@@ -6,38 +6,42 @@ export default function useSwipeGesture({
   onSwipeUp,
   onSwipeDown,
   minSwipeDistance = 50,
-  direction = "horizontal", // 'horizontal', 'vertical', or 'both'
+  direction = "horizontal",
 } = {}) {
   const elementRef = useRef(null)
-  const touchStartXRef = useRef(null)
-  const touchEndXRef = useRef(null)
-  const touchStartYRef = useRef(null)
-  const touchEndYRef = useRef(null)
 
   useEffect(() => {
     const element = elementRef.current
     if (!element) return
 
+    const controller = new AbortController()
+
+    let touchStartX = null
+    let touchEndX = null
+    let touchStartY = null
+    let touchEndY = null
+
     const handleTouchStart = (e) => {
-      touchEndXRef.current = null
-      touchEndYRef.current = null
-      touchStartXRef.current = e.targetTouches[0].clientX
-      touchStartYRef.current = e.targetTouches[0].clientY
+      touchEndX = null
+      touchEndY = null
+      touchStartX = e.targetTouches[0].clientX
+      touchStartY = e.targetTouches[0].clientY
     }
 
     const handleTouchMove = (e) => {
-      touchEndXRef.current = e.targetTouches[0].clientX
-      touchEndYRef.current = e.targetTouches[0].clientY
+      touchEndX = e.targetTouches[0].clientX
+      touchEndY = e.targetTouches[0].clientY
     }
 
+    const isHorizontalSwipe = () =>
+      direction === "horizontal" && touchStartX !== null && touchEndX !== null
+
+    const isVerticalSwipe = () =>
+      direction === "vertical" && touchStartY !== null && touchEndY !== null
+
     const handleTouchEnd = () => {
-      // Handle horizontal swipes
-      if (
-        (direction === "horizontal" || direction === "both") &&
-        touchStartXRef.current !== null &&
-        touchEndXRef.current !== null
-      ) {
-        const distanceX = touchStartXRef.current - touchEndXRef.current
+      if (isHorizontalSwipe()) {
+        const distanceX = touchStartX - touchEndX
         const isLeftSwipe = distanceX > minSwipeDistance
         const isRightSwipe = distanceX < -minSwipeDistance
 
@@ -50,13 +54,8 @@ export default function useSwipeGesture({
         }
       }
 
-      // Handle vertical swipes
-      if (
-        (direction === "vertical" || direction === "both") &&
-        touchStartYRef.current !== null &&
-        touchEndYRef.current !== null
-      ) {
-        const distanceY = touchStartYRef.current - touchEndYRef.current
+      if (isVerticalSwipe()) {
+        const distanceY = touchStartY - touchEndY
         const isUpSwipe = distanceY > minSwipeDistance
         const isDownSwipe = distanceY < -minSwipeDistance
 
@@ -70,14 +69,20 @@ export default function useSwipeGesture({
       }
     }
 
-    element.addEventListener("touchstart", handleTouchStart)
-    element.addEventListener("touchmove", handleTouchMove)
-    element.addEventListener("touchend", handleTouchEnd)
+    element.addEventListener("touchstart", handleTouchStart, {
+      signal: controller.signal,
+      passive: true,
+    })
+    element.addEventListener("touchmove", handleTouchMove, {
+      signal: controller.signal,
+      passive: true,
+    })
+    element.addEventListener("touchend", handleTouchEnd, {
+      signal: controller.signal,
+    })
 
     return () => {
-      element.removeEventListener("touchstart", handleTouchStart)
-      element.removeEventListener("touchmove", handleTouchMove)
-      element.removeEventListener("touchend", handleTouchEnd)
+      controller.abort()
     }
   }, [
     onSwipeLeft,
