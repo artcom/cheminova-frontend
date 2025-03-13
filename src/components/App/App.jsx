@@ -1,7 +1,23 @@
 import useFullscreen from "../../hooks/useFullscreen"
 
+import useGlobalState from "../../hooks/useGlobalState"
 export default function App() {
-  ;<FullscreenButton />
+  const { selectedCharacter, setSelectedCharacter } = useGlobalState()
+  return (
+    <>
+      <h1> Cheminova Frontend</h1>
+      <p> Selected Character: {selectedCharacter ?? "none Selected"}</p>
+      <button
+        onClick={() =>
+          setSelectedCharacter(selectedCharacter === "bob" ? "alice" : "bob")
+        }
+      >
+        Set selected character to{" "}
+        {selectedCharacter === "bob" ? "alice" : "bob"}
+      </button>
+      <FullscreenButton />
+    </>
+  )
 }
 
 function FullscreenButton() {
