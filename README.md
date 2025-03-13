@@ -36,7 +36,7 @@ npm run build
   "editor.formatOnSave": true,
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "[javascript]": {
-    ". ditor.defaultFormatter": "esbenp.prettier-vscode"
+    ".editor.defaultFormatter": "esbenp.prettier-vscode"
   }
 }
 ```
