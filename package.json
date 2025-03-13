@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "dev:host": "vite --host", 
     "lint": "eslint src",
     "format": "prettier --check src",
     "format:write": "prettier --write src",
