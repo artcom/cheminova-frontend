@@ -1,12 +1,7 @@
 import useFullscreen from "../../hooks/useFullscreen"
 
 export default function App() {
-  return (
-    <>
-      <h1>Cheminova Frontend</h1>
-      <FullscreenButton />
-    </>
-  )
+  ;<FullscreenButton />
 }
 
 function FullscreenButton() {
