@@ -79,6 +79,7 @@ export default function useSwipeGesture({
     })
     element.addEventListener("touchend", handleTouchEnd, {
       signal: controller.signal,
+      passive: true,
     })
 
     return () => {
