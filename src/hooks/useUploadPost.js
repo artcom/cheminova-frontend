@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query"
-import { uploadPost } from "../api/uploadData"
+import { uploadPost } from "@api/uploadData"
 
 export default function useUploadPost() {
   const queryClient = useQueryClient()

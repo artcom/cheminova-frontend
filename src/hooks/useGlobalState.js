@@ -1,4 +1,4 @@
-import { StateContext } from "../GlobalState"
+import { StateContext } from "@/GlobalState"
 import { useContext } from "react"
 
 export default function useGlobalState() {

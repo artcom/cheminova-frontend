@@ -1,6 +1,6 @@
 import { useState } from "react"
-import useFetchPosts from "../../hooks/useFetchPosts"
-import useUploadPost from "../../hooks/useUploadPost"
+import useFetchPosts from "@hooks/useFetchPosts"
+import useUploadPost from "@hooks/useUploadPost"
 
 export default function ExampleQueries() {
   const { data: posts, isLoading, error, refetch } = useFetchPosts()
