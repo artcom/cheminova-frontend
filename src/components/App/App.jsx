@@ -1,6 +1,7 @@
 import useFullscreen from "../../hooks/useFullscreen"
 import PhotoCapture from "../PhotoCapture"
 import useGlobalState from "../../hooks/useGlobalState"
+import ExampleQueries from "../ExampleQueries"
 
 export default function App() {
   const { selectedCharacter, setSelectedCharacter } = useGlobalState()
@@ -19,6 +20,7 @@ export default function App() {
       </button>
       <PhotoCapture />
       <FullscreenButton />
+      <ExampleQueries />
     </>
   )
 }
