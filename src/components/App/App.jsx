@@ -1,8 +1,10 @@
 import useFullscreen from "../../hooks/useFullscreen"
-
+import PhotoCapture from "../PhotoCapture"
 import useGlobalState from "../../hooks/useGlobalState"
+
 export default function App() {
   const { selectedCharacter, setSelectedCharacter } = useGlobalState()
+
   return (
     <>
       <h1> Cheminova Frontend</h1>
@@ -15,6 +17,7 @@ export default function App() {
         Set selected character to{" "}
         {selectedCharacter === "bob" ? "alice" : "bob"}
       </button>
+      <PhotoCapture />
       <FullscreenButton />
     </>
   )
