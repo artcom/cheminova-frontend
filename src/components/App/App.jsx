@@ -1,7 +1,7 @@
-import useFullscreen from "../../hooks/useFullscreen"
-import PhotoCapture from "../PhotoCapture"
-import useGlobalState from "../../hooks/useGlobalState"
-import ExampleQueries from "../ExampleQueries"
+import useFullscreen from "@hooks/useFullscreen"
+import PhotoCapture from "@components/PhotoCapture"
+import useGlobalState from "@hooks/useGlobalState"
+import ExampleQueries from "@components/ExampleQueries"
 
 export default function App() {
   const { selectedCharacter, setSelectedCharacter } = useGlobalState()

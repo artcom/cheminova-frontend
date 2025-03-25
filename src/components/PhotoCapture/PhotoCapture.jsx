@@ -1,4 +1,4 @@
-import useDevicePlatform from "../../hooks/useDevicePlatform"
+import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useState, useRef } from "react"
 
 export default function PhotoCapture() {
