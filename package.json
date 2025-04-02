@@ -11,7 +11,7 @@
     "format:write": "prettier --write src",
     "build": "vite build",
     "preview": "vite preview",
-    "prepare": "husky install"
+    "prepare": "husky"
   },
   "dependencies": {
     "@tanstack/react-query": "^5.67.3",
