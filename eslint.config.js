@@ -8,6 +8,12 @@ import pluginQuery from "@tanstack/eslint-plugin-query"
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
+  { languageOptions: { globals: globals.browser } },
+  ...pluginQuery.configs["flat/recommended"],
+  pluginJs.configs.recommended,
+  pluginReact.configs.flat.recommended,
+  pluginReact.configs.flat["jsx-runtime"],
+  eslintConfigPrettier,
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
     settings: {
@@ -21,12 +27,7 @@ export default [
     },
     rules: {
       "react-compiler/react-compiler": "error",
+      "react/prop-types": 0,
     },
   },
-  { languageOptions: { globals: globals.browser } },
-  ...pluginQuery.configs["flat/recommended"],
-  pluginJs.configs.recommended,
-  pluginReact.configs.flat.recommended,
-  pluginReact.configs.flat["jsx-runtime"],
-  eslintConfigPrettier,
 ]
