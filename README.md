@@ -40,3 +40,25 @@ npm run build
   }
 }
 ```
+
+# Talk
+
+## Performance Opimization
+
+**Reducing Bundle Size:**
+
+- https://shaxadd.medium.com/optimizing-your-react-vite-application-a-guide-to-reducing-bundle-size-6b7e93891c96
+
+```JSX
+import React, { Suspense } from 'react';
+
+const MyComponent = React.lazy(() => import('./MyComponent'));
+function App() {
+  return (
+    <Suspense fallback={<div>Loading...</div>}>
+      <MyComponent />
+    </Suspense>
+  );
+}
+export default App;
+```
