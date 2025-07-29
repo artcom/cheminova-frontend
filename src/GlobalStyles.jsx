@@ -13,7 +13,11 @@ const GlobalStyles = createGlobalStyle`
     width: 100%;
     height: 100%;
     color: #242424;
-    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    font-family: "Bricolage Grotesque", sans-serif;
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings:
+      "wdth" 100;
   }
 
   #root {
@@ -22,8 +26,6 @@ const GlobalStyles = createGlobalStyle`
     display: grid;
     place-items: center;
   }
-
- 
 `
 
 export default GlobalStyles
