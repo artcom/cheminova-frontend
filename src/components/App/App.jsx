@@ -1,7 +1,6 @@
 import useFullscreen from "@hooks/useFullscreen"
-import PhotoCapture from "@components/PhotoCapture"
 import useGlobalState from "@hooks/useGlobalState"
-import ExampleQueries from "@components/ExampleQueries"
+import DemoPage from "@ui/DemoPage"
 
 export default function App() {
   const { selectedCharacter, setSelectedCharacter } = useGlobalState()
@@ -18,9 +17,8 @@ export default function App() {
         Set selected character to{" "}
         {selectedCharacter === "bob" ? "alice" : "bob"}
       </button>
-      <PhotoCapture />
+      <DemoPage />
       <FullscreenButton />
-      <ExampleQueries />
     </>
   )
 }

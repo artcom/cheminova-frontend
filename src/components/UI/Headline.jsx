@@ -1,7 +1,7 @@
 import { styled } from "styled-components"
 
 const Headline = styled.div`
-  color: #fff;
+  color: black;
   text-align: center;
 
   font-family: "Bricolage Grotesque";
