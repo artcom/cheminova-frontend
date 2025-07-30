@@ -1,6 +1,5 @@
 import Button from "@ui/Button"
-import Headline from "@ui/Headline"
-import SubHeadline from "@ui/SubHeadline"
+import Header from "@ui/Header"
 import IconButton from "@ui/IconButton"
 
 export default function DemoPage() {
@@ -10,8 +9,7 @@ export default function DemoPage() {
         backgroundColor: "lightgray",
       }}
     >
-      <Headline> Demo Page</Headline>
-      <SubHeadline>This is a demo page</SubHeadline>
+      <Header headline="Demo Page" subheadline="This is a demo page" />
       <Button onClick={() => console.log("Button clicked!")}>Click Me!</Button>
       <div
         style={{
