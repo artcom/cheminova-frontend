@@ -1,6 +1,7 @@
 import Button from "@ui/Button"
 import Header from "@ui/Header"
 import IconButton from "@ui/IconButton"
+import MainLayout from "@ui/MainLayout"
 
 export default function DemoPage() {
   return (
@@ -38,6 +39,12 @@ export default function DemoPage() {
           onClick={() => console.log("Camera clicked!")}
         />
       </div>
+      <MainLayout
+        headline="Main Layout Headline"
+        subheadline="Optional Subheadline"
+        descriptionTitle="Description Title"
+        descriptionText="This is the description text for the main layout."
+      />
     </div>
   )
 }
