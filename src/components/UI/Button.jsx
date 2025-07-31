@@ -14,7 +14,6 @@ const Container = styled.button`
   color: #fff;
 
   text-align: center;
-  font-family: "Bricolage Grotesque";
   font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;

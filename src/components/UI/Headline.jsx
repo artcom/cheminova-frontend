@@ -4,7 +4,6 @@ const Headline = styled.div`
   color: black;
   text-align: center;
 
-  font-family: "Bricolage Grotesque";
   font-size: 2.625rem;
   font-style: normal;
   font-weight: 700;
