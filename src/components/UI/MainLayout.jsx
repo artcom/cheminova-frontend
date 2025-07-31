@@ -10,6 +10,10 @@ const Layout = styled.div`
   flex: 1 0 0;
   grid-template-rows: repeat(2, minmax(0, 1fr));
   grid-template-columns: repeat(1, minmax(0, 1fr));
+  background-image: ${({ backgroundImage }) =>
+    backgroundImage ? `url(${backgroundImage})` : "none"};
+  background-size: cover;
+  background-position: center;
 `
 
 const StyledHeader = styled(Header)`
@@ -77,20 +81,33 @@ export default function MainLayout({
   subheadline,
   descriptionTitle,
   descriptionText,
-  prevButton,
-  nextButton,
+  onPrev,
+  onNext,
+  backgroundImage,
 }) {
   return (
-    <Layout>
+    <Layout backgroundImage={backgroundImage}>
       <StyledHeader headline={headline} subheadline={subheadline} />
       <DescriptionBlock>
         <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
         <DescriptionText>{descriptionText}</DescriptionText>
         <ButtonLayout>
-          {prevButton || (
+          {onPrev ? (
+            <DirectedButton
+              direction="left"
+              variant="arrowLeft"
+              onClick={onPrev}
+            />
+          ) : (
             <DirectedButton direction="left" variant="arrowLeft" />
           )}
-          {nextButton || (
+          {onNext ? (
+            <DirectedButton
+              direction="right"
+              variant="arrowRight"
+              onClick={onNext}
+            />
+          ) : (
             <DirectedButton direction="right" variant="arrowRight" />
           )}
         </ButtonLayout>

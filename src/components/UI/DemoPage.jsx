@@ -1,9 +1,35 @@
+import { useState } from "react"
 import Button from "@ui/Button"
 import Header from "@ui/Header"
 import IconButton from "@ui/IconButton"
 import MainLayout from "@ui/MainLayout"
+import LaNau from "./LaNau.jpg"
+
+const mainLayoutScreens = [
+  {
+    headline: "Main Layout Headline 1",
+    subheadline: "Optional Subheadline 1",
+    descriptionTitle: "Description Title 1",
+    descriptionText: "This is the description text for the first main layout.",
+    backgroundImage: LaNau,
+  },
+  {
+    headline: "Main Layout Headline 2",
+    subheadline: "Optional Subheadline 2",
+    descriptionTitle: "Description Title 2",
+    descriptionText: "This is the description text for the second main layout.",
+  },
+]
 
 export default function DemoPage() {
+  const [screenIndex, setScreenIndex] = useState(0)
+  const nextScreen = () =>
+    setScreenIndex((i) => (i + 1) % mainLayoutScreens.length)
+  const prevScreen = () =>
+    setScreenIndex(
+      (i) => (i - 1 + mainLayoutScreens.length) % mainLayoutScreens.length,
+    )
+
   return (
     <div
       style={{
@@ -40,10 +66,9 @@ export default function DemoPage() {
         />
       </div>
       <MainLayout
-        headline="Main Layout Headline"
-        subheadline="Optional Subheadline"
-        descriptionTitle="Description Title"
-        descriptionText="This is the description text for the main layout."
+        {...mainLayoutScreens[screenIndex]}
+        onPrev={prevScreen}
+        onNext={nextScreen}
       />
     </div>
   )
