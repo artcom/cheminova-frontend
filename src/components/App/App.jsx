@@ -1,6 +1,5 @@
-import useFullscreen from "@hooks/useFullscreen"
 import useGlobalState from "@hooks/useGlobalState"
-import DemoPage from "@ui/DemoPage"
+import DemoPage from "@components/DemoPage"
 
 export default function App() {
   const { selectedCharacter, setSelectedCharacter } = useGlobalState()
@@ -18,21 +17,6 @@ export default function App() {
         {selectedCharacter === "bob" ? "alice" : "bob"}
       </button>
       <DemoPage />
-      <FullscreenButton />
     </>
-  )
-}
-
-function FullscreenButton() {
-  const { isFullscreen, isIOSDevice, toggleFullscreen } = useFullscreen()
-
-  if (isIOSDevice) {
-    return null
-  }
-
-  return (
-    <button onClick={toggleFullscreen}>
-      {isFullscreen ? "Exit Fullscreen" : "Fullscreen"}
-    </button>
   )
 }

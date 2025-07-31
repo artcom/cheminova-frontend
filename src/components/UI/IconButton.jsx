@@ -134,6 +134,39 @@ const ICON_VARIANTS = {
     ),
     label: "Arrow right",
   },
+
+  fullscreen: {
+    svg: (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="55"
+        height="55"
+        viewBox="0 0 55 55"
+        fill="none"
+      >
+        <rect
+          x="1"
+          y="1"
+          width="53"
+          height="53"
+          rx="26.5"
+          stroke="white"
+          strokeWidth="2"
+        />
+        <path
+          d="M18 18H22V20H20V22H18V18ZM35 18H37V22H35V20H33V18H35ZM18 35V33H20V35H22V37H18V35ZM35 35V37H33V35H35V33H37V35H35Z"
+          fill="white"
+        />
+        <path
+          d="M24 24H31V31H24V24Z"
+          stroke="white"
+          strokeWidth="1.5"
+          fill="none"
+        />
+      </svg>
+    ),
+    label: "Fullscreen",
+  },
 }
 
 function IconButton({

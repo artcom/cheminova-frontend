@@ -14,6 +14,7 @@ const Layout = styled.div`
     backgroundImage ? `url(${backgroundImage})` : "none"};
   background-size: cover;
   background-position: center;
+  position: relative;
 `
 
 const StyledHeader = styled(Header)`
@@ -84,13 +85,17 @@ export default function MainLayout({
   onPrev,
   onNext,
   backgroundImage,
+  topRightAction,
+  children,
 }) {
   return (
     <Layout backgroundImage={backgroundImage}>
+      {topRightAction}
       <StyledHeader headline={headline} subheadline={subheadline} />
       <DescriptionBlock>
         <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
         <DescriptionText>{descriptionText}</DescriptionText>
+        {children}
         <ButtonLayout>
           {onPrev ? (
             <DirectedButton
