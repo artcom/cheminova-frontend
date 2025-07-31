@@ -64,21 +64,14 @@ const ButtonLayout = styled.div`
   margin: 0 auto;
 `
 
-const ButtonLeft = styled(IconButton)`
+const DirectedButton = styled(IconButton)`
+  flex-shrink: 0;
   width: 3.4375rem;
   height: 3.4375rem;
-  flex-shrink: 0;
   grid-row: 1 / span 1;
-  grid-column: 1 / span 1;
-`
-
-const ButtonRight = styled(IconButton)`
-  width: 3.4375rem;
-  height: 3.4375rem;
-  flex-shrink: 0;
-  grid-row: 1 / span 1;
-  grid-column: 2 / span 1;
-  justify-self: end;
+  grid-column: ${({ direction }) =>
+    direction === "right" ? "2 / span 1" : "1 / span 1"};
+  justify-self: ${({ direction }) => (direction === "right" ? "end" : "start")};
 `
 
 export default function MainLayout({
@@ -96,8 +89,12 @@ export default function MainLayout({
         <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
         <DescriptionText>{descriptionText}</DescriptionText>
         <ButtonLayout>
-          {prevButton || <ButtonLeft variant="arrowLeft" />}
-          {nextButton || <ButtonRight variant="arrowRight" />}
+          {prevButton || (
+            <DirectedButton direction="left" variant="arrowLeft" />
+          )}
+          {nextButton || (
+            <DirectedButton direction="right" variant="arrowRight" />
+          )}
         </ButtonLayout>
       </DescriptionBlock>
     </Layout>

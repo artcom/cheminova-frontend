@@ -158,19 +158,10 @@ function IconButton({
     onClick(event)
   }
 
-  const handleKeyDown = (event) => {
-    if (disabled) return
-    if (event.key === "Enter" || event.key === " ") {
-      event.preventDefault()
-      handleClick(event)
-    }
-  }
-
   return (
     <StyledButton
       type="button"
       onClick={handleClick}
-      onKeyDown={handleKeyDown}
       disabled={disabled}
       className={className}
       data-testid={testId}

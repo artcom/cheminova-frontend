@@ -6,6 +6,12 @@ const GlobalStyles = createGlobalStyle`
     margin: 0;
     padding: 0;
     touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none; 
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   html,
