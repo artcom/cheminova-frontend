@@ -1,7 +1,7 @@
 import { styled } from "styled-components"
 
 const SubHeadline = styled.div`
-  color: white;
+  color: ${(props) => props.theme.colors.background.paper};
   text-align: center;
   font-family: ${(props) => props.theme.fontFamily};
   font-size: 1.5rem;

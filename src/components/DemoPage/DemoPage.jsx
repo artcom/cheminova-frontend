@@ -15,11 +15,8 @@ export default function DemoPage() {
 
   const mainLayoutScreens = [
     {
-      headline: "Main Layout Headline 1",
-      subheadline: "Optional Subheadline 1",
-      descriptionTitle: "Description Title 1",
-      descriptionText:
-        "This is the description text for the first main layout.",
+      headline: "La Nau",
+      subheadline: "Experiencing",
       backgroundImage: LaNau,
       vignetteIntensity: 50,
     },
