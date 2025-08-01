@@ -17,7 +17,7 @@ export const IntroScreen = ({ onCharacterSelect }) => {
         transition={{ duration: 0.6, delay: 0.1 }}
         style={{ fontSize: "3rem", marginBottom: "1rem" }}
       >
-        Choose your guide
+        Your guide
       </IntroHeading>
 
       <IntroHeading
@@ -26,7 +26,7 @@ export const IntroScreen = ({ onCharacterSelect }) => {
         transition={{ duration: 0.6, delay: 0.2 }}
         style={{ fontSize: "1.5rem", marginBottom: "3rem", opacity: 0.8 }}
       >
-        Choose one of the three characters
+        Choose one character
       </IntroHeading>
 
       <IntroCharactersRow

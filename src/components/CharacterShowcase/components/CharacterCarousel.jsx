@@ -19,10 +19,10 @@ export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
   return (
     <div
       style={{
-        width: "100vw",
+        width: "100dvw",
         height: "100%",
         overflow: "hidden",
-        perspective: "1000px",
+        perspective: "62.5rem",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
@@ -62,7 +62,7 @@ const CharacterCard = ({ character, transform }) => {
   return (
     <motion.div
       style={{
-        flex: "0 0 100vw",
+        flex: "0 0 100dvw",
         height: "100%",
         display: "flex",
         flexDirection: "column",
@@ -87,15 +87,15 @@ const CharacterCard = ({ character, transform }) => {
           width: "auto",
           height: "60%",
           objectFit: "contain",
-          marginBottom: "20px",
-          filter: `drop-shadow(0 ${8 + shadowIntensity * 4}px ${12 + shadowIntensity * 8}px rgba(0, 0, 0, ${0.4 - shadowIntensity * 0.1}))`,
+          marginBottom: "1.25rem",
+          filter: `drop-shadow(0 ${0.5 + shadowIntensity * 0.25}rem ${0.75 + shadowIntensity * 0.5}rem rgba(0, 0, 0, ${0.4 - shadowIntensity * 0.1}))`,
         }}
       />
       <div
         style={{
           color: "white",
           textAlign: "center",
-          textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
+          textShadow: "0 0.125rem 0.25rem rgba(0, 0, 0, 0.5)",
           maxWidth: "80%",
         }}
       >

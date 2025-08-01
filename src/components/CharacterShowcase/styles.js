@@ -7,10 +7,10 @@ export const Container = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  height: 100dvh;
   width: 100%;
   overflow: hidden;
-  perspective: 1500px;
+  perspective: 93.75rem;
 `
 
 export const MainLayoutContainer = styled(motion.div)`
@@ -19,10 +19,10 @@ export const MainLayoutContainer = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  width: 100vw;
+  height: 100dvh;
+  width: 100dvw;
   overflow: hidden;
-  perspective: 1500px;
+  perspective: 93.75rem;
   padding-bottom: 6rem; /* Space for navigation overlay */
 `
 
@@ -32,33 +32,23 @@ export const CharactersContainer = styled.div`
   justify-content: center;
   width: 100%;
   position: relative;
-  height: 80vh;
+  height: 80dvh;
   touch-action: none;
 `
 
 export const CharacterBox = styled(motion.div)`
-  width: 70vw;
-  height: 60vh;
-  border-radius: 16px;
+  width: 70dvw;
+  height: 60dvh;
+  border-radius: 1rem;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: bold;
   position: absolute;
   cursor: ${(props) => (props.isSelected ? "grab" : "default")};
   overflow: hidden;
-
-  @media (max-width: 768px) {
-    width: 360px;
-    height: 480px;
-  }
-
-  @media (max-width: 480px) {
-    width: 360px;
-    height: 480px;
-  }
 
   &:active {
     cursor: ${(props) => (props.isSelected ? "grabbing" : "default")};
@@ -94,9 +84,9 @@ export const CharacterName = styled(motion.div)`
   font-size: 2.5rem;
   font-weight: 700;
   color: white;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  margin-top: 20px;
-  letter-spacing: 1px;
+  text-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.3);
+  margin-top: 1.25rem;
+  letter-spacing: 0.0625rem;
   position: relative;
 `
 
@@ -107,14 +97,14 @@ export const NavigationButton = styled(motion.button)`
   background-color: white;
   border: none;
   border-radius: 50%;
-  width: 70px;
-  height: 70px;
+  width: 4.375rem;
+  height: 4.375rem;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 28px;
+  font-size: 1.75rem;
   cursor: pointer;
-  filter: drop-shadow(0 4px 15px rgba(0, 0, 0, 0.2));
+  filter: drop-shadow(0 0.25rem 0.9375rem rgba(0, 0, 0, 0.2));
   z-index: 10;
   color: #333;
   transition: all 0.2s ease;
@@ -125,11 +115,11 @@ export const NavigationButton = styled(motion.button)`
   }
 
   &.left {
-    left: 30px;
+    left: 1.875rem;
   }
 
   &.right {
-    right: 30px;
+    right: 1.875rem;
   }
 `
 
@@ -156,7 +146,7 @@ export const IntroContainer = styled(motion.div)`
   align-items: center;
   justify-content: center;
   width: 100%;
-  height: 90vh;
+  height: 90dvh;
 `
 
 export const IntroCharactersRow = styled(motion.div)`
@@ -164,12 +154,8 @@ export const IntroCharactersRow = styled(motion.div)`
   align-items: center;
   justify-content: center;
   width: 100%;
-  gap: 20px;
-  margin-bottom: 40px;
-
-  @media (max-width: 768px) {
-    gap: 10px;
-  }
+  gap: 1.25rem;
+  margin-bottom: 2.5rem;
 `
 
 export const IntroCharacterItem = styled(motion.div)`
@@ -177,20 +163,10 @@ export const IntroCharacterItem = styled(motion.div)`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  width: 25vw;
-  height: 50vh;
+  width: 25dvw;
+  height: 50dvh;
   cursor: pointer;
   position: relative;
-
-  @media (max-width: 768px) {
-    width: 30vw;
-    height: 40vh;
-  }
-
-  @media (max-width: 480px) {
-    width: 30vw;
-    height: 35vh;
-  }
 `
 
 export const IntroCharacterImage = styled(motion.img)`
@@ -198,7 +174,7 @@ export const IntroCharacterImage = styled(motion.img)`
   height: 80%;
   object-fit: contain;
   object-position: center;
-  filter: drop-shadow(0 10px 15px rgba(0, 0, 0, 0.3));
+  filter: drop-shadow(0 0.625rem 0.9375rem rgba(0, 0, 0, 0.3));
 `
 
 export const IntroHeading = styled(motion.div)`
@@ -207,23 +183,15 @@ export const IntroHeading = styled(motion.div)`
   font-size: 2rem;
   font-weight: 700;
   color: white;
-  text-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-  margin-top: 30px;
-  padding: 0 20px;
-  max-width: 800px;
+  text-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.3);
+  margin-top: 1.875rem;
+  padding: 0 1.25rem;
+  max-width: 50rem;
   line-height: 1.4;
   cursor: pointer;
 
   &:hover {
     text-decoration: underline;
-  }
-
-  @media (max-width: 768px) {
-    font-size: 1.5rem;
-  }
-
-  @media (max-width: 480px) {
-    font-size: 1.2rem;
   }
 `
 
