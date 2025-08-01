@@ -94,13 +94,29 @@ const CharacterCard = ({ character, transform }) => {
       <div
         style={{
           color: "white",
-          fontSize: "1.2rem",
-          fontWeight: "bold",
           textAlign: "center",
           textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
+          maxWidth: "80%",
         }}
       >
-        {character.name}
+        <div
+          style={{
+            fontSize: "1.8rem",
+            fontWeight: "bold",
+            marginBottom: "0.5rem",
+          }}
+        >
+          {character.name}
+        </div>
+        <div
+          style={{
+            fontSize: "1.1rem",
+            opacity: 0.9,
+            lineHeight: "1.4",
+          }}
+        >
+          {character.description}
+        </div>
       </div>
     </motion.div>
   )

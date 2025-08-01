@@ -8,13 +8,31 @@ import {
 } from "../styles"
 import { CHARACTER_DATA } from "../constants"
 
-export const IntroScreen = ({ onCharacterSelect, onContinue }) => {
+export const IntroScreen = ({ onCharacterSelect }) => {
   return (
     <IntroContainer>
+      <IntroHeading
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.1 }}
+        style={{ fontSize: "3rem", marginBottom: "1rem" }}
+      >
+        Choose your guide
+      </IntroHeading>
+
+      <IntroHeading
+        initial={{ y: 30, opacity: 0 }}
+        animate={{ y: 0, opacity: 1 }}
+        transition={{ duration: 0.6, delay: 0.2 }}
+        style={{ fontSize: "1.5rem", marginBottom: "3rem", opacity: 0.8 }}
+      >
+        Choose one of the three characters
+      </IntroHeading>
+
       <IntroCharactersRow
         initial={{ y: 50, opacity: 0 }}
         animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.2 }}
+        transition={{ duration: 0.6, delay: 0.4 }}
       >
         {CHARACTER_DATA.map((character, index) => (
           <IntroCharacterItem
@@ -34,16 +52,6 @@ export const IntroScreen = ({ onCharacterSelect, onContinue }) => {
           </IntroCharacterItem>
         ))}
       </IntroCharactersRow>
-
-      <IntroHeading
-        initial={{ y: 30, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
-        onClick={onContinue}
-      >
-        Enter the world of the beautiful Camp Nou through the eyes of your
-        chosen character
-      </IntroHeading>
     </IntroContainer>
   )
 }
