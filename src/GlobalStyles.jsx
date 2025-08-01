@@ -19,6 +19,7 @@ const GlobalStyles = createGlobalStyle`
     background-color: ${(props) => props.theme.colors.background.paper};
     width: 100%;
     height: 100%;
+    overflow: hidden;
     color: ${(props) => props.theme.colors.text.primary};
     font-family: ${(props) => props.theme.fontFamily};
     font-optical-sizing: auto;
@@ -31,6 +32,7 @@ const GlobalStyles = createGlobalStyle`
   #root {
     width: 100%;
     height: 100%;
+    overflow: hidden;
     display: grid;
     place-items: center;
   }
