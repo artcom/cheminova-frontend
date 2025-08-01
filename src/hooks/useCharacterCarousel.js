@@ -10,7 +10,11 @@ export const useCharacterCarousel = (
   const spacing = window.innerWidth
 
   useEffect(() => {
-    x.set(-spacing * (selectedIndex - 1))
+    animate(x, -spacing * (selectedIndex - 1), {
+      type: "spring",
+      stiffness: 300,
+      damping: 30,
+    })
   }, [selectedIndex, spacing, x])
 
   const handleDragEnd = () => {

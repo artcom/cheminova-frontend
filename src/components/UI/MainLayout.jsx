@@ -83,16 +83,6 @@ const FullscreenContainer = styled.div`
   position: relative;
 `
 
-const NavigationOverlay = styled.div`
-  position: absolute;
-  bottom: 2rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 1000;
-  display: flex;
-  gap: 2rem;
-`
-
 export default function MainLayout({
   headline,
   subheadline,
@@ -105,32 +95,12 @@ export default function MainLayout({
   children,
   fullscreenComponent,
 }) {
-  // If fullscreenComponent is provided, render it with navigation overlay
+  // If fullscreenComponent is provided, render it without navigation
   if (fullscreenComponent) {
     return (
       <FullscreenContainer>
         {topRightAction}
         {fullscreenComponent}
-        <NavigationOverlay>
-          {onPrev ? (
-            <DirectedButton
-              direction="left"
-              variant="arrowLeft"
-              onClick={onPrev}
-            />
-          ) : (
-            <DirectedButton direction="left" variant="arrowLeft" />
-          )}
-          {onNext ? (
-            <DirectedButton
-              direction="right"
-              variant="arrowRight"
-              onClick={onNext}
-            />
-          ) : (
-            <DirectedButton direction="right" variant="arrowRight" />
-          )}
-        </NavigationOverlay>
       </FullscreenContainer>
     )
   }
