@@ -5,8 +5,8 @@ import Navigation from "./Navigation"
 import Vignette from "./Vignette"
 
 const Layout = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   display: grid;
   row-gap: 31.25rem;
   flex: 1 0 0;
@@ -64,8 +64,8 @@ const DescriptionText = styled.div`
 `
 
 const FullscreenContainer = styled.div`
-  width: 100vw;
-  height: 100vh;
+  width: 100dvw;
+  height: 100dvh;
   position: relative;
 `
 
