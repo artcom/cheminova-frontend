@@ -226,3 +226,14 @@ export const IntroHeading = styled(motion.div)`
     font-size: 1.2rem;
   }
 `
+
+export const CharacterButtonLayout = styled.div`
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+  z-index: 1000;
+`

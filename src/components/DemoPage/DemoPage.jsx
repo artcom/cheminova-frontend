@@ -5,22 +5,36 @@ import useFullscreen from "@hooks/useFullscreen"
 import CharacterShowcase from "@components/CharacterShowcase"
 import LaNau from "../UI/LaNau.jpg"
 
-const mainLayoutScreens = [
-  {
-    headline: "Main Layout Headline 1",
-    subheadline: "Optional Subheadline 1",
-    descriptionTitle: "Description Title 1",
-    descriptionText: "This is the description text for the first main layout.",
-    backgroundImage: LaNau,
-  },
-  {
-    fullscreenComponent: <CharacterShowcase isInMainLayout={true} />,
-  },
-]
-
 export default function DemoPage() {
   const [screenIndex, setScreenIndex] = useState(0)
   const { isIOSDevice, toggleFullscreen } = useFullscreen()
+
+  const handleCharacterSelected = () => {
+    setScreenIndex(2) // Go to page 3 (index 2)
+  }
+
+  const mainLayoutScreens = [
+    {
+      headline: "Main Layout Headline 1",
+      subheadline: "Optional Subheadline 1",
+      descriptionTitle: "Description Title 1",
+      descriptionText:
+        "This is the description text for the first main layout.",
+      backgroundImage: LaNau,
+    },
+    {
+      fullscreenComponent: (
+        <CharacterShowcase onCharacterSelected={handleCharacterSelected} />
+      ),
+    },
+    {
+      headline: "Character Selected!",
+      subheadline: "Your journey begins",
+      descriptionTitle: "Welcome to your adventure",
+      descriptionText:
+        "You have successfully selected your character. Your personalized experience awaits!",
+    },
+  ]
 
   const nextScreen = () =>
     setScreenIndex((i) => (i + 1) % mainLayoutScreens.length)
