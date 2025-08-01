@@ -10,8 +10,8 @@ const Layout = styled.div`
   flex: 1 0 0;
   grid-template-rows: repeat(2, minmax(0, 1fr));
   grid-template-columns: repeat(1, minmax(0, 1fr));
-  background-image: ${({ backgroundImage }) =>
-    backgroundImage ? `url(${backgroundImage})` : "none"};
+  background-image: ${({ $backgroundImage }) =>
+    $backgroundImage ? `url(${$backgroundImage})` : "none"};
   background-size: cover;
   background-position: center;
   position: relative;
@@ -137,7 +137,7 @@ export default function MainLayout({
 
   // Default layout for regular content
   return (
-    <Layout backgroundImage={backgroundImage}>
+    <Layout $backgroundImage={backgroundImage}>
       {topRightAction}
       <StyledHeader headline={headline} subheadline={subheadline} />
       <DescriptionBlock>
