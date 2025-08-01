@@ -9,6 +9,8 @@ const HeaderContainer = styled.div`
   padding: 3.625rem 0.625rem 0.625rem 0.625rem;
   flex-direction: column;
   align-items: center;
+  position: relative;
+  z-index: 3;
 `
 
 function Header({ headline, subheadline }) {

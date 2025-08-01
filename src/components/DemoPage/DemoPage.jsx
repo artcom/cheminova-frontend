@@ -21,6 +21,7 @@ export default function DemoPage() {
       descriptionText:
         "This is the description text for the first main layout.",
       backgroundImage: LaNau,
+      vignetteIntensity: 50,
     },
     {
       fullscreenComponent: (
@@ -33,6 +34,7 @@ export default function DemoPage() {
       descriptionTitle: "Welcome to your adventure",
       descriptionText:
         "You have successfully selected your character. Your personalized experience awaits!",
+      vignetteIntensity: 20,
     },
   ]
 

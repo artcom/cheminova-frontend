@@ -1,6 +1,7 @@
 import { styled } from "styled-components"
 import Header from "./Header"
 import IconButton from "@ui/IconButton"
+import Vignette from "./Vignette"
 
 const Layout = styled.div`
   width: 100vw;
@@ -22,6 +23,8 @@ const StyledHeader = styled(Header)`
   align-self: stretch;
   grid-row: 1 / span 1;
   grid-column: 1 / span 1;
+  position: relative;
+  z-index: 2;
 `
 
 const DescriptionBlock = styled.div`
@@ -34,6 +37,8 @@ const DescriptionBlock = styled.div`
   align-self: stretch;
   grid-row: 2 / span 1;
   grid-column: 1 / span 1;
+  position: relative;
+  z-index: 2;
 `
 
 const DescriptionTitle = styled.div`
@@ -94,6 +99,7 @@ export default function MainLayout({
   topRightAction,
   children,
   fullscreenComponent,
+  vignetteIntensity = 25,
 }) {
   // If fullscreenComponent is provided, render it without navigation
   if (fullscreenComponent) {
@@ -108,6 +114,7 @@ export default function MainLayout({
   // Default layout for regular content
   return (
     <Layout $backgroundImage={backgroundImage}>
+      {backgroundImage && <Vignette intensity={vignetteIntensity} />}
       {topRightAction}
       <StyledHeader headline={headline} subheadline={subheadline} />
       <DescriptionBlock>
