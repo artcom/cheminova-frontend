@@ -1,14 +1,10 @@
 import { motion } from "framer-motion"
 import { CHARACTER_DATA } from "../constants"
 import { useCharacterCarousel } from "../../../hooks/useCharacterCarousel"
-import {
-  calculateCharacterTransform,
-  CAROUSEL_ANIMATION,
-  DRAG_CONFIG,
-} from "../utils/transformUtils"
+import { CAROUSEL_ANIMATION, DRAG_CONFIG } from "../utils/transformUtils"
 
 export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
-  const { x, spacing, handleDragEnd, dragConstraints } = useCharacterCarousel(
+  const { x, handleDragEnd, dragConstraints } = useCharacterCarousel(
     selectedIndex,
     CHARACTER_DATA.length,
     (newIndex) => {
@@ -25,11 +21,17 @@ export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
         perspective: "62.5rem",
         display: "flex",
         alignItems: "center",
-        justifyContent: "center",
+        justifyContent: "flex-start",
+        position: "relative",
       }}
     >
       <motion.div
-        style={{ display: "flex", x, height: "100%" }}
+        style={{
+          display: "flex",
+          x,
+          height: "100%",
+          width: `${CHARACTER_DATA.length * 100}dvw`,
+        }}
         drag="x"
         dragConstraints={dragConstraints}
         dragElastic={DRAG_CONFIG.elastic}
@@ -37,17 +39,15 @@ export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
         onDragEnd={handleDragEnd}
       >
         {CHARACTER_DATA.map((character, index) => {
-          const transform = calculateCharacterTransform(
-            index,
-            selectedIndex,
-            spacing,
-          )
+          const offset = index - selectedIndex
+          const absoluteOffset = Math.abs(offset)
 
           return (
             <CharacterCard
               key={index}
               character={character}
-              transform={transform}
+              scale={Math.max(1 - absoluteOffset * 0.2, 0.8)}
+              shadowIntensity={absoluteOffset}
             />
           )
         })}
@@ -56,9 +56,7 @@ export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
   )
 }
 
-const CharacterCard = ({ character, transform }) => {
-  const { scale, z, y, xOffset, shadowIntensity } = transform
-
+const CharacterCard = ({ character, scale, shadowIntensity }) => {
   return (
     <motion.div
       style={{
@@ -69,13 +67,8 @@ const CharacterCard = ({ character, transform }) => {
         alignItems: "center",
         justifyContent: "center",
         userSelect: "none",
-        transformStyle: "preserve-3d",
-        transformOrigin: "center center",
       }}
       animate={{
-        x: xOffset,
-        y: y,
-        z: z,
         scale: scale,
       }}
       transition={CAROUSEL_ANIMATION}
