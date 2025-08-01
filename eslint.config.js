@@ -9,6 +9,18 @@ import pluginQuery from "@tanstack/eslint-plugin-query"
 /** @type {import('eslint').Linter.Config[]} */
 export default [
   { languageOptions: { globals: globals.browser } },
+  {
+    files: ["**/*.config.{js,mjs,cjs}", "vite.config.js", "eslint.config.js"],
+    languageOptions: {
+      globals: {
+        ...globals.node,
+        __dirname: "readonly",
+        __filename: "readonly",
+        process: "readonly",
+        Buffer: "readonly",
+      },
+    },
+  },
   ...pluginQuery.configs["flat/recommended"],
   pluginJs.configs.recommended,
   pluginReact.configs.flat.recommended,

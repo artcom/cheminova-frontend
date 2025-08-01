@@ -5,15 +5,27 @@ const GlobalStyles = createGlobalStyle`
     box-sizing: border-box;
     margin: 0;
     padding: 0;
+    touch-action: manipulation;
+    user-select: none;
+    -webkit-user-select: none;
+    -moz-user-select: none;
+    user-select: none; 
+    -webkit-touch-callout: none;
+    -webkit-tap-highlight-color: transparent;
   }
 
   html,
   body {
-    background-color: rgba(255, 255, 255, 0.87);
+    background-color: ${(props) => props.theme.colors.background.paper};
     width: 100%;
     height: 100%;
-    color: #242424;
-    font-family: Inter, Avenir, Helvetica, Arial, sans-serif;
+    color: ${(props) => props.theme.colors.text.primary};
+    font-family: ${(props) => props.theme.fontFamily};
+    font-optical-sizing: auto;
+    font-style: normal;
+    font-variation-settings: "wdth" 100;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
   }
 
   #root {
@@ -23,7 +35,10 @@ const GlobalStyles = createGlobalStyle`
     place-items: center;
   }
 
- 
+  input, textarea, select {
+    font-family: inherit;
+  }
+
 `
 
 export default GlobalStyles

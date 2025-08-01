@@ -3,6 +3,8 @@ import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
 import { resolve } from "path"
 
+import webfontDownload from "vite-plugin-webfont-dl"
+
 export default defineConfig({
   plugins: [
     react({
@@ -14,6 +16,7 @@ export default defineConfig({
       },
     }),
     eslintPlugin(),
+    webfontDownload(),
   ],
   resolve: {
     alias: {
@@ -21,6 +24,8 @@ export default defineConfig({
       "@components": resolve(__dirname, "./src/components"),
       "@hooks": resolve(__dirname, "./src/hooks"),
       "@api": resolve(__dirname, "./src/api"),
+      "@ui": resolve(__dirname, "./src/components/UI"),
+      "@theme": resolve(__dirname, "./src/theme"),
     },
   },
 })
