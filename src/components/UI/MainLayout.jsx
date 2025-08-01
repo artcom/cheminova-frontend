@@ -83,6 +83,7 @@ export default function MainLayout({
   vignetteIntensity = 25,
   navigationMode = "dual",
   singleButtonVariant = "arrowDown",
+  disableInternalAnimations = false,
 }) {
   // If fullscreenComponent is provided, render it without navigation
   if (fullscreenComponent) {
@@ -99,15 +100,23 @@ export default function MainLayout({
     <Layout $backgroundImage={backgroundImage}>
       {backgroundImage && <Vignette intensity={vignetteIntensity} />}
       {topRightAction}
-      <StyledHeader headline={headline} subheadline={subheadline} />
+      <StyledHeader
+        headline={headline}
+        subheadline={subheadline}
+        disableAnimations={disableInternalAnimations}
+      />
       <DescriptionBlock
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{
-          duration: 0.8,
-          delay: 0.8,
-          ease: "easeOut",
-        }}
+        initial={disableInternalAnimations ? false : { opacity: 0 }}
+        animate={disableInternalAnimations ? false : { opacity: 1 }}
+        transition={
+          disableInternalAnimations
+            ? {}
+            : {
+                duration: 0.8,
+                delay: 0.8,
+                ease: "easeOut",
+              }
+        }
       >
         <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
         <DescriptionText>{descriptionText}</DescriptionText>

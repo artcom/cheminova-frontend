@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { AnimatePresence, motion } from "framer-motion"
 import IconButton from "@ui/IconButton"
 import MainLayout from "@ui/MainLayout"
 import useFullscreen from "@hooks/useFullscreen"
@@ -40,6 +41,16 @@ export default function DemoPage() {
       backgroundImage: LaNau,
       navigationMode: "dual",
     },
+    {
+      headline: "Ready to Explore",
+      subheadline: "The adventure continues",
+      descriptionTitle: "Discover Camp Nou",
+      descriptionText:
+        "Step into the world of FC Barcelona and explore every corner of this iconic stadium. Your personalized journey through history awaits.",
+      vignetteIntensity: 25,
+      backgroundImage: LaNau,
+      navigationMode: "dual",
+    },
   ]
 
   const nextScreen = () =>
@@ -55,29 +66,49 @@ export default function DemoPage() {
         width: "100vw",
         height: "100vh",
         overflow: "hidden",
-        backgroundColor: "lightgray",
+        backgroundColor: "black",
         position: "relative",
       }}
     >
-      <MainLayout
-        {...mainLayoutScreens[screenIndex]}
-        onPrev={prevScreen}
-        onNext={nextScreen}
-        topRightAction={
-          !isIOSDevice ? (
-            <IconButton
-              variant="fullscreen"
-              onClick={toggleFullscreen}
-              style={{
-                position: "absolute",
-                top: "1rem",
-                right: "1rem",
-                zIndex: 10,
-              }}
-            />
-          ) : null
-        }
-      />
+      <AnimatePresence>
+        <motion.div
+          key={screenIndex}
+          initial={{ opacity: screenIndex === 0 ? 1 : 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{
+            duration: 0.4,
+            ease: "easeInOut",
+          }}
+          style={{
+            width: "100%",
+            height: "100%",
+            position: "absolute",
+            top: 0,
+            left: 0,
+          }}
+        >
+          <MainLayout
+            {...mainLayoutScreens[screenIndex]}
+            onPrev={prevScreen}
+            onNext={nextScreen}
+            topRightAction={
+              !isIOSDevice ? (
+                <IconButton
+                  variant="fullscreen"
+                  onClick={toggleFullscreen}
+                  style={{
+                    position: "absolute",
+                    top: "1rem",
+                    right: "1rem",
+                    zIndex: 10,
+                  }}
+                />
+              ) : null
+            }
+          />
+        </motion.div>
+      </AnimatePresence>
     </div>
   )
 }

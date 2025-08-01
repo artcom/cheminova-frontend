@@ -48,19 +48,19 @@ const itemVariants = {
   },
 }
 
-function Header({ headline, subheadline }) {
+function Header({ headline, subheadline, disableAnimations = false }) {
   return (
     <HeaderContainer
-      variants={containerVariants}
-      initial="hidden"
-      animate="visible"
+      variants={disableAnimations ? {} : containerVariants}
+      initial={disableAnimations ? false : "hidden"}
+      animate={disableAnimations ? false : "visible"}
     >
       {subheadline && (
-        <AnimatedSubHeadline variants={itemVariants}>
+        <AnimatedSubHeadline variants={disableAnimations ? {} : itemVariants}>
           <SubHeadline>{subheadline}</SubHeadline>
         </AnimatedSubHeadline>
       )}
-      <AnimatedHeadline variants={itemVariants}>
+      <AnimatedHeadline variants={disableAnimations ? {} : itemVariants}>
         <Headline>{headline}</Headline>
       </AnimatedHeadline>
     </HeaderContainer>
