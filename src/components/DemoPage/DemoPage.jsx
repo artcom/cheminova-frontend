@@ -17,8 +17,13 @@ export default function DemoPage() {
     {
       headline: "La Nau",
       subheadline: "Experiencing",
+      descriptionTitle: "Welcome to Camp Nou",
+      descriptionText:
+        "Discover the magic of FC Barcelona's legendary stadium through immersive experiences.",
       backgroundImage: LaNau,
-      vignetteIntensity: 50,
+      vignetteIntensity: 30,
+      navigationMode: "single",
+      singleButtonVariant: "arrowDown",
     },
     {
       fullscreenComponent: (
@@ -32,6 +37,8 @@ export default function DemoPage() {
       descriptionText:
         "You have successfully selected your character. Your personalized experience awaits!",
       vignetteIntensity: 20,
+      backgroundImage: LaNau,
+      navigationMode: "dual",
     },
   ]
 

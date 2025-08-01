@@ -1,6 +1,7 @@
 import { styled } from "styled-components"
+import { motion } from "framer-motion"
 import Header from "./Header"
-import IconButton from "@ui/IconButton"
+import Navigation from "./Navigation"
 import Vignette from "./Vignette"
 
 const Layout = styled.div`
@@ -27,7 +28,7 @@ const StyledHeader = styled(Header)`
   z-index: 2;
 `
 
-const DescriptionBlock = styled.div`
+const DescriptionBlock = styled(motion.div)`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -62,26 +63,6 @@ const DescriptionText = styled.div`
   line-height: normal;
 `
 
-const ButtonLayout = styled.div`
-  display: grid;
-  width: 80%;
-  height: 7.3125rem;
-  flex-shrink: 0;
-  grid-template-rows: repeat(1, minmax(0, 1fr));
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  margin: 0 auto;
-`
-
-const DirectedButton = styled(IconButton)`
-  flex-shrink: 0;
-  width: 3.4375rem;
-  height: 3.4375rem;
-  grid-row: 1 / span 1;
-  grid-column: ${({ direction }) =>
-    direction === "right" ? "2 / span 1" : "1 / span 1"};
-  justify-self: ${({ direction }) => (direction === "right" ? "end" : "start")};
-`
-
 const FullscreenContainer = styled.div`
   width: 100vw;
   height: 100vh;
@@ -100,6 +81,8 @@ export default function MainLayout({
   children,
   fullscreenComponent,
   vignetteIntensity = 25,
+  navigationMode = "dual",
+  singleButtonVariant = "arrowDown",
 }) {
   // If fullscreenComponent is provided, render it without navigation
   if (fullscreenComponent) {
@@ -117,30 +100,24 @@ export default function MainLayout({
       {backgroundImage && <Vignette intensity={vignetteIntensity} />}
       {topRightAction}
       <StyledHeader headline={headline} subheadline={subheadline} />
-      <DescriptionBlock>
+      <DescriptionBlock
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{
+          duration: 0.8,
+          delay: 0.8,
+          ease: "easeOut",
+        }}
+      >
         <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
         <DescriptionText>{descriptionText}</DescriptionText>
         {children}
-        <ButtonLayout>
-          {onPrev ? (
-            <DirectedButton
-              direction="left"
-              variant="arrowLeft"
-              onClick={onPrev}
-            />
-          ) : (
-            <DirectedButton direction="left" variant="arrowLeft" />
-          )}
-          {onNext ? (
-            <DirectedButton
-              direction="right"
-              variant="arrowRight"
-              onClick={onNext}
-            />
-          ) : (
-            <DirectedButton direction="right" variant="arrowRight" />
-          )}
-        </ButtonLayout>
+        <Navigation
+          mode={navigationMode}
+          onPrev={onPrev}
+          onNext={onNext}
+          singleButtonVariant={singleButtonVariant}
+        />
       </DescriptionBlock>
     </Layout>
   )
