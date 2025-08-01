@@ -77,6 +77,22 @@ const DirectedButton = styled(IconButton)`
   justify-self: ${({ direction }) => (direction === "right" ? "end" : "start")};
 `
 
+const FullscreenContainer = styled.div`
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+`
+
+const NavigationOverlay = styled.div`
+  position: absolute;
+  bottom: 2rem;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 1000;
+  display: flex;
+  gap: 2rem;
+`
+
 export default function MainLayout({
   headline,
   subheadline,
@@ -87,7 +103,39 @@ export default function MainLayout({
   backgroundImage,
   topRightAction,
   children,
+  fullscreenComponent,
 }) {
+  // If fullscreenComponent is provided, render it with navigation overlay
+  if (fullscreenComponent) {
+    return (
+      <FullscreenContainer>
+        {topRightAction}
+        {fullscreenComponent}
+        <NavigationOverlay>
+          {onPrev ? (
+            <DirectedButton
+              direction="left"
+              variant="arrowLeft"
+              onClick={onPrev}
+            />
+          ) : (
+            <DirectedButton direction="left" variant="arrowLeft" />
+          )}
+          {onNext ? (
+            <DirectedButton
+              direction="right"
+              variant="arrowRight"
+              onClick={onNext}
+            />
+          ) : (
+            <DirectedButton direction="right" variant="arrowRight" />
+          )}
+        </NavigationOverlay>
+      </FullscreenContainer>
+    )
+  }
+
+  // Default layout for regular content
   return (
     <Layout backgroundImage={backgroundImage}>
       {topRightAction}

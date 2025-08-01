@@ -13,6 +13,19 @@ export const Container = styled(motion.div)`
   perspective: 1500px;
 `
 
+export const MainLayoutContainer = styled(motion.div)`
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  overflow: hidden;
+  perspective: 1500px;
+  padding-bottom: 6rem; /* Space for navigation overlay */
+`
+
 export const CharactersContainer = styled.div`
   display: flex;
   align-items: center;

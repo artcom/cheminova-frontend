@@ -1,11 +1,11 @@
 import { useState } from "react"
-import { Container } from "./styles"
+import { Container, MainLayoutContainer } from "./styles"
 import { TransitionWrapper } from "./components/TransitionWrapper"
 import { IntroScreen } from "./components/IntroScreen"
 import { CharacterCarousel } from "./components/CharacterCarousel"
 import { CHARACTER_THEMES, INTRO_GRADIENT } from "./constants"
 
-const CharacterShowcase = () => {
+const CharacterShowcase = ({ isInMainLayout = false }) => {
   const [showIntro, setShowIntro] = useState(true)
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(1)
 
@@ -25,8 +25,10 @@ const CharacterShowcase = () => {
     }
   }
 
+  const ContainerComponent = isInMainLayout ? MainLayoutContainer : Container
+
   return (
-    <Container
+    <ContainerComponent
       animate={{
         background: `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`,
       }}
@@ -47,7 +49,7 @@ const CharacterShowcase = () => {
           onSelectionChange={setCurrentCharacterIndex}
         />
       </TransitionWrapper>
-    </Container>
+    </ContainerComponent>
   )
 }
 
