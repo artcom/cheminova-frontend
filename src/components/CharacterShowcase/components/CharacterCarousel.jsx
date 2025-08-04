@@ -1,9 +1,12 @@
-import * as m from "motion/react-m"
-import { LazyMotion } from "motion/react"
+import { motion } from "motion/react"
 import { CHARACTER_DATA } from "../constants"
 import { useCharacterCarousel } from "../../../hooks/useCharacterCarousel"
 import { CAROUSEL_ANIMATION, DRAG_CONFIG } from "../utils/transformUtils"
-export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
+
+export default function CharacterCarousel({
+  selectedIndex,
+  onSelectionChange,
+}) {
   const { x, handleDragEnd, dragConstraints } = useCharacterCarousel(
     selectedIndex,
     CHARACTER_DATA.length,
@@ -11,10 +14,12 @@ export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
       onSelectionChange(newIndex)
     },
   )
-  const loadFeatures = () =>
-    import("../../UI/features.js").then((res) => res.default)
+
   return (
-    <div
+    <motion.div
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
       style={{
         width: "100dvw",
         height: "100%",
@@ -26,41 +31,54 @@ export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
         position: "relative",
       }}
     >
-      <LazyMotion features={loadFeatures} strict>
-        <m.div
-          style={{
-            display: "flex",
-            x,
-            height: "100%",
-            width: `${CHARACTER_DATA.length * 100}dvw`,
-          }}
-          drag="x"
-          dragConstraints={dragConstraints}
-          dragElastic={DRAG_CONFIG.elastic}
-          dragMomentum={DRAG_CONFIG.momentum}
-          onDragEnd={handleDragEnd}
-        >
-          {CHARACTER_DATA.map((character, index) => {
-            const offset = index - selectedIndex
-            const absoluteOffset = Math.abs(offset)
-            return (
-              <CharacterCard
-                key={index}
-                character={character}
-                scale={Math.max(1 - absoluteOffset * 0.2, 0.8)}
-                shadowIntensity={absoluteOffset}
-              />
-            )
-          })}
-        </m.div>
-      </LazyMotion>
-    </div>
+      <motion.div
+        initial={{ x: -100 }}
+        animate={{ x: 0 }}
+        transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        style={{
+          display: "flex",
+          x,
+          height: "100%",
+          width: `${CHARACTER_DATA.length * 100}dvw`,
+        }}
+        drag="x"
+        dragConstraints={dragConstraints}
+        dragElastic={DRAG_CONFIG.elastic}
+        dragMomentum={DRAG_CONFIG.momentum}
+        onDragEnd={handleDragEnd}
+      >
+        {CHARACTER_DATA.map((character, index) => {
+          const offset = index - selectedIndex
+          const absoluteOffset = Math.abs(offset)
+          return (
+            <CharacterCard
+              key={index}
+              character={character}
+              scale={Math.max(1 - absoluteOffset * 0.2, 0.8)}
+              shadowIntensity={absoluteOffset}
+            />
+          )
+        })}
+      </motion.div>
+    </motion.div>
   )
 }
 
 const CharacterCard = ({ character, scale, shadowIntensity }) => {
   return (
-    <m.div
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{
+        opacity: 1,
+        y: 0,
+        scale: scale,
+      }}
+      transition={{
+        duration: 0.5,
+        delay: 0.4,
+        ease: "easeOut",
+        scale: CAROUSEL_ANIMATION,
+      }}
       style={{
         flex: "0 0 100dvw",
         height: "100%",
@@ -70,12 +88,15 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => {
         justifyContent: "center",
         userSelect: "none",
       }}
-      animate={{
-        scale: scale,
-      }}
-      transition={CAROUSEL_ANIMATION}
     >
-      <img
+      <motion.img
+        initial={{ opacity: 0, scale: 0.8 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{
+          duration: 0.6,
+          delay: 0.6,
+          ease: "easeOut",
+        }}
         src={character.image}
         alt={character.name}
         style={{
@@ -86,7 +107,14 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => {
           filter: `drop-shadow(0 ${0.5 + shadowIntensity * 0.25}rem ${0.75 + shadowIntensity * 0.5}rem rgba(0, 0, 0, ${0.4 - shadowIntensity * 0.1}))`,
         }}
       />
-      <div
+      <motion.div
+        initial={{ opacity: 0, y: 10 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{
+          duration: 0.5,
+          delay: 0.8,
+          ease: "easeOut",
+        }}
         style={{
           color: "white",
           textAlign: "center",
@@ -94,7 +122,14 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => {
           maxWidth: "80%",
         }}
       >
-        <div
+        <motion.div
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.4,
+            delay: 1.0,
+            ease: "easeOut",
+          }}
           style={{
             fontSize: "1.8rem",
             fontWeight: "bold",
@@ -102,8 +137,15 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => {
           }}
         >
           {character.name}
-        </div>
-        <div
+        </motion.div>
+        <motion.div
+          initial={{ opacity: 0, y: 5 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{
+            duration: 0.4,
+            delay: 1.2,
+            ease: "easeOut",
+          }}
           style={{
             fontSize: "1.1rem",
             opacity: 0.9,
@@ -111,8 +153,8 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => {
           }}
         >
           {character.description}
-        </div>
-      </div>
-    </m.div>
+        </motion.div>
+      </motion.div>
+    </motion.div>
   )
 }

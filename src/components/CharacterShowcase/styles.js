@@ -1,5 +1,5 @@
-import styled from "styled-components"
-import * as m from "motion/react-m"
+import { styled } from "styled-components"
+import { motion as m } from "framer-motion"
 
 export const Container = styled(m.div)`
   position: relative;
@@ -23,7 +23,7 @@ export const MainLayoutContainer = styled(m.div)`
   width: 100dvw;
   overflow: hidden;
   perspective: 93.75rem;
-  padding-bottom: 6rem; /* Space for navigation overlay */
+  padding-bottom: 6rem;
 `
 
 export const CharactersContainer = styled.div`

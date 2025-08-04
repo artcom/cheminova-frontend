@@ -1,30 +1,16 @@
-import { useState, Suspense, lazy } from "react"
+import { useState } from "react"
 import { MainLayoutContainer, CharacterButtonLayout } from "./styles"
 import Button from "@ui/Button"
 import IconButton from "@ui/IconButton"
 import { CHARACTER_THEMES, INTRO_GRADIENT, CHARACTER_DATA } from "./constants"
 import useGlobalState from "@hooks/useGlobalState"
-
-const LazyTransitionWrapper = lazy(() =>
-  import("./components/TransitionWrapper").then((m) => ({
-    default: m.TransitionWrapper,
-  })),
-)
-const LazyIntroScreen = lazy(() =>
-  import("./components/IntroScreen").then((m) => ({ default: m.IntroScreen })),
-)
-const LazyCharacterCarousel = lazy(() =>
-  import("./components/CharacterCarousel").then((m) => ({
-    default: m.CharacterCarousel,
-  })),
-)
-
+import IntroScreen from "./components/IntroScreen"
+import CharacterCarousel from "./components/CharacterCarousel"
 const CharacterShowcase = ({ onCharacterSelected }) => {
   const [showIntro, setShowIntro] = useState(true)
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(1)
   const { setSelectedCharacter } = useGlobalState()
 
-  // Get theme colors based on current state
   const themeColors = showIntro
     ? INTRO_GRADIENT
     : CHARACTER_THEMES[currentCharacterIndex]
@@ -75,25 +61,18 @@ const CharacterShowcase = ({ onCharacterSelected }) => {
         background: { duration: 0.8, ease: "easeOut" },
       }}
     >
-      <Suspense fallback={<div>Loading…</div>}>
-        <LazyTransitionWrapper isActive={showIntro}>
-          <LazyIntroScreen
-            onCharacterSelect={handleCharacterSelection}
-            onContinue={handleIntroComplete}
-          />
-        </LazyTransitionWrapper>
-      </Suspense>
+      {showIntro ? (
+        <IntroScreen
+          onCharacterSelect={handleCharacterSelection}
+          onContinue={handleIntroComplete}
+        />
+      ) : (
+        <CharacterCarousel
+          selectedIndex={currentCharacterIndex}
+          onSelectionChange={setCurrentCharacterIndex}
+        />
+      )}
 
-      <Suspense fallback={<div>Loading…</div>}>
-        <LazyTransitionWrapper isActive={!showIntro}>
-          <LazyCharacterCarousel
-            selectedIndex={currentCharacterIndex}
-            onSelectionChange={setCurrentCharacterIndex}
-          />
-        </LazyTransitionWrapper>
-      </Suspense>
-
-      {/* Show navigation buttons only when not in intro */}
       {!showIntro && (
         <CharacterButtonLayout>
           <IconButton variant="arrowLeft" onClick={handlePrevCharacter} />

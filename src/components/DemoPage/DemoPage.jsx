@@ -1,14 +1,79 @@
-import { useState } from "react"
+import { useState, Suspense, lazy } from "react"
 import IconButton from "@ui/IconButton"
 import MainLayout from "@ui/MainLayout"
-import CharacterShowcase from "@components/CharacterShowcase"
-import PhotoCapture from "@components/PhotoCapture"
 import useFullscreen from "@hooks/useFullscreen"
+import usePagePreloader from "@hooks/usePagePreloader"
+import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
 import LaNau from "@ui/LaNau.webp"
+
+const LazyCharacterShowcase = lazy(
+  () => import("@components/CharacterShowcase"),
+)
+const LazyPhotoCapture = lazy(() => import("@components/PhotoCapture"))
 
 export default function DemoPage() {
   const [screenIndex, setScreenIndex] = useState(0)
   const { isIOSDevice, toggleFullscreen } = useFullscreen()
+
+  const preloadConfig = {
+    1: {
+      images: CHARACTER_DATA.map((character) => character.image),
+      lazyComponents: [
+        {
+          name: "CharacterShowcase",
+          importFunction: () => import("@components/CharacterShowcase"),
+        },
+        {
+          name: "TransitionWrapper",
+          importFunction: () =>
+            import(
+              "@components/CharacterShowcase/components/TransitionWrapper"
+            ),
+        },
+        {
+          name: "IntroScreen",
+          importFunction: () =>
+            import("@components/CharacterShowcase/components/IntroScreen"),
+        },
+        {
+          name: "CharacterCarousel",
+          importFunction: () =>
+            import(
+              "@components/CharacterShowcase/components/CharacterCarousel"
+            ),
+        },
+      ],
+      preloadFunction: () => {
+        console.log("🚀 Preloading character showcase content...")
+      },
+    },
+    4: {
+      images: [],
+      lazyComponents: [
+        {
+          name: "PhotoCapture",
+          importFunction: () => import("@components/PhotoCapture"),
+        },
+      ],
+      preloadFunction: () => {
+        console.log("🚀 Preloading photo capture content...")
+      },
+    },
+  }
+
+  const {
+    preloadedImageCount,
+    totalImageCount,
+    preloadedComponentsCount,
+    upcomingPages,
+    isAllImagesPreloaded,
+  } = usePagePreloader(screenIndex, preloadConfig)
+
+  if (totalImageCount > 0 || preloadedComponentsCount > 0) {
+    console.log(
+      `📸 Preload status: ${preloadedImageCount}/${totalImageCount} images, ${preloadedComponentsCount} components loaded for pages: ${upcomingPages.join(", ")}`,
+    )
+  }
 
   const mainLayoutScreens = [
     {
@@ -24,7 +89,11 @@ export default function DemoPage() {
     },
     {
       fullscreenComponent: (
-        <CharacterShowcase onCharacterSelected={() => setScreenIndex(2)} />
+        <Suspense fallback={<div>Loading Character Showcase...</div>}>
+          <LazyCharacterShowcase
+            onCharacterSelected={() => setScreenIndex(2)}
+          />
+        </Suspense>
       ),
     },
     {
@@ -48,7 +117,11 @@ export default function DemoPage() {
       navigationMode: "dual",
     },
     {
-      fullscreenComponent: <PhotoCapture />,
+      fullscreenComponent: (
+        <Suspense fallback={<div>Loading Photo Capture...</div>}>
+          <LazyPhotoCapture />
+        </Suspense>
+      ),
     },
   ]
 
@@ -58,6 +131,10 @@ export default function DemoPage() {
     setScreenIndex(
       (i) => (i - 1 + mainLayoutScreens.length) % mainLayoutScreens.length,
     )
+
+  const showPreloadDebug =
+    import.meta.env?.DEV &&
+    (totalImageCount > 0 || preloadedComponentsCount > 0)
 
   return (
     <div
@@ -69,8 +146,27 @@ export default function DemoPage() {
         position: "relative",
       }}
     >
+      {showPreloadDebug && (
+        <div
+          style={{
+            position: "absolute",
+            top: "10px",
+            left: "10px",
+            zIndex: 1000,
+            backgroundColor: "rgba(0, 0, 0, 0.7)",
+            color: "white",
+            padding: "8px 12px",
+            borderRadius: "4px",
+            fontSize: "12px",
+            fontFamily: "monospace",
+          }}
+        >
+          🚀 Preload: {preloadedImageCount}/{totalImageCount} imgs,{" "}
+          {preloadedComponentsCount} comps {isAllImagesPreloaded ? "✅" : "⏳"}
+        </div>
+      )}
+
       <MainLayout
-        key={screenIndex}
         {...mainLayoutScreens[screenIndex]}
         onPrev={prevScreen}
         onNext={nextScreen}
