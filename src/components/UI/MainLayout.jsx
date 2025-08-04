@@ -1,3 +1,4 @@
+import { motion } from "motion/react"
 import { styled } from "styled-components"
 import Header from "./Header"
 import Navigation from "./Navigation"
@@ -27,7 +28,7 @@ const StyledHeader = styled(Header)`
   z-index: 2;
 `
 
-const DescriptionBlock = styled.div`
+const DescriptionBlock = styled(motion.div)`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -84,7 +85,6 @@ export default function MainLayout({
   singleButtonVariant = "arrowDown",
   disableInternalAnimations = false,
 }) {
-  // If fullscreenComponent is provided, render it without navigation
   if (fullscreenComponent) {
     return (
       <FullscreenContainer>
@@ -94,7 +94,6 @@ export default function MainLayout({
     )
   }
 
-  // Default layout for regular content
   return (
     <Layout $backgroundImage={backgroundImage}>
       {backgroundImage && <Vignette intensity={vignetteIntensity} />}
@@ -104,7 +103,19 @@ export default function MainLayout({
         subheadline={subheadline}
         disableAnimations={disableInternalAnimations}
       />
-      <DescriptionBlock>
+      <DescriptionBlock
+        initial={disableInternalAnimations ? false : { opacity: 0 }}
+        animate={disableInternalAnimations ? false : { opacity: 1 }}
+        transition={
+          disableInternalAnimations
+            ? {}
+            : {
+                duration: 0.8,
+                delay: 0.8,
+                ease: "easeOut",
+              }
+        }
+      >
         <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
         <DescriptionText>{descriptionText}</DescriptionText>
         {children}

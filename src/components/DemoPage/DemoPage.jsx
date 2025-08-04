@@ -1,22 +1,14 @@
-import { useState, Suspense, lazy } from "react"
+import { useState } from "react"
 import IconButton from "@ui/IconButton"
 import MainLayout from "@ui/MainLayout"
+import CharacterShowcase from "@components/CharacterShowcase"
+import PhotoCapture from "@components/PhotoCapture"
 import useFullscreen from "@hooks/useFullscreen"
-import LaNau from "../UI/LaNau.webp"
-
-const LazyAnimatedMainLayout = lazy(() => import("@ui/AnimatedMainLayout"))
-
-const LazyCharacterShowcase = lazy(
-  () => import("@components/CharacterShowcase"),
-)
+import LaNau from "@ui/LaNau.webp"
 
 export default function DemoPage() {
   const [screenIndex, setScreenIndex] = useState(0)
   const { isIOSDevice, toggleFullscreen } = useFullscreen()
-
-  const handleCharacterSelected = () => {
-    setScreenIndex(2) // Go to page 3 (index 2)
-  }
 
   const mainLayoutScreens = [
     {
@@ -32,11 +24,7 @@ export default function DemoPage() {
     },
     {
       fullscreenComponent: (
-        <Suspense fallback={<div>Loading experience…</div>}>
-          <LazyCharacterShowcase
-            onCharacterSelected={handleCharacterSelected}
-          />
-        </Suspense>
+        <CharacterShowcase onCharacterSelected={() => setScreenIndex(2)} />
       ),
     },
     {
@@ -59,6 +47,9 @@ export default function DemoPage() {
       backgroundImage: LaNau,
       navigationMode: "dual",
     },
+    {
+      fullscreenComponent: <PhotoCapture />,
+    },
   ]
 
   const nextScreen = () =>
@@ -78,50 +69,26 @@ export default function DemoPage() {
         position: "relative",
       }}
     >
-      {screenIndex === 0 ? (
-        <MainLayout
-          {...mainLayoutScreens[screenIndex]}
-          onPrev={prevScreen}
-          onNext={nextScreen}
-          topRightAction={
-            !isIOSDevice ? (
-              <IconButton
-                variant="fullscreen"
-                onClick={toggleFullscreen}
-                style={{
-                  position: "absolute",
-                  top: "1rem",
-                  right: "1rem",
-                  zIndex: 10,
-                }}
-              />
-            ) : null
-          }
-        />
-      ) : (
-        <Suspense fallback={<div>Loading…</div>}>
-          <LazyAnimatedMainLayout
-            key={screenIndex}
-            {...mainLayoutScreens[screenIndex]}
-            onPrev={prevScreen}
-            onNext={nextScreen}
-            topRightAction={
-              !isIOSDevice ? (
-                <IconButton
-                  variant="fullscreen"
-                  onClick={toggleFullscreen}
-                  style={{
-                    position: "absolute",
-                    top: "1rem",
-                    right: "1rem",
-                    zIndex: 10,
-                  }}
-                />
-              ) : null
-            }
-          />
-        </Suspense>
-      )}
+      <MainLayout
+        key={screenIndex}
+        {...mainLayoutScreens[screenIndex]}
+        onPrev={prevScreen}
+        onNext={nextScreen}
+        topRightAction={
+          !isIOSDevice ? (
+            <IconButton
+              variant="fullscreen"
+              onClick={toggleFullscreen}
+              style={{
+                position: "absolute",
+                top: "1rem",
+                right: "1rem",
+                zIndex: 10,
+              }}
+            />
+          ) : null
+        }
+      />
     </div>
   )
 }

@@ -1,6 +1,7 @@
 import { styled } from "styled-components"
+import { motion } from "motion/react"
 
-const SubHeadline = styled.div`
+const SubHeadline = styled(motion.div)`
   color: ${(props) => props.theme.colors.background.paper};
   text-align: center;
   font-family: ${(props) => props.theme.fontFamily};

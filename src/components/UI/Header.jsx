@@ -13,25 +13,25 @@ const HeaderContainer = styled.div`
   z-index: 3;
 `
 
-const AnimatedSubHeadline = styled.div`
-  width: 100%;
-`
-
-const AnimatedHeadline = styled.div`
-  width: 100%;
-`
-
 function Header({ headline, subheadline }) {
   return (
     <HeaderContainer>
       {subheadline && (
-        <AnimatedSubHeadline>
-          <SubHeadline>{subheadline}</SubHeadline>
-        </AnimatedSubHeadline>
+        <SubHeadline
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        >
+          {subheadline}
+        </SubHeadline>
       )}
-      <AnimatedHeadline>
-        <Headline>{headline}</Headline>
-      </AnimatedHeadline>
+      <Headline
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        {headline}
+      </Headline>
     </HeaderContainer>
   )
 }

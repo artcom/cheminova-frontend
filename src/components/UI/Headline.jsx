@@ -1,6 +1,7 @@
 import { styled } from "styled-components"
+import { motion } from "motion/react"
 
-const Headline = styled.div`
+const Headline = styled(motion.div)`
   color: ${(props) => props.theme.colors.background.paper};
   text-align: center;
   font-size: 2.625rem;
