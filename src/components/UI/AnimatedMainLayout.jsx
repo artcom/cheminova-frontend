@@ -1,4 +1,5 @@
 import { styled } from "styled-components"
+import { motion } from "framer-motion"
 import Header from "./Header"
 import Navigation from "./Navigation"
 import Vignette from "./Vignette"
@@ -27,7 +28,7 @@ const StyledHeader = styled(Header)`
   z-index: 2;
 `
 
-const DescriptionBlock = styled.div`
+const DescriptionBlock = styled(motion.div)`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -68,7 +69,7 @@ const FullscreenContainer = styled.div`
   position: relative;
 `
 
-export default function MainLayout({
+export default function AnimatedMainLayout({
   headline,
   subheadline,
   descriptionTitle,
@@ -104,7 +105,19 @@ export default function MainLayout({
         subheadline={subheadline}
         disableAnimations={disableInternalAnimations}
       />
-      <DescriptionBlock>
+      <DescriptionBlock
+        initial={disableInternalAnimations ? false : { opacity: 0 }}
+        animate={disableInternalAnimations ? false : { opacity: 1 }}
+        transition={
+          disableInternalAnimations
+            ? {}
+            : {
+                duration: 0.8,
+                delay: 0.8,
+                ease: "easeOut",
+              }
+        }
+      >
         <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
         <DescriptionText>{descriptionText}</DescriptionText>
         {children}

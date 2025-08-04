@@ -1,9 +1,10 @@
 import { useState, Suspense, lazy } from "react"
-import { AnimatePresence, motion } from "framer-motion"
 import IconButton from "@ui/IconButton"
 import MainLayout from "@ui/MainLayout"
 import useFullscreen from "@hooks/useFullscreen"
 import LaNau from "../UI/LaNau.webp"
+
+const LazyAnimatedMainLayout = lazy(() => import("@ui/AnimatedMainLayout"))
 
 const LazyCharacterShowcase = lazy(
   () => import("@components/CharacterShowcase"),
@@ -77,25 +78,30 @@ export default function DemoPage() {
         position: "relative",
       }}
     >
-      <AnimatePresence>
-        <motion.div
-          key={screenIndex}
-          initial={{ opacity: screenIndex === 0 ? 1 : 0 }}
-          animate={{ opacity: 1 }}
-          exit={{ opacity: 0 }}
-          transition={{
-            duration: 0.4,
-            ease: "easeInOut",
-          }}
-          style={{
-            width: "100%",
-            height: "100%",
-            position: "absolute",
-            top: 0,
-            left: 0,
-          }}
-        >
-          <MainLayout
+      {screenIndex === 0 ? (
+        <MainLayout
+          {...mainLayoutScreens[screenIndex]}
+          onPrev={prevScreen}
+          onNext={nextScreen}
+          topRightAction={
+            !isIOSDevice ? (
+              <IconButton
+                variant="fullscreen"
+                onClick={toggleFullscreen}
+                style={{
+                  position: "absolute",
+                  top: "1rem",
+                  right: "1rem",
+                  zIndex: 10,
+                }}
+              />
+            ) : null
+          }
+        />
+      ) : (
+        <Suspense fallback={<div>Loading…</div>}>
+          <LazyAnimatedMainLayout
+            key={screenIndex}
             {...mainLayoutScreens[screenIndex]}
             onPrev={prevScreen}
             onNext={nextScreen}
@@ -114,8 +120,8 @@ export default function DemoPage() {
               ) : null
             }
           />
-        </motion.div>
-      </AnimatePresence>
+        </Suspense>
+      )}
     </div>
   )
 }

@@ -1,9 +1,8 @@
 import { styled } from "styled-components"
-import { motion } from "framer-motion"
 import Headline from "./Headline"
 import SubHeadline from "./SubHeadline"
 
-const HeaderContainer = styled(motion.div)`
+const HeaderContainer = styled.div`
   display: flex;
   width: 24.5625rem;
   height: 10.5625rem;
@@ -14,53 +13,23 @@ const HeaderContainer = styled(motion.div)`
   z-index: 3;
 `
 
-const AnimatedSubHeadline = styled(motion.div)`
+const AnimatedSubHeadline = styled.div`
   width: 100%;
 `
 
-const AnimatedHeadline = styled(motion.div)`
+const AnimatedHeadline = styled.div`
   width: 100%;
 `
 
-const containerVariants = {
-  hidden: { opacity: 0 },
-  visible: {
-    opacity: 1,
-    transition: {
-      staggerChildren: 0.3,
-      delayChildren: 0.2,
-    },
-  },
-}
-
-const itemVariants = {
-  hidden: {
-    opacity: 0,
-    y: 20,
-  },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      duration: 0.6,
-      ease: "easeOut",
-    },
-  },
-}
-
-function Header({ headline, subheadline, disableAnimations = false }) {
+function Header({ headline, subheadline }) {
   return (
-    <HeaderContainer
-      variants={disableAnimations ? {} : containerVariants}
-      initial={disableAnimations ? false : "hidden"}
-      animate={disableAnimations ? false : "visible"}
-    >
+    <HeaderContainer>
       {subheadline && (
-        <AnimatedSubHeadline variants={disableAnimations ? {} : itemVariants}>
+        <AnimatedSubHeadline>
           <SubHeadline>{subheadline}</SubHeadline>
         </AnimatedSubHeadline>
       )}
-      <AnimatedHeadline variants={disableAnimations ? {} : itemVariants}>
+      <AnimatedHeadline>
         <Headline>{headline}</Headline>
       </AnimatedHeadline>
     </HeaderContainer>
