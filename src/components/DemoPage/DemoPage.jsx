@@ -1,10 +1,13 @@
-import { useState } from "react"
+import { useState, Suspense, lazy } from "react"
 import { AnimatePresence, motion } from "framer-motion"
 import IconButton from "@ui/IconButton"
 import MainLayout from "@ui/MainLayout"
 import useFullscreen from "@hooks/useFullscreen"
-import CharacterShowcase from "@components/CharacterShowcase"
-import LaNau from "../UI/LaNau.jpg"
+import LaNau from "../UI/LaNau.webp"
+
+const LazyCharacterShowcase = lazy(
+  () => import("@components/CharacterShowcase"),
+)
 
 export default function DemoPage() {
   const [screenIndex, setScreenIndex] = useState(0)
@@ -28,7 +31,11 @@ export default function DemoPage() {
     },
     {
       fullscreenComponent: (
-        <CharacterShowcase onCharacterSelected={handleCharacterSelected} />
+        <Suspense fallback={<div>Loading experience…</div>}>
+          <LazyCharacterShowcase
+            onCharacterSelected={handleCharacterSelected}
+          />
+        </Suspense>
       ),
     },
     {

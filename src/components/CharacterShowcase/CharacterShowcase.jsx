@@ -1,12 +1,23 @@
-import { useState } from "react"
+import { useState, Suspense, lazy } from "react"
 import { MainLayoutContainer, CharacterButtonLayout } from "./styles"
 import Button from "@ui/Button"
 import IconButton from "@ui/IconButton"
-import { TransitionWrapper } from "./components/TransitionWrapper"
-import { IntroScreen } from "./components/IntroScreen"
-import { CharacterCarousel } from "./components/CharacterCarousel"
 import { CHARACTER_THEMES, INTRO_GRADIENT, CHARACTER_DATA } from "./constants"
 import useGlobalState from "@hooks/useGlobalState"
+
+const LazyTransitionWrapper = lazy(() =>
+  import("./components/TransitionWrapper").then((m) => ({
+    default: m.TransitionWrapper,
+  })),
+)
+const LazyIntroScreen = lazy(() =>
+  import("./components/IntroScreen").then((m) => ({ default: m.IntroScreen })),
+)
+const LazyCharacterCarousel = lazy(() =>
+  import("./components/CharacterCarousel").then((m) => ({
+    default: m.CharacterCarousel,
+  })),
+)
 
 const CharacterShowcase = ({ onCharacterSelected }) => {
   const [showIntro, setShowIntro] = useState(true)
@@ -64,19 +75,23 @@ const CharacterShowcase = ({ onCharacterSelected }) => {
         background: { duration: 0.8, ease: "easeOut" },
       }}
     >
-      <TransitionWrapper isActive={showIntro}>
-        <IntroScreen
-          onCharacterSelect={handleCharacterSelection}
-          onContinue={handleIntroComplete}
-        />
-      </TransitionWrapper>
+      <Suspense fallback={<div>Loading…</div>}>
+        <LazyTransitionWrapper isActive={showIntro}>
+          <LazyIntroScreen
+            onCharacterSelect={handleCharacterSelection}
+            onContinue={handleIntroComplete}
+          />
+        </LazyTransitionWrapper>
+      </Suspense>
 
-      <TransitionWrapper isActive={!showIntro}>
-        <CharacterCarousel
-          selectedIndex={currentCharacterIndex}
-          onSelectionChange={setCurrentCharacterIndex}
-        />
-      </TransitionWrapper>
+      <Suspense fallback={<div>Loading…</div>}>
+        <LazyTransitionWrapper isActive={!showIntro}>
+          <LazyCharacterCarousel
+            selectedIndex={currentCharacterIndex}
+            onSelectionChange={setCurrentCharacterIndex}
+          />
+        </LazyTransitionWrapper>
+      </Suspense>
 
       {/* Show navigation buttons only when not in intro */}
       {!showIntro && (
