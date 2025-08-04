@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react"
-import { useMotionValue, animate } from "framer-motion"
+import { animate, useMotionValue } from "motion/react"
 
 export const useCharacterCarousel = (
   selectedIndex,
