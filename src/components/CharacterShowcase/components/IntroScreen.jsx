@@ -6,6 +6,7 @@ import {
   CharacterName,
   IntroHeading,
 } from "../styles"
+// No direct framer-motion import, all motion props are handled by styled(m.div) etc from styles.js
 import { CHARACTER_DATA } from "../constants"
 
 export const IntroScreen = ({ onCharacterSelect }) => {

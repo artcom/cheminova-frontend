@@ -1,9 +1,12 @@
-import { AnimatePresence, motion } from "framer-motion"
+import * as m from "motion/react-m"
+import { LazyMotion } from "motion/react"
 
-export default function MotionWrapper({ children, ...props }) {
+const MotionWrapper = ({ children, ...props }) => {
+  const loadFeatures = () =>
+    import("../UI/features.js").then((res) => res.default)
   return (
-    <AnimatePresence>
-      <motion.div
+    <LazyMotion features={loadFeatures} strict>
+      <m.div
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}
@@ -18,7 +21,9 @@ export default function MotionWrapper({ children, ...props }) {
         {...props}
       >
         {children}
-      </motion.div>
-    </AnimatePresence>
+      </m.div>
+    </LazyMotion>
   )
 }
+
+export default MotionWrapper

@@ -1,8 +1,8 @@
-import { motion } from "framer-motion"
+import * as m from "motion/react-m"
+import { LazyMotion } from "motion/react"
 import { CHARACTER_DATA } from "../constants"
 import { useCharacterCarousel } from "../../../hooks/useCharacterCarousel"
 import { CAROUSEL_ANIMATION, DRAG_CONFIG } from "../utils/transformUtils"
-
 export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
   const { x, handleDragEnd, dragConstraints } = useCharacterCarousel(
     selectedIndex,
@@ -11,7 +11,8 @@ export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
       onSelectionChange(newIndex)
     },
   )
-
+  const loadFeatures = () =>
+    import("../../UI/features.js").then((res) => res.default)
   return (
     <div
       style={{
@@ -25,40 +26,41 @@ export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
         position: "relative",
       }}
     >
-      <motion.div
-        style={{
-          display: "flex",
-          x,
-          height: "100%",
-          width: `${CHARACTER_DATA.length * 100}dvw`,
-        }}
-        drag="x"
-        dragConstraints={dragConstraints}
-        dragElastic={DRAG_CONFIG.elastic}
-        dragMomentum={DRAG_CONFIG.momentum}
-        onDragEnd={handleDragEnd}
-      >
-        {CHARACTER_DATA.map((character, index) => {
-          const offset = index - selectedIndex
-          const absoluteOffset = Math.abs(offset)
-
-          return (
-            <CharacterCard
-              key={index}
-              character={character}
-              scale={Math.max(1 - absoluteOffset * 0.2, 0.8)}
-              shadowIntensity={absoluteOffset}
-            />
-          )
-        })}
-      </motion.div>
+      <LazyMotion features={loadFeatures} strict>
+        <m.div
+          style={{
+            display: "flex",
+            x,
+            height: "100%",
+            width: `${CHARACTER_DATA.length * 100}dvw`,
+          }}
+          drag="x"
+          dragConstraints={dragConstraints}
+          dragElastic={DRAG_CONFIG.elastic}
+          dragMomentum={DRAG_CONFIG.momentum}
+          onDragEnd={handleDragEnd}
+        >
+          {CHARACTER_DATA.map((character, index) => {
+            const offset = index - selectedIndex
+            const absoluteOffset = Math.abs(offset)
+            return (
+              <CharacterCard
+                key={index}
+                character={character}
+                scale={Math.max(1 - absoluteOffset * 0.2, 0.8)}
+                shadowIntensity={absoluteOffset}
+              />
+            )
+          })}
+        </m.div>
+      </LazyMotion>
     </div>
   )
 }
 
 const CharacterCard = ({ character, scale, shadowIntensity }) => {
   return (
-    <motion.div
+    <m.div
       style={{
         flex: "0 0 100dvw",
         height: "100%",
@@ -111,6 +113,6 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => {
           {character.description}
         </div>
       </div>
-    </motion.div>
+    </m.div>
   )
 }

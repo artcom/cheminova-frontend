@@ -1,7 +1,7 @@
 import styled from "styled-components"
-import { motion } from "framer-motion"
+import * as m from "motion/react-m"
 
-export const Container = styled(motion.div)`
+export const Container = styled(m.div)`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -13,7 +13,7 @@ export const Container = styled(motion.div)`
   perspective: 93.75rem;
 `
 
-export const MainLayoutContainer = styled(motion.div)`
+export const MainLayoutContainer = styled(m.div)`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -36,7 +36,7 @@ export const CharactersContainer = styled.div`
   touch-action: none;
 `
 
-export const CharacterBox = styled(motion.div)`
+export const CharacterBox = styled(m.div)`
   width: 70dvw;
   height: 60dvh;
   border-radius: 1rem;
@@ -67,7 +67,7 @@ export const CharacterBox = styled(motion.div)`
   }
 `
 
-export const CharacterImage = styled(motion.img)`
+export const CharacterImage = styled(m.img)`
   width: auto;
   height: 80%;
   object-fit: contain;
@@ -77,7 +77,7 @@ export const CharacterImage = styled(motion.img)`
   z-index: 2;
 `
 
-export const CharacterName = styled(motion.div)`
+export const CharacterName = styled(m.div)`
   width: 100%;
   text-align: center;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
@@ -90,7 +90,7 @@ export const CharacterName = styled(motion.div)`
   position: relative;
 `
 
-export const NavigationButton = styled(motion.button)`
+export const NavigationButton = styled(m.button)`
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
@@ -133,14 +133,14 @@ export const Particles = styled.div`
   pointer-events: none;
 `
 
-export const Particle = styled(motion.div)`
+export const Particle = styled(m.div)`
   position: absolute;
   background-color: rgba(255, 255, 255, 0.8);
   border-radius: 50%;
   pointer-events: none;
 `
 
-export const IntroContainer = styled(motion.div)`
+export const IntroContainer = styled(m.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -149,7 +149,7 @@ export const IntroContainer = styled(motion.div)`
   height: 90dvh;
 `
 
-export const IntroCharactersRow = styled(motion.div)`
+export const IntroCharactersRow = styled(m.div)`
   display: flex;
   align-items: center;
   justify-content: center;
@@ -158,7 +158,7 @@ export const IntroCharactersRow = styled(motion.div)`
   margin-bottom: 2.5rem;
 `
 
-export const IntroCharacterItem = styled(motion.div)`
+export const IntroCharacterItem = styled(m.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -169,7 +169,7 @@ export const IntroCharacterItem = styled(motion.div)`
   position: relative;
 `
 
-export const IntroCharacterImage = styled(motion.img)`
+export const IntroCharacterImage = styled(m.img)`
   width: auto;
   height: 80%;
   object-fit: contain;
@@ -177,7 +177,7 @@ export const IntroCharacterImage = styled(motion.img)`
   filter: drop-shadow(0 0.625rem 0.9375rem rgba(0, 0, 0, 0.3));
 `
 
-export const IntroHeading = styled(motion.div)`
+export const IntroHeading = styled(m.div)`
   text-align: center;
   font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
   font-size: 2rem;

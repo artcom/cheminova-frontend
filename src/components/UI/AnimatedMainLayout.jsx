@@ -1,5 +1,6 @@
+import * as m from "motion/react-m"
 import { styled } from "styled-components"
-import { motion } from "framer-motion"
+import { LazyMotion } from "motion/react"
 import Header from "./Header"
 import Navigation from "./Navigation"
 import Vignette from "./Vignette"
@@ -28,7 +29,7 @@ const StyledHeader = styled(Header)`
   z-index: 2;
 `
 
-const DescriptionBlock = styled(motion.div)`
+const DescriptionBlock = styled(m.div)`
   display: flex;
   flex-direction: column;
   justify-content: flex-end;
@@ -85,6 +86,9 @@ export default function AnimatedMainLayout({
   singleButtonVariant = "arrowDown",
   disableInternalAnimations = false,
 }) {
+  const loadFeatures = () =>
+    import("../UI/features.js").then((res) => res.default)
+
   // If fullscreenComponent is provided, render it without navigation
   if (fullscreenComponent) {
     return (
@@ -97,37 +101,39 @@ export default function AnimatedMainLayout({
 
   // Default layout for regular content
   return (
-    <Layout $backgroundImage={backgroundImage}>
-      {backgroundImage && <Vignette intensity={vignetteIntensity} />}
-      {topRightAction}
-      <StyledHeader
-        headline={headline}
-        subheadline={subheadline}
-        disableAnimations={disableInternalAnimations}
-      />
-      <DescriptionBlock
-        initial={disableInternalAnimations ? false : { opacity: 0 }}
-        animate={disableInternalAnimations ? false : { opacity: 1 }}
-        transition={
-          disableInternalAnimations
-            ? {}
-            : {
-                duration: 0.8,
-                delay: 0.8,
-                ease: "easeOut",
-              }
-        }
-      >
-        <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
-        <DescriptionText>{descriptionText}</DescriptionText>
-        {children}
-        <Navigation
-          mode={navigationMode}
-          onPrev={onPrev}
-          onNext={onNext}
-          singleButtonVariant={singleButtonVariant}
+    <LazyMotion features={loadFeatures} strict>
+      <Layout $backgroundImage={backgroundImage}>
+        {backgroundImage && <Vignette intensity={vignetteIntensity} />}
+        {topRightAction}
+        <StyledHeader
+          headline={headline}
+          subheadline={subheadline}
+          disableAnimations={disableInternalAnimations}
         />
-      </DescriptionBlock>
-    </Layout>
+        <DescriptionBlock
+          initial={disableInternalAnimations ? false : { opacity: 0 }}
+          animate={disableInternalAnimations ? false : { opacity: 1 }}
+          transition={
+            disableInternalAnimations
+              ? {}
+              : {
+                  duration: 0.8,
+                  delay: 0.8,
+                  ease: "easeOut",
+                }
+          }
+        >
+          <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
+          <DescriptionText>{descriptionText}</DescriptionText>
+          {children}
+          <Navigation
+            mode={navigationMode}
+            onPrev={onPrev}
+            onNext={onNext}
+            singleButtonVariant={singleButtonVariant}
+          />
+        </DescriptionBlock>
+      </Layout>
+    </LazyMotion>
   )
 }
