@@ -16,7 +16,9 @@ export default defineConfig({
       },
     }),
     eslintPlugin(),
-    webfontDownload(),
+    webfontDownload([], {
+      subsetsAllowed: ["latin-ext"],
+    }),
   ],
   resolve: {
     alias: {
