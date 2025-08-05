@@ -1,10 +1,40 @@
 import { useState, Suspense, lazy } from "react"
+import { styled } from "styled-components"
 import IconButton from "@ui/IconButton"
 import MainLayout from "@ui/MainLayout"
 import useFullscreen from "@hooks/useFullscreen"
 import usePagePreloader from "@hooks/usePagePreloader"
 import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
 import LaNau from "@ui/assets/LaNau.webp"
+
+const AppContainer = styled.div`
+  width: 100dvw;
+  height: 100dvh;
+  overflow: hidden;
+  background-color: black;
+  position: relative;
+`
+
+const PreloadDebugOverlay = styled.div`
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  z-index: 1000;
+  background-color: rgba(0, 0, 0, 0.7);
+  color: white;
+  padding: 8px 12px;
+  border-radius: 4px;
+  font-size: 12px;
+  font-family: monospace;
+  line-height: 1.4;
+`
+
+const FullscreenButton = styled(IconButton)`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+`
 
 const LazyCharacterShowcase = lazy(
   () => import("@components/CharacterShowcase"),
@@ -136,7 +166,6 @@ export default function App() {
     import.meta.env?.DEV &&
     (totalImageCount > 0 || preloadedComponentsCount > 0)
 
-  // Calculate current page preload status
   const currentPageImages =
     upcomingPages.length > 0
       ? upcomingPages.reduce((acc, pageIndex) => {
@@ -154,39 +183,17 @@ export default function App() {
       : 0
 
   return (
-    <div
-      style={{
-        width: "100dvw",
-        height: "100dvh",
-        overflow: "hidden",
-        backgroundColor: "black",
-        position: "relative",
-      }}
-    >
+    <AppContainer>
       {showPreloadDebug && (
-        <div
-          style={{
-            position: "absolute",
-            top: "10px",
-            left: "10px",
-            zIndex: 1000,
-            backgroundColor: "rgba(0, 0, 0, 0.7)",
-            color: "white",
-            padding: "8px 12px",
-            borderRadius: "4px",
-            fontSize: "12px",
-            fontFamily: "monospace",
-            lineHeight: "1.4",
-          }}
-        >
-          � Page: {screenIndex} | Next: {upcomingPages.join(", ") || "none"}
+        <PreloadDebugOverlay>
+          📍 Page: {screenIndex} | Next: {upcomingPages.join(", ") || "none"}
           <br />
           🖼️ Images: {preloadedImageCount}/{currentPageImages}
           <br />
           🧩 Components: {preloadedComponentsCount}/{currentPageComponents}
           <br />
           {isAllImagesPreloaded ? "✅ Ready" : "⏳ Loading"}
-        </div>
+        </PreloadDebugOverlay>
       )}
 
       <MainLayout
@@ -196,19 +203,10 @@ export default function App() {
         onNext={nextScreen}
         topRightAction={
           !isIOSDevice ? (
-            <IconButton
-              variant="fullscreen"
-              onClick={toggleFullscreen}
-              style={{
-                position: "absolute",
-                top: "1rem",
-                right: "1rem",
-                zIndex: 10,
-              }}
-            />
+            <FullscreenButton variant="fullscreen" onClick={toggleFullscreen} />
           ) : null
         }
       />
-    </div>
+    </AppContainer>
   )
 }
