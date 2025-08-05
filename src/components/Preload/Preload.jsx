@@ -4,14 +4,14 @@ import { preloadConfig } from "./preloadConfig"
 
 const PreloadDebugOverlay = styled.div`
   position: absolute;
-  top: 10px;
-  left: 10px;
+  top: 0.625rem;
+  left: 0.625rem;
   z-index: 1000;
   background-color: rgba(0, 0, 0, 0.7);
   color: white;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 0.5rem 0.75rem;
+  border-radius: 0.25rem;
+  font-size: 0.75rem;
   font-family: monospace;
   line-height: 1.4;
 `
