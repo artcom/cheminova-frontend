@@ -4,7 +4,7 @@ import MainLayout from "@ui/MainLayout"
 import useFullscreen from "@hooks/useFullscreen"
 import usePagePreloader from "@hooks/usePagePreloader"
 import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
-import LaNau from "@ui/LaNau.webp"
+import LaNau from "@ui/assets/LaNau.webp"
 
 const LazyCharacterShowcase = lazy(
   () => import("@components/CharacterShowcase"),
