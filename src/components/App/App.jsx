@@ -9,7 +9,7 @@ const AppContainer = styled.div`
   width: 100dvw;
   height: 100dvh;
   overflow: hidden;
-  background-color: black;
+  background-color: ${({ theme }) => theme.colors.background.dark};
   position: relative;
 `
 
