@@ -1,9 +1,9 @@
 import { useState } from "react"
 import { styled } from "styled-components"
 import MainLayout from "@ui/MainLayout"
-import FullscreenButton from "@ui/FullscreenButton"
 import Preload from "@components/Preload"
 import { createMainLayoutScreens } from "./screenConfig.jsx"
+import { AnimatePresence } from "motion/react"
 
 const AppContainer = styled.div`
   width: 100dvw;
@@ -29,12 +29,14 @@ export default function App() {
   return (
     <AppContainer>
       <Preload />
-      <MainLayout
-        {...currentScreen}
-        onNext={nextScreen}
-        onPrev={prevScreen}
-        topRightAction={<FullscreenButton />}
-      />
+      <AnimatePresence>
+        <MainLayout
+          key={screenIndex}
+          {...currentScreen}
+          onNext={nextScreen}
+          onPrev={prevScreen}
+        />
+      </AnimatePresence>
     </AppContainer>
   )
 }

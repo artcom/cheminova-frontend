@@ -3,6 +3,7 @@ import { styled } from "styled-components"
 import Header from "./Header"
 import Navigation from "./Navigation"
 import Vignette from "./Vignette"
+import FullscreenButton from "@ui/FullscreenButton"
 
 const Layout = styled.div`
   width: 100dvw;
@@ -77,26 +78,20 @@ export default function MainLayout({
   onPrev,
   onNext,
   backgroundImage,
-  topRightAction,
   children,
-  fullscreenComponent,
   vignetteIntensity = 25,
   navigationMode = "dual",
   singleButtonVariant = "arrowDown",
+  isFirstPage = false,
 }) {
-  if (fullscreenComponent) {
-    return (
-      <FullscreenContainer>
-        {topRightAction}
-        {fullscreenComponent}
-      </FullscreenContainer>
-    )
+  if (children) {
+    return <FullscreenContainer>{children}</FullscreenContainer>
   }
 
   return (
     <Layout $backgroundImage={backgroundImage}>
       {backgroundImage && <Vignette intensity={vignetteIntensity} />}
-      {topRightAction}
+      {isFirstPage && <FullscreenButton />}
       <StyledHeader headline={headline} subheadline={subheadline} />
       <DescriptionBlock
         initial={{ opacity: 0 }}
@@ -109,7 +104,6 @@ export default function MainLayout({
       >
         <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
         <DescriptionText>{descriptionText}</DescriptionText>
-        {children}
         <Navigation
           mode={navigationMode}
           onPrev={onPrev}

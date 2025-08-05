@@ -17,9 +17,10 @@ export const createMainLayoutScreens = (setScreenIndex) => [
     vignetteIntensity: 30,
     navigationMode: "single",
     singleButtonVariant: "arrowDown",
+    isFirstPage: true,
   },
   {
-    fullscreenComponent: (
+    children: (
       <Suspense fallback={<div>Loading Character Showcase...</div>}>
         <LazyCharacterShowcase onCharacterSelected={() => setScreenIndex(2)} />
       </Suspense>
@@ -46,7 +47,7 @@ export const createMainLayoutScreens = (setScreenIndex) => [
     navigationMode: "dual",
   },
   {
-    fullscreenComponent: (
+    children: (
       <Suspense fallback={<div>Loading Photo Capture...</div>}>
         <LazyPhotoCapture />
       </Suspense>
