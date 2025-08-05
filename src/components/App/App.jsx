@@ -1,11 +1,14 @@
 import { useState, Suspense, lazy } from "react"
 import { styled } from "styled-components"
-import IconButton from "@ui/IconButton"
 import MainLayout from "@ui/MainLayout"
-import useFullscreen from "@hooks/useFullscreen"
-import usePagePreloader from "@hooks/usePagePreloader"
-import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
+import FullscreenButton from "@ui/FullscreenButton"
+import Preload from "@components/Preload"
 import LaNau from "@ui/assets/LaNau.webp"
+
+const LazyCharacterShowcase = lazy(
+  () => import("@components/CharacterShowcase"),
+)
+const LazyPhotoCapture = lazy(() => import("@components/PhotoCapture"))
 
 const AppContainer = styled.div`
   width: 100dvw;
@@ -15,95 +18,8 @@ const AppContainer = styled.div`
   position: relative;
 `
 
-const PreloadDebugOverlay = styled.div`
-  position: absolute;
-  top: 10px;
-  left: 10px;
-  z-index: 1000;
-  background-color: rgba(0, 0, 0, 0.7);
-  color: white;
-  padding: 8px 12px;
-  border-radius: 4px;
-  font-size: 12px;
-  font-family: monospace;
-  line-height: 1.4;
-`
-
-const FullscreenButton = styled(IconButton)`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 10;
-`
-
-const LazyCharacterShowcase = lazy(
-  () => import("@components/CharacterShowcase"),
-)
-const LazyPhotoCapture = lazy(() => import("@components/PhotoCapture"))
-
 export default function App() {
   const [screenIndex, setScreenIndex] = useState(0)
-  const { isIOSDevice, toggleFullscreen } = useFullscreen()
-
-  const preloadConfig = {
-    1: {
-      images: CHARACTER_DATA.map((character) => character.image),
-      lazyComponents: [
-        {
-          name: "CharacterShowcase",
-          importFunction: () => import("@components/CharacterShowcase"),
-        },
-        {
-          name: "TransitionWrapper",
-          importFunction: () =>
-            import(
-              "@components/CharacterShowcase/components/TransitionWrapper"
-            ),
-        },
-        {
-          name: "IntroScreen",
-          importFunction: () =>
-            import("@components/CharacterShowcase/components/IntroScreen"),
-        },
-        {
-          name: "CharacterCarousel",
-          importFunction: () =>
-            import(
-              "@components/CharacterShowcase/components/CharacterCarousel"
-            ),
-        },
-      ],
-      preloadFunction: () => {
-        console.log("🚀 Preloading character showcase content...")
-      },
-    },
-    4: {
-      images: [],
-      lazyComponents: [
-        {
-          name: "PhotoCapture",
-          importFunction: () => import("@components/PhotoCapture"),
-        },
-      ],
-      preloadFunction: () => {
-        console.log("🚀 Preloading photo capture content...")
-      },
-    },
-  }
-
-  const {
-    preloadedImageCount,
-    totalImageCount,
-    preloadedComponentsCount,
-    upcomingPages,
-    isAllImagesPreloaded,
-  } = usePagePreloader(screenIndex, preloadConfig)
-
-  if (totalImageCount > 0 || preloadedComponentsCount > 0) {
-    console.log(
-      `📸 Preload status: ${preloadedImageCount}/${totalImageCount} images, ${preloadedComponentsCount} components loaded for pages: ${upcomingPages.join(", ")}`,
-    )
-  }
 
   const mainLayoutScreens = [
     {
@@ -162,51 +78,17 @@ export default function App() {
       (i) => (i - 1 + mainLayoutScreens.length) % mainLayoutScreens.length,
     )
 
-  const showPreloadDebug =
-    import.meta.env?.DEV &&
-    (totalImageCount > 0 || preloadedComponentsCount > 0)
-
-  const currentPageImages =
-    upcomingPages.length > 0
-      ? upcomingPages.reduce((acc, pageIndex) => {
-          const pageConfig = preloadConfig[pageIndex]
-          return acc + (pageConfig?.images?.length || 0)
-        }, 0)
-      : 0
-
-  const currentPageComponents =
-    upcomingPages.length > 0
-      ? upcomingPages.reduce((acc, pageIndex) => {
-          const pageConfig = preloadConfig[pageIndex]
-          return acc + (pageConfig?.lazyComponents?.length || 0)
-        }, 0)
-      : 0
-
   return (
     <AppContainer>
-      {showPreloadDebug && (
-        <PreloadDebugOverlay>
-          📍 Page: {screenIndex} | Next: {upcomingPages.join(", ") || "none"}
-          <br />
-          🖼️ Images: {preloadedImageCount}/{currentPageImages}
-          <br />
-          🧩 Components: {preloadedComponentsCount}/{currentPageComponents}
-          <br />
-          {isAllImagesPreloaded ? "✅ Ready" : "⏳ Loading"}
-        </PreloadDebugOverlay>
-      )}
-
-      <MainLayout
-        key={screenIndex}
-        {...mainLayoutScreens[screenIndex]}
-        onPrev={prevScreen}
-        onNext={nextScreen}
-        topRightAction={
-          !isIOSDevice ? (
-            <FullscreenButton variant="fullscreen" onClick={toggleFullscreen} />
-          ) : null
-        }
-      />
+      <Preload screenIndex={screenIndex}>
+        <MainLayout
+          key={screenIndex}
+          {...mainLayoutScreens[screenIndex]}
+          onPrev={prevScreen}
+          onNext={nextScreen}
+          topRightAction={<FullscreenButton />}
+        />
+      </Preload>
     </AppContainer>
   )
 }
