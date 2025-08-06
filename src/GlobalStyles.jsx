@@ -6,6 +6,7 @@ const GlobalStyles = createGlobalStyle`
     margin: 0;
     padding: 0;
     touch-action: manipulation;
+    font-family: ${(props) => props.theme.fontFamily};
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;

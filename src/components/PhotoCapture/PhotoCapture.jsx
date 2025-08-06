@@ -1,5 +1,83 @@
 import useDevicePlatform from "@hooks/useDevicePlatform"
+import SmallButton from "@components/UI/SmallButton"
 import { useState, useRef } from "react"
+import { styled } from "styled-components"
+
+const PhotoCaptureContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  height: 100%;
+  padding: 2rem;
+`
+
+const HeaderContainer = styled.div`
+  display: flex;
+  width: 21.4375rem;
+  height: 10.5625rem;
+  padding: 3.625rem 0.625rem 0.625rem 0;
+  flex-direction: column;
+  align-items: center;
+`
+
+const HeaderText = styled.h1`
+  color: #fff;
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin: 0;
+  text-align: center;
+`
+
+const TasksContainer = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  width: 100%;
+  align-items: flex-end;
+`
+
+const TaskCard = styled.div`
+  display: flex;
+  width: 23rem;
+  height: 9.4375rem;
+  padding: 1.75rem 1.625rem;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 1.125rem;
+  flex-shrink: 0;
+  border-radius: 0 1.75rem 1.75rem 0;
+  background-color: #f1ece1;
+`
+
+const TaskHeadline = styled.h2`
+  color: #000;
+  font-size: 1.5rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  margin: 0;
+`
+
+const TaskContent = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+`
+
+const TaskImage = styled.img`
+  width: 3rem;
+  height: 3rem;
+  object-fit: cover;
+  border-radius: 0.5rem;
+`
+
+const HiddenInput = styled.input`
+  display: none;
+`
 
 export default function PhotoCapture() {
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0)
@@ -8,7 +86,7 @@ export default function PhotoCapture() {
   const galleryInputRef = useRef(null)
   const { isAndroid } = useDevicePlatform()
 
-  const tasks = ["Take a picture of the stadium", "Take a picture of yourself"]
+  const tasks = ["Of La Nau", "Of yourself", "Of the atmosphere"]
 
   const handleFileChange = (event) => {
     const file = event.target.files[0]
@@ -43,98 +121,72 @@ export default function PhotoCapture() {
   }
 
   return (
-    <div
-      style={{
-        color: "#fff",
-        padding: "20px",
-        backgroundColor: "#000",
-        width: "100%",
-        height: "100%",
-      }}
-    >
-      <h1>Photo Capture</h1>
-      <input
+    <PhotoCaptureContainer>
+      <HiddenInput
         type="file"
         accept="image/*"
         capture="environment"
         onChange={handleFileChange}
         ref={cameraInputRef}
-        style={{ display: "none" }}
       />
 
-      <input
+      <HiddenInput
         type="file"
         accept="image/*"
         onChange={handleFileChange}
         ref={galleryInputRef}
-        style={{ display: "none" }}
       />
 
-      <h2>Photo Tasks</h2>
+      <HeaderContainer>
+        <HeaderText>Frame your perspective</HeaderText>
+      </HeaderContainer>
 
-      {tasks.map((task, index) => (
-        <div
-          key={index}
-          style={{
-            marginBottom: "20px",
-            padding: "10px",
-            border:
-              index === currentTaskIndex ? "2px solid blue" : "1px solid gray",
-          }}
-        >
-          <div style={{ display: "flex", alignItems: "center", gap: "10px" }}>
-            <span
-              style={{
-                fontWeight: index === currentTaskIndex ? "bold" : "normal",
-              }}
-            >
-              {index + 1}. {task}
-            </span>
+      <TasksContainer>
+        {tasks.map((task, index) => (
+          <TaskCard key={index}>
+            <TaskHeadline>{task}</TaskHeadline>
 
-            {taskImages[index] && (
-              <div
-                style={{ display: "flex", alignItems: "center", gap: "10px" }}
-              >
-                <img
-                  src={taskImages[index]}
-                  alt={`Task ${index + 1} completed`}
-                  style={{ width: "50px", height: "50px", objectFit: "cover" }}
-                />
-                <button onClick={() => handleRetake(index)}>Retake</button>
-              </div>
-            )}
-          </div>
-
-          {index === currentTaskIndex && !taskImages[index] && (
-            <div style={{ marginTop: "10px" }}>
-              {isAndroid ? (
+            <TaskContent>
+              {taskImages[index] && (
                 <>
-                  <button onClick={handleOpenCamera}>Take Photo</button>
-                  <button onClick={handleOpenGallery}>
-                    Choose from Gallery
-                  </button>
+                  <TaskImage
+                    src={taskImages[index]}
+                    alt={`Task ${index + 1} completed`}
+                  />
+                  <SmallButton onClick={() => handleRetake(index)}>
+                    Retake
+                  </SmallButton>
                 </>
-              ) : (
-                <button onClick={handleOpenGallery}>
-                  Take or Choose Photo
-                </button>
               )}
-            </div>
-          )}
-        </div>
-      ))}
+
+              {index === currentTaskIndex && !taskImages[index] && (
+                <>
+                  {isAndroid ? (
+                    <>
+                      <SmallButton onClick={handleOpenCamera}>
+                        Take Photo
+                      </SmallButton>
+                      <SmallButton onClick={handleOpenGallery}>
+                        Gallery
+                      </SmallButton>
+                    </>
+                  ) : (
+                    <SmallButton onClick={handleOpenGallery}>
+                      Take Photo
+                    </SmallButton>
+                  )}
+                </>
+              )}
+            </TaskContent>
+          </TaskCard>
+        ))}
+      </TasksContainer>
 
       {Object.keys(taskImages).length === tasks.length && (
-        <div
-          style={{
-            marginTop: "20px",
-            padding: "10px",
-            backgroundColor: "lightgreen",
-          }}
-        >
-          <h3>All tasks completed!</h3>
-        </div>
+        <TaskCard>
+          <TaskHeadline>All tasks completed!</TaskHeadline>
+        </TaskCard>
       )}
-    </div>
+    </PhotoCaptureContainer>
   )
 }

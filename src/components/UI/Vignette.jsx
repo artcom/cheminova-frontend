@@ -66,7 +66,7 @@ export default function Vignette({
   isCharacterScreen = false,
   screenIndex = 0,
 }) {
-  if (screenIndex !== 4) {
+  if (screenIndex < 3) {
     return (
       <>
         <GradientWelcome />

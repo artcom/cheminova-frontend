@@ -1,6 +1,7 @@
 import LaNau from "@ui/assets/LaNau.webp"
 import CharacterShowcase from "@components/CharacterShowcase"
 import PhotoCapture from "@components/PhotoCapture"
+import Introduction from "@components/Introduction"
 
 export const createMainLayoutScreens = (
   setScreenIndex,
@@ -42,27 +43,11 @@ export const createMainLayoutScreens = (
     ),
   },
   {
-    headline: "Character Selected!",
-    subheadline: "Your journey begins",
-    descriptionTitle: "Welcome to your adventure",
-    descriptionText:
-      "You have successfully selected your character. Your personalized experience awaits!",
-    vignetteIntensity: 20,
-    backgroundImage: LaNau,
-    navigationMode: "dual",
-  },
-  {
-    headline: "Ready to Explore",
-    subheadline: "The adventure continues",
-    descriptionTitle: "Discover Camp Nou",
-    descriptionText:
-      "Step into the world of FC Barcelona and explore every corner of this iconic stadium. Your personalized journey through history awaits.",
-    vignetteIntensity: 25,
-    backgroundImage: LaNau,
-    navigationMode: "dual",
+    children: <Introduction onNext={() => setScreenIndex(3)} />,
+    navigationMode: null,
   },
   {
     children: <PhotoCapture />,
-    navigationMode: null,
+    navigationMode: "single",
   },
 ]
