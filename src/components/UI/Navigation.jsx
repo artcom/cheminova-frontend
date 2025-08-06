@@ -9,6 +9,8 @@ const NavigationContainer = styled.div`
   flex-shrink: 0;
   z-index: 10;
   margin: 0 auto;
+  align-self: ${({ $position }) =>
+    $position === "bottom" ? "flex-end" : "auto"};
 
   ${({ $mode }) => {
     switch ($mode) {
@@ -47,10 +49,11 @@ export default function Navigation({
   onNext,
   onSelect,
   singleButtonVariant = "arrowDown",
+  position = "default",
 }) {
   if (mode === "single") {
     return (
-      <NavigationContainer $mode="single">
+      <NavigationContainer $mode="single" $position={position}>
         <IconButton variant={singleButtonVariant} onClick={onNext} />
       </NavigationContainer>
     )
@@ -58,7 +61,7 @@ export default function Navigation({
 
   if (mode === "select") {
     return (
-      <NavigationContainer $mode="select">
+      <NavigationContainer $mode="select" $position={position}>
         <IconButton variant="arrowLeft" onClick={onPrev} />
         <Button onClick={onSelect}>Select</Button>
         <IconButton variant="arrowRight" onClick={onNext} />
@@ -67,11 +70,11 @@ export default function Navigation({
   }
 
   if (mode === null) {
-    return <NavigationContainer />
+    return <NavigationContainer $position={position} />
   }
 
   return (
-    <NavigationContainer $mode="horizontal">
+    <NavigationContainer $mode="horizontal" $position={position}>
       <IconButton variant="arrowLeft" onClick={onPrev} />
       <IconButton variant="arrowRight" onClick={onNext} />
     </NavigationContainer>

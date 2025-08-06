@@ -8,7 +8,6 @@ const PhotoCaptureContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  height: 100%;
   padding: 2rem;
 `
 
@@ -36,7 +35,7 @@ const TasksContainer = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  align-items: flex-end;
+  align-items: flex-start;
 `
 
 const TaskCard = styled.div`
@@ -121,25 +120,27 @@ export default function PhotoCapture() {
   }
 
   return (
-    <PhotoCaptureContainer>
-      <HiddenInput
-        type="file"
-        accept="image/*"
-        capture="environment"
-        onChange={handleFileChange}
-        ref={cameraInputRef}
-      />
+    <>
+      <PhotoCaptureContainer>
+        <HiddenInput
+          type="file"
+          accept="image/*"
+          capture="environment"
+          onChange={handleFileChange}
+          ref={cameraInputRef}
+        />
 
-      <HiddenInput
-        type="file"
-        accept="image/*"
-        onChange={handleFileChange}
-        ref={galleryInputRef}
-      />
+        <HiddenInput
+          type="file"
+          accept="image/*"
+          onChange={handleFileChange}
+          ref={galleryInputRef}
+        />
 
-      <HeaderContainer>
-        <HeaderText>Frame your perspective</HeaderText>
-      </HeaderContainer>
+        <HeaderContainer>
+          <HeaderText>Frame your perspective</HeaderText>
+        </HeaderContainer>
+      </PhotoCaptureContainer>
 
       <TasksContainer>
         {tasks.map((task, index) => (
@@ -187,6 +188,6 @@ export default function PhotoCapture() {
           <TaskHeadline>All tasks completed!</TaskHeadline>
         </TaskCard>
       )}
-    </PhotoCaptureContainer>
+    </>
   )
 }

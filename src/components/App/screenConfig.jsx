@@ -49,5 +49,7 @@ export const createMainLayoutScreens = (
   {
     children: <PhotoCapture />,
     navigationMode: "single",
+    vignetteIntensity: 0,
+    navigationPosition: null,
   },
 ]

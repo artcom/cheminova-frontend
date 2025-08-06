@@ -6,7 +6,6 @@ const GlobalStyles = createGlobalStyle`
     margin: 0;
     padding: 0;
     touch-action: manipulation;
-    font-family: ${(props) => props.theme.fontFamily};
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
@@ -22,12 +21,13 @@ const GlobalStyles = createGlobalStyle`
     height: 100%;
     overflow: hidden;
     color: ${(props) => props.theme.colors.text.primary};
-    font-family: ${(props) => props.theme.fontFamily};
+    font-family: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
     font-variation-settings: "wdth" 100;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+
   }
 
   #root {

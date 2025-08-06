@@ -16,9 +16,19 @@ export default defineConfig({
       },
     }),
     eslintPlugin(),
-    webfontDownload([], {
-      subsetsAllowed: ["latin-ext"],
-    }),
+    webfontDownload(
+      [
+        "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap",
+      ],
+      {
+        injectAsStyleTag: true,
+        minifyCss: true,
+        async: true,
+        cache: true,
+        proxy: false,
+        subsetsAllowed: ["latin"],
+      },
+    ),
   ],
   resolve: {
     alias: {

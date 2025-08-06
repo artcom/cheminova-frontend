@@ -11,6 +11,7 @@ const Layout = styled.div`
   height: 100dvh;
   flex-direction: column;
   align-items: flex-start;
+  justify-content: flex-end;
   gap: 0.625rem;
   background-color: ${(props) => props.theme.colors.background.dark};
   background-image: ${({ $backgroundImage }) =>
@@ -57,6 +58,7 @@ export default function MainLayout({
   vignetteIntensity = 25,
   navigationMode = "dual",
   singleButtonVariant = "arrowDown",
+  navigationPosition = "default",
   isFirstPage = false,
   screenIndex = 0,
 }) {
@@ -94,6 +96,7 @@ export default function MainLayout({
         onNext={onNext}
         onSelect={onSelect}
         singleButtonVariant={singleButtonVariant}
+        position={navigationPosition}
       />
     </Layout>
   )
