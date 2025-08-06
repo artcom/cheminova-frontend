@@ -1,5 +1,6 @@
 import { Image } from "@react-three/drei"
 import { useThree } from "@react-three/fiber"
+import SpecialTile from "./SpecialTile"
 
 const images = [
   "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
@@ -33,7 +34,13 @@ export default function GalleryContent() {
         const y = zeroY - row * imageScale
         const position = [x, y, 0]
 
-        return (
+        return index % 3 === 0 ? (
+          <SpecialTile
+            key={index}
+            position={position}
+            scale={[imageScale, imageScale]}
+          />
+        ) : (
           <Image
             key={index}
             url={image}
@@ -42,6 +49,7 @@ export default function GalleryContent() {
           />
         )
       })}
+      )
     </>
   )
 }
