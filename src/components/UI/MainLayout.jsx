@@ -6,13 +6,12 @@ import FullscreenButton from "@ui/FullscreenButton"
 import Vignette from "./Vignette"
 
 const Layout = styled.div`
+  display: flex;
   width: 100dvw;
   height: 100dvh;
-  display: grid;
-  row-gap: 31.25rem;
-  flex: 1 0 0;
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  grid-template-columns: repeat(1, minmax(0, 1fr));
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.625rem;
   background-color: ${(props) => props.theme.colors.background.dark};
   background-image: ${({ $backgroundImage }) =>
     $backgroundImage ? `url(${$backgroundImage})` : "none"};
@@ -23,27 +22,32 @@ const Layout = styled.div`
   left: 0;
 `
 
-const AnimatedHeader = styled(motion.div)`
+const TextLayout = styled.div`
+  display: flex;
+  width: 24.5625rem;
+  margin: 0 auto;
+  padding: 0 1.5625rem;
+  flex-direction: column;
+  justify-content: center;
+  align-items: flex-start;
+  gap: 29.9375rem;
   flex: 1 0 0;
-  align-self: stretch;
-  grid-row: 1 / span 1;
-  grid-column: 1 / span 1;
+`
+const AnimatedHeader = styled(motion.div)`
+  width: 100%;
   position: relative;
   z-index: 2;
   display: flex;
-  justify-content: center;
+  justify-content: flex-start;
 `
 
 const DescriptionBlock = styled(motion.div)`
+  width: 100%;
   display: flex;
   flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
+  justify-content: center;
+  align-items: flex-start;
   gap: 0.75rem;
-  flex: 1 0 0;
-  align-self: stretch;
-  grid-row: 2 / span 1;
-  grid-column: 1 / span 1;
   position: relative;
   z-index: 2;
 `
@@ -98,40 +102,38 @@ export default function MainLayout({
   return (
     <Layout $backgroundImage={backgroundImage}>
       {backgroundImage && <Vignette $intensity={vignetteIntensity} />}
-
       {isFirstPage && <FullscreenButton />}
-
-      <AnimatedHeader
-        key={`header-${headline}-${subheadline}`}
-        initial={{ opacity: 0, y: -20 }}
-        animate={{ opacity: 1, y: 0 }}
-        exit={{ opacity: 0, y: -20 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        <Header headline={headline} subheadline={subheadline} />
-      </AnimatedHeader>
-
-      <DescriptionBlock
-        key={`description-${headline}-${subheadline}`}
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        exit={{ opacity: 0 }}
-        transition={{
-          delay: 0.3,
-          duration: 0.6,
-          ease: "easeOut",
-        }}
-      >
-        <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
-        <DescriptionText>{descriptionText}</DescriptionText>
-
-        <Navigation
-          mode={navigationMode}
-          onPrev={onPrev}
-          onNext={onNext}
-          singleButtonVariant={singleButtonVariant}
-        />
-      </DescriptionBlock>
+      <TextLayout>
+        <AnimatedHeader
+          key={`header-${headline}-${subheadline}`}
+          initial={{ opacity: 0, y: -20 }}
+          animate={{ opacity: 1, y: 0 }}
+          exit={{ opacity: 0, y: -20 }}
+          transition={{ duration: 0.6, ease: "easeOut" }}
+        >
+          <Header headline={headline} subheadline={subheadline} />
+        </AnimatedHeader>
+        <DescriptionBlock
+          key={`description-${headline}-${subheadline}`}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{
+            delay: 0.3,
+            duration: 0.6,
+            ease: "easeOut",
+          }}
+        >
+          <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
+          <DescriptionText>{descriptionText}</DescriptionText>
+        </DescriptionBlock>
+      </TextLayout>
+      <Navigation
+        mode={navigationMode}
+        onPrev={onPrev}
+        onNext={onNext}
+        singleButtonVariant={singleButtonVariant}
+      />
     </Layout>
   )
 }

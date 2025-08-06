@@ -7,6 +7,7 @@ const NavigationContainer = styled.div`
   height: 7.3125rem;
   flex-shrink: 0;
   margin: 0 auto;
+  z-index: 10;
 
   ${({ $mode }) => {
     switch ($mode) {
@@ -59,7 +60,6 @@ export default function Navigation({
     )
   }
 
-  // Dual mode (default)
   return (
     <NavigationContainer $mode="dual">
       {onPrev ? (
