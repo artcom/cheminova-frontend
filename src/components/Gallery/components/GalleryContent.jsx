@@ -31,12 +31,13 @@ export default function GalleryContent() {
 
         const x = zeroX + column * imageScale
         const y = zeroY - row * imageScale
+        const position = [x, y, 0]
 
         return (
           <Image
             key={index}
             url={image}
-            position={[x, y, 0]}
+            position={position}
             scale={imageScale}
           />
         )
