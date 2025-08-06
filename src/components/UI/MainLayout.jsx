@@ -34,14 +34,6 @@ const TextLayout = styled.div`
   flex: 1 0 0;
 `
 
-const FullscreenContainer = styled.div`
-  width: 100dvw;
-  height: 100dvh;
-  position: absolute;
-  top: 0;
-  left: 0;
-`
-
 export default function MainLayout({
   headline,
   subheadline,
@@ -57,7 +49,7 @@ export default function MainLayout({
   isFirstPage = false,
 }) {
   if (children) {
-    return <FullscreenContainer>{children}</FullscreenContainer>
+    return <Layout>{children}</Layout>
   }
 
   return (
