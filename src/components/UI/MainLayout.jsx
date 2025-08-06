@@ -11,7 +11,6 @@ const Layout = styled.div`
   height: 100dvh;
   flex-direction: column;
   align-items: flex-start;
-  justify-content: flex-end;
   gap: 0.625rem;
   background-color: ${(props) => props.theme.colors.background.dark};
   background-image: ${({ $backgroundImage }) =>
