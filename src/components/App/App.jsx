@@ -1,15 +1,14 @@
-import { useState } from "react"
+import { useState, useCallback } from "react"
 import { styled } from "styled-components"
 import MainLayout from "@ui/MainLayout"
-import Preload from "@components/Preload"
+import useImagePreloader from "@hooks/useImagePreloader"
 import { createMainLayoutScreens } from "./screenConfig.jsx"
-import { AnimatePresence } from "motion/react"
+import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
 
 const AppContainer = styled.div`
   width: 100dvw;
   height: 100dvh;
   overflow: hidden;
-  background-color: ${({ theme }) => theme.colors.background.dark};
   position: relative;
 `
 
@@ -17,26 +16,28 @@ export default function App() {
   const [screenIndex, setScreenIndex] = useState(0)
   const mainLayoutScreens = createMainLayoutScreens(setScreenIndex)
 
+  const characterImages = CHARACTER_DATA.map((character) => character.image)
+  useImagePreloader(characterImages, screenIndex === 0)
+
   const currentScreen = mainLayoutScreens[screenIndex]
 
-  const nextScreen = () =>
+  const handleNextScreen = useCallback(() => {
     setScreenIndex((i) => (i + 1) % mainLayoutScreens.length)
-  const prevScreen = () =>
+  }, [mainLayoutScreens.length])
+
+  const handlePrevScreen = () => {
     setScreenIndex(
       (i) => (i - 1 + mainLayoutScreens.length) % mainLayoutScreens.length,
     )
+  }
 
   return (
     <AppContainer>
-      <Preload />
-      <AnimatePresence>
-        <MainLayout
-          key={screenIndex}
-          {...currentScreen}
-          onNext={nextScreen}
-          onPrev={prevScreen}
-        />
-      </AnimatePresence>
+      <MainLayout
+        {...currentScreen}
+        onNext={handleNextScreen}
+        onPrev={handlePrevScreen}
+      />
     </AppContainer>
   )
 }

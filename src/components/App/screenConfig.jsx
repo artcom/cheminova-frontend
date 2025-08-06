@@ -1,10 +1,6 @@
-import { Suspense, lazy } from "react"
 import LaNau from "@ui/assets/LaNau.webp"
-
-const LazyCharacterShowcase = lazy(
-  () => import("@components/CharacterShowcase"),
-)
-const LazyPhotoCapture = lazy(() => import("@components/PhotoCapture"))
+import CharacterShowcase from "@components/CharacterShowcase"
+import PhotoCapture from "@components/PhotoCapture"
 
 export const createMainLayoutScreens = (setScreenIndex) => [
   {
@@ -21,9 +17,7 @@ export const createMainLayoutScreens = (setScreenIndex) => [
   },
   {
     children: (
-      <Suspense fallback={<div>Loading Character Showcase...</div>}>
-        <LazyCharacterShowcase onCharacterSelected={() => setScreenIndex(2)} />
-      </Suspense>
+      <CharacterShowcase onCharacterSelected={() => setScreenIndex(2)} />
     ),
   },
   {
@@ -47,10 +41,6 @@ export const createMainLayoutScreens = (setScreenIndex) => [
     navigationMode: "dual",
   },
   {
-    children: (
-      <Suspense fallback={<div>Loading Photo Capture...</div>}>
-        <LazyPhotoCapture />
-      </Suspense>
-    ),
+    children: <PhotoCapture />,
   },
 ]

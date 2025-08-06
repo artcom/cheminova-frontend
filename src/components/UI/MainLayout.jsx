@@ -2,8 +2,8 @@ import { motion } from "motion/react"
 import { styled } from "styled-components"
 import Header from "./Header"
 import Navigation from "./Navigation"
-import Vignette from "./Vignette"
 import FullscreenButton from "@ui/FullscreenButton"
+import Vignette from "./Vignette"
 
 const Layout = styled.div`
   width: 100dvw;
@@ -13,20 +13,25 @@ const Layout = styled.div`
   flex: 1 0 0;
   grid-template-rows: repeat(2, minmax(0, 1fr));
   grid-template-columns: repeat(1, minmax(0, 1fr));
+  background-color: ${(props) => props.theme.colors.background.dark};
   background-image: ${({ $backgroundImage }) =>
     $backgroundImage ? `url(${$backgroundImage})` : "none"};
   background-size: cover;
   background-position: center;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
 `
 
-const StyledHeader = styled(Header)`
+const AnimatedHeader = styled(motion.div)`
   flex: 1 0 0;
   align-self: stretch;
   grid-row: 1 / span 1;
   grid-column: 1 / span 1;
   position: relative;
   z-index: 2;
+  display: flex;
+  justify-content: center;
 `
 
 const DescriptionBlock = styled(motion.div)`
@@ -67,7 +72,9 @@ const DescriptionText = styled.div`
 const FullscreenContainer = styled.div`
   width: 100dvw;
   height: 100dvh;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
 `
 
 export default function MainLayout({
@@ -90,20 +97,34 @@ export default function MainLayout({
 
   return (
     <Layout $backgroundImage={backgroundImage}>
-      {backgroundImage && <Vignette intensity={vignetteIntensity} />}
+      {backgroundImage && <Vignette $intensity={vignetteIntensity} />}
+
       {isFirstPage && <FullscreenButton />}
-      <StyledHeader headline={headline} subheadline={subheadline} />
+
+      <AnimatedHeader
+        key={`header-${headline}-${subheadline}`}
+        initial={{ opacity: 0, y: -20 }}
+        animate={{ opacity: 1, y: 0 }}
+        exit={{ opacity: 0, y: -20 }}
+        transition={{ duration: 0.6, ease: "easeOut" }}
+      >
+        <Header headline={headline} subheadline={subheadline} />
+      </AnimatedHeader>
+
       <DescriptionBlock
+        key={`description-${headline}-${subheadline}`}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
         transition={{
-          duration: 0.8,
-          delay: 0.8,
+          delay: 0.3,
+          duration: 0.6,
           ease: "easeOut",
         }}
       >
         <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
         <DescriptionText>{descriptionText}</DescriptionText>
+
         <Navigation
           mode={navigationMode}
           onPrev={onPrev}

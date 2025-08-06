@@ -43,7 +43,15 @@ export default function PhotoCapture() {
   }
 
   return (
-    <div style={{ color: "#fff", padding: "20px" }}>
+    <div
+      style={{
+        color: "#fff",
+        padding: "20px",
+        backgroundColor: "#000",
+        width: "100%",
+        height: "100%",
+      }}
+    >
       <h1>Photo Capture</h1>
       <input
         type="file"
