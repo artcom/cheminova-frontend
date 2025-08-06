@@ -13,7 +13,7 @@ export const Container = styled(m.div)`
   perspective: 93.75rem;
 `
 
-export const MainLayoutContainer = styled(m.div)`
+export const MainLayoutContainer = styled.div`
   position: relative;
   display: flex;
   flex-direction: column;
@@ -77,19 +77,6 @@ export const CharacterImage = styled(m.img)`
   z-index: 2;
 `
 
-export const CharacterName = styled(m.div)`
-  width: 100%;
-  text-align: center;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 2.5rem;
-  font-weight: 700;
-  color: white;
-  text-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.3);
-  margin-top: 1.25rem;
-  letter-spacing: 0.0625rem;
-  position: relative;
-`
-
 export const NavigationButton = styled(m.button)`
   position: absolute;
   top: 50%;
@@ -133,36 +120,29 @@ export const Particles = styled.div`
   pointer-events: none;
 `
 
-export const Particle = styled(m.div)`
-  position: absolute;
-  background-color: rgba(255, 255, 255, 0.8);
-  border-radius: 50%;
-  pointer-events: none;
-`
-
 export const IntroContainer = styled(m.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
+  padding-bottom: 5rem;
   width: 100%;
-  height: 90dvh;
+  height: 100dvh;
 `
 
 export const IntroCharactersRow = styled(m.div)`
   display: flex;
-  align-items: center;
+  align-items: end;
   justify-content: center;
   width: 100%;
   gap: 1.25rem;
-  margin-bottom: 2.5rem;
 `
 
 export const IntroCharacterItem = styled(m.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   width: 25dvw;
   height: 50dvh;
   cursor: pointer;
@@ -170,38 +150,18 @@ export const IntroCharacterItem = styled(m.div)`
 `
 
 export const IntroCharacterImage = styled(m.img)`
-  width: auto;
-  height: 80%;
+  width: 15.1875rem;
+  height: 27rem;
+  aspect-ratio: 9/16;
   object-fit: contain;
-  object-position: center;
-  filter: drop-shadow(0 0.625rem 0.9375rem rgba(0, 0, 0, 0.3));
-`
-
-export const IntroHeading = styled(m.div)`
-  text-align: center;
-  font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: white;
-  text-shadow: 0 0.125rem 0.625rem rgba(0, 0, 0, 0.3);
-  margin-top: 1.875rem;
-  padding: 0 1.25rem;
-  max-width: 50rem;
-  line-height: 1.4;
-  cursor: pointer;
-
-  &:hover {
-    text-decoration: underline;
-  }
 `
 
 export const CharacterButtonLayout = styled.div`
   position: absolute;
-  bottom: 2rem;
+  bottom: 0;
   left: 50%;
   transform: translateX(-50%);
   display: flex;
   align-items: center;
-  gap: 2rem;
   z-index: 1000;
 `

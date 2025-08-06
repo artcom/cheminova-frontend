@@ -37,6 +37,7 @@ export default function App() {
         {...currentScreen}
         onNext={handleNextScreen}
         onPrev={handlePrevScreen}
+        screenIndex={screenIndex}
       />
     </AppContainer>
   )

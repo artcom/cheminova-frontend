@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { MainLayoutContainer } from "./styles"
 import Navigation from "@ui/Navigation"
-import { CHARACTER_THEMES, INTRO_GRADIENT, CHARACTER_DATA } from "./constants"
+import { CHARACTER_DATA } from "./constants"
 import useGlobalState from "@hooks/useGlobalState"
 import IntroScreen from "./components/IntroScreen"
 import CharacterCarousel from "./components/CharacterCarousel"
@@ -9,10 +9,6 @@ const CharacterShowcase = ({ onCharacterSelected }) => {
   const [showIntro, setShowIntro] = useState(true)
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(1)
   const { setSelectedCharacter } = useGlobalState()
-
-  const themeColors = showIntro
-    ? INTRO_GRADIENT
-    : CHARACTER_THEMES[currentCharacterIndex]
 
   const handleIntroComplete = () => {
     setShowIntro(false)
@@ -52,14 +48,7 @@ const CharacterShowcase = ({ onCharacterSelected }) => {
   const ContainerComponent = MainLayoutContainer
 
   return (
-    <ContainerComponent
-      animate={{
-        background: `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`,
-      }}
-      transition={{
-        background: { duration: 0.8, ease: "easeOut" },
-      }}
-    >
+    <ContainerComponent>
       {showIntro ? (
         <IntroScreen
           onCharacterSelect={handleCharacterSelection}

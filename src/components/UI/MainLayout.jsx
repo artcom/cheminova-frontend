@@ -28,10 +28,20 @@ const TextLayout = styled.div`
   margin: 0 auto;
   padding: 0 1.5625rem;
   flex-direction: column;
-  justify-content: center;
+  justify-content: ${({ $hasDescription }) =>
+    $hasDescription ? "space-between" : "flex-start"};
   align-items: flex-start;
-  gap: 29.9375rem;
+  gap: 0;
   flex: 1 0 0;
+`
+
+const ChildrenContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 1;
 `
 
 export default function MainLayout({
@@ -47,30 +57,44 @@ export default function MainLayout({
   navigationMode = "dual",
   singleButtonVariant = "arrowDown",
   isFirstPage = false,
+  screenIndex = 0,
 }) {
-  if (children) {
+  if (children && !headline && !descriptionTitle && !navigationMode) {
+    // Children only - simple fullscreen layout
     return <Layout>{children}</Layout>
   }
 
   return (
     <Layout $backgroundImage={backgroundImage}>
-      {backgroundImage && <Vignette $intensity={vignetteIntensity} />}
-      {isFirstPage && <FullscreenButton />}
-      <TextLayout>
-        <Header headline={headline} subheadline={subheadline} />
-        <Description
-          title={descriptionTitle}
-          text={descriptionText}
-          headline={headline}
-          subheadline={subheadline}
+      {children && <ChildrenContainer>{children}</ChildrenContainer>}
+      {(backgroundImage || vignetteIntensity) && (
+        <Vignette
+          intensity={vignetteIntensity}
+          isCharacterScreen={screenIndex === 1}
         />
-      </TextLayout>
-      <Navigation
-        mode={navigationMode}
-        onPrev={onPrev}
-        onNext={onNext}
-        singleButtonVariant={singleButtonVariant}
-      />
+      )}
+      {isFirstPage && <FullscreenButton />}
+      {(headline || descriptionTitle) && (
+        <TextLayout $hasDescription={!!descriptionTitle}>
+          {headline && <Header headline={headline} subheadline={subheadline} />}
+          {descriptionTitle && (
+            <Description
+              title={descriptionTitle}
+              text={descriptionText}
+              headline={headline}
+              subheadline={subheadline}
+            />
+          )}
+        </TextLayout>
+      )}
+      {navigationMode && (
+        <Navigation
+          mode={navigationMode}
+          onPrev={onPrev}
+          onNext={onNext}
+          singleButtonVariant={singleButtonVariant}
+        />
+      )}
     </Layout>
   )
 }

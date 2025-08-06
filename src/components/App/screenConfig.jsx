@@ -6,9 +6,6 @@ export const createMainLayoutScreens = (setScreenIndex) => [
   {
     headline: "La Nau",
     subheadline: "Experiencing",
-    descriptionTitle: "Welcome to Camp Nou",
-    descriptionText:
-      "Discover the magic of FC Barcelona's legendary stadium through immersive experiences.",
     backgroundImage: LaNau,
     vignetteIntensity: 30,
     navigationMode: "single",
@@ -16,6 +13,13 @@ export const createMainLayoutScreens = (setScreenIndex) => [
     isFirstPage: true,
   },
   {
+    headline: "La Nau",
+    descriptionTitle: "Choose your guide",
+    descriptionText:
+      "Select your guide for this immersive journey through La Nau.",
+    backgroundImage: LaNau,
+    vignetteIntensity: 50,
+    navigationMode: "single",
     children: (
       <CharacterShowcase onCharacterSelected={() => setScreenIndex(2)} />
     ),
