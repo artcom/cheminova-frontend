@@ -1,7 +1,6 @@
 import { useState } from "react"
-import { MainLayoutContainer, CharacterButtonLayout } from "./styles"
-import Button from "@ui/Button"
-import IconButton from "@ui/IconButton"
+import { MainLayoutContainer } from "./styles"
+import Navigation from "@ui/Navigation"
 import { CHARACTER_THEMES, INTRO_GRADIENT, CHARACTER_DATA } from "./constants"
 import useGlobalState from "@hooks/useGlobalState"
 import IntroScreen from "./components/IntroScreen"
@@ -74,11 +73,12 @@ const CharacterShowcase = ({ onCharacterSelected }) => {
       )}
 
       {!showIntro && (
-        <CharacterButtonLayout>
-          <IconButton variant="arrowLeft" onClick={handlePrevCharacter} />
-          <Button onClick={handleSelectCharacter}>Select</Button>
-          <IconButton variant="arrowRight" onClick={handleNextCharacter} />
-        </CharacterButtonLayout>
+        <Navigation
+          mode="select"
+          onPrev={handlePrevCharacter}
+          onNext={handleNextCharacter}
+          onSelect={handleSelectCharacter}
+        />
       )}
     </ContainerComponent>
   )

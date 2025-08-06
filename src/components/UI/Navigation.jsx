@@ -1,87 +1,76 @@
 import { styled } from "styled-components"
 import IconButton from "@ui/IconButton"
+import Button from "@ui/Button"
 
 const NavigationContainer = styled.div`
-  display: grid;
-  width: 80%;
+  display: flex;
+  width: 24.5625rem;
   height: 7.3125rem;
   flex-shrink: 0;
-  margin: 0 auto;
   z-index: 10;
 
   ${({ $mode }) => {
     switch ($mode) {
       case "single":
         return `
-          grid-template-rows: repeat(1, minmax(0, 1fr));
-          grid-template-columns: repeat(1, minmax(0, 1fr));
-          place-items: center;
+          padding: 1.9375rem 0;
+          justify-content: center;
+          align-items: center;
         `
-      case "dual":
+      case "horizontal":
+        return `
+          padding: 1.9375rem 1.5625rem;
+          justify-content: center;
+          align-items: flex-start;
+          gap: 14.5625rem;
+        `
+      case "select":
+        return `
+          padding: 2rem 0 1.875rem 0;
+          justify-content: center;
+          align-items: flex-start;
+          gap: 4.4375rem;
+        `
       default:
         return `
-          grid-template-rows: repeat(1, minmax(0, 1fr));
-          grid-template-columns: repeat(2, minmax(0, 1fr));
+          padding: 1.9375rem 1.5625rem;
+          justify-content: center;
+          align-items: flex-start;
+          gap: 14.5625rem;
         `
     }
   }}
 `
 
-const DirectedButton = styled(IconButton)`
-  flex-shrink: 0;
-  width: 3.4375rem;
-  height: 3.4375rem;
-  grid-row: 1 / span 1;
-  grid-column: ${({ direction, $mode }) => {
-    if ($mode === "single") return "1 / span 1"
-    return direction === "right" ? "2 / span 1" : "1 / span 1"
-  }};
-  justify-self: ${({ direction, $mode }) => {
-    if ($mode === "single") return "center"
-    return direction === "right" ? "end" : "start"
-  }};
-`
-
 export default function Navigation({
-  mode = "dual",
+  mode = "horizontal",
   onPrev,
   onNext,
+  onSelect,
   singleButtonVariant = "arrowDown",
 }) {
   if (mode === "single") {
     return (
       <NavigationContainer $mode="single">
-        <DirectedButton
-          variant={singleButtonVariant}
-          onClick={onNext}
-          $mode="single"
-        />
+        <IconButton variant={singleButtonVariant} onClick={onNext} />
+      </NavigationContainer>
+    )
+  }
+
+  if (mode === "select") {
+    return (
+      <NavigationContainer $mode="select">
+        <IconButton variant="arrowLeft" onClick={onPrev} />
+        <Button onClick={onSelect}>Select</Button>
+        <IconButton variant="arrowRight" onClick={onNext} />
       </NavigationContainer>
     )
   }
 
   return (
-    <NavigationContainer $mode="dual">
-      {onPrev ? (
-        <DirectedButton
-          direction="left"
-          variant="arrowLeft"
-          onClick={onPrev}
-          $mode="dual"
-        />
-      ) : (
-        <DirectedButton direction="left" variant="arrowLeft" $mode="dual" />
-      )}
-      {onNext ? (
-        <DirectedButton
-          direction="right"
-          variant="arrowRight"
-          onClick={onNext}
-          $mode="dual"
-        />
-      ) : (
-        <DirectedButton direction="right" variant="arrowRight" $mode="dual" />
-      )}
+    <NavigationContainer $mode="horizontal">
+      <IconButton variant="arrowLeft" onClick={onPrev} />
+      <IconButton variant="arrowRight" onClick={onNext} />
     </NavigationContainer>
   )
 }
