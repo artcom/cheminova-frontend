@@ -8,6 +8,7 @@ const NavigationContainer = styled.div`
   height: 7.3125rem;
   flex-shrink: 0;
   z-index: 10;
+  margin: 0 auto;
 
   ${({ $mode }) => {
     switch ($mode) {
