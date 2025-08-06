@@ -27,36 +27,17 @@ const CharacterCardContainer = styled(motion.div)`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-end;
   user-select: none;
 `
 
 const CharacterImage = styled(motion.img)`
   width: auto;
-  height: 60%;
+  height: 60dvh;
+  margin-bottom: 5.25rem;
   object-fit: contain;
-  margin-bottom: 1.25rem;
   filter: ${(props) =>
     `drop-shadow(0 ${0.5 + props.$shadowIntensity * 0.25}rem ${0.75 + props.$shadowIntensity * 0.5}rem rgba(0, 0, 0, ${0.4 - props.$shadowIntensity * 0.1}))`};
-`
-
-const CharacterTextContainer = styled(motion.div)`
-  color: white;
-  text-align: center;
-  text-shadow: 0 0.125rem 0.25rem rgba(0, 0, 0, 0.5);
-  max-width: 80%;
-`
-
-const CharacterName = styled(motion.div)`
-  font-size: 1.8rem;
-  font-weight: bold;
-  margin-bottom: 0.5rem;
-`
-
-const CharacterDescription = styled(motion.div)`
-  font-size: 1.1rem;
-  opacity: 0.9;
-  line-height: 1.4;
 `
 
 export default function CharacterCarousel({
@@ -134,38 +115,6 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => {
         alt={character.name}
         $shadowIntensity={shadowIntensity}
       />
-      <CharacterTextContainer
-        initial={{ opacity: 0, y: 10 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{
-          duration: 0.5,
-          delay: 0.8,
-          ease: "easeOut",
-        }}
-      >
-        <CharacterName
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 0.4,
-            delay: 1.0,
-            ease: "easeOut",
-          }}
-        >
-          {character.name}
-        </CharacterName>
-        <CharacterDescription
-          initial={{ opacity: 0, y: 5 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{
-            duration: 0.4,
-            delay: 1.2,
-            ease: "easeOut",
-          }}
-        >
-          {character.description}
-        </CharacterDescription>
-      </CharacterTextContainer>
     </CharacterCardContainer>
   )
 }

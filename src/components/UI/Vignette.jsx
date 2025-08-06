@@ -64,8 +64,9 @@ const GradientCharacter = styled.div`
 export default function Vignette({
   intensity = 25,
   isCharacterScreen = false,
+  screenIndex = 0,
 }) {
-  if (isCharacterScreen) {
+  if (screenIndex !== 4) {
     return (
       <>
         <GradientWelcome />

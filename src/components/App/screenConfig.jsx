@@ -2,7 +2,12 @@ import LaNau from "@ui/assets/LaNau.webp"
 import CharacterShowcase from "@components/CharacterShowcase"
 import PhotoCapture from "@components/PhotoCapture"
 
-export const createMainLayoutScreens = (setScreenIndex) => [
+export const createMainLayoutScreens = (
+  setScreenIndex,
+  selectedCharacter = null,
+  onCharacterChange = null,
+  characterNavHandlers = null,
+) => [
   {
     headline: "La Nau",
     subheadline: "Experiencing",
@@ -13,15 +18,27 @@ export const createMainLayoutScreens = (setScreenIndex) => [
     isFirstPage: true,
   },
   {
-    headline: "La Nau",
-    descriptionTitle: "Choose your guide",
-    descriptionText:
-      "Select your guide for this immersive journey through La Nau.",
+    headline: selectedCharacter ? selectedCharacter.title : "La Nau",
+    descriptionTitle: selectedCharacter
+      ? selectedCharacter.name
+      : "Choose your guide",
+    descriptionText: selectedCharacter
+      ? selectedCharacter.description
+      : "Select your guide for this immersive journey through La Nau.",
     backgroundImage: LaNau,
     vignetteIntensity: 50,
-    navigationMode: "single",
+    navigationMode: selectedCharacter ? "select" : null,
+    onPrev: characterNavHandlers?.onPrev,
+    onNext: characterNavHandlers?.onNext,
+    onSelect: characterNavHandlers?.onSelect,
     children: (
-      <CharacterShowcase onCharacterSelected={() => setScreenIndex(2)} />
+      <CharacterShowcase
+        onCharacterSelected={() => setScreenIndex(2)}
+        onCharacterChange={onCharacterChange}
+        onPrev={characterNavHandlers?.onPrev}
+        onNext={characterNavHandlers?.onNext}
+        onSelect={characterNavHandlers?.onSelect}
+      />
     ),
   },
   {
@@ -46,5 +63,6 @@ export const createMainLayoutScreens = (setScreenIndex) => [
   },
   {
     children: <PhotoCapture />,
+    navigationMode: null,
   },
 ]

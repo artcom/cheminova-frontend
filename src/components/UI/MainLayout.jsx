@@ -51,6 +51,7 @@ export default function MainLayout({
   descriptionText,
   onPrev,
   onNext,
+  onSelect,
   backgroundImage,
   children,
   vignetteIntensity = 25,
@@ -60,7 +61,6 @@ export default function MainLayout({
   screenIndex = 0,
 }) {
   if (children && !headline && !descriptionTitle && !navigationMode) {
-    // Children only - simple fullscreen layout
     return <Layout>{children}</Layout>
   }
 
@@ -71,6 +71,7 @@ export default function MainLayout({
         <Vignette
           intensity={vignetteIntensity}
           isCharacterScreen={screenIndex === 1}
+          screenIndex={screenIndex}
         />
       )}
       {isFirstPage && <FullscreenButton />}
@@ -87,14 +88,13 @@ export default function MainLayout({
           )}
         </TextLayout>
       )}
-      {navigationMode && (
-        <Navigation
-          mode={navigationMode}
-          onPrev={onPrev}
-          onNext={onNext}
-          singleButtonVariant={singleButtonVariant}
-        />
-      )}
+      <Navigation
+        mode={navigationMode}
+        onPrev={onPrev}
+        onNext={onNext}
+        onSelect={onSelect}
+        singleButtonVariant={singleButtonVariant}
+      />
     </Layout>
   )
 }

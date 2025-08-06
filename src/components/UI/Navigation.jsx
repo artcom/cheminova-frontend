@@ -68,6 +68,10 @@ export default function Navigation({
     )
   }
 
+  if (mode === null) {
+    return <NavigationContainer />
+  }
+
   return (
     <NavigationContainer $mode="horizontal">
       <IconButton variant="arrowLeft" onClick={onPrev} />
