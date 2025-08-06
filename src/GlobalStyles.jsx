@@ -26,6 +26,7 @@ const GlobalStyles = createGlobalStyle`
     font-variation-settings: "wdth" 100;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
+    overflow: hidden;
   }
 
   #root {
