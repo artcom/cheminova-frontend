@@ -1,4 +1,5 @@
 import { Image } from "@react-three/drei"
+import { useThree } from "@react-three/fiber"
 
 const images = [
   "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
@@ -11,13 +12,35 @@ const images = [
   "https://images.unsplash.com/photo-1593642532973-d31b6557fa68",
   "https://images.unsplash.com/photo-1606787366850-de6330128bfc",
 ]
+const imageScale = 1
 
 export default function GalleryContent() {
+  const { viewport } = useThree()
+
+  const tilesPerRow = Math.floor(viewport.width / imageScale)
+  const rowWidth = tilesPerRow * imageScale
+
+  const zeroX = -rowWidth / 2 + imageScale / 2
+  const zeroY = viewport.height / 2 - imageScale / 2
+
   return (
     <>
-      {images.map((img, index) => (
-        <Image key={index} url={img} position={[index, 0, 0]} />
-      ))}
+      {images.map((image, index) => {
+        const row = Math.floor(index / tilesPerRow)
+        const column = index % tilesPerRow
+
+        const x = zeroX + column * imageScale
+        const y = zeroY - row * imageScale
+
+        return (
+          <Image
+            key={index}
+            url={image}
+            position={[x, y, 0]}
+            scale={imageScale}
+          />
+        )
+      })}
     </>
   )
 }
