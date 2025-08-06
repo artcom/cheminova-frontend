@@ -1,4 +1,3 @@
-import { motion } from "motion/react"
 import { styled } from "styled-components"
 import Header from "./Header"
 import Navigation from "./Navigation"
@@ -34,13 +33,6 @@ const TextLayout = styled.div`
   gap: 29.9375rem;
   flex: 1 0 0;
 `
-const AnimatedHeader = styled(motion.div)`
-  width: 100%;
-  position: relative;
-  z-index: 2;
-  display: flex;
-  justify-content: flex-start;
-`
 
 const FullscreenContainer = styled.div`
   width: 100dvw;
@@ -73,15 +65,7 @@ export default function MainLayout({
       {backgroundImage && <Vignette $intensity={vignetteIntensity} />}
       {isFirstPage && <FullscreenButton />}
       <TextLayout>
-        <AnimatedHeader
-          key={`header-${headline}-${subheadline}`}
-          initial={{ opacity: 0, y: -20 }}
-          animate={{ opacity: 1, y: 0 }}
-          exit={{ opacity: 0, y: -20 }}
-          transition={{ duration: 0.6, ease: "easeOut" }}
-        >
-          <Header headline={headline} subheadline={subheadline} />
-        </AnimatedHeader>
+        <Header headline={headline} subheadline={subheadline} />
         <Description
           title={descriptionTitle}
           text={descriptionText}

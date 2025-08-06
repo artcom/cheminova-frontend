@@ -1,8 +1,9 @@
+import { motion } from "motion/react"
 import { styled } from "styled-components"
 import Headline from "./Headline"
 import SubHeadline from "./SubHeadline"
 
-const HeaderContainer = styled.div`
+const HeaderLayout = styled(motion.div)`
   display: flex;
   width: 24.5625rem;
   height: 10.5625rem;
@@ -15,7 +16,13 @@ const HeaderContainer = styled.div`
 
 function Header({ headline, subheadline }) {
   return (
-    <HeaderContainer>
+    <HeaderLayout
+      key={`header-${headline}-${subheadline}`}
+      initial={{ opacity: 0, y: -20 }}
+      animate={{ opacity: 1, y: 0 }}
+      exit={{ opacity: 0, y: -20 }}
+      transition={{ duration: 0.6, ease: "easeOut" }}
+    >
       {subheadline && (
         <SubHeadline
           initial={{ opacity: 0 }}
@@ -32,7 +39,7 @@ function Header({ headline, subheadline }) {
       >
         {headline}
       </Headline>
-    </HeaderContainer>
+    </HeaderLayout>
   )
 }
 
