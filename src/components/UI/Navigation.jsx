@@ -4,7 +4,7 @@ import Button from "@ui/Button"
 
 const NavigationContainer = styled.div`
   display: flex;
-  width: 24.5625rem;
+  width: 90%;
   height: 7.3125rem;
   flex-shrink: 0;
   z-index: 10;
@@ -20,17 +20,15 @@ const NavigationContainer = styled.div`
         `
       case "horizontal":
         return `
-          padding: 1.9375rem 1.5625rem;
-          justify-content: center;
-          align-items: flex-start;
-          gap: 14.5625rem;
+          padding: 2rem 0 1.875rem 0;
+          justify-content: space-between;
+          align-items: center;
         `
       case "select":
         return `
           padding: 2rem 0 1.875rem 0;
-          justify-content: center;
-          align-items: flex-start;
-          gap: 4.4375rem;
+          justify-content: space-between;
+          align-items: center;
         `
       default:
         return `
