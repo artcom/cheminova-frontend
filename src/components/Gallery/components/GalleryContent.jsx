@@ -19,7 +19,7 @@ export default function GalleryContent({ imagePool, targetTilesPerRow = 5 }) {
   const tilesPerColumn = Math.floor(viewport.height / idealTileWidth)
   const totalTiles = Math.min(tilesPerRow * tilesPerColumn, imagePool.length)
   const images = imagePool.slice(0, totalTiles)
-  const imageScale = idealTileWidth * 1.0
+  const imageScale = idealTileWidth * 1.15
 
   const gridWidth = tilesPerRow * idealTileWidth
   const gridHeight = tilesPerColumn * idealTileWidth
@@ -44,8 +44,24 @@ export default function GalleryContent({ imagePool, targetTilesPerRow = 5 }) {
     const column = index % tilesPerRow
     const x = zeroX + column * idealTileWidth
     const y = zeroY - row * idealTileWidth
-    const position = [x, y, 0]
+
+    // Add random displacement of 5%
+    const displacementRange = idealTileWidth * 0.05
+    const randomX = (Math.random() - 0.5) * 2 * displacementRange
+    const randomY = (Math.random() - 0.5) * 2 * displacementRange
+
     const personalIdx = randomIndices.indexOf(index)
+    const isPersonalImage = personalIdx !== -1
+
+    // Calculate Z value based on delay and image type
+    const normalizedDelay = delays[index] / maxDelay // 0 to 1
+    const zOffset = isPersonalImage
+      ? normalizedDelay * 0.2 // Personal images: positive Z (on top)
+      : normalizedDelay * -0.2 // Normal images: negative Z (behind)
+
+    console.log("z-offset", zOffset)
+
+    const position = [x + randomX, y + randomY, zOffset]
 
     return {
       key:
@@ -56,6 +72,8 @@ export default function GalleryContent({ imagePool, targetTilesPerRow = 5 }) {
       image: personalIdx !== -1 ? personalImages[personalIdx] : image,
       isPersonal: personalIdx !== -1,
       delay: delays[index],
+      // Different scales for personal vs normal images
+      scale: isPersonalImage ? idealTileWidth * 1.25 : imageScale,
     }
   })
 
@@ -69,7 +87,7 @@ export default function GalleryContent({ imagePool, targetTilesPerRow = 5 }) {
           delay={tile.delay}
           isPersonal={tile.isPersonal}
           personalAnimationStartTime={personalAnimationStartTime}
-          targetScale={imageScale}
+          targetScale={tile.scale}
         />
       ))}
     </group>

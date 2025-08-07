@@ -8,18 +8,16 @@ const START_OPACITY = 0
 const END_OPACITY = 1
 const ANIMATION_DURATION = 5.2
 const START_Z = -2
-const END_Z = 0
 
 const PERSONAL_START_SCALE = 3
 const PERSONAL_START_OPACITY = 0
 const PERSONAL_END_OPACITY = 1
 const PERSONAL_START_Z = 2
-const PERSONAL_END_Z = 0
 const PERSONAL_ANIMATION_DURATION = 3.5
 
 const GRAYSCALE_ANIMATION_DURATION = 2.0
-const GRAYSCALE_START = 0
-const GRAYSCALE_END = 0.7
+const GRAYSCALE_START = 0.7
+const GRAYSCALE_END = 0
 
 export default function AnimatingTile({
   url,
@@ -32,6 +30,9 @@ export default function AnimatingTile({
   const imageRef = useRef()
   const isInitialAnimationDone = useRef(false)
   const isGrayscaleAnimationDone = useRef(false)
+
+  // Extract the target Z position from the position array
+  const targetZ = position[2]
 
   // Add random delay for personal images (0-2 seconds)
   const personalDelay = useRef(isPersonal ? Math.random() * 2 : 0)
@@ -93,7 +94,7 @@ export default function AnimatingTile({
       imageRef.current.material.opacity = currentOpacity
 
       const currentZ =
-        PERSONAL_START_Z + (PERSONAL_END_Z - PERSONAL_START_Z) * easedProgress
+        PERSONAL_START_Z + (targetZ - PERSONAL_START_Z) * easedProgress
       imageRef.current.position.z = currentZ
 
       if (imageRef.current.material.grayscale !== undefined) {
@@ -122,7 +123,7 @@ export default function AnimatingTile({
         START_OPACITY + (END_OPACITY - START_OPACITY) * easedProgress
       imageRef.current.material.opacity = currentOpacity
 
-      const currentZ = START_Z + (END_Z - START_Z) * easedProgress
+      const currentZ = START_Z + (targetZ - START_Z) * easedProgress
       imageRef.current.position.z = currentZ
 
       if (elapsedTime >= grayscaleStartTime) {
@@ -145,7 +146,7 @@ export default function AnimatingTile({
         }
       } else {
         if (imageRef.current.material.grayscale !== undefined) {
-          imageRef.current.material.grayscale = 0
+          imageRef.current.material.grayscale = 0.7
         }
       }
     }
