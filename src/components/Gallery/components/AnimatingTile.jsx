@@ -1,7 +1,9 @@
 import { useRef } from "react"
-import { useFrame } from "@react-three/fiber"
+import { useFrame, extend } from "@react-three/fiber"
 import { Image } from "@react-three/drei"
-import { easing } from "maath"
+import { easing, geometry } from "maath"
+
+extend({ RoundedPlaneGeometry: geometry.RoundedPlaneGeometry })
 
 const START_SCALE = 0.3
 const START_OPACITY = 0
@@ -166,6 +168,8 @@ export default function AnimatingTile({
       scale={initialScale}
       opacity={initialOpacity}
       transparent
-    />
+    >
+      <roundedPlaneGeometry args={[1, 1, 0.08]} />
+    </Image>
   )
 }
