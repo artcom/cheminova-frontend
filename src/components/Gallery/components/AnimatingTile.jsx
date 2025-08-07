@@ -15,6 +15,10 @@ const PERSONAL_START_Z = 2
 const PERSONAL_END_Z = 0
 const PERSONAL_ANIMATION_DURATION = 3.5
 
+const GRAYSCALE_ANIMATION_DURATION = 2.0
+const GRAYSCALE_START = 0
+const GRAYSCALE_END = 1
+
 export default function AnimatingTile({
   url,
   position,
@@ -24,13 +28,24 @@ export default function AnimatingTile({
   targetScale = 1,
 }) {
   const imageRef = useRef()
-  const isAnimationDone = useRef(false)
+  const isInitialAnimationDone = useRef(false)
+  const isGrayscaleAnimationDone = useRef(false)
+
+  const grayscaleStartTime =
+    personalAnimationStartTime + PERSONAL_ANIMATION_DURATION
 
   useFrame((state) => {
+    if (!imageRef.current || !imageRef.current.material) {
+      return
+    }
+
+    if (isPersonal && isInitialAnimationDone.current) {
+      return
+    }
     if (
-      isAnimationDone.current ||
-      !imageRef.current ||
-      !imageRef.current.material
+      !isPersonal &&
+      isInitialAnimationDone.current &&
+      isGrayscaleAnimationDone.current
     ) {
       return
     }
@@ -54,7 +69,7 @@ export default function AnimatingTile({
 
       if (progress >= 1) {
         progress = 1
-        isAnimationDone.current = true
+        isInitialAnimationDone.current = true
       }
 
       const easedProgress = easing.cubic.out(progress)
@@ -72,6 +87,10 @@ export default function AnimatingTile({
       const currentZ =
         PERSONAL_START_Z + (PERSONAL_END_Z - PERSONAL_START_Z) * easedProgress
       imageRef.current.position.z = currentZ
+
+      if (imageRef.current.material.grayscale !== undefined) {
+        imageRef.current.material.grayscale = 0
+      }
     } else {
       if (elapsedTime < delay) {
         return
@@ -82,7 +101,7 @@ export default function AnimatingTile({
 
       if (progress >= 1) {
         progress = 1
-        isAnimationDone.current = true
+        isInitialAnimationDone.current = true
       }
 
       const easedProgress = easing.cubic.out(progress)
@@ -94,6 +113,30 @@ export default function AnimatingTile({
       const currentOpacity =
         START_OPACITY + (END_OPACITY - START_OPACITY) * easedProgress
       imageRef.current.material.opacity = currentOpacity
+
+      if (elapsedTime >= grayscaleStartTime) {
+        const grayscaleTimeSinceStart = elapsedTime - grayscaleStartTime
+        let grayscaleProgress =
+          grayscaleTimeSinceStart / GRAYSCALE_ANIMATION_DURATION
+
+        if (grayscaleProgress >= 1) {
+          grayscaleProgress = 1
+          isGrayscaleAnimationDone.current = true
+        }
+
+        const easedGrayscaleProgress = easing.cubic.out(grayscaleProgress)
+        const currentGrayscaleValue =
+          GRAYSCALE_START +
+          (GRAYSCALE_END - GRAYSCALE_START) * easedGrayscaleProgress
+
+        if (imageRef.current.material.grayscale !== undefined) {
+          imageRef.current.material.grayscale = currentGrayscaleValue
+        }
+      } else {
+        if (imageRef.current.material.grayscale !== undefined) {
+          imageRef.current.material.grayscale = 0
+        }
+      }
     }
   })
 
