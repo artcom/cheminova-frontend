@@ -7,6 +7,8 @@ const START_SCALE = 0.3
 const START_OPACITY = 0
 const END_OPACITY = 1
 const ANIMATION_DURATION = 5.2
+const START_Z = -2
+const END_Z = 0
 
 const PERSONAL_START_SCALE = 3
 const PERSONAL_START_OPACITY = 0
@@ -17,7 +19,7 @@ const PERSONAL_ANIMATION_DURATION = 3.5
 
 const GRAYSCALE_ANIMATION_DURATION = 2.0
 const GRAYSCALE_START = 0
-const GRAYSCALE_END = 1
+const GRAYSCALE_END = 0.7
 
 export default function AnimatingTile({
   url,
@@ -114,6 +116,9 @@ export default function AnimatingTile({
         START_OPACITY + (END_OPACITY - START_OPACITY) * easedProgress
       imageRef.current.material.opacity = currentOpacity
 
+      const currentZ = START_Z + (END_Z - START_Z) * easedProgress
+      imageRef.current.position.z = currentZ
+
       if (elapsedTime >= grayscaleStartTime) {
         const grayscaleTimeSinceStart = elapsedTime - grayscaleStartTime
         let grayscaleProgress =
@@ -144,7 +149,7 @@ export default function AnimatingTile({
   const initialOpacity = isPersonal ? PERSONAL_START_OPACITY : START_OPACITY
   const initialPosition = isPersonal
     ? [position[0], position[1], PERSONAL_START_Z]
-    : position
+    : [position[0], position[1], START_Z]
 
   return (
     <Image
