@@ -6,18 +6,17 @@ import { styled } from "styled-components"
 const PhotoCaptureContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
   width: 100%;
-  padding: 2rem;
+  padding: 0 0 34.75rem 0;
 `
 
 const HeaderContainer = styled.div`
   display: flex;
   width: 21.4375rem;
-  height: 10.5625rem;
-  padding: 3.625rem 0.625rem 0.625rem 0;
   flex-direction: column;
-  align-items: center;
+  align-items: flex-start;
+  padding: 1.5625rem;
 `
 
 const HeaderText = styled.h1`
@@ -138,8 +137,51 @@ export default function PhotoCapture() {
         />
 
         <HeaderContainer>
-          <HeaderText>Frame your perspective</HeaderText>
+          <HeaderText>
+            Frame your <br /> perspective
+          </HeaderText>
         </HeaderContainer>
+
+        <TasksContainer>
+          {tasks.map((task, index) => (
+            <TaskCard key={index}>
+              <TaskHeadline>{task}</TaskHeadline>
+
+              <TaskContent>
+                {taskImages[index] && (
+                  <>
+                    <TaskImage
+                      src={taskImages[index]}
+                      alt={`Task ${index + 1} completed`}
+                    />
+                    <SmallButton onClick={() => handleRetake(index)}>
+                      Retake
+                    </SmallButton>
+                  </>
+                )}
+
+                {index === currentTaskIndex && !taskImages[index] && (
+                  <>
+                    {isAndroid ? (
+                      <>
+                        <SmallButton onClick={handleOpenCamera}>
+                          Take Photo
+                        </SmallButton>
+                        <SmallButton onClick={handleOpenGallery}>
+                          Gallery
+                        </SmallButton>
+                      </>
+                    ) : (
+                      <SmallButton onClick={handleOpenGallery}>
+                        Take Photo
+                      </SmallButton>
+                    )}
+                  </>
+                )}
+              </TaskContent>
+            </TaskCard>
+          ))}
+        </TasksContainer>
       </PhotoCaptureContainer>
 
       <TasksContainer>
