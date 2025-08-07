@@ -59,8 +59,6 @@ export default function GalleryContent({ imagePool, targetTilesPerRow = 5 }) {
       ? normalizedDelay * 0.2 // Personal images: positive Z (on top)
       : normalizedDelay * -0.2 // Normal images: negative Z (behind)
 
-    console.log("z-offset", zOffset)
-
     const position = [x + randomX, y + randomY, zOffset]
 
     return {
