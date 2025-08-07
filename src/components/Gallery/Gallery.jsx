@@ -8,23 +8,17 @@ import PersonalImage1 from "./assets/1.jpg"
 import PersonalImage2 from "./assets/2.jpg"
 import PersonalImage3 from "./assets/3.jpg"
 
-const imagePixelSize = 300
 const personalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
 
-const getRandomHexColor = () => {
-  return Math.floor(Math.random() * 16777215)
-    .toString(16)
-    .padStart(6, "0")
-}
+const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
+  eager: true,
+  query: "?url",
+  import: "default",
+})
 
 export default function Gallery() {
   const imagePool = useMemo(() => {
-    return Array.from({ length: 50 }, () => {
-      const bgColor = getRandomHexColor()
-      const textColor = "FFFFFF"
-      const text = `${imagePixelSize}x${imagePixelSize}`
-      return `https://placehold.co/${imagePixelSize}x${imagePixelSize}/${bgColor}/${textColor}?text=${text}`
-    })
+    return Object.values(cologneImages)
   }, [])
 
   const allImages = useMemo(() => {
