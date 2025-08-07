@@ -1,54 +1,59 @@
 import { Image } from "@react-three/drei"
-import { useThree } from "@react-three/fiber"
 import SpecialTile from "./SpecialTile"
+import PersonalImage1 from "../assets/1.jpg"
+import PersonalImage2 from "../assets/2.jpg"
+import PersonalImage3 from "../assets/3.jpg"
 
-const images = [
-  "https://images.unsplash.com/photo-1506748686214-e9df14d4d9d0",
-  "https://images.unsplash.com/photo-1522202176988-66273c2fd55f",
-  "https://images.unsplash.com/photo-1495567720989-cebdbdd97913",
-  "https://images.unsplash.com/photo-1534081333815-ae5019106622",
-  "https://images.unsplash.com/photo-1541698444083-023c97d3f4b6",
-  "https://images.unsplash.com/photo-1551963831-b3b1ca40c98e",
-  "https://images.unsplash.com/photo-1567306226416-28f0efdc88ce",
-  "https://images.unsplash.com/photo-1593642532973-d31b6557fa68",
-  "https://images.unsplash.com/photo-1606787366850-de6330128bfc",
-]
 const imageScale = 1
+const personalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
 
-export default function GalleryContent() {
-  const { viewport } = useThree()
+export default function GalleryContent({ images, tilesPerRow }) {
+  const TILES_PER_COLUMN = Math.ceil(images.length / tilesPerRow)
+  const gridWidth = tilesPerRow * imageScale
+  const gridHeight = TILES_PER_COLUMN * imageScale
 
-  const tilesPerRow = Math.floor(viewport.width / imageScale)
-  const rowWidth = tilesPerRow * imageScale
+  const zeroX = -gridWidth / 2 + imageScale / 2
+  const zeroY = gridHeight / 2 - imageScale / 2
 
-  const zeroX = -rowWidth / 2 + imageScale / 2
-  const zeroY = viewport.height / 2 - imageScale / 2
+  const gridIndices = Array.from({ length: images.length }, (_, i) => i)
+  const randomIndices = []
+  while (randomIndices.length < personalImages.length && gridIndices.length) {
+    const idx = Math.floor(Math.random() * gridIndices.length)
+    randomIndices.push(gridIndices[idx])
+    gridIndices.splice(idx, 1)
+  }
+
+  console.log("randomIndices", randomIndices)
 
   return (
-    <>
+    <group>
       {images.map((image, index) => {
         const row = Math.floor(index / tilesPerRow)
         const column = index % tilesPerRow
-
         const x = zeroX + column * imageScale
         const y = zeroY - row * imageScale
         const position = [x, y, 0]
 
-        return index % 3 === 0 ? (
-          <SpecialTile
-            key={index}
-            position={position}
-            scale={[imageScale, imageScale]}
-          />
-        ) : (
+        const personalIdx = randomIndices.indexOf(index)
+        if (personalIdx !== -1) {
+          return (
+            <SpecialTile
+              key={`personal-${personalIdx}-${index}`}
+              position={position}
+              scale={[imageScale, imageScale]}
+              image={personalImages[personalIdx]}
+            />
+          )
+        }
+        return (
           <Image
-            key={index}
+            key={`${image}-${index}`}
             url={image}
             position={position}
             scale={imageScale}
           />
         )
       })}
-    </>
+    </group>
   )
 }
