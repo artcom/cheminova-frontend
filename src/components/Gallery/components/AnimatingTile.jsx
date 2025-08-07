@@ -4,13 +4,11 @@ import { Image } from "@react-three/drei"
 import { easing } from "maath"
 
 const START_SCALE = 0.3
-const END_SCALE = 1
 const START_OPACITY = 0
 const END_OPACITY = 1
 const ANIMATION_DURATION = 5.2
 
 const PERSONAL_START_SCALE = 3
-const PERSONAL_END_SCALE = 1
 const PERSONAL_START_OPACITY = 0
 const PERSONAL_END_OPACITY = 1
 const PERSONAL_START_Z = 2
@@ -23,6 +21,7 @@ export default function AnimatingTile({
   delay,
   isPersonal,
   personalAnimationStartTime,
+  targetScale = 1,
 }) {
   const imageRef = useRef()
   const isAnimationDone = useRef(false)
@@ -62,7 +61,7 @@ export default function AnimatingTile({
 
       const currentScale =
         PERSONAL_START_SCALE +
-        (PERSONAL_END_SCALE - PERSONAL_START_SCALE) * easedProgress
+        (targetScale - PERSONAL_START_SCALE) * easedProgress
       imageRef.current.scale.set(currentScale, currentScale, 1)
 
       const currentOpacity =
@@ -89,7 +88,7 @@ export default function AnimatingTile({
       const easedProgress = easing.cubic.out(progress)
 
       const currentScale =
-        START_SCALE + (END_SCALE - START_SCALE) * easedProgress
+        START_SCALE + (targetScale - START_SCALE) * easedProgress
       imageRef.current.scale.set(currentScale, currentScale, 1)
 
       const currentOpacity =

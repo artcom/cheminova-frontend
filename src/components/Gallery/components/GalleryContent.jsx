@@ -2,18 +2,30 @@ import AnimatingTile from "./AnimatingTile"
 import PersonalImage1 from "../assets/1.jpg"
 import PersonalImage2 from "../assets/2.jpg"
 import PersonalImage3 from "../assets/3.jpg"
+import { useThree } from "@react-three/fiber"
 
-const imageScale = 1
 const personalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
 const ANIMATION_DURATION = 5.2
 
-export default function GalleryContent({ images, tilesPerRow }) {
-  const TILES_PER_COLUMN = Math.ceil(images.length / tilesPerRow)
-  const gridWidth = tilesPerRow * imageScale
-  const gridHeight = TILES_PER_COLUMN * imageScale
+export default function GalleryContent({ imagePool, targetTilesPerRow = 5 }) {
+  const { viewport } = useThree()
 
-  const zeroX = -gridWidth / 2 + imageScale / 2
-  const zeroY = gridHeight / 2 - imageScale / 2
+  if (!viewport || viewport.width === 0 || viewport.height === 0) {
+    return null
+  }
+
+  const tilesPerRow = targetTilesPerRow
+  const idealTileWidth = viewport.width / tilesPerRow
+  const tilesPerColumn = Math.floor(viewport.height / idealTileWidth)
+  const totalTiles = Math.min(tilesPerRow * tilesPerColumn, imagePool.length)
+  const images = imagePool.slice(0, totalTiles)
+  const imageScale = idealTileWidth * 1.0
+
+  const gridWidth = tilesPerRow * idealTileWidth
+  const gridHeight = tilesPerColumn * idealTileWidth
+
+  const zeroX = -gridWidth / 2 + idealTileWidth / 2
+  const zeroY = gridHeight / 2 - idealTileWidth / 2
 
   const gridIndices = Array.from({ length: images.length }, (_, i) => i)
   const randomIndices = []
@@ -30,8 +42,8 @@ export default function GalleryContent({ images, tilesPerRow }) {
   const tileData = images.map((image, index) => {
     const row = Math.floor(index / tilesPerRow)
     const column = index % tilesPerRow
-    const x = zeroX + column * imageScale
-    const y = zeroY - row * imageScale
+    const x = zeroX + column * idealTileWidth
+    const y = zeroY - row * idealTileWidth
     const position = [x, y, 0]
     const personalIdx = randomIndices.indexOf(index)
 
@@ -57,6 +69,7 @@ export default function GalleryContent({ images, tilesPerRow }) {
           delay={tile.delay}
           isPersonal={tile.isPersonal}
           personalAnimationStartTime={personalAnimationStartTime}
+          targetScale={imageScale}
         />
       ))}
     </group>
