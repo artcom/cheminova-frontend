@@ -10,6 +10,7 @@ const Headline = styled(motion.div)`
   line-height: normal;
   position: relative;
   z-index: 3;
+  width: 100%;
 `
 
 export default Headline

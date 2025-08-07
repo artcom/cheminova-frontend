@@ -1,4 +1,4 @@
-import { motion } from "motion/react"
+import { motion, AnimatePresence } from "motion/react"
 import { styled } from "styled-components"
 import Headline from "./Headline"
 import SubHeadline from "./SubHeadline"
@@ -10,35 +10,38 @@ const HeaderLayout = styled(motion.div)`
   padding: 3.625rem 0.625rem 0.625rem 0.625rem;
   flex-direction: column;
   align-items: center;
-  position: relative;
   z-index: 3;
 `
 
 function Header({ headline, subheadline }) {
   return (
-    <HeaderLayout
-      key={`header-${headline}-${subheadline}`}
-      initial={{ opacity: 0, y: -20 }}
-      animate={{ opacity: 1, y: 0 }}
-      exit={{ opacity: 0, y: -20 }}
-      transition={{ duration: 0.6, ease: "easeOut" }}
-    >
-      {subheadline && (
-        <SubHeadline
+    <HeaderLayout>
+      <AnimatePresence mode="popLayout">
+        {subheadline && (
+          <SubHeadline
+            key={`subheadline-${subheadline}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {subheadline}
+          </SubHeadline>
+        )}
+
+        <Headline
+          key={`headline-${headline}`}
+          layoutId={`headline`}
           initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-          transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+          animate={{
+            opacity: 1,
+            transition: { duration: 0.5, ease: "easeInOut", delay: 0.5 },
+          }}
+          exit={{ opacity: 0 }}
+          transition={{ layout: { duration: 0.2, ease: "easeInOut" } }}
         >
-          {subheadline}
-        </SubHeadline>
-      )}
-      <Headline
-        initial={{ opacity: 0 }}
-        animate={{ opacity: 1 }}
-        transition={{ duration: 0.6, ease: "easeOut" }}
-      >
-        {headline}
-      </Headline>
+          {headline}
+        </Headline>
+      </AnimatePresence>
     </HeaderLayout>
   )
 }
