@@ -19,7 +19,6 @@ const getRandomHexColor = () => {
 
 export default function Gallery() {
   const imagePool = useMemo(() => {
-    console.log("Generating image pool... (This will run only once)")
     return Array.from({ length: 50 }, () => {
       const bgColor = getRandomHexColor()
       const textColor = "FFFFFF"
