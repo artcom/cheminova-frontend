@@ -33,8 +33,14 @@ export default function AnimatingTile({
   const isInitialAnimationDone = useRef(false)
   const isGrayscaleAnimationDone = useRef(false)
 
+  // Add random delay for personal images (0-2 seconds)
+  const personalDelay = useRef(isPersonal ? Math.random() * 2 : 0)
+  const adjustedPersonalStartTime =
+    personalAnimationStartTime + personalDelay.current
+
+  // Grayscale starts after the latest possible personal animation end (accounting for max delay)
   const grayscaleStartTime =
-    personalAnimationStartTime + PERSONAL_ANIMATION_DURATION
+    personalAnimationStartTime + 2 + PERSONAL_ANIMATION_DURATION
 
   useFrame((state) => {
     if (!imageRef.current || !imageRef.current.material) {
@@ -55,7 +61,7 @@ export default function AnimatingTile({
     const { elapsedTime } = state.clock
 
     if (isPersonal) {
-      if (elapsedTime < personalAnimationStartTime) {
+      if (elapsedTime < adjustedPersonalStartTime) {
         imageRef.current.material.opacity = 0
         imageRef.current.position.z = PERSONAL_START_Z
         imageRef.current.scale.set(
@@ -66,7 +72,7 @@ export default function AnimatingTile({
         return
       }
 
-      const timeSinceAnimStart = elapsedTime - personalAnimationStartTime
+      const timeSinceAnimStart = elapsedTime - adjustedPersonalStartTime
       let progress = timeSinceAnimStart / PERSONAL_ANIMATION_DURATION
 
       if (progress >= 1) {
