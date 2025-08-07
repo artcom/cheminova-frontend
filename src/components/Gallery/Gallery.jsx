@@ -3,6 +3,7 @@ import GalleryContent from "./components/GalleryContent"
 import GalleryLoader from "./components/GalleryLoader"
 import useImagePreloader from "../../hooks/useImagePreloader"
 import { useMemo } from "react"
+import theme from "../../theme"
 
 import PersonalImage1 from "./assets/1.jpg"
 import PersonalImage2 from "./assets/2.jpg"
@@ -29,16 +30,43 @@ export default function Gallery() {
 
   if (isLoading) {
     return (
-      <>
-        <h1>Gallery</h1>
+      <div
+        style={{
+          backgroundColor: theme.colors.background.dark,
+          minHeight: "100vh",
+        }}
+      >
+        <h1
+          style={{
+            color: theme.colors.background.paper,
+            margin: 0,
+            padding: "20px",
+          }}
+        >
+          Gallery
+        </h1>
         <GalleryLoader loadedCount={loadedCount} totalImages={totalImages} />
-      </>
+      </div>
     )
   }
 
   return (
-    <>
-      <h1>Gallery</h1>
+    <div
+      style={{
+        backgroundColor: theme.colors.background.dark,
+        minHeight: "100vh",
+        width: "100%",
+      }}
+    >
+      <h1
+        style={{
+          color: theme.colors.background.paper,
+          margin: 0,
+          padding: "20px",
+        }}
+      >
+        Gallery
+      </h1>
       <div
         style={{
           width: "100%",
@@ -57,6 +85,6 @@ export default function Gallery() {
           <GalleryContent imagePool={imagePool} targetTilesPerRow={5} />
         </Canvas>
       </div>
-    </>
+    </div>
   )
 }

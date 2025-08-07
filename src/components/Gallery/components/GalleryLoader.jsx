@@ -1,9 +1,14 @@
-const LoadingSpinner = ({ size = 40, color = "black" }) => (
+import theme from "../../../theme"
+
+const LoadingSpinner = ({
+  size = 40,
+  color = theme.colors.background.paper,
+}) => (
   <div
     style={{
       width: size,
       height: size,
-      border: `3px solid ${color}20`,
+      border: `3px solid ${color}30`,
       borderTop: `3px solid ${color}`,
       borderRadius: "50%",
       animation: "spin 1s linear infinite",
@@ -21,8 +26,9 @@ export default function GalleryLoader({ loadedCount, totalImages }) {
         justifyContent: "center",
         height: "90vh",
         width: "100%",
-        color: "black",
-        fontFamily: "Arial, sans-serif",
+        color: theme.colors.background.paper,
+        fontFamily: theme.fontFamily,
+        backgroundColor: theme.colors.background.dark,
       }}
     >
       <style jsx>{`
@@ -36,15 +42,27 @@ export default function GalleryLoader({ loadedCount, totalImages }) {
         }
       `}</style>
 
-      <LoadingSpinner size={60} color="black" />
+      <LoadingSpinner size={60} color={theme.colors.background.paper} />
 
       <h2
-        style={{ margin: "20px 0 10px 0", fontSize: "24px", fontWeight: "300" }}
+        style={{
+          margin: "20px 0 10px 0",
+          fontSize: "24px",
+          fontWeight: "300",
+          color: theme.colors.background.paper,
+        }}
       >
         Loading Gallery
       </h2>
 
-      <p style={{ margin: "0 0 20px 0", fontSize: "16px", opacity: 0.8 }}>
+      <p
+        style={{
+          margin: "0 0 20px 0",
+          fontSize: "16px",
+          opacity: 0.8,
+          color: theme.colors.background.paper,
+        }}
+      >
         {loadedCount} of {totalImages} images loaded
       </p>
 
@@ -52,7 +70,7 @@ export default function GalleryLoader({ loadedCount, totalImages }) {
         style={{
           width: "300px",
           height: "4px",
-          backgroundColor: "#333",
+          backgroundColor: `${theme.colors.background.paper}30`,
           borderRadius: "2px",
           overflow: "hidden",
         }}
@@ -61,7 +79,7 @@ export default function GalleryLoader({ loadedCount, totalImages }) {
           style={{
             width: `${totalImages > 0 ? (loadedCount / totalImages) * 100 : 0}%`,
             height: "100%",
-            backgroundColor: "#4CAF50",
+            backgroundColor: theme.colors.background.paper,
             borderRadius: "2px",
             transition: "width 0.3s ease",
           }}
@@ -75,6 +93,7 @@ export default function GalleryLoader({ loadedCount, totalImages }) {
           opacity: 0.6,
           textAlign: "center",
           maxWidth: "400px",
+          color: theme.colors.background.paper,
         }}
       >
         Please wait while we prepare your image gallery experience

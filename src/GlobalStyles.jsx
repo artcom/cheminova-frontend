@@ -16,10 +16,10 @@ const GlobalStyles = createGlobalStyle`
 
   html,
   body {
-    background-color: ${(props) => props.theme.colors.background.paper};
+    background-color: ${(props) => props.theme.colors.background.dark};
     width: 100%;
     height: 100%;
-    color: ${(props) => props.theme.colors.text.primary};
+    color: ${(props) => props.theme.colors.background.paper};
     font-family: ${(props) => props.theme.fontFamily};
     font-optical-sizing: auto;
     font-style: normal;
