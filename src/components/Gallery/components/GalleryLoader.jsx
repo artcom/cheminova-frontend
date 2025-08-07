@@ -1,4 +1,4 @@
-const LoadingSpinner = ({ size = 40, color = "#ffffff" }) => (
+const LoadingSpinner = ({ size = 40, color = "black" }) => (
   <div
     style={{
       width: size,
@@ -21,8 +21,7 @@ export default function GalleryLoader({ loadedCount, totalImages }) {
         justifyContent: "center",
         height: "90vh",
         width: "100%",
-        backgroundColor: "#1a1a1a",
-        color: "#ffffff",
+        color: "black",
         fontFamily: "Arial, sans-serif",
       }}
     >
@@ -37,7 +36,7 @@ export default function GalleryLoader({ loadedCount, totalImages }) {
         }
       `}</style>
 
-      <LoadingSpinner size={60} color="#ffffff" />
+      <LoadingSpinner size={60} color="black" />
 
       <h2
         style={{ margin: "20px 0 10px 0", fontSize: "24px", fontWeight: "300" }}
