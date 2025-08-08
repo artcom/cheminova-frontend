@@ -1,9 +1,4 @@
 // Unified Gallery and Animation configuration
-import PersonalImage1 from "./assets/1.jpg"
-import PersonalImage2 from "./assets/2.jpg"
-import PersonalImage3 from "./assets/3.jpg"
-
-export const PERSONAL_IMAGES = [PersonalImage1, PersonalImage2, PersonalImage3]
 
 // Layout / tile constants
 export const DISPLACEMENT_RATIO = 0.05

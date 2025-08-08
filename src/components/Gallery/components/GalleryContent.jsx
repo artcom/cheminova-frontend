@@ -6,7 +6,6 @@ import {
   DISPLACEMENT_RATIO,
   BASE_IMAGE_SCALE,
   PERSONAL_SCALE_MULTIPLIER,
-  PERSONAL_IMAGES,
 } from "../config"
 import {
   computeGridMetrics,
@@ -15,7 +14,11 @@ import {
   buildTileData,
 } from "../utils"
 
-export default function GalleryContent({ imagePool, targetTilesPerRow = 5 }) {
+export default function GalleryContent({
+  imagePool,
+  targetTilesPerRow = 5,
+  personalImages = [],
+}) {
   const { viewport } = useThree()
   if (!viewport || viewport.width === 0 || viewport.height === 0) return null
 
@@ -33,7 +36,7 @@ export default function GalleryContent({ imagePool, targetTilesPerRow = 5 }) {
     totalTiles,
     tilesPerRow,
     tilesPerColumn,
-    count: PERSONAL_IMAGES.length,
+    count: personalImages.length,
   })
 
   const delays = buildDelays(images.length, MAX_RANDOM_DELAY)
@@ -49,7 +52,7 @@ export default function GalleryContent({ imagePool, targetTilesPerRow = 5 }) {
     displacementRatio: DISPLACEMENT_RATIO,
     delays,
     maxDelay,
-    personalImages: { indices: personalIndices, urls: PERSONAL_IMAGES },
+    personalImages: { indices: personalIndices, urls: personalImages },
     baseImageScale: BASE_IMAGE_SCALE,
     personalScaleMultiplier: PERSONAL_SCALE_MULTIPLIER,
   })

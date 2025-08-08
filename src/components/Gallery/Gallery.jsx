@@ -73,6 +73,7 @@ export default function Gallery() {
           <GalleryContent
             imagePool={imagePool}
             targetTilesPerRow={tilesPerRow}
+            personalImages={personalImages}
           />
         </Canvas>
       </Stage>
