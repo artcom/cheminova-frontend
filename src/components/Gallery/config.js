@@ -12,13 +12,23 @@ export const MAX_RANDOM_DELAY = 5.5
 // Camera / detail-view constants
 export const CAMERA_DEFAULT_Z = 5
 export const DETAIL_CAMERA_Z = 4.1 // zoom-in target for detail view
-export const CAMERA_LERP = 0.08 // smoothing factor per frame
+export const CAMERA_LERP = 0.06 // smoothing factor per frame
 
 // Detail stacking behavior
 export const STACK_LERP = 0.12 // how quickly tiles move to center
 export const ENABLE_DECK_EFFECT = true // optional fan effect when stacked
-export const DECK_OFFSET_AMPLITUDE = 0.25 // world units of max offset from center
-export const DECK_ROTATION_MAX = 0.08 // radians, small tilt
+export const DECK_OFFSET_AMPLITUDE = 0.12 // world units of max offset from center
+export const DECK_ROTATION_MAX = 0.04 // radians, small tilt
+
+// Stack switching animation (prev/next)
+export const STACK_SWITCH_DUR = 0.5 // seconds
+export const STACK_BUMP_AMPLITUDE = 0.12 // world units the stack moves up briefly
+export const WRAP_EXTRA_DEPTH = -0.45 // temporary extra depth for wrapping card
+export const WRAP_ROTATION = 0.12 // temporary extra rotation for wrapping card
+
+// Debugging
+export const DEBUG_GALLERY = true
+export const DEBUG_THROTTLE_MS = 150
 
 // Per-tile animation config
 export const ANIMATION_CONFIG = {

@@ -50,6 +50,7 @@ export default function Navigation({
   onSelect,
   singleButtonVariant = "arrowDown",
   position = "default",
+  selectLabel = "Select",
 }) {
   if (mode === "single") {
     return (
@@ -63,7 +64,7 @@ export default function Navigation({
     return (
       <NavigationContainer $mode="select" $position={position}>
         <IconButton variant="arrowLeft" onClick={onPrev} />
-        <Button onClick={onSelect}>Select</Button>
+        <Button onClick={onSelect}>{selectLabel}</Button>
         <IconButton variant="arrowRight" onClick={onNext} />
       </NavigationContainer>
     )

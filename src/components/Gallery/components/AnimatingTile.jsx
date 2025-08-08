@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useRef } from "react"
-import { useFrame, extend } from "@react-three/fiber"
+import { Vector3 } from "three"
+import { useFrame, extend, useThree } from "@react-three/fiber"
 import { Image } from "@react-three/drei"
 import { geometry } from "maath"
 import ANIMATION_CONFIG, {
@@ -7,6 +8,11 @@ import ANIMATION_CONFIG, {
   ENABLE_DECK_EFFECT,
   DECK_OFFSET_AMPLITUDE,
   DECK_ROTATION_MAX,
+  STACK_SWITCH_DUR,
+  WRAP_EXTRA_DEPTH,
+  WRAP_ROTATION,
+  DEBUG_GALLERY,
+  DEBUG_THROTTLE_MS,
 } from "../config"
 import { animatePersonal, animateNormal } from "../animationUtils"
 
@@ -22,8 +28,26 @@ export default function AnimatingTile({
   onCompleted,
   onClick,
   detailMode = false,
+  isActive = false,
+  stackIndex,
+  stackSize,
+  activeIndex,
+  switchInfo,
 }) {
+  const { camera, size } = useThree()
   const imageRef = useRef()
+  const originalZRef = useRef(position[2])
+  const baseScaleRef = useRef(targetScale)
+  const lastLogMsRef = useRef(0)
+  const switchRef = useRef({ dir: 0, startMs: 0 })
+  const tunedMatRef = useRef(false)
+  const lastActiveLogRef = useRef(0)
+  const tmpVecRef = useRef(new Vector3())
+
+  // Keep latest switch info in a ref for useFrame
+  useEffect(() => {
+    switchRef.current = switchInfo || { dir: 0, startMs: 0 }
+  }, [switchInfo])
   const flags = {
     initialDone: useRef(false),
     grayscaleDone: useRef(false),
@@ -48,22 +72,130 @@ export default function AnimatingTile({
 
     // If in detail mode, override XY to stack at center, preserve Z
     if (detailMode) {
-      const z = img.position.z
+      // Ensure proper depth handling when stacking to avoid disappearing due to blending
+      if (!tunedMatRef.current) {
+        // In detail mode we stack many planes at (nearly) the same depth.
+        // Let renderOrder control visibility and disable depth writes/tests
+        // to prevent z-fighting or occlusion causing the stack to disappear.
+        mat.transparent = true
+        mat.depthWrite = false
+        mat.depthTest = false
+        mat.opacity = 1
+        tunedMatRef.current = true
+      }
+      const originalZ = originalZRef.current
       // target center with optional deck offset
       let tx = 0
       let ty = 0
       if (ENABLE_DECK_EFFECT) {
         // Use z to derive a small deterministic offset and tilt
-        const seed = z * 31.4159
+        const seed = originalZ * 31.4159
         const sx = Math.sin(seed)
         const sy = Math.cos(seed)
         tx = sx * DECK_OFFSET_AMPLITUDE
         ty = sy * DECK_OFFSET_AMPLITUDE * 0.6
         const r = sx * DECK_ROTATION_MAX
-        img.rotation.z = img.rotation.z + (r - img.rotation.z) * 0.2
+        // damp rotation to avoid accumulating drift
+        img.rotation.z = img.rotation.z + (r - img.rotation.z) * 0.12
       }
-      img.position.x = img.position.x + (tx - img.position.x) * STACK_LERP
+      // gentle layering based on index relative to active
+      let depthOffset = 0
+      let sideOffset = 0
+      let relativeDistance = 0
+      if (
+        typeof stackIndex === "number" &&
+        typeof stackSize === "number" &&
+        stackSize > 0 &&
+        typeof activeIndex === "number"
+      ) {
+        // compute shortest circular distance
+        const raw = stackIndex - activeIndex
+        const half = Math.floor(stackSize / 2)
+        let shortest = raw
+        if (raw > half) shortest = raw - stackSize
+        else if (raw < -half) shortest = raw + stackSize
+
+        const diff = Math.abs(shortest)
+        const capped = Math.min(diff, 6)
+        depthOffset = Math.max(-0.12, -0.02 * capped)
+        sideOffset = 0 // keep stack centered; only outgoing card gets side/rot animation
+        relativeDistance = diff
+
+        // During a switch, the outgoing top card should wrap underneath
+        const sw = switchRef.current
+        if (sw && sw.dir && sw.startMs) {
+          const dir = sw.dir
+          const elapsed = (performance.now() - sw.startMs) / 1000
+          const progress = Math.min(1, Math.max(0, elapsed / STACK_SWITCH_DUR))
+          if (progress >= 1) {
+            // switch ended; parent will clear dir/startMs
+          }
+          const outgoingIndex =
+            (((activeIndex - dir) % stackSize) + stackSize) % stackSize
+          const isOutgoing = stackIndex === outgoingIndex
+          if (isOutgoing) {
+            const k = Math.sin(Math.PI * progress)
+            depthOffset += WRAP_EXTRA_DEPTH * k
+            const extraRot = dir * WRAP_ROTATION * k
+            img.rotation.z = img.rotation.z + (extraRot - img.rotation.z) * 0.2
+            if (DEBUG_GALLERY) {
+              const now = performance.now()
+              if (now - lastLogMsRef.current > DEBUG_THROTTLE_MS) {
+                console.debug("[Tile] wrapping", {
+                  stackIndex,
+                  activeIndex,
+                  dir,
+                  progress: progress.toFixed(2),
+                })
+                lastLogMsRef.current = now
+              }
+            }
+          }
+        }
+      }
+      // Render order for stable stacking: active on top
+      img.renderOrder =
+        1000 +
+        (isActive ? 1000 : 0) +
+        (stackSize ? stackSize - relativeDistance : 0)
+      img.position.x =
+        img.position.x + (tx + sideOffset - img.position.x) * STACK_LERP
       img.position.y = img.position.y + (ty - img.position.y) * STACK_LERP
+
+      // Active image gets a gentle lift and focus scale
+      const baseScale = baseScaleRef.current
+      const focusScale = isActive ? baseScale * 1.08 : baseScale
+      const focusZ = originalZ + (isActive ? 0.4 : 0.0) + depthOffset
+      img.scale.x = img.scale.x + (focusScale - img.scale.x) * 0.18
+      img.scale.y = img.scale.y + (focusScale - img.scale.y) * 0.18
+      img.position.z = img.position.z + (focusZ - img.position.z) * 0.18
+
+      // Debug active tile's transform to trace disappearing issues
+      if (DEBUG_GALLERY && isActive) {
+        const now = performance.now()
+        if (now - lastActiveLogRef.current > 200) {
+          const dist = camera ? camera.position.distanceTo(img.position) : 0
+          const ndc = tmpVecRef.current.copy(img.position)
+          if (camera && ndc.project) ndc.project(camera)
+          const sx = size?.width ? ((ndc.x + 1) / 2) * size.width : 0
+          const sy = size?.height ? ((-ndc.y + 1) / 2) * size.height : 0
+          console.debug("[Tile] active pose", {
+            stackIndex,
+            pos: {
+              x: img.position.x.toFixed(2),
+              y: img.position.y.toFixed(2),
+              z: img.position.z.toFixed(2),
+            },
+            scale: img.scale.x.toFixed(2),
+            renderOrder: img.renderOrder,
+            rotZ: img.rotation.z.toFixed(3),
+            opacity: mat.opacity?.toFixed?.(2) ?? mat.opacity,
+            dist: dist ? dist.toFixed(2) : undefined,
+            screen: { x: Math.round(sx), y: Math.round(sy) },
+          })
+          lastActiveLogRef.current = now
+        }
+      }
       return
     }
 
@@ -130,10 +262,19 @@ export default function AnimatingTile({
       mat.transparent = true
       mat.opacity = initialOpacity
     }
-  }, [initialPosition, initialScale, initialOpacity])
+    originalZRef.current = position[2]
+    baseScaleRef.current = targetScale
+    tunedMatRef.current = false
+  }, [initialPosition, initialScale, initialOpacity, position, targetScale])
 
   return (
-    <Image ref={imageRef} url={url} transparent onClick={onClick}>
+    <Image
+      ref={imageRef}
+      url={url}
+      transparent
+      frustumCulled={false}
+      onClick={onClick}
+    >
       <roundedPlaneGeometry args={[1, 1, 0.08]} />
     </Image>
   )

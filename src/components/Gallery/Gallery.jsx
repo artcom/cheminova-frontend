@@ -2,11 +2,20 @@ import { Canvas, useThree, useFrame } from "@react-three/fiber"
 import GalleryContent from "./components/GalleryContent"
 import GalleryLoader from "./components/GalleryLoader"
 import useImagePreloader from "../../hooks/useImagePreloader"
-import { useEffect, useMemo, useState } from "react"
+import { useEffect, useMemo, useState, useRef } from "react"
 import theme from "../../theme"
 import useResponsiveTilesPerRow from "../../hooks/useResponsiveTilesPerRow"
 import styled from "styled-components"
-import { CAMERA_DEFAULT_Z, DETAIL_CAMERA_Z, CAMERA_LERP } from "./config"
+import {
+  CAMERA_DEFAULT_Z,
+  DETAIL_CAMERA_Z,
+  CAMERA_LERP,
+  STACK_SWITCH_DUR,
+  STACK_BUMP_AMPLITUDE,
+  DEBUG_GALLERY,
+} from "./config"
+import Navigation from "@ui/Navigation"
+import { AnimatePresence, motion } from "framer-motion"
 
 import PersonalImage1 from "./assets/1.jpg"
 import PersonalImage2 from "./assets/2.jpg"
@@ -43,6 +52,10 @@ export default function Gallery() {
   const tilesPerRow = useResponsiveTilesPerRow()
   const [allAnimsDone, setAllAnimsDone] = useState(false)
   const [detailMode, setDetailMode] = useState(false)
+  const [activeIndex, setActiveIndex] = useState(0)
+  const [stackSize, setStackSize] = useState(0)
+  const [switchDir, setSwitchDir] = useState(0) // 1 next, -1 prev, 0 idle
+  const switchStartRef = useRef(0) // performance.now() timestamp
 
   const imagePool = useMemo(() => {
     const entries = Object.entries(cologneImages)
@@ -77,16 +90,79 @@ export default function Gallery() {
           gl={{ antialias: true, alpha: true }}
         >
           <CameraController detailMode={detailMode} />
-          <GalleryContent
-            imagePool={imagePool}
-            targetTilesPerRow={tilesPerRow}
-            personalImages={personalImages}
-            onAllAnimationsDone={() => setAllAnimsDone(true)}
-            detailMode={detailMode}
-            setDetailMode={setDetailMode}
-            canEnterDetail={allAnimsDone && !detailMode}
-          />
+
+          <StackBump
+            switchDir={switchDir}
+            switchStartRef={switchStartRef}
+            onEnd={() => {
+              if (DEBUG_GALLERY) console.debug("[StackBump] end")
+              setSwitchDir(0)
+              switchStartRef.current = 0
+            }}
+          >
+            <GalleryContent
+              imagePool={imagePool}
+              targetTilesPerRow={tilesPerRow}
+              personalImages={personalImages}
+              onAllAnimationsDone={() => setAllAnimsDone(true)}
+              detailMode={detailMode}
+              setDetailMode={setDetailMode}
+              canEnterDetail={allAnimsDone && !detailMode}
+              activeIndex={activeIndex}
+              setActiveIndex={setActiveIndex}
+              onStackSizeChange={(n) => {
+                if (n !== stackSize && DEBUG_GALLERY)
+                  console.debug("[Gallery] stack size", n)
+                setStackSize(n)
+              }}
+              switchInfo={{ dir: switchDir, startMs: switchStartRef.current }}
+            />
+          </StackBump>
         </Canvas>
+
+        <AnimatePresence>
+          {detailMode && (
+            <motion.div
+              style={{
+                position: "fixed",
+                left: 0,
+                right: 0,
+                bottom: 0,
+                zIndex: 20,
+              }}
+              initial={{ opacity: 0, y: 40 }}
+              animate={{ opacity: 1, y: 0 }}
+              exit={{ opacity: 0, y: 40 }}
+              transition={{ type: "tween", duration: 0.3 }}
+            >
+              <Navigation
+                mode="select"
+                position="bottom"
+                selectLabel="Close"
+                onSelect={() => {
+                  if (DEBUG_GALLERY) console.debug("[Gallery] exit detail")
+                  setDetailMode(false)
+                }}
+                onPrev={() => {
+                  if (stackSize <= 0) return
+                  if (DEBUG_GALLERY)
+                    console.debug("[Gallery] prev", { stackSize, activeIndex })
+                  setSwitchDir(-1)
+                  switchStartRef.current = performance.now()
+                  setActiveIndex((i) => (i - 1 + stackSize) % stackSize)
+                }}
+                onNext={() => {
+                  if (stackSize <= 0) return
+                  if (DEBUG_GALLERY)
+                    console.debug("[Gallery] next", { stackSize, activeIndex })
+                  setSwitchDir(1)
+                  switchStartRef.current = performance.now()
+                  setActiveIndex((i) => (i + 1) % stackSize)
+                }}
+              />
+            </motion.div>
+          )}
+        </AnimatePresence>
       </Stage>
     </Page>
   )
@@ -94,6 +170,7 @@ export default function Gallery() {
 
 function CameraController({ detailMode }) {
   const { camera } = useThree()
+  const lastCamLogRef = useRef(0)
   // Ensure default Z when not in detail mode
   useEffect(() => {
     if (!detailMode) {
@@ -108,11 +185,63 @@ function CameraController({ detailMode }) {
   // Only animate camera when in detail mode
   useFrame(() => {
     if (!detailMode) return
+    const dz = DETAIL_CAMERA_Z - camera.position.z
+    if (Math.abs(dz) < 0.001) return
     camera.position.set(
       camera.position.x,
       camera.position.y,
-      camera.position.z + (DETAIL_CAMERA_Z - camera.position.z) * CAMERA_LERP,
+      camera.position.z + dz * CAMERA_LERP,
     )
+    if (DEBUG_GALLERY) {
+      const now = performance.now()
+      if (now - lastCamLogRef.current > 500) {
+        console.debug("[Camera] pos", {
+          x: camera.position.x.toFixed(2),
+          y: camera.position.y.toFixed(2),
+          z: camera.position.z.toFixed(2),
+        })
+        lastCamLogRef.current = now
+      }
+    }
   })
   return null
+}
+
+function StackBump({ switchDir, switchStartRef, children, onEnd }) {
+  const groupRef = useRef()
+  const endCalledForStartRef = useRef(0)
+  // Drive timer and bump easing per frame
+  useFrame(() => {
+    const g = groupRef.current
+    if (!g) return
+    if (!switchDir || !switchStartRef.current) {
+      // settle back
+      g.position.y = g.position.y + (0 - g.position.y) * 0.3
+      return
+    }
+    // Simple up-then-down bump: y = amp * sin(pi * progress)
+    const now = performance.now()
+    const elapsed = (now - switchStartRef.current) / 1000
+    const progress = Math.min(1, Math.max(0, elapsed / STACK_SWITCH_DUR))
+    const bump = Math.sin(Math.PI * progress) * STACK_BUMP_AMPLITUDE
+    g.position.y = g.position.y + (bump - g.position.y) * 0.3
+    if (
+      DEBUG_GALLERY &&
+      (progress === 0 || progress === 1 || Math.abs(progress - 0.5) < 0.02)
+    ) {
+      console.debug(
+        "[StackBump] progress",
+        progress.toFixed(2),
+        "bump",
+        bump.toFixed(3),
+      )
+    }
+    if (progress >= 1 && onEnd) {
+      if (endCalledForStartRef.current !== switchStartRef.current) {
+        endCalledForStartRef.current = switchStartRef.current
+        onEnd()
+      }
+    }
+  })
+  return <group ref={groupRef}>{children}</group>
 }

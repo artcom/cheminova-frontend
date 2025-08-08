@@ -7,6 +7,7 @@ import {
   DISPLACEMENT_RATIO,
   BASE_IMAGE_SCALE,
   PERSONAL_SCALE_MULTIPLIER,
+  DEBUG_GALLERY,
 } from "../config"
 import {
   computeGridMetrics,
@@ -23,6 +24,10 @@ export default function GalleryContent({
   detailMode = false,
   setDetailMode,
   canEnterDetail = false,
+  activeIndex = 0,
+  setActiveIndex,
+  onStackSizeChange,
+  switchInfo,
 }) {
   const { viewport } = useThree()
   const vw = viewport?.width || 0
@@ -91,9 +96,13 @@ export default function GalleryContent({
       onAllAnimationsDone()
   }
 
+  useEffect(() => {
+    if (onStackSizeChange) onStackSizeChange(tileData.length)
+  }, [tileData.length, onStackSizeChange])
+
   return (
     <group>
-      {tileData.map((tile) => (
+      {tileData.map((tile, idx) => (
         <AnimatingTile
           key={tile.key}
           position={tile.position}
@@ -103,9 +112,23 @@ export default function GalleryContent({
           personalAnimationStartTime={personalAnimationStartTime}
           targetScale={tile.scale}
           onCompleted={handleTileCompleted}
-          onClick={() => canEnterDetail && setDetailMode && setDetailMode(true)}
+          onClick={() => {
+            if (canEnterDetail && setDetailMode) {
+              if (setActiveIndex) {
+                setActiveIndex(idx)
+                if (DEBUG_GALLERY)
+                  console.debug("[GalleryContent] enter detail idx", idx)
+              }
+              setDetailMode(true)
+            }
+          }}
           detailMode={detailMode}
           canEnterDetail={canEnterDetail}
+          isActive={detailMode && idx === activeIndex}
+          stackIndex={idx}
+          stackSize={tileData.length}
+          activeIndex={activeIndex}
+          switchInfo={switchInfo}
         />
       ))}
     </group>

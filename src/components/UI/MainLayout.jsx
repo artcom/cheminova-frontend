@@ -26,7 +26,6 @@ const TextLayout = styled.div`
   display: flex;
   width: 24.5625rem;
   margin: 0 auto;
-  padding: 0 1.5625rem;
   flex-direction: column;
   justify-content: ${({ $hasDescription }) =>
     $hasDescription ? "space-between" : "flex-start"};
