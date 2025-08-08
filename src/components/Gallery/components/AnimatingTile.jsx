@@ -1,25 +1,11 @@
 import { useRef } from "react"
 import { useFrame, extend } from "@react-three/fiber"
 import { Image } from "@react-three/drei"
-import { easing, geometry } from "maath"
+import { geometry } from "maath"
+import CONFIG from "../animationConfig"
+import { animatePersonal, animateNormal } from "../animationUtils"
 
 extend({ RoundedPlaneGeometry: geometry.RoundedPlaneGeometry })
-
-const START_SCALE = 0.3
-const START_OPACITY = 0
-const END_OPACITY = 1
-const ANIMATION_DURATION = 5.2
-const START_Z = -2
-
-const PERSONAL_START_SCALE = 3
-const PERSONAL_START_OPACITY = 0
-const PERSONAL_END_OPACITY = 1
-const PERSONAL_START_Z = 2
-const PERSONAL_ANIMATION_DURATION = 3.5
-
-const GRAYSCALE_ANIMATION_DURATION = 2.0
-const GRAYSCALE_START = 0.7
-const GRAYSCALE_END = 0
 
 export default function AnimatingTile({
   url,
@@ -30,135 +16,65 @@ export default function AnimatingTile({
   targetScale = 1,
 }) {
   const imageRef = useRef()
-  const isInitialAnimationDone = useRef(false)
-  const isGrayscaleAnimationDone = useRef(false)
+  const flags = {
+    initialDone: useRef(false),
+    grayscaleDone: useRef(false),
+  }
 
-  // Extract the target Z position from the position array
   const targetZ = position[2]
-
-  // Add random delay for personal images (0-2 seconds)
-  const personalDelay = useRef(isPersonal ? Math.random() * 2 : 0)
+  const personalDelay = useRef(
+    isPersonal ? Math.random() * CONFIG.personal.delayMax : 0,
+  )
   const adjustedPersonalStartTime =
     personalAnimationStartTime + personalDelay.current
-
-  // Grayscale starts after the latest possible personal animation end (accounting for max delay)
   const grayscaleStartTime =
-    personalAnimationStartTime + 2 + PERSONAL_ANIMATION_DURATION
+    personalAnimationStartTime +
+    CONFIG.personal.delayMax +
+    CONFIG.personal.duration
 
   useFrame((state) => {
-    if (!imageRef.current || !imageRef.current.material) {
-      return
-    }
+    const img = imageRef.current
+    const mat = img?.material
+    if (!img || !mat) return
 
-    if (isPersonal && isInitialAnimationDone.current) {
+    if (isPersonal && flags.initialDone.current) return
+    if (!isPersonal && flags.initialDone.current && flags.grayscaleDone.current)
       return
-    }
-    if (
-      !isPersonal &&
-      isInitialAnimationDone.current &&
-      isGrayscaleAnimationDone.current
-    ) {
-      return
-    }
 
     const { elapsedTime } = state.clock
 
     if (isPersonal) {
-      if (elapsedTime < adjustedPersonalStartTime) {
-        imageRef.current.material.opacity = 0
-        imageRef.current.position.z = PERSONAL_START_Z
-        imageRef.current.scale.set(
-          PERSONAL_START_SCALE,
-          PERSONAL_START_SCALE,
-          1,
-        )
-        return
-      }
-
-      const timeSinceAnimStart = elapsedTime - adjustedPersonalStartTime
-      let progress = timeSinceAnimStart / PERSONAL_ANIMATION_DURATION
-
-      if (progress >= 1) {
-        progress = 1
-        isInitialAnimationDone.current = true
-      }
-
-      const easedProgress = easing.cubic.out(progress)
-
-      const currentScale =
-        PERSONAL_START_SCALE +
-        (targetScale - PERSONAL_START_SCALE) * easedProgress
-      imageRef.current.scale.set(currentScale, currentScale, 1)
-
-      const currentOpacity =
-        PERSONAL_START_OPACITY +
-        (PERSONAL_END_OPACITY - PERSONAL_START_OPACITY) * easedProgress
-      imageRef.current.material.opacity = currentOpacity
-
-      const currentZ =
-        PERSONAL_START_Z + (targetZ - PERSONAL_START_Z) * easedProgress
-      imageRef.current.position.z = currentZ
-
-      if (imageRef.current.material.grayscale !== undefined) {
-        imageRef.current.material.grayscale = 0
-      }
+      animatePersonal({
+        img,
+        mat,
+        elapsedTime,
+        adjustedStart: adjustedPersonalStartTime,
+        targetScale,
+        targetZ,
+        flags,
+      })
     } else {
-      if (elapsedTime < delay) {
-        return
-      }
-
-      const timeSinceAnimStart = elapsedTime - delay
-      let progress = timeSinceAnimStart / ANIMATION_DURATION
-
-      if (progress >= 1) {
-        progress = 1
-        isInitialAnimationDone.current = true
-      }
-
-      const easedProgress = easing.cubic.out(progress)
-
-      const currentScale =
-        START_SCALE + (targetScale - START_SCALE) * easedProgress
-      imageRef.current.scale.set(currentScale, currentScale, 1)
-
-      const currentOpacity =
-        START_OPACITY + (END_OPACITY - START_OPACITY) * easedProgress
-      imageRef.current.material.opacity = currentOpacity
-
-      const currentZ = START_Z + (targetZ - START_Z) * easedProgress
-      imageRef.current.position.z = currentZ
-
-      if (elapsedTime >= grayscaleStartTime) {
-        const grayscaleTimeSinceStart = elapsedTime - grayscaleStartTime
-        let grayscaleProgress =
-          grayscaleTimeSinceStart / GRAYSCALE_ANIMATION_DURATION
-
-        if (grayscaleProgress >= 1) {
-          grayscaleProgress = 1
-          isGrayscaleAnimationDone.current = true
-        }
-
-        const easedGrayscaleProgress = easing.cubic.out(grayscaleProgress)
-        const currentGrayscaleValue =
-          GRAYSCALE_START +
-          (GRAYSCALE_END - GRAYSCALE_START) * easedGrayscaleProgress
-
-        if (imageRef.current.material.grayscale !== undefined) {
-          imageRef.current.material.grayscale = currentGrayscaleValue
-        }
-      } else {
-        if (imageRef.current.material.grayscale !== undefined) {
-          imageRef.current.material.grayscale = 0.7
-        }
-      }
+      animateNormal({
+        img,
+        mat,
+        elapsedTime,
+        delay,
+        targetScale,
+        targetZ,
+        grayscaleStart: grayscaleStartTime,
+        flags,
+      })
     }
   })
 
-  const initialScale = isPersonal ? PERSONAL_START_SCALE : START_SCALE
-  const initialOpacity = isPersonal ? PERSONAL_START_OPACITY : START_OPACITY
-  const initialPosition = isPersonal
-    ? [position[0], position[1], PERSONAL_START_Z]
-    : [position[0], position[1], START_Z]
+  const initialScale = isPersonal
+    ? CONFIG.personal.startScale
+    : CONFIG.normal.startScale
+  const initialOpacity = isPersonal
+    ? CONFIG.personal.startOpacity
+    : CONFIG.normal.startOpacity
+  const initialZ = isPersonal ? CONFIG.personal.startZ : CONFIG.normal.startZ
+  const initialPosition = [position[0], position[1], initialZ]
 
   return (
     <Image
