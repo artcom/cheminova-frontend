@@ -15,6 +15,10 @@ import ANIMATION_CONFIG, {
   DEBUG_THROTTLE_MS,
   CAMERA_DEFAULT_Z,
   DETAIL_CAMERA_Z,
+  DETAIL_ACTIVE_LIFT,
+  SCALE_COMP_MIN,
+  SCALE_COMP_MAX,
+  RESTORE_LERP,
 } from "../config"
 import { animatePersonal, animateNormal } from "../animationUtils"
 
@@ -204,14 +208,14 @@ export default function AnimatingTile({
       const baseScale = detailStackScale || baseScaleRef.current
       const camZ = camera?.position?.z ?? CAMERA_DEFAULT_Z
       // Use a stable lift scaled by the configured DETAIL_CAMERA_Z relative to default
-      const lift = 0.4 * (DETAIL_CAMERA_Z / CAMERA_DEFAULT_Z)
+      const lift = DETAIL_ACTIVE_LIFT * (DETAIL_CAMERA_Z / CAMERA_DEFAULT_Z)
       const focusZTarget =
         originalZ + (isEffectiveActive ? lift : 0.0) + depthOffset
       // Scale compensation to keep on-screen size roughly stable when z changes
       const denom = Math.max(0.001, camZ - focusZTarget)
       const numer = Math.max(0.001, camZ - img.position.z)
       let comp = numer / denom
-      comp = Math.max(0.9, Math.min(1.15, comp))
+      comp = Math.max(SCALE_COMP_MIN, Math.min(SCALE_COMP_MAX, comp))
       const focusScaleTarget = isEffectiveActive
         ? baseScale * 1.08 * comp
         : baseScale
@@ -274,7 +278,6 @@ export default function AnimatingTile({
     }
 
     // When not in detail mode, smoothly restore XY back to grid position
-    const RESTORE_LERP = 0.2
     if (!detailMode) {
       img.position.x =
         img.position.x + (position[0] - img.position.x) * RESTORE_LERP

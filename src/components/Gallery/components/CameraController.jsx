@@ -1,0 +1,48 @@
+import { useEffect, useRef } from "react"
+import { useThree, useFrame } from "@react-three/fiber"
+import {
+  CAMERA_DEFAULT_Z,
+  DETAIL_CAMERA_Z,
+  CAMERA_LERP,
+  DEBUG_GALLERY,
+} from "../config"
+
+export default function CameraController({ detailMode }) {
+  const { camera } = useThree()
+  const lastCamLogRef = useRef(0)
+
+  // Ensure default Z when not in detail mode
+  useEffect(() => {
+    if (!detailMode) {
+      camera.position.set(
+        camera.position.x,
+        camera.position.y,
+        CAMERA_DEFAULT_Z,
+      )
+    }
+  }, [detailMode, camera])
+
+  // Only animate camera when in detail mode
+  useFrame(() => {
+    if (!detailMode) return
+    const dz = DETAIL_CAMERA_Z - camera.position.z
+    if (Math.abs(dz) < 0.001) return
+    camera.position.set(
+      camera.position.x,
+      camera.position.y,
+      camera.position.z + dz * CAMERA_LERP,
+    )
+    if (DEBUG_GALLERY) {
+      const now = performance.now()
+      if (now - lastCamLogRef.current > 500) {
+        console.debug("[Camera] pos", {
+          x: camera.position.x.toFixed(2),
+          y: camera.position.y.toFixed(2),
+          z: camera.position.z.toFixed(2),
+        })
+        lastCamLogRef.current = now
+      }
+    }
+  })
+  return null
+}

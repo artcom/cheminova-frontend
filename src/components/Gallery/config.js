@@ -13,6 +13,8 @@ export const MAX_RANDOM_DELAY = 5.5
 export const CAMERA_DEFAULT_Z = 5
 export const DETAIL_CAMERA_Z = 2.1 // zoom-in target for detail view
 export const CAMERA_LERP = 0.06 // smoothing factor per frame
+// Active tile lift amount in detail mode (base, before camera ratio compensation)
+export const DETAIL_ACTIVE_LIFT = 0.4
 
 // Detail stacking behavior
 export const STACK_LERP = 0.12 // how quickly tiles move to center
@@ -25,6 +27,13 @@ export const STACK_SWITCH_DUR = 0.5 // seconds
 export const STACK_BUMP_AMPLITUDE = 0.12 // world units the stack moves up briefly
 export const WRAP_EXTRA_DEPTH = -0.45 // temporary extra depth for wrapping card
 export const WRAP_ROTATION = 0.12 // temporary extra rotation for wrapping card
+
+// Scale compensation clamp to avoid popping when adjusting Z in detail mode
+export const SCALE_COMP_MIN = 0.9
+export const SCALE_COMP_MAX = 1.15
+
+// Lerp constants used outside of animation utils
+export const RESTORE_LERP = 0.2
 
 // Debugging
 export const DEBUG_GALLERY = true
