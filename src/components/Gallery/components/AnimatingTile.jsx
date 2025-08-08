@@ -2,7 +2,7 @@ import { useRef } from "react"
 import { useFrame, extend } from "@react-three/fiber"
 import { Image } from "@react-three/drei"
 import { geometry } from "maath"
-import CONFIG from "../animationConfig"
+import ANIMATION_CONFIG from "../config"
 import { animatePersonal, animateNormal } from "../animationUtils"
 
 extend({ RoundedPlaneGeometry: geometry.RoundedPlaneGeometry })
@@ -23,14 +23,14 @@ export default function AnimatingTile({
 
   const targetZ = position[2]
   const personalDelay = useRef(
-    isPersonal ? Math.random() * CONFIG.personal.delayMax : 0,
+    isPersonal ? Math.random() * ANIMATION_CONFIG.personal.delayMax : 0,
   )
   const adjustedPersonalStartTime =
     personalAnimationStartTime + personalDelay.current
   const grayscaleStartTime =
     personalAnimationStartTime +
-    CONFIG.personal.delayMax +
-    CONFIG.personal.duration
+    ANIMATION_CONFIG.personal.delayMax +
+    ANIMATION_CONFIG.personal.duration
 
   useFrame((state) => {
     const img = imageRef.current
@@ -68,12 +68,14 @@ export default function AnimatingTile({
   })
 
   const initialScale = isPersonal
-    ? CONFIG.personal.startScale
-    : CONFIG.normal.startScale
+    ? ANIMATION_CONFIG.personal.startScale
+    : ANIMATION_CONFIG.normal.startScale
   const initialOpacity = isPersonal
-    ? CONFIG.personal.startOpacity
-    : CONFIG.normal.startOpacity
-  const initialZ = isPersonal ? CONFIG.personal.startZ : CONFIG.normal.startZ
+    ? ANIMATION_CONFIG.personal.startOpacity
+    : ANIMATION_CONFIG.normal.startOpacity
+  const initialZ = isPersonal
+    ? ANIMATION_CONFIG.personal.startZ
+    : ANIMATION_CONFIG.normal.startZ
   const initialPosition = [position[0], position[1], initialZ]
 
   return (

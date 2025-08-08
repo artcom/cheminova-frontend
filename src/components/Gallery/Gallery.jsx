@@ -4,10 +4,30 @@ import GalleryLoader from "./components/GalleryLoader"
 import useImagePreloader from "../../hooks/useImagePreloader"
 import { useMemo } from "react"
 import theme from "../../theme"
+import useResponsiveTilesPerRow from "../../hooks/useResponsiveTilesPerRow"
+import styled from "styled-components"
 
 import PersonalImage1 from "./assets/1.jpg"
 import PersonalImage2 from "./assets/2.jpg"
 import PersonalImage3 from "./assets/3.jpg"
+
+const Page = styled.div`
+  background-color: ${theme.colors.background.dark};
+  min-height: 100vh;
+`
+
+const Title = styled.h1`
+  color: ${theme.colors.background.paper};
+  margin: 0;
+  padding: 20px;
+`
+
+const Stage = styled.div`
+  width: 100%;
+  height: 90vh;
+  position: relative;
+  overflow: hidden;
+`
 
 const personalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
 
@@ -18,8 +38,12 @@ const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
 })
 
 export default function Gallery() {
+  const tilesPerRow = useResponsiveTilesPerRow()
+
   const imagePool = useMemo(() => {
-    return Object.values(cologneImages)
+    const entries = Object.entries(cologneImages)
+    entries.sort(([a], [b]) => a.localeCompare(b))
+    return entries.map(([, url]) => url)
   }, [])
 
   const allImages = useMemo(() => {
@@ -30,61 +54,28 @@ export default function Gallery() {
 
   if (isLoading) {
     return (
-      <div
-        style={{
-          backgroundColor: theme.colors.background.dark,
-          minHeight: "100vh",
-        }}
-      >
-        <h1
-          style={{
-            color: theme.colors.background.paper,
-            margin: 0,
-            padding: "20px",
-          }}
-        >
-          Gallery
-        </h1>
+      <Page>
+        <Title>Gallery</Title>
         <GalleryLoader loadedCount={loadedCount} totalImages={totalImages} />
-      </div>
+      </Page>
     )
   }
 
   return (
-    <div
-      style={{
-        backgroundColor: theme.colors.background.dark,
-        minHeight: "100vh",
-        width: "100%",
-      }}
-    >
-      <h1
-        style={{
-          color: theme.colors.background.paper,
-          margin: 0,
-          padding: "20px",
-        }}
-      >
-        Gallery
-      </h1>
-      <div
-        style={{
-          width: "100%",
-          height: "90vh",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+    <Page>
+      <Title>Gallery</Title>
+      <Stage>
         <Canvas
-          camera={{
-            position: [0, 0, 5],
-            fov: 75,
-          }}
+          camera={{ position: [0, 0, 5], fov: 75 }}
           style={{ touchAction: "none" }}
+          gl={{ antialias: true, alpha: true }}
         >
-          <GalleryContent imagePool={imagePool} targetTilesPerRow={5} />
+          <GalleryContent
+            imagePool={imagePool}
+            targetTilesPerRow={tilesPerRow}
+          />
         </Canvas>
-      </div>
-    </div>
+      </Stage>
+    </Page>
   )
 }

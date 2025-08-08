@@ -7,7 +7,7 @@ import {
   BASE_IMAGE_SCALE,
   PERSONAL_SCALE_MULTIPLIER,
   PERSONAL_IMAGES,
-} from "../constants"
+} from "../config"
 import {
   computeGridMetrics,
   selectCentralIndices,

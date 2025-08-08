@@ -20,7 +20,6 @@ export const computeGridMetrics = ({
   }
 }
 
-// Chebyshev distance (no-touch if >= 2)
 const chebyshev = (r1, c1, r2, c2) =>
   Math.max(Math.abs(r1 - r2), Math.abs(c1 - c2))
 
@@ -74,7 +73,7 @@ export const selectCentralIndices = ({
 
   const shuffled = [...pool].sort(() => Math.random() - 0.5)
   const selected = []
-  const noTouchDistance = 2 // Chebyshev >= 2 means not touching (including diagonals)
+  const noTouchDistance = 2
 
   const respectsNoTouch = (candidate) => {
     const r = Math.floor(candidate / tilesPerRow)
@@ -95,7 +94,6 @@ export const selectCentralIndices = ({
 
   if (selected.length >= count) return selected
 
-  // Best-effort fallback: maximize spacing if strict no-touch isn't possible
   const remaining = count - selected.length
   const remainingPool = shuffled.filter((i) => !selected.includes(i))
 
