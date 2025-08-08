@@ -1,103 +1,90 @@
+import { motion } from "framer-motion"
+import { styled } from "styled-components"
 import theme from "../../../theme"
 
-const LoadingSpinner = ({
-  size = 40,
-  color = theme.colors.background.paper,
-}) => (
-  <div
-    style={{
-      width: size,
-      height: size,
-      border: `3px solid ${color}30`,
-      borderTop: `3px solid ${color}`,
-      borderRadius: "50%",
-      animation: "spin 1s linear infinite",
-    }}
-  />
-)
+const Wrapper = styled.div`
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 90vh;
+  width: 100%;
+  background-color: ${theme.colors.background.dark};
+  color: ${theme.colors.background.paper};
+  font-family: ${theme.fontFamily};
+`
+
+const SpinnerRing = styled(motion.div)`
+  width: ${(p) => p.$size || 40}px;
+  height: ${(p) => p.$size || 40}px;
+  border: 3px solid ${theme.colors.background.paper}30;
+  border-top: 3px solid ${theme.colors.background.paper};
+  border-radius: 50%;
+`
+
+const Title = styled.h2`
+  margin: 20px 0 10px 0;
+  font-size: 24px;
+  font-weight: 300;
+  color: ${theme.colors.background.paper};
+`
+
+const Subtitle = styled.p`
+  margin: 0 0 20px 0;
+  font-size: 16px;
+  color: ${theme.colors.background.paper};
+  opacity: 0.8;
+`
+
+const ProgressBar = styled.div`
+  width: 300px;
+  height: 4px;
+  background-color: ${theme.colors.background.paper}30;
+  border-radius: 2px;
+  overflow: hidden;
+`
+
+const ProgressFill = styled(motion.div)`
+  height: 100%;
+  background-color: ${theme.colors.background.paper};
+  border-radius: 2px;
+`
+
+const Hint = styled.p`
+  margin: 10px 0 0 0;
+  font-size: 14px;
+  text-align: center;
+  max-width: 400px;
+  color: ${theme.colors.background.paper};
+  opacity: 0.6;
+`
 
 export default function GalleryLoader({ loadedCount, totalImages }) {
+  const progress = totalImages > 0 ? (loadedCount / totalImages) * 100 : 0
+
   return (
-    <div
-      style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "90vh",
-        width: "100%",
-        color: theme.colors.background.paper,
-        fontFamily: theme.fontFamily,
-        backgroundColor: theme.colors.background.dark,
-      }}
-    >
-      <style jsx>{`
-        @keyframes spin {
-          0% {
-            transform: rotate(0deg);
-          }
-          100% {
-            transform: rotate(360deg);
-          }
-        }
-      `}</style>
+    <Wrapper>
+      <SpinnerRing
+        $size={60}
+        animate={{ rotate: 360 }}
+        transition={{ duration: 1, ease: "linear", repeat: Infinity }}
+      />
 
-      <LoadingSpinner size={60} color={theme.colors.background.paper} />
+      <Title>Loading Gallery</Title>
 
-      <h2
-        style={{
-          margin: "20px 0 10px 0",
-          fontSize: "24px",
-          fontWeight: "300",
-          color: theme.colors.background.paper,
-        }}
-      >
-        Loading Gallery
-      </h2>
-
-      <p
-        style={{
-          margin: "0 0 20px 0",
-          fontSize: "16px",
-          opacity: 0.8,
-          color: theme.colors.background.paper,
-        }}
-      >
+      <Subtitle>
         {loadedCount} of {totalImages} images loaded
-      </p>
+      </Subtitle>
 
-      <div
-        style={{
-          width: "300px",
-          height: "4px",
-          backgroundColor: `${theme.colors.background.paper}30`,
-          borderRadius: "2px",
-          overflow: "hidden",
-        }}
-      >
-        <div
-          style={{
-            width: `${totalImages > 0 ? (loadedCount / totalImages) * 100 : 0}%`,
-            height: "100%",
-            backgroundColor: theme.colors.background.paper,
-            borderRadius: "2px",
-            transition: "width 0.3s ease",
-          }}
+      <ProgressBar>
+        <ProgressFill
+          initial={{ width: "0%" }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.3, ease: "easeInOut" }}
         />
-      </div>
+      </ProgressBar>
 
-      <p
-        style={{
-          margin: "10px 0 0 0",
-          fontSize: "14px",
-          opacity: 0.6,
-          textAlign: "center",
-          maxWidth: "400px",
-          color: theme.colors.background.paper,
-        }}
-      >
-        Please wait while we prepare your image gallery experience
-      </p>
-    </div>
+      <Hint>Please wait while we prepare your image gallery experience</Hint>
+    </Wrapper>
   )
 }
