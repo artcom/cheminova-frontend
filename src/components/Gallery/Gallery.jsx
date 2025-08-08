@@ -40,7 +40,7 @@ const Stage = styled.div`
   overflow: hidden;
 `
 
-const personalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
+const defaultPersonalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
 
 const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
   eager: true,
@@ -57,6 +57,21 @@ export default function Gallery() {
   const [switchDir, setSwitchDir] = useState(0) // 1 next, -1 prev, 0 idle
   const switchStartRef = useRef(0) // performance.now() timestamp
 
+  // Load personal images from localStorage if present
+  const personalImages = useMemo(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("personalImages") || "[]")
+      if (Array.isArray(stored) && stored.some(Boolean)) {
+        // Keep only valid URLs, fill missing with defaults
+        const merged = defaultPersonalImages.map((d, i) => stored[i] || d)
+        return merged
+      }
+    } catch {
+      // ignore storage parse failures
+    }
+    return defaultPersonalImages
+  }, [])
+
   const imagePool = useMemo(() => {
     const entries = Object.entries(cologneImages)
     entries.sort(([a], [b]) => a.localeCompare(b))
@@ -65,7 +80,7 @@ export default function Gallery() {
 
   const allImages = useMemo(() => {
     return [...imagePool, ...personalImages]
-  }, [imagePool])
+  }, [imagePool, personalImages])
 
   const { isLoading, loadedCount, totalImages } = useImagePreloader(allImages)
 

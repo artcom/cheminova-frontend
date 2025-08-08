@@ -1,6 +1,6 @@
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import SmallButton from "@components/UI/SmallButton"
-import { useState, useRef } from "react"
+import { useEffect, useMemo, useState, useRef } from "react"
 import { styled } from "styled-components"
 
 const PhotoCaptureContainer = styled.div`
@@ -84,20 +84,53 @@ export default function PhotoCapture() {
   const galleryInputRef = useRef(null)
   const { isAndroid } = useDevicePlatform()
 
-  const tasks = ["Of La Nau", "Of yourself", "Of the atmosphere"]
+  const tasks = useMemo(
+    () => ["Of La Nau", "Of yourself", "Of the atmosphere"],
+    [],
+  )
+
+  // Load from localStorage on mount
+  useEffect(() => {
+    try {
+      const stored = JSON.parse(localStorage.getItem("personalImages") || "[]")
+      if (Array.isArray(stored) && stored.length) {
+        const mapped = stored.reduce((acc, url, idx) => {
+          if (url) acc[idx] = url
+          return acc
+        }, {})
+        setTaskImages(mapped)
+        // set current index to first missing one
+        const firstMissing = tasks.findIndex((_, i) => !mapped[i])
+        setCurrentTaskIndex(
+          firstMissing === -1 ? tasks.length - 1 : firstMissing,
+        )
+      }
+    } catch {
+      // ignore storage parse failures
+    }
+  }, [tasks])
+
+  const persistTaskImages = (nextObj) => {
+    const arr = tasks.map((_, i) => nextObj[i] || null)
+    localStorage.setItem("personalImages", JSON.stringify(arr))
+  }
 
   const handleFileChange = (event) => {
     const file = event.target.files[0]
     if (file) {
-      const imageUrl = URL.createObjectURL(file)
-      setTaskImages((prev) => ({
-        ...prev,
-        [currentTaskIndex]: imageUrl,
-      }))
-
-      if (currentTaskIndex < tasks.length - 1) {
-        setCurrentTaskIndex((prev) => prev + 1)
+      const reader = new FileReader()
+      reader.onload = () => {
+        const dataUrl = reader.result
+        setTaskImages((prev) => {
+          const next = { ...prev, [currentTaskIndex]: dataUrl }
+          persistTaskImages(next)
+          return next
+        })
+        if (currentTaskIndex < tasks.length - 1) {
+          setCurrentTaskIndex((prev) => prev + 1)
+        }
       }
+      reader.readAsDataURL(file)
     }
   }
 
@@ -105,6 +138,7 @@ export default function PhotoCapture() {
     setTaskImages((prev) => {
       const newImages = { ...prev }
       delete newImages[taskIndex]
+      persistTaskImages(newImages)
       return newImages
     })
     setCurrentTaskIndex(taskIndex)
@@ -183,47 +217,6 @@ export default function PhotoCapture() {
           ))}
         </TasksContainer>
       </PhotoCaptureContainer>
-
-      <TasksContainer>
-        {tasks.map((task, index) => (
-          <TaskCard key={index}>
-            <TaskHeadline>{task}</TaskHeadline>
-
-            <TaskContent>
-              {taskImages[index] && (
-                <>
-                  <TaskImage
-                    src={taskImages[index]}
-                    alt={`Task ${index + 1} completed`}
-                  />
-                  <SmallButton onClick={() => handleRetake(index)}>
-                    Retake
-                  </SmallButton>
-                </>
-              )}
-
-              {index === currentTaskIndex && !taskImages[index] && (
-                <>
-                  {isAndroid ? (
-                    <>
-                      <SmallButton onClick={handleOpenCamera}>
-                        Take Photo
-                      </SmallButton>
-                      <SmallButton onClick={handleOpenGallery}>
-                        Gallery
-                      </SmallButton>
-                    </>
-                  ) : (
-                    <SmallButton onClick={handleOpenGallery}>
-                      Take Photo
-                    </SmallButton>
-                  )}
-                </>
-              )}
-            </TaskContent>
-          </TaskCard>
-        ))}
-      </TasksContainer>
 
       {Object.keys(taskImages).length === tasks.length && (
         <TaskCard>

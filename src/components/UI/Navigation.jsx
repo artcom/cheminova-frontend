@@ -9,8 +9,15 @@ const NavigationContainer = styled.div`
   flex-shrink: 0;
   z-index: 10;
   margin: 0 auto;
-  align-self: ${({ $position }) =>
-    $position === "bottom" ? "flex-end" : "auto"};
+  ${({ $position }) =>
+    $position === "bottom"
+      ? `
+    position: fixed;
+    left: 50%;
+    transform: translateX(-50%);
+    bottom: 0;
+  `
+      : ``};
 
   ${({ $mode }) => {
     switch ($mode) {
