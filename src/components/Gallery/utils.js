@@ -23,11 +23,33 @@ export const computeGridMetrics = ({
 const chebyshev = (r1, c1, r2, c2) =>
   Math.max(Math.abs(r1 - r2), Math.abs(c1 - c2))
 
+// Deterministic PRNG helpers (mulberry32)
+const mulberry32 = (seed) => {
+  let t = seed >>> 0
+  return () => {
+    t += 0x6d2b79f5
+    let r = Math.imul(t ^ (t >>> 15), 1 | t)
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r)
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+const seededShuffle = (arr, seed) => {
+  const rand = mulberry32(seed)
+  const a = [...arr]
+  for (let i = a.length - 1; i > 0; i--) {
+    const j = Math.floor(rand() * (i + 1))
+    ;[a[i], a[j]] = [a[j], a[i]]
+  }
+  return a
+}
+
 export const selectCentralIndices = ({
   totalTiles,
   tilesPerRow,
   tilesPerColumn,
   count,
+  seed = 12345,
 }) => {
   const primaryMinRow = Math.max(1, Math.floor(tilesPerColumn * 0.25))
   const primaryMaxRow = Math.min(
@@ -71,7 +93,7 @@ export const selectCentralIndices = ({
     pool = [...new Set([...primary, ...fallback])]
   }
 
-  const shuffled = [...pool].sort(() => Math.random() - 0.5)
+  const shuffled = seededShuffle(pool, seed)
   const selected = []
   const noTouchDistance = 2
 
@@ -121,8 +143,10 @@ export const selectCentralIndices = ({
   return selected
 }
 
-export const buildDelays = (count, maxDelay) =>
-  Array.from({ length: count }, () => Math.random() * maxDelay)
+export const buildDelays = (count, maxDelay, seed = 98765) => {
+  const rand = mulberry32(seed)
+  return Array.from({ length: count }, () => rand() * maxDelay)
+}
 
 export const buildTileData = ({
   images,
@@ -136,7 +160,9 @@ export const buildTileData = ({
   personalImages,
   baseImageScale,
   personalScaleMultiplier,
+  seed = 424242,
 }) => {
+  const rand = mulberry32(seed)
   return images.map((image, index) => {
     const row = Math.floor(index / tilesPerRow)
     const column = index % tilesPerRow
@@ -144,8 +170,11 @@ export const buildTileData = ({
     const y = zeroY - row * idealTileWidth
 
     const displacementRange = idealTileWidth * displacementRatio
-    const randomX = (Math.random() - 0.5) * 2 * displacementRange
-    const randomY = (Math.random() - 0.5) * 2 * displacementRange
+    // deterministic jitter per index
+    const jx = (rand() - 0.5) * 2
+    const jy = (rand() - 0.5) * 2
+    const randomX = jx * displacementRange
+    const randomY = jy * displacementRange
 
     const personalIdx = personalImages.indices.indexOf(index)
     const isPersonal = personalIdx !== -1
