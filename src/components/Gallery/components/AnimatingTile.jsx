@@ -13,6 +13,8 @@ import ANIMATION_CONFIG, {
   WRAP_ROTATION,
   DEBUG_GALLERY,
   DEBUG_THROTTLE_MS,
+  CAMERA_DEFAULT_Z,
+  DETAIL_CAMERA_Z,
 } from "../config"
 import { animatePersonal, animateNormal } from "../animationUtils"
 
@@ -28,6 +30,7 @@ export default function AnimatingTile({
   onCompleted,
   onClick,
   detailMode = false,
+  detailStackScale,
   isActive = false,
   stackIndex,
   stackSize,
@@ -102,6 +105,28 @@ export default function AnimatingTile({
       let depthOffset = 0
       let sideOffset = 0
       let relativeDistance = 0
+      let shortest = 0
+
+      // During a switch, freeze the "visual active" until halfway to avoid janky jump
+      let effectiveActive = activeIndex
+      let switchProgress = 1
+      const sw = switchRef.current
+      if (
+        typeof stackSize === "number" &&
+        stackSize > 0 &&
+        sw &&
+        sw.dir &&
+        sw.startMs
+      ) {
+        const elapsed = (performance.now() - sw.startMs) / 1000
+        switchProgress = Math.min(1, Math.max(0, elapsed / STACK_SWITCH_DUR))
+        if (switchProgress < 0.5) {
+          // keep previous active until mid animation
+          const prevActive =
+            (((activeIndex - sw.dir) % stackSize) + stackSize) % stackSize
+          effectiveActive = prevActive
+        }
+      }
       if (
         typeof stackIndex === "number" &&
         typeof stackSize === "number" &&
@@ -109,9 +134,9 @@ export default function AnimatingTile({
         typeof activeIndex === "number"
       ) {
         // compute shortest circular distance
-        const raw = stackIndex - activeIndex
+        const raw = stackIndex - effectiveActive
         const half = Math.floor(stackSize / 2)
-        let shortest = raw
+        shortest = raw
         if (raw > half) shortest = raw - stackSize
         else if (raw < -half) shortest = raw + stackSize
 
@@ -122,11 +147,9 @@ export default function AnimatingTile({
         relativeDistance = diff
 
         // During a switch, the outgoing top card should wrap underneath
-        const sw = switchRef.current
         if (sw && sw.dir && sw.startMs) {
           const dir = sw.dir
-          const elapsed = (performance.now() - sw.startMs) / 1000
-          const progress = Math.min(1, Math.max(0, elapsed / STACK_SWITCH_DUR))
+          const progress = switchProgress
           if (progress >= 1) {
             // switch ended; parent will clear dir/startMs
           }
@@ -153,22 +176,48 @@ export default function AnimatingTile({
           }
         }
       }
-      // Render order for stable stacking: active on top
+      // Render order for stable stacking: ensure uniqueness and active on top
+      const isEffectiveActive =
+        detailMode &&
+        typeof stackIndex === "number" &&
+        typeof stackSize === "number" &&
+        stackSize > 0 &&
+        typeof activeIndex === "number"
+          ? stackIndex === effectiveActive
+          : isActive
+      const ringPos =
+        typeof stackSize === "number" && stackSize > 0
+          ? (stackIndex - effectiveActive + stackSize) % stackSize
+          : 0
       img.renderOrder =
-        1000 +
-        (isActive ? 1000 : 0) +
-        (stackSize ? stackSize - relativeDistance : 0)
+        10000 +
+        (isEffectiveActive ? 10000 : 0) +
+        (stackSize ? (stackSize - relativeDistance) * 100 : 0) +
+        (shortest >= 0 ? 50 : 0) +
+        ringPos
       img.position.x =
         img.position.x + (tx + sideOffset - img.position.x) * STACK_LERP
       img.position.y = img.position.y + (ty - img.position.y) * STACK_LERP
 
       // Active image gets a gentle lift and focus scale
-      const baseScale = baseScaleRef.current
-      const focusScale = isActive ? baseScale * 1.08 : baseScale
-      const focusZ = originalZ + (isActive ? 0.4 : 0.0) + depthOffset
-      img.scale.x = img.scale.x + (focusScale - img.scale.x) * 0.18
-      img.scale.y = img.scale.y + (focusScale - img.scale.y) * 0.18
-      img.position.z = img.position.z + (focusZ - img.position.z) * 0.18
+      // Use a uniform scale for detail stack to avoid size shifts across tiles
+      const baseScale = detailStackScale || baseScaleRef.current
+      const camZ = camera?.position?.z ?? CAMERA_DEFAULT_Z
+      // Use a stable lift scaled by the configured DETAIL_CAMERA_Z relative to default
+      const lift = 0.4 * (DETAIL_CAMERA_Z / CAMERA_DEFAULT_Z)
+      const focusZTarget =
+        originalZ + (isEffectiveActive ? lift : 0.0) + depthOffset
+      // Scale compensation to keep on-screen size roughly stable when z changes
+      const denom = Math.max(0.001, camZ - focusZTarget)
+      const numer = Math.max(0.001, camZ - img.position.z)
+      let comp = numer / denom
+      comp = Math.max(0.9, Math.min(1.15, comp))
+      const focusScaleTarget = isEffectiveActive
+        ? baseScale * 1.08 * comp
+        : baseScale
+      img.scale.x = img.scale.x + (focusScaleTarget - img.scale.x) * 0.18
+      img.scale.y = img.scale.y + (focusScaleTarget - img.scale.y) * 0.18
+      img.position.z = img.position.z + (focusZTarget - img.position.z) * 0.18
 
       // Debug active tile's transform to trace disappearing issues
       if (DEBUG_GALLERY && isActive) {
@@ -222,6 +271,19 @@ export default function AnimatingTile({
         grayscaleStart: grayscaleStartTime,
         flags,
       })
+    }
+
+    // When not in detail mode, smoothly restore XY back to grid position
+    const RESTORE_LERP = 0.2
+    if (!detailMode) {
+      img.position.x =
+        img.position.x + (position[0] - img.position.x) * RESTORE_LERP
+      img.position.y =
+        img.position.y + (position[1] - img.position.y) * RESTORE_LERP
+      // restore material depth behavior for regular rendering
+      mat.depthWrite = true
+      mat.depthTest = true
+      mat.transparent = true
     }
 
     // Completion callback dispatch

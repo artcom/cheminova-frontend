@@ -26,6 +26,8 @@ export default function GalleryContent({
   canEnterDetail = false,
   activeIndex = 0,
   setActiveIndex,
+  detailStackScale,
+  setDetailStackScale,
   onStackSizeChange,
   switchInfo,
 }) {
@@ -65,6 +67,14 @@ export default function GalleryContent({
     const maxDelay = Math.max(...delays)
     const personalAnimationStartTime = maxDelay + ANIMATION_DURATION
 
+    // On small screens, reduce base scale slightly so 5 columns fit without overlap
+    const responsiveBaseScale =
+      vw <= 480 ? Math.min(1.0, BASE_IMAGE_SCALE) * 0.9 : BASE_IMAGE_SCALE
+    const responsivePersonalMultiplier =
+      vw <= 480
+        ? Math.min(1.2, PERSONAL_SCALE_MULTIPLIER)
+        : PERSONAL_SCALE_MULTIPLIER
+
     const tileData = buildTileData({
       images,
       tilesPerRow,
@@ -75,13 +85,24 @@ export default function GalleryContent({
       delays,
       maxDelay,
       personalImages: { indices: personalIndices, urls: personalImages },
-      baseImageScale: BASE_IMAGE_SCALE,
-      personalScaleMultiplier: PERSONAL_SCALE_MULTIPLIER,
+      baseImageScale: responsiveBaseScale,
+      personalScaleMultiplier: responsivePersonalMultiplier,
       seed: totalTiles * 7 + tilesPerRow * 11 + tilesPerColumn * 19,
     })
 
-    return { tileData, personalAnimationStartTime }
+    return {
+      tileData,
+      personalAnimationStartTime,
+      responsiveBaseScale,
+      idealTileWidth,
+    }
   }, [ready, vw, vh, targetTilesPerRow, imagePool, personalImages])
+
+  // If not yet captured, default to the first tile’s scale; once captured, keep it until exit
+  const computedDefaultDetailScale = useMemo(() => {
+    if (!ready || !tileData.length) return 1
+    return tileData[0]?.scale || 1
+  }, [ready, tileData])
 
   // Completion tracking
   const completedRef = useRef(0)
@@ -119,11 +140,16 @@ export default function GalleryContent({
                 if (DEBUG_GALLERY)
                   console.debug("[GalleryContent] enter detail idx", idx)
               }
+              if (!detailStackScale && setDetailStackScale) {
+                // Capture the scale of the clicked tile to preserve perceived size
+                setDetailStackScale(tile.scale)
+              }
               setDetailMode(true)
             }
           }}
           detailMode={detailMode}
           canEnterDetail={canEnterDetail}
+          detailStackScale={detailStackScale || computedDefaultDetailScale}
           isActive={detailMode && idx === activeIndex}
           stackIndex={idx}
           stackSize={tileData.length}

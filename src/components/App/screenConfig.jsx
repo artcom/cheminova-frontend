@@ -52,7 +52,7 @@ export const createMainLayoutScreens = (
     navigationMode: "single",
     navigationPosition: "bottom",
     singleButtonVariant: "arrowDown",
-    vignetteIntensity: 0,
+    vignetteIntensity: null,
   },
   {
     children: <Gallery />,

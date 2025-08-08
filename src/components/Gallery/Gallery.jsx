@@ -56,6 +56,7 @@ export default function Gallery() {
   const [stackSize, setStackSize] = useState(0)
   const [switchDir, setSwitchDir] = useState(0) // 1 next, -1 prev, 0 idle
   const switchStartRef = useRef(0) // performance.now() timestamp
+  const [detailStackScale, setDetailStackScale] = useState(null)
 
   // Load personal images from localStorage if present
   const personalImages = useMemo(() => {
@@ -125,6 +126,8 @@ export default function Gallery() {
               canEnterDetail={allAnimsDone && !detailMode}
               activeIndex={activeIndex}
               setActiveIndex={setActiveIndex}
+              detailStackScale={detailStackScale}
+              setDetailStackScale={setDetailStackScale}
               onStackSizeChange={(n) => {
                 if (n !== stackSize && DEBUG_GALLERY)
                   console.debug("[Gallery] stack size", n)
@@ -157,6 +160,7 @@ export default function Gallery() {
                 onSelect={() => {
                   if (DEBUG_GALLERY) console.debug("[Gallery] exit detail")
                   setDetailMode(false)
+                  setDetailStackScale(null)
                 }}
                 onPrev={() => {
                   if (stackSize <= 0) return

@@ -1,10 +1,9 @@
 import { useEffect, useState } from "react"
 
 export default function useResponsiveTilesPerRow() {
+  // On all screens up to 1200px (including mobile), use 5 columns; otherwise 6.
   const compute = () => {
     const w = typeof window !== "undefined" ? window.innerWidth : 1024
-    if (w <= 480) return 3
-    if (w <= 768) return 4
     if (w <= 1200) return 5
     return 6
   }

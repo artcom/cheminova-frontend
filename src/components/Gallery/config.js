@@ -11,7 +11,7 @@ export const MAX_RANDOM_DELAY = 5.5
 
 // Camera / detail-view constants
 export const CAMERA_DEFAULT_Z = 5
-export const DETAIL_CAMERA_Z = 4.1 // zoom-in target for detail view
+export const DETAIL_CAMERA_Z = 2.1 // zoom-in target for detail view
 export const CAMERA_LERP = 0.06 // smoothing factor per frame
 
 // Detail stacking behavior
