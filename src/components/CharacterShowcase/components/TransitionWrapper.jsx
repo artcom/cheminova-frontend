@@ -1,6 +1,6 @@
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
 
-export const TransitionWrapper = ({ isActive, children }) => {
+export const TransitionWrapper = ({ isActive, children, ...props }) => {
   return (
     <motion.div
       initial={false}
@@ -28,6 +28,7 @@ export const TransitionWrapper = ({ isActive, children }) => {
         alignItems: "center",
         justifyContent: "center",
       }}
+      {...props}
     >
       {children}
     </motion.div>

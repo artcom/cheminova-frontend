@@ -19,19 +19,22 @@ const GlobalStyles = createGlobalStyle`
     background-color: ${(props) => props.theme.colors.background.dark};
     width: 100%;
     height: 100%;
-    color: ${(props) => props.theme.colors.background.paper};
-    font-family: ${(props) => props.theme.fontFamily};
+    overflow: hidden;
+    color: ${(props) => props.theme.colors.text.primary};
+    font-family: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
     font-variation-settings: "wdth" 100;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden;
+
   }
 
   #root {
     width: 100%;
     height: 100%;
+    overflow: hidden;
     display: grid;
     place-items: center;
   }

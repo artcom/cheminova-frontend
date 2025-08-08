@@ -1,18 +1,30 @@
-import { useState } from "react"
-import { Container } from "./styles"
-import { TransitionWrapper } from "./components/TransitionWrapper"
-import { IntroScreen } from "./components/IntroScreen"
-import { CharacterCarousel } from "./components/CharacterCarousel"
-import { CHARACTER_THEMES, INTRO_GRADIENT } from "./constants"
+import { useState, useEffect } from "react"
+import { MainLayoutContainer } from "./styles"
+import { CHARACTER_DATA } from "./constants"
+import useGlobalState from "@hooks/useGlobalState"
+import IntroScreen from "./components/IntroScreen"
+import CharacterCarousel from "./components/CharacterCarousel"
 
-const CharacterShowcase = () => {
+const CharacterShowcase = ({
+  onCharacterSelected,
+  onCharacterChange,
+  onPrev,
+  onNext,
+  onSelect,
+}) => {
   const [showIntro, setShowIntro] = useState(true)
-  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(1)
+  const {
+    setSelectedCharacter,
+    currentCharacterIndex,
+    setCurrentCharacterIndex,
+  } = useGlobalState()
 
-  // Get theme colors based on current state
-  const themeColors = showIntro
-    ? INTRO_GRADIENT
-    : CHARACTER_THEMES[currentCharacterIndex]
+  useEffect(() => {
+    if (!showIntro && onCharacterChange) {
+      const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
+      onCharacterChange(currentCharacter)
+    }
+  }, [currentCharacterIndex, showIntro, onCharacterChange])
 
   const handleIntroComplete = () => {
     setShowIntro(false)
@@ -25,29 +37,72 @@ const CharacterShowcase = () => {
     }
   }
 
+  const handleCharacterChange = (newIndex) => {
+    setCurrentCharacterIndex(newIndex)
+  }
+
+  const handleSelectCharacter = () => {
+    const selectedCharacter = CHARACTER_DATA[currentCharacterIndex]
+    setSelectedCharacter(selectedCharacter)
+    if (onCharacterSelected) {
+      onCharacterSelected()
+    }
+  }
+
+  const handlePrevCharacter = () => {
+    if (onPrev) {
+      onPrev()
+    } else {
+      const newIndex =
+        currentCharacterIndex > 0
+          ? currentCharacterIndex - 1
+          : CHARACTER_DATA.length - 1
+      setCurrentCharacterIndex(newIndex)
+    }
+  }
+
+  const handleNextCharacter = () => {
+    if (onNext) {
+      onNext()
+    } else {
+      const newIndex = (currentCharacterIndex + 1) % CHARACTER_DATA.length
+      setCurrentCharacterIndex(newIndex)
+    }
+  }
+
+  const handleSelectAndContinue = () => {
+    handleSelectCharacter()
+    if (onSelect) onSelect()
+  }
+
+  const handleSingleNavigation = () => {
+    if (showIntro) {
+      handleIntroComplete()
+    } else {
+      if (onNext) onNext()
+    }
+  }
+
+  const ContainerComponent = MainLayoutContainer
+
   return (
-    <Container
-      animate={{
-        background: `linear-gradient(135deg, ${themeColors[0]} 0%, ${themeColors[1]} 100%)`,
-      }}
-      transition={{
-        background: { duration: 0.8, ease: "easeOut" },
-      }}
-    >
-      <TransitionWrapper isActive={showIntro}>
+    <ContainerComponent>
+      {showIntro ? (
         <IntroScreen
           onCharacterSelect={handleCharacterSelection}
           onContinue={handleIntroComplete}
         />
-      </TransitionWrapper>
-
-      <TransitionWrapper isActive={!showIntro}>
+      ) : (
         <CharacterCarousel
           selectedIndex={currentCharacterIndex}
-          onSelectionChange={setCurrentCharacterIndex}
+          onSelectionChange={handleCharacterChange}
+          onSelectCharacter={handleSelectAndContinue}
+          onPrev={handlePrevCharacter}
+          onNext={handleNextCharacter}
+          onSingleNavigation={handleSingleNavigation}
         />
-      </TransitionWrapper>
-    </Container>
+      )}
+    </ContainerComponent>
   )
 }
 

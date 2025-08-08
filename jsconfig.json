@@ -1,6 +1,8 @@
 {
   "compilerOptions": {
     "baseUrl": ".",
+    "checkJs": false,
+    "allowJs": true,
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
@@ -10,5 +12,6 @@
       "@theme/*": ["src/theme/*"]
     }
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*"],
+  "exclude": ["node_modules"]
 }

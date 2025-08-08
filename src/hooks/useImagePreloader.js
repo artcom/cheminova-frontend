@@ -1,65 +1,67 @@
-import { useState, useEffect } from "react"
+import { useEffect, useRef, useState } from "react"
 
-export default function useImagePreloader(imageUrls) {
-  const [loadedImages, setLoadedImages] = useState(new Set())
-  const [errorImages, setErrorImages] = useState(new Set())
-  const [isLoading, setIsLoading] = useState(true)
+const useImagePreloader = (imageUrls = [], shouldPreload = true) => {
+  const preloadedImages = useRef(new Set())
+  const imageElements = useRef(new Map())
+  const [preloadedCount, setPreloadedCount] = useState(0)
 
   useEffect(() => {
-    if (!imageUrls || imageUrls.length === 0) {
-      setIsLoading(false)
+    if (!shouldPreload || !imageUrls.length) {
       return
     }
 
-    let isMounted = true
-    setIsLoading(true)
-    setLoadedImages(new Set())
-    setErrorImages(new Set())
+    // Snapshot refs for use within this effect's callbacks and cleanup
+    const imagesMap = imageElements.current
+    const preloadedSet = preloadedImages.current
 
-    const loadImage = (url) => {
-      return new Promise((resolve) => {
+    const preloadImages = () => {
+      imageUrls.forEach((url) => {
+        if (preloadedSet.has(url)) {
+          return
+        }
+
         const img = new Image()
 
         img.onload = () => {
-          if (isMounted) {
-            setLoadedImages((prev) => new Set([...prev, url]))
-          }
-          resolve({ url, success: true })
+          preloadedSet.add(url)
+          setPreloadedCount(preloadedSet.size)
+          console.log(`✅ Preloaded image: ${url}`)
         }
 
         img.onerror = () => {
-          if (isMounted) {
-            setErrorImages((prev) => new Set([...prev, url]))
-          }
-          resolve({ url, success: false })
+          console.warn(`❌ Failed to preload image: ${url}`)
         }
 
+        imagesMap.set(url, img)
         img.src = url
       })
     }
 
-    const loadAllImages = async () => {
-      const promises = imageUrls.map(loadImage)
-      await Promise.all(promises)
-
-      if (isMounted) {
-        setIsLoading(false)
-      }
-    }
-
-    loadAllImages()
+    const timeoutId = setTimeout(preloadImages, 100)
 
     return () => {
-      isMounted = false
+      clearTimeout(timeoutId)
+      imagesMap.clear()
     }
-  }, [imageUrls])
+  }, [imageUrls, shouldPreload])
+
+  useEffect(() => {
+    // Snapshot refs for cleanup on unmount
+    const imagesMap = imageElements.current
+    const preloadedSet = preloadedImages.current
+    return () => {
+      imagesMap.clear()
+      preloadedSet.clear()
+      setPreloadedCount(0)
+    }
+  }, [])
 
   return {
-    isLoading,
-    loadedImages,
-    errorImages,
-    totalImages: imageUrls?.length || 0,
-    loadedCount: loadedImages.size,
-    errorCount: errorImages.size,
+    isPreloaded: (url) => preloadedImages.current.has(url),
+    preloadedCount,
+    totalCount: imageUrls.length,
+    isAllPreloaded: imageUrls.length > 0 && preloadedCount === imageUrls.length,
   }
 }
+
+export default useImagePreloader
