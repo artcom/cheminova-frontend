@@ -35,6 +35,10 @@ export const SCALE_COMP_MAX = 1.15
 // Lerp constants used outside of animation utils
 export const RESTORE_LERP = 0.2
 
+// Stack assembly easing to prevent first-switch jank
+export const STACK_ASSEMBLY_DUR = 0.35 // seconds
+export const STACK_FADE_LERP = 0.18 // per-frame opacity lerp while assembling
+
 // Debugging
 export const DEBUG_GALLERY = true
 export const DEBUG_THROTTLE_MS = 150

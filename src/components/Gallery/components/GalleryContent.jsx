@@ -30,6 +30,7 @@ export default function GalleryContent({
   setDetailStackScale,
   onStackSizeChange,
   switchInfo,
+  onDebugDataUpdate,
 }) {
   const { viewport } = useThree()
   const vw = viewport?.width || 0
@@ -98,6 +99,33 @@ export default function GalleryContent({
     }
   }, [ready, vw, vh, targetTilesPerRow, imagePool, personalImages])
 
+  // Freeze tile data and timings once we enter detail mode to avoid jank from
+  // camera-affected viewport changes recomputing grid metrics mid-stack.
+  const frozenRef = useRef({ tileData: null, personalStart: 0 })
+  const prevDetailRef = useRef(false)
+  useEffect(() => {
+    if (detailMode && !prevDetailRef.current) {
+      // taking a snapshot at the moment of entering detail view
+      frozenRef.current = {
+        tileData,
+        personalStart: personalAnimationStartTime,
+      }
+    } else if (!detailMode && prevDetailRef.current) {
+      // leaving detail view
+      frozenRef.current = { tileData: null, personalStart: 0 }
+    }
+    prevDetailRef.current = detailMode
+  }, [detailMode, tileData, personalAnimationStartTime])
+
+  const effectiveTileData =
+    detailMode && frozenRef.current.tileData
+      ? frozenRef.current.tileData
+      : tileData
+  const effectivePersonalStart =
+    detailMode && frozenRef.current.personalStart
+      ? frozenRef.current.personalStart
+      : personalAnimationStartTime
+
   // If not yet captured, default to the first tile’s scale; once captured, keep it until exit
   const computedDefaultDetailScale = useMemo(() => {
     if (!ready || !tileData.length) return 1
@@ -106,7 +134,7 @@ export default function GalleryContent({
 
   // Completion tracking
   const completedRef = useRef(0)
-  const total = tileData.length
+  const total = effectiveTileData.length
   useEffect(() => {
     completedRef.current = 0
   }, [total])
@@ -118,19 +146,45 @@ export default function GalleryContent({
   }
 
   useEffect(() => {
-    if (onStackSizeChange) onStackSizeChange(tileData.length)
-  }, [tileData.length, onStackSizeChange])
+    if (onStackSizeChange) onStackSizeChange(effectiveTileData.length)
+  }, [effectiveTileData.length, onStackSizeChange])
+
+  // Track real-time positions for debug overlay
+  const currentPositionsRef = useRef({})
+
+  const handlePositionUpdate = (tileIndex, position) => {
+    currentPositionsRef.current[tileIndex] = position
+    // Update debug data with current positions
+    if (onDebugDataUpdate && effectiveTileData.length > 0) {
+      const updatedTileData = effectiveTileData.map((tile, idx) => ({
+        ...tile,
+        currentPosition: currentPositionsRef.current[idx] || tile.position,
+      }))
+      onDebugDataUpdate(updatedTileData)
+    }
+  }
+
+  // Update debug data when tileData changes
+  useEffect(() => {
+    if (onDebugDataUpdate && effectiveTileData.length > 0) {
+      const updatedTileData = effectiveTileData.map((tile, idx) => ({
+        ...tile,
+        currentPosition: currentPositionsRef.current[idx] || tile.position,
+      }))
+      onDebugDataUpdate(updatedTileData)
+    }
+  }, [effectiveTileData, onDebugDataUpdate])
 
   return (
     <group>
-      {tileData.map((tile, idx) => (
+      {effectiveTileData.map((tile, idx) => (
         <AnimatingTile
           key={tile.key}
           position={tile.position}
           url={tile.image}
           delay={tile.delay}
           isPersonal={tile.isPersonal}
-          personalAnimationStartTime={personalAnimationStartTime}
+          personalAnimationStartTime={effectivePersonalStart}
           targetScale={tile.scale}
           onCompleted={handleTileCompleted}
           onClick={() => {
@@ -152,9 +206,10 @@ export default function GalleryContent({
           detailStackScale={detailStackScale || computedDefaultDetailScale}
           isActive={detailMode && idx === activeIndex}
           stackIndex={idx}
-          stackSize={tileData.length}
+          stackSize={effectiveTileData.length}
           activeIndex={activeIndex}
           switchInfo={switchInfo}
+          onPositionUpdate={DEBUG_GALLERY ? handlePositionUpdate : undefined}
         />
       ))}
     </group>

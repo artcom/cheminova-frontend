@@ -19,6 +19,8 @@ import ANIMATION_CONFIG, {
   SCALE_COMP_MIN,
   SCALE_COMP_MAX,
   RESTORE_LERP,
+  STACK_ASSEMBLY_DUR,
+  STACK_FADE_LERP,
 } from "../config"
 import { animatePersonal, animateNormal } from "../animationUtils"
 
@@ -44,12 +46,14 @@ export default function AnimatingTile({
   const { camera, size } = useThree()
   const imageRef = useRef()
   const originalZRef = useRef(position[2])
+  const deckSeedRef = useRef(position[2])
   const baseScaleRef = useRef(targetScale)
   const lastLogMsRef = useRef(0)
   const switchRef = useRef({ dir: 0, startMs: 0 })
   const tunedMatRef = useRef(false)
   const lastActiveLogRef = useRef(0)
   const tmpVecRef = useRef(new Vector3())
+  const detailEnterMsRef = useRef(0)
 
   // Keep latest switch info in a ref for useFrame
   useEffect(() => {
@@ -87,8 +91,19 @@ export default function AnimatingTile({
         mat.transparent = true
         mat.depthWrite = false
         mat.depthTest = false
-        mat.opacity = 1
+        // Don't snap opacity to 1 immediately; we'll lerp during assembly
+        if (typeof mat.opacity !== "number") mat.opacity = 1
         tunedMatRef.current = true
+      }
+      // Assembly easing progress for deck offset + opacity
+      let assemblyK = 1
+      if (detailEnterMsRef.current) {
+        const elapsed = (performance.now() - detailEnterMsRef.current) / 1000
+        assemblyK = Math.min(1, Math.max(0, elapsed / STACK_ASSEMBLY_DUR))
+        // Fade opacity smoothly towards 1
+        if (typeof mat.opacity === "number") {
+          mat.opacity = mat.opacity + (1 - mat.opacity) * STACK_FADE_LERP
+        }
       }
       const originalZ = originalZRef.current
       // target center with optional deck offset
@@ -96,11 +111,12 @@ export default function AnimatingTile({
       let ty = 0
       if (ENABLE_DECK_EFFECT) {
         // Use z to derive a small deterministic offset and tilt
-        const seed = originalZ * 31.4159
+        const seed = (deckSeedRef.current ?? originalZ) * 31.4159
         const sx = Math.sin(seed)
         const sy = Math.cos(seed)
-        tx = sx * DECK_OFFSET_AMPLITUDE
-        ty = sy * DECK_OFFSET_AMPLITUDE * 0.6
+        // Ramp in the deck offset to avoid a sudden jump on entry
+        tx = sx * DECK_OFFSET_AMPLITUDE * assemblyK
+        ty = sy * DECK_OFFSET_AMPLITUDE * 0.6 * assemblyK
         const r = sx * DECK_ROTATION_MAX
         // damp rotation to avoid accumulating drift
         img.rotation.z = img.rotation.z + (r - img.rotation.z) * 0.12
@@ -111,8 +127,11 @@ export default function AnimatingTile({
       let relativeDistance = 0
       let shortest = 0
 
-      // During a switch, freeze the "visual active" until halfway to avoid janky jump
-      let effectiveActive = activeIndex
+      // During a switch, use different pivots for transforms vs. render-order:
+      // - transforms (position/rotation) freeze the previous active until ~midway
+      // - render order favors the new active immediately so it draws on top
+      let effectiveActiveTransform = activeIndex
+      let effectiveActiveRender = activeIndex
       let switchProgress = 1
       const sw = switchRef.current
       if (
@@ -124,12 +143,14 @@ export default function AnimatingTile({
       ) {
         const elapsed = (performance.now() - sw.startMs) / 1000
         switchProgress = Math.min(1, Math.max(0, elapsed / STACK_SWITCH_DUR))
+        const prevActive =
+          (((activeIndex - sw.dir) % stackSize) + stackSize) % stackSize
+        // Keep previous active as the transform pivot until halfway
         if (switchProgress < 0.5) {
-          // keep previous active until mid animation
-          const prevActive =
-            (((activeIndex - sw.dir) % stackSize) + stackSize) % stackSize
-          effectiveActive = prevActive
+          effectiveActiveTransform = prevActive
         }
+        // Always prioritize the new active for render order so it draws on top
+        effectiveActiveRender = activeIndex
       }
       if (
         typeof stackIndex === "number" &&
@@ -138,7 +159,7 @@ export default function AnimatingTile({
         typeof activeIndex === "number"
       ) {
         // compute shortest circular distance
-        const raw = stackIndex - effectiveActive
+        const raw = stackIndex - effectiveActiveTransform
         const half = Math.floor(stackSize / 2)
         shortest = raw
         if (raw > half) shortest = raw - stackSize
@@ -187,11 +208,11 @@ export default function AnimatingTile({
         typeof stackSize === "number" &&
         stackSize > 0 &&
         typeof activeIndex === "number"
-          ? stackIndex === effectiveActive
+          ? stackIndex === effectiveActiveRender
           : isActive
       const ringPos =
         typeof stackSize === "number" && stackSize > 0
-          ? (stackIndex - effectiveActive + stackSize) % stackSize
+          ? (stackIndex - effectiveActiveRender + stackSize) % stackSize
           : 0
       img.renderOrder =
         10000 +
@@ -328,9 +349,32 @@ export default function AnimatingTile({
       mat.opacity = initialOpacity
     }
     originalZRef.current = position[2]
-    baseScaleRef.current = targetScale
+    deckSeedRef.current = position[2]
+    // Avoid overwriting the captured base scale while in detail mode,
+    // which could cause the first switch to change perceived size.
+    if (!detailMode) {
+      baseScaleRef.current = targetScale
+    }
     tunedMatRef.current = false
-  }, [initialPosition, initialScale, initialOpacity, position, targetScale])
+  }, [
+    initialPosition,
+    initialScale,
+    initialOpacity,
+    position,
+    targetScale,
+    detailMode,
+  ])
+
+  // Track entering/exiting detail mode to rebase Z baseline
+  useEffect(() => {
+    if (detailMode) {
+      detailEnterMsRef.current = performance.now()
+      // Rebase baseline Z for stacking to eliminate grid jitter influencing depth
+      originalZRef.current = 0
+    } else {
+      detailEnterMsRef.current = 0
+    }
+  }, [detailMode])
 
   return (
     <Image

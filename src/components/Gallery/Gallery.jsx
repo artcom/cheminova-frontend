@@ -36,6 +36,46 @@ const Stage = styled.div`
   overflow: hidden;
 `
 
+const DebugOverlay = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  background: rgba(0, 0, 0, 0.8);
+  color: white;
+  padding: 10px;
+  border-radius: 5px;
+  font-family: monospace;
+  font-size: 12px;
+  max-height: 80vh;
+  overflow-y: auto;
+  z-index: 100;
+  min-width: 300px;
+`
+
+const DebugControls = styled.div`
+  position: absolute;
+  top: 10px;
+  right: 10px;
+  display: flex;
+  gap: 5px;
+  z-index: 101;
+`
+
+const DebugButton = styled.button`
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid #333;
+  padding: 5px 10px;
+  border-radius: 3px;
+  font-family: monospace;
+  font-size: 11px;
+  cursor: pointer;
+
+  &:hover {
+    background: rgba(0, 0, 0, 0.9);
+  }
+`
+
 const defaultPersonalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
 
 const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
@@ -53,6 +93,8 @@ export default function Gallery() {
   const [switchDir, setSwitchDir] = useState(0) // 1 next, -1 prev, 0 idle
   const switchStartRef = useRef(0) // performance.now() timestamp
   const [detailStackScale, setDetailStackScale] = useState(null)
+  const [showDebugOverlay, setShowDebugOverlay] = useState(false)
+  const [tileDebugData, setTileDebugData] = useState([])
 
   // Load personal images from localStorage if present
   const personalImages = useMemo(
@@ -117,9 +159,109 @@ export default function Gallery() {
                 setStackSize(n)
               }}
               switchInfo={{ dir: switchDir, startMs: switchStartRef.current }}
+              onDebugDataUpdate={DEBUG_GALLERY ? setTileDebugData : undefined}
             />
           </StackBump>
         </Canvas>
+
+        {DEBUG_GALLERY && (
+          <>
+            <DebugControls>
+              <DebugButton
+                onClick={() => setShowDebugOverlay(!showDebugOverlay)}
+              >
+                {showDebugOverlay ? "Hide Debug" : "Show Debug"}
+              </DebugButton>
+              <DebugButton
+                onClick={() => {
+                  console.group("🎯 Gallery Position Debug Data")
+                  console.log("Gallery State:", {
+                    detailMode,
+                    activeIndex,
+                    stackSize,
+                    tilesPerRow,
+                    totalTiles: tileDebugData.length,
+                  })
+                  console.log("Tile Positions:")
+                  tileDebugData.forEach((tile, idx) => {
+                    console.log(
+                      `Tile ${idx}${tile.isPersonal ? " (Personal)" : ""}:`,
+                      {
+                        targetPosition: tile.position,
+                        currentPositionX: tile.currentPosition
+                          ? tile.currentPosition[0]
+                          : tile.position[0],
+                        currentPositionY: tile.currentPosition
+                          ? tile.currentPosition[1]
+                          : tile.position[1],
+                        currentPositionZ: tile.currentPosition
+                          ? tile.currentPosition[2]
+                          : tile.position[2],
+                        scale: tile.scale,
+                        delay: tile.delay,
+                        isActive: idx === activeIndex && detailMode,
+                      },
+                    )
+                  })
+                  console.groupEnd()
+                }}
+              >
+                Log Positions
+              </DebugButton>
+            </DebugControls>
+
+            {showDebugOverlay && (
+              <DebugOverlay>
+                <div style={{ marginBottom: "10px", fontWeight: "bold" }}>
+                  Gallery Debug Info ({tileDebugData.length} tiles)
+                </div>
+                <div style={{ marginBottom: "10px" }}>
+                  Detail Mode: {detailMode ? "ON" : "OFF"} | Active Index:{" "}
+                  {activeIndex} | Stack Size: {stackSize}
+                </div>
+                {tileDebugData.map((tile, idx) => (
+                  <div
+                    key={idx}
+                    style={{
+                      marginBottom: "8px",
+                      padding: "5px",
+                      backgroundColor:
+                        idx === activeIndex && detailMode
+                          ? "rgba(255, 255, 0, 0.2)"
+                          : "transparent",
+                      border: tile.isPersonal
+                        ? "1px solid #ff6b6b"
+                        : "1px solid #333",
+                    }}
+                  >
+                    <div
+                      style={{
+                        fontWeight: "bold",
+                        color: tile.isPersonal ? "#ff6b6b" : "#4ecdc4",
+                      }}
+                    >
+                      Tile {idx} {tile.isPersonal ? "(Personal)" : ""}
+                    </div>
+                    <div>
+                      Position: [{tile.position[0].toFixed(3)},{" "}
+                      {tile.position[1].toFixed(3)},{" "}
+                      {tile.position[2].toFixed(3)}]
+                    </div>
+                    <div>Scale: {tile.scale.toFixed(3)}</div>
+                    <div>Delay: {tile.delay.toFixed(2)}s</div>
+                    {tile.currentPosition && (
+                      <div style={{ color: "#90ee90" }}>
+                        Current: [{tile.currentPosition[0].toFixed(3)},{" "}
+                        {tile.currentPosition[1].toFixed(3)},{" "}
+                        {tile.currentPosition[2].toFixed(3)}]
+                      </div>
+                    )}
+                  </div>
+                ))}
+              </DebugOverlay>
+            )}
+          </>
+        )}
 
         <AnimatePresence>
           {detailMode && (
