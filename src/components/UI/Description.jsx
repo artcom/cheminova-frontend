@@ -8,6 +8,7 @@ const DescriptionBlock = styled(motion.div)`
   justify-content: center;
   align-items: flex-start;
   gap: 0.75rem;
+  padding: 0 1.56125rem;
   position: relative;
   z-index: 2;
 `
