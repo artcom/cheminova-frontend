@@ -2,7 +2,7 @@
 
 // Layout / tile constants
 export const DISPLACEMENT_RATIO = 0.05
-export const BASE_IMAGE_SCALE = 1.15
+export const BASE_IMAGE_SCALE = 1.25
 export const PERSONAL_SCALE_MULTIPLIER = 1.25
 
 // Timing constants

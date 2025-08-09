@@ -70,7 +70,7 @@ export default function GalleryContent({
 
     // On small screens, reduce base scale slightly so 5 columns fit without overlap
     const responsiveBaseScale =
-      vw <= 480 ? Math.min(1.0, BASE_IMAGE_SCALE) * 0.9 : BASE_IMAGE_SCALE
+      vw <= 480 ? Math.min(1.2, BASE_IMAGE_SCALE) * 0.9 : BASE_IMAGE_SCALE
     const responsivePersonalMultiplier =
       vw <= 480
         ? Math.min(1.2, PERSONAL_SCALE_MULTIPLIER)
