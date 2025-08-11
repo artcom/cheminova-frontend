@@ -1,6 +1,6 @@
-import Alice from "./assets/1.webp"
-import Bob from "./assets/2.webp"
-import Charlie from "./assets/3.webp"
+import Alice from "./assets/1.png"
+import Bob from "./assets/2.png"
+import Charlie from "./assets/3.png"
 
 export const CHARACTER_DATA = [
   {

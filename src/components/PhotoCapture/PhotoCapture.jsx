@@ -48,6 +48,7 @@ const TaskCard = styled.div`
   flex-shrink: 0;
   border-radius: 0 1.75rem 1.75rem 0;
   background-color: #f1ece1;
+  position: relative;
 `
 
 const TaskHeadline = styled.h2`
@@ -67,10 +68,15 @@ const TaskContent = styled.div`
 `
 
 const TaskImage = styled.img`
-  width: 3rem;
-  height: 3rem;
+  width: 7rem;
+  height: 7rem;
+  position: absolute;
+  right: 0;
+  top: 50%;
+  transform: translateY(-50%);
+  margin-right: 2rem;
+  border-radius: 1rem;
   object-fit: cover;
-  border-radius: 0.5rem;
 `
 
 const HiddenInput = styled.input`
@@ -84,10 +90,7 @@ export default function PhotoCapture() {
   const galleryInputRef = useRef(null)
   const { isAndroid } = useDevicePlatform()
 
-  const tasks = useMemo(
-    () => ["Of La Nau", "Of yourself", "Of the atmosphere"],
-    [],
-  )
+  const tasks = useMemo(() => ["Of La Nau", "Of yourself", "Of Kölle"], [])
 
   // Load from localStorage on mount
   useEffect(() => {
@@ -184,13 +187,13 @@ export default function PhotoCapture() {
               <TaskContent>
                 {taskImages[index] && (
                   <>
+                    <SmallButton onClick={() => handleRetake(index)}>
+                      Retake
+                    </SmallButton>
                     <TaskImage
                       src={taskImages[index]}
                       alt={`Task ${index + 1} completed`}
                     />
-                    <SmallButton onClick={() => handleRetake(index)}>
-                      Retake
-                    </SmallButton>
                   </>
                 )}
 
