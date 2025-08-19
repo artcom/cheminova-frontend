@@ -10,7 +10,6 @@ const useImagePreloader = (imageUrls = [], shouldPreload = true) => {
       return
     }
 
-    // Snapshot refs for use within this effect's callbacks and cleanup
     const imagesMap = imageElements.current
     const preloadedSet = preloadedImages.current
 
