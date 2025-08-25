@@ -24,7 +24,6 @@ export default function IntroScreen({ onCharacterSelect }) {
               delay: 0.6 + index * 0.1,
               ease: "easeOut",
             }}
-            whileHover={{ y: -10 }}
             onClick={() => onCharacterSelect(index)}
           >
             <IntroCharacterImage
@@ -36,7 +35,6 @@ export default function IntroScreen({ onCharacterSelect }) {
                 delay: 0.8 + index * 0.1,
                 ease: "easeOut",
               }}
-              whileHover={{ scale: 1.05 }}
             />
           </IntroCharacterItem>
         ))}

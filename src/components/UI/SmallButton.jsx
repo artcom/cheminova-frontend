@@ -24,10 +24,6 @@ const StyledSmallButton = styled.button`
   font-weight: 700;
   line-height: normal;
 
-  &:hover {
-    opacity: 0.8;
-  }
-
   &:active {
     transform: scale(0.98);
   }
