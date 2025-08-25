@@ -31,8 +31,7 @@ const VignetteContainer = styled.div`
 const GradientWelcome = styled.div`
   position: absolute;
   top: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   width: 100%;
   height: 11.4375rem;
   pointer-events: none;
@@ -48,8 +47,7 @@ const GradientWelcome = styled.div`
 const GradientCharacter = styled.div`
   position: absolute;
   bottom: 0;
-  left: 50%;
-  transform: translateX(-50%);
+  left: 0;
   width: 100%;
   height: 18.25rem;
   pointer-events: none;
