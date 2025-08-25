@@ -2,6 +2,7 @@ import { motion, AnimatePresence } from "motion/react"
 import { styled } from "styled-components"
 import Headline from "./Headline"
 import SubHeadline from "./SubHeadline"
+import LegalNotice from "./LegalNotice"
 
 const HeaderLayout = styled(motion.div)`
   display: flex;
@@ -13,10 +14,11 @@ const HeaderLayout = styled(motion.div)`
   z-index: 3;
 `
 
-function Header({ headline, subheadline }) {
+function Header({ headline, subheadline, legalNotice, setShowScreen }) {
   return (
     <HeaderLayout>
       <AnimatePresence mode="popLayout">
+        {legalNotice && <LegalNotice setShowScreen={setShowScreen} />}
         {subheadline && (
           <SubHeadline
             key={`subheadline-${subheadline}`}

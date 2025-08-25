@@ -59,6 +59,7 @@ export default function MainLayout({
   navigationPosition = "default",
   isFirstPage = false,
   screenIndex = 0,
+  setShowScreen,
 }) {
   if (children && !headline && !descriptionTitle && !navigationMode) {
     return <Layout>{children}</Layout>
@@ -77,7 +78,14 @@ export default function MainLayout({
       {isFirstPage && <FullscreenButton />}
       {(headline || descriptionTitle) && (
         <TextLayout $hasDescription={!!descriptionTitle}>
-          {headline && <Header headline={headline} subheadline={subheadline} />}
+          {headline && (
+            <Header
+              headline={headline}
+              subheadline={subheadline}
+              legalNotice={isFirstPage}
+              setShowScreen={setShowScreen}
+            />
+          )}
           {descriptionTitle && (
             <Description
               title={descriptionTitle}

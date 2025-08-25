@@ -1,4 +1,6 @@
 import { useState } from "react"
+import Privacy from "@ui/Privacy"
+import Imprint from "@ui/Imprint"
 import { styled } from "styled-components"
 import MainLayout from "@ui/MainLayout"
 import useImagePreloader from "@hooks/useImagePreloader"
@@ -9,12 +11,13 @@ import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
 const AppContainer = styled.div`
   width: 100dvw;
   height: 100dvh;
-  overflow: hidden;
+  overflow: ${(props) => (props.$scroll ? "scroll" : "hidden")};
   position: relative;
 `
 
 export default function App() {
   const [screenIndex, setScreenIndex] = useState(0)
+  const [showScreen, setShowScreen] = useState(null)
   const {
     selectedCharacter,
     setSelectedCharacter,
@@ -65,13 +68,18 @@ export default function App() {
   const currentScreen = mainLayoutScreens[screenIndex]
 
   return (
-    <AppContainer>
-      <MainLayout
-        onNext={handleNextScreen}
-        onPrev={handlePrevScreen}
-        screenIndex={screenIndex}
-        {...currentScreen}
-      />
+    <AppContainer $scroll={showScreen !== null}>
+      {showScreen === "privacy" && <Privacy />}
+      {showScreen === "imprint" && <Imprint />}
+      {showScreen === null && (
+        <MainLayout
+          onNext={handleNextScreen}
+          onPrev={handlePrevScreen}
+          screenIndex={screenIndex}
+          setShowScreen={setShowScreen}
+          {...currentScreen}
+        />
+      )}
     </AppContainer>
   )
 }
