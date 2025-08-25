@@ -1,11 +1,15 @@
-import Alice from "./assets/1.png"
-import Bob from "./assets/2.png"
-import Charlie from "./assets/3.png"
+import Alice from "./assets/amara.png"
+import AmaraSelected from "./assets/amaraSelected.png"
+import Bob from "./assets/mateo.png"
+import MateoSelected from "./assets/MateoSelected.png"
+import Charlie from "./assets/nova.png"
+import NovaSelected from "./assets/novaSelected.png"
 
 export const CHARACTER_DATA = [
   {
     id: 1,
     image: Alice,
+    selectedImage: AmaraSelected,
     name: "Amara",
     title: "The Artist",
     description:
@@ -14,6 +18,7 @@ export const CHARACTER_DATA = [
   {
     id: 2,
     image: Bob,
+    selectedImage: MateoSelected,
     name: "Diego",
     title: "The Legend",
     description:
@@ -22,6 +27,7 @@ export const CHARACTER_DATA = [
   {
     id: 3,
     image: Charlie,
+    selectedImage: NovaSelected,
     name: "Luna",
     title: "The Explorer",
     description:
