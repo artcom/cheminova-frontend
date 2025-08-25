@@ -16,11 +16,8 @@ export const IntroductionContainer = styled.div`
 
 export const CharacterImageContainer = styled.div`
   position: absolute;
-  top: -20%;
+  top: 0;
   right: 0;
-  width: 38.81438rem;
-  height: 68.98613rem;
-  transform: translateX(50%) rotate(-37.338deg);
   z-index: 1;
 `
 

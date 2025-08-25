@@ -1,7 +1,7 @@
 import Alice from "./assets/amara.png"
 import AmaraSelected from "./assets/amaraSelected.png"
 import Bob from "./assets/mateo.png"
-import MateoSelected from "./assets/MateoSelected.png"
+import MateoSelected from "./assets/mateoSelected.png"
 import Charlie from "./assets/nova.png"
 import NovaSelected from "./assets/novaSelected.png"
 

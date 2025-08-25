@@ -37,7 +37,7 @@ export default function Introduction({ onNext }) {
     <IntroductionContainer data-introduction-container>
       <CharacterImageContainer>
         <CharacterImage
-          src={currentCharacter?.image}
+          src={currentCharacter?.selectedImage}
           alt={currentCharacter?.name || "Character"}
         />
       </CharacterImageContainer>
