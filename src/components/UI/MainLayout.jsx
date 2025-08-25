@@ -1,80 +1,47 @@
 import { styled } from "styled-components"
 import Header from "./Header"
-import IconButton from "@ui/IconButton"
+import Navigation from "./Navigation"
+import Description from "./Description"
+import FullscreenButton from "@ui/FullscreenButton"
+import Vignette from "./Vignette"
 
 const Layout = styled.div`
-  width: 100vw;
-  height: 100vh;
-  display: grid;
-  row-gap: 31.25rem;
-  flex: 1 0 0;
-  grid-template-rows: repeat(2, minmax(0, 1fr));
-  grid-template-columns: repeat(1, minmax(0, 1fr));
+  display: flex;
+  width: 100dvw;
+  height: 100dvh;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.625rem;
+  background-color: ${(props) => props.theme.colors.background.dark};
   background-image: ${({ $backgroundImage }) =>
     $backgroundImage ? `url(${$backgroundImage})` : "none"};
   background-size: cover;
   background-position: center;
-  position: relative;
+  position: absolute;
+  top: 0;
+  left: 0;
 `
 
-const StyledHeader = styled(Header)`
-  flex: 1 0 0;
-  align-self: stretch;
-  grid-row: 1 / span 1;
-  grid-column: 1 / span 1;
-`
-
-const DescriptionBlock = styled.div`
+const TextLayout = styled.div`
   display: flex;
-  flex-direction: column;
-  justify-content: flex-end;
-  align-items: center;
-  gap: 0.75rem;
-  flex: 1 0 0;
-  align-self: stretch;
-  grid-row: 2 / span 1;
-  grid-column: 1 / span 1;
-`
-
-const DescriptionTitle = styled.div`
-  height: 1.6875rem;
-  align-self: stretch;
-  color: #fff;
-  text-align: center;
-  font-size: 1.5rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-`
-
-const DescriptionText = styled.div`
-  align-self: stretch;
-  color: #fff;
-  text-align: center;
-  font-size: 1rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: normal;
-`
-
-const ButtonLayout = styled.div`
-  display: grid;
-  width: 80%;
-  height: 7.3125rem;
-  flex-shrink: 0;
-  grid-template-rows: repeat(1, minmax(0, 1fr));
-  grid-template-columns: repeat(2, minmax(0, 1fr));
+  width: 24.5625rem;
   margin: 0 auto;
+  padding: 0 1.5625rem;
+  flex-direction: column;
+  justify-content: ${({ $hasDescription }) =>
+    $hasDescription ? "space-between" : "flex-start"};
+  align-items: flex-start;
+  gap: 0;
+  flex: 1 0 0;
 `
 
-const DirectedButton = styled(IconButton)`
-  flex-shrink: 0;
-  width: 3.4375rem;
-  height: 3.4375rem;
-  grid-row: 1 / span 1;
-  grid-column: ${({ direction }) =>
-    direction === "right" ? "2 / span 1" : "1 / span 1"};
-  justify-self: ${({ direction }) => (direction === "right" ? "end" : "start")};
+const ChildrenContainer = styled.div`
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100dvw;
+  height: 100dvh;
+  z-index: 1;
 `
 
 export default function MainLayout({
@@ -84,39 +51,52 @@ export default function MainLayout({
   descriptionText,
   onPrev,
   onNext,
+  onSelect,
   backgroundImage,
-  topRightAction,
   children,
+  vignetteIntensity = 25,
+  navigationMode = "dual",
+  singleButtonVariant = "arrowDown",
+  navigationPosition = "default",
+  isFirstPage = false,
+  screenIndex = 0,
 }) {
+  if (children && !headline && !descriptionTitle && !navigationMode) {
+    return <Layout>{children}</Layout>
+  }
+
   return (
     <Layout $backgroundImage={backgroundImage}>
-      {topRightAction}
-      <StyledHeader headline={headline} subheadline={subheadline} />
-      <DescriptionBlock>
-        <DescriptionTitle>{descriptionTitle}</DescriptionTitle>
-        <DescriptionText>{descriptionText}</DescriptionText>
-        {children}
-        <ButtonLayout>
-          {onPrev ? (
-            <DirectedButton
-              direction="left"
-              variant="arrowLeft"
-              onClick={onPrev}
+      {children && <ChildrenContainer>{children}</ChildrenContainer>}
+      {(backgroundImage || vignetteIntensity) && (
+        <Vignette
+          intensity={vignetteIntensity}
+          isCharacterScreen={screenIndex === 1}
+          screenIndex={screenIndex}
+        />
+      )}
+      {isFirstPage && <FullscreenButton />}
+      {(headline || descriptionTitle) && (
+        <TextLayout $hasDescription={!!descriptionTitle}>
+          {headline && <Header headline={headline} subheadline={subheadline} />}
+          {descriptionTitle && (
+            <Description
+              title={descriptionTitle}
+              text={descriptionText}
+              headline={headline}
+              subheadline={subheadline}
             />
-          ) : (
-            <DirectedButton direction="left" variant="arrowLeft" />
           )}
-          {onNext ? (
-            <DirectedButton
-              direction="right"
-              variant="arrowRight"
-              onClick={onNext}
-            />
-          ) : (
-            <DirectedButton direction="right" variant="arrowRight" />
-          )}
-        </ButtonLayout>
-      </DescriptionBlock>
+        </TextLayout>
+      )}
+      <Navigation
+        mode={navigationMode}
+        onPrev={onPrev}
+        onNext={onNext}
+        onSelect={onSelect}
+        singleButtonVariant={singleButtonVariant}
+        position={navigationPosition}
+      />
     </Layout>
   )
 }

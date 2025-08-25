@@ -1,14 +1,32 @@
-import { motion } from "framer-motion"
+import { motion } from "motion/react"
+import { styled } from "styled-components"
 import { CHARACTER_DATA } from "../constants"
 import { useCharacterCarousel } from "../../../hooks/useCharacterCarousel"
-import {
-  calculateCharacterTransform,
-  CAROUSEL_ANIMATION,
-  DRAG_CONFIG,
-} from "../utils/transformUtils"
+import { DRAG_CONFIG } from "../utils/transformUtils"
+import CharacterCard from "./CharacterCard"
 
-export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
-  const { x, spacing, handleDragEnd, dragConstraints } = useCharacterCarousel(
+const CarouselContainer = styled(motion.div)`
+  width: 100dvw;
+  height: 100%;
+  overflow: hidden;
+  perspective: 62.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  position: relative;
+`
+
+const DraggableWrapper = styled(motion.div)`
+  display: flex;
+  height: 100%;
+  width: ${(props) => `${props.$charactersLength * 100}dvw`};
+`
+
+export default function CharacterCarousel({
+  selectedIndex,
+  onSelectionChange,
+}) {
+  const { x, handleDragEnd, dragConstraints } = useCharacterCarousel(
     selectedIndex,
     CHARACTER_DATA.length,
     (newIndex) => {
@@ -17,19 +35,17 @@ export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
   )
 
   return (
-    <div
-      style={{
-        width: "100vw",
-        height: "100%",
-        overflow: "hidden",
-        perspective: "1000px",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-      }}
+    <CarouselContainer
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
+      transition={{ duration: 0.5, ease: "easeOut" }}
     >
-      <motion.div
-        style={{ display: "flex", x, height: "100%" }}
+      <DraggableWrapper
+        initial={{ x: -100 }}
+        animate={{ x: 0 }}
+        transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
+        style={{ x }}
+        $charactersLength={CHARACTER_DATA.length}
         drag="x"
         dragConstraints={dragConstraints}
         dragElastic={DRAG_CONFIG.elastic}
@@ -37,71 +53,18 @@ export const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
         onDragEnd={handleDragEnd}
       >
         {CHARACTER_DATA.map((character, index) => {
-          const transform = calculateCharacterTransform(
-            index,
-            selectedIndex,
-            spacing,
-          )
-
+          const offset = index - selectedIndex
+          const absoluteOffset = Math.abs(offset)
           return (
             <CharacterCard
               key={index}
               character={character}
-              transform={transform}
+              scale={Math.max(1 - absoluteOffset * 0.2, 0.8)}
+              shadowIntensity={absoluteOffset}
             />
           )
         })}
-      </motion.div>
-    </div>
-  )
-}
-
-const CharacterCard = ({ character, transform }) => {
-  const { scale, z, y, xOffset, shadowIntensity } = transform
-
-  return (
-    <motion.div
-      style={{
-        flex: "0 0 100vw",
-        height: "100%",
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        userSelect: "none",
-        transformStyle: "preserve-3d",
-        transformOrigin: "center center",
-      }}
-      animate={{
-        x: xOffset,
-        y: y,
-        z: z,
-        scale: scale,
-      }}
-      transition={CAROUSEL_ANIMATION}
-    >
-      <img
-        src={character.image}
-        alt={character.name}
-        style={{
-          width: "auto",
-          height: "60%",
-          objectFit: "contain",
-          marginBottom: "20px",
-          filter: `drop-shadow(0 ${8 + shadowIntensity * 4}px ${12 + shadowIntensity * 8}px rgba(0, 0, 0, ${0.4 - shadowIntensity * 0.1}))`,
-        }}
-      />
-      <div
-        style={{
-          color: "white",
-          fontSize: "1.2rem",
-          fontWeight: "bold",
-          textAlign: "center",
-          textShadow: "0 2px 4px rgba(0, 0, 0, 0.5)",
-        }}
-      >
-        {character.name}
-      </div>
-    </motion.div>
+      </DraggableWrapper>
+    </CarouselContainer>
   )
 }

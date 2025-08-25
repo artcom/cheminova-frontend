@@ -1,5 +1,5 @@
-import { useEffect } from "react"
-import { useMotionValue, animate } from "framer-motion"
+import { useEffect, useState } from "react"
+import { animate, useMotionValue } from "motion/react"
 
 export const useCharacterCarousel = (
   selectedIndex,
@@ -7,23 +7,55 @@ export const useCharacterCarousel = (
   onSelectionChange,
 ) => {
   const x = useMotionValue(0)
-  const spacing = window.innerWidth
+  const [spacing, setSpacing] = useState(0)
 
   useEffect(() => {
-    x.set(-spacing * (selectedIndex - 1))
+    const updateSpacing = () => {
+      // Use document.documentElement.clientWidth for more reliable viewport width
+      const viewportWidth =
+        document.documentElement.clientWidth || window.innerWidth
+      setSpacing(viewportWidth)
+    }
+
+    // Initial setup with a small delay to ensure DOM is ready
+    setTimeout(updateSpacing, 100)
+
+    window.addEventListener("resize", updateSpacing)
+    window.addEventListener("orientationchange", updateSpacing)
+
+    return () => {
+      window.removeEventListener("resize", updateSpacing)
+      window.removeEventListener("orientationchange", updateSpacing)
+    }
+  }, [])
+
+  useEffect(() => {
+    if (spacing > 0) {
+      // Position to center the selected character
+      const targetPosition = -spacing * selectedIndex
+      animate(x, targetPosition, {
+        type: "spring",
+        stiffness: 300,
+        damping: 30,
+      })
+    }
   }, [selectedIndex, spacing, x])
 
   const handleDragEnd = () => {
+    if (spacing === 0) return
+
     const currentPosition = x.get()
-    const calculatedIndex = -currentPosition / spacing + 1
-    const newIndex = Math.round(calculatedIndex)
-    const clampedIndex = Math.min(Math.max(newIndex, 0), charactersLength - 1)
+    const calculatedIndex = Math.round(-currentPosition / spacing)
+    const clampedIndex = Math.min(
+      Math.max(calculatedIndex, 0),
+      charactersLength - 1,
+    )
 
     if (clampedIndex !== selectedIndex) {
       onSelectionChange(clampedIndex)
     }
 
-    animate(x, -(clampedIndex - 1) * spacing, {
+    animate(x, -clampedIndex * spacing, {
       type: "spring",
       stiffness: 300,
       damping: 30,
@@ -31,8 +63,8 @@ export const useCharacterCarousel = (
   }
 
   const dragConstraints = {
-    left: -(charactersLength - 2) * spacing,
-    right: spacing,
+    left: -(charactersLength - 1) * spacing,
+    right: 0,
   }
 
   return {

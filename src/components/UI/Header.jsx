@@ -1,22 +1,48 @@
+import { motion, AnimatePresence } from "motion/react"
 import { styled } from "styled-components"
 import Headline from "./Headline"
 import SubHeadline from "./SubHeadline"
 
-const HeaderContainer = styled.div`
+const HeaderLayout = styled(motion.div)`
   display: flex;
-  width: 24.5625rem;
+  width: 100%;
   height: 10.5625rem;
   padding: 3.625rem 0.625rem 0.625rem 0.625rem;
   flex-direction: column;
   align-items: center;
+  z-index: 3;
 `
 
 function Header({ headline, subheadline }) {
   return (
-    <HeaderContainer>
-      {subheadline && <SubHeadline>{subheadline}</SubHeadline>}
-      <Headline>{headline}</Headline>
-    </HeaderContainer>
+    <HeaderLayout>
+      <AnimatePresence mode="popLayout">
+        {subheadline && (
+          <SubHeadline
+            key={`subheadline-${subheadline}`}
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+          >
+            {subheadline}
+          </SubHeadline>
+        )}
+
+        <Headline
+          key={`headline-${headline}`}
+          layoutId={`headline`}
+          initial={{ opacity: 0 }}
+          animate={{
+            opacity: 1,
+            transition: { duration: 0.5, ease: "easeInOut", delay: 0.5 },
+          }}
+          exit={{ opacity: 0 }}
+          transition={{ layout: { duration: 0.2, ease: "easeInOut" } }}
+        >
+          {headline}
+        </Headline>
+      </AnimatePresence>
+    </HeaderLayout>
   )
 }
 
