@@ -70,11 +70,6 @@ const DebugButton = styled.button`
   border-radius: 3px;
   font-family: monospace;
   font-size: 11px;
-  cursor: pointer;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.9);
-  }
 `
 
 const defaultPersonalImages = [PersonalImage1, PersonalImage2, PersonalImage3]

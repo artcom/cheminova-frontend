@@ -47,12 +47,7 @@ export const CharacterBox = styled(m.div)`
   font-size: 1.5rem;
   font-weight: bold;
   position: absolute;
-  cursor: ${(props) => (props.isSelected ? "grab" : "default")};
   overflow: hidden;
-
-  &:active {
-    cursor: ${(props) => (props.isSelected ? "grabbing" : "default")};
-  }
 
   &.selected {
     z-index: 3;
@@ -90,7 +85,6 @@ export const NavigationButton = styled(m.button)`
   align-items: center;
   justify-content: center;
   font-size: 1.75rem;
-  cursor: pointer;
   filter: drop-shadow(0 0.25rem 0.9375rem rgba(0, 0, 0, 0.2));
   z-index: 10;
   color: #333;
@@ -98,7 +92,6 @@ export const NavigationButton = styled(m.button)`
 
   &:disabled {
     opacity: 0.3;
-    cursor: not-allowed;
   }
 
   &.left {
@@ -145,7 +138,6 @@ export const IntroCharacterItem = styled(m.div)`
   justify-content: flex-end;
   width: 25dvw;
   height: 50dvh;
-  cursor: pointer;
   position: relative;
 `
 

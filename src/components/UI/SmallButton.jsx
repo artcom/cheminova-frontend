@@ -7,11 +7,9 @@ const StyledSmallButton = styled.button`
   border: 1px solid black;
   background: transparent;
   cursor: pointer;
-
   display: flex;
   justify-content: center;
   align-items: center;
-
   color: black;
   text-align: center;
   font-family:
@@ -38,19 +36,6 @@ const StyledSmallButton = styled.button`
   }
 `
 
-const ButtonText = styled.span`
-  display: flex;
-  width: 6.75069rem;
-  height: 1.875rem;
-  flex-direction: column;
-  justify-content: center;
-  flex-shrink: 0;
-`
-
-export default function SmallButton({ children, onClick, disabled, ...props }) {
-  return (
-    <StyledSmallButton onClick={onClick} disabled={disabled} {...props}>
-      <ButtonText>{children}</ButtonText>
-    </StyledSmallButton>
-  )
+export default function SmallButton({ children, ...props }) {
+  return <StyledSmallButton {...props}>{children}</StyledSmallButton>
 }
