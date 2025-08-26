@@ -16,11 +16,9 @@ const StyledButton = styled.button`
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-  cursor: pointer;
 
   &:disabled {
     opacity: 0.5;
-    cursor: not-allowed;
   }
 `
 
