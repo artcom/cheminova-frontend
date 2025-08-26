@@ -1,9 +1,8 @@
-import { useCallback, useEffect, useState } from "react"
-
 import {
   CHARACTER_DATA,
   DRAG_THRESHOLD,
-} from "../components/CharacterShowcase/constants"
+} from "@/components/CharacterShowcase/constants"
+import { useEffect, useState } from "react"
 
 export const useCharacterSelection = () => {
   const [selectedCharIndex, setSelectedCharIndex] = useState(1)
@@ -14,81 +13,62 @@ export const useCharacterSelection = () => {
     right: 200,
   })
 
-  // Update drag constraints based on screen size
   useEffect(() => {
     const updateDragConstraints = () => {
       const width = window.innerWidth
-      let constraints
-
-      if (width > 768) {
-        constraints = { left: -300, right: 300 }
-      } else if (width > 480) {
-        constraints = { left: -250, right: 250 }
-      } else {
-        constraints = { left: -150, right: 150 }
-      }
+      const constraints =
+        width > 768
+          ? { left: -300, right: 300 }
+          : width > 480
+            ? { left: -250, right: 250 }
+            : { left: -150, right: 150 }
 
       setDragConstraints(constraints)
     }
 
     updateDragConstraints()
     window.addEventListener("resize", updateDragConstraints)
-
-    return () => {
-      window.removeEventListener("resize", updateDragConstraints)
-    }
+    return () => window.removeEventListener("resize", updateDragConstraints)
   }, [])
 
-  const handlePrevious = useCallback(() => {
-    if (selectedCharIndex > 0) {
-      setSelectedCharIndex(selectedCharIndex - 1)
-      setDragOffset(0)
-      return true
-    }
-    return false
-  }, [selectedCharIndex])
+  const handlePrevious = () => {
+    setSelectedCharIndex(selectedCharIndex - 1)
+    setDragOffset(0)
+    return selectedCharIndex > 0
+  }
 
-  const handleNext = useCallback(() => {
-    if (selectedCharIndex < CHARACTER_DATA.length - 1) {
-      setSelectedCharIndex(selectedCharIndex + 1)
-      setDragOffset(0)
-      return true
-    }
-    return false
-  }, [selectedCharIndex])
+  const handleNext = () => {
+    setSelectedCharIndex(selectedCharIndex + 1)
+    setDragOffset(0)
+    return selectedCharIndex < CHARACTER_DATA.length - 1
+  }
 
-  const handleDrag = useCallback((_, info) => {
+  const handleDrag = (_, info) => {
     setIsDragging(true)
     setDragOffset(info.offset.x)
-  }, [])
+  }
 
-  const handleDragEnd = useCallback(
-    (_, info) => {
-      setIsDragging(false)
+  const handleDragEnd = (_, info) => {
+    setIsDragging(false)
 
-      if (
-        info.offset.x < -DRAG_THRESHOLD &&
-        selectedCharIndex < CHARACTER_DATA.length - 1
-      ) {
-        handleNext()
-      } else if (info.offset.x > DRAG_THRESHOLD && selectedCharIndex > 0) {
-        handlePrevious()
-      }
+    if (
+      info.offset.x < -DRAG_THRESHOLD &&
+      selectedCharIndex < CHARACTER_DATA.length - 1
+    ) {
+      handleNext()
+    } else if (info.offset.x > DRAG_THRESHOLD && selectedCharIndex > 0) {
+      handlePrevious()
+    }
 
-      setDragOffset(0)
-    },
-    [selectedCharIndex, handleNext, handlePrevious],
-  )
+    setDragOffset(0)
+  }
 
-  const getPositionClass = useCallback(
-    (index) => {
-      if (index === selectedCharIndex) return "selected"
-      if (index === selectedCharIndex - 1) return "left"
-      if (index === selectedCharIndex + 1) return "right"
-      return ""
-    },
-    [selectedCharIndex],
-  )
+  const getPositionClass = (index) => {
+    if (index === selectedCharIndex) return "selected"
+    if (index === selectedCharIndex - 1) return "left"
+    if (index === selectedCharIndex + 1) return "right"
+    return ""
+  }
 
   return {
     selectedCharIndex,
