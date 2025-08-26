@@ -1,39 +1,11 @@
 import { styled } from "styled-components"
 
-const VignetteContainer = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  pointer-events: none;
-  z-index: 1;
-  background: ${({ $intensity, $isCharacterScreen }) => {
-    if ($isCharacterScreen) {
-      return "none"
-    }
-    return `linear-gradient(
-      to bottom,
-      rgba(0, 0, 0, 0.9) 0%,
-      rgba(0, 0, 0, 0.8) ${$intensity * 0.2}%,
-      rgba(0, 0, 0, 0.7) ${$intensity * 0.4}%,
-      rgba(0, 0, 0, 0.1) ${$intensity * 0.7}%,
-      transparent ${$intensity}%,
-      transparent ${100 - $intensity}%,
-      rgba(0, 0, 0, 0.2) ${100 - $intensity * 0.7}%,
-      rgba(0, 0, 0, 0.9) ${100 - $intensity * 0.4}%,
-      rgba(0, 0, 0, 1) ${100 - $intensity * 0.2}%,
-      rgba(0, 0, 0, 1) 100%
-    )`
-  }};
-`
-
 const GradientWelcome = styled.div`
   position: absolute;
   top: 0;
   left: 0;
   width: 100%;
-  height: 11.4375rem;
+  height: 14.4375rem;
   pointer-events: none;
   z-index: 1;
   background: linear-gradient(
@@ -59,28 +31,17 @@ const GradientCharacter = styled.div`
   );
 `
 
-export default function Vignette({
-  intensity,
-  isCharacterScreen,
-  screenIndex,
-}) {
-  const vignetteIntensity = intensity || 25
-  const isCharScreen = isCharacterScreen || false
-  const currentScreenIndex = screenIndex || 0
+export default function Vignette({ screenIndex }) {
+  console.log("Vignette render")
 
-  if (currentScreenIndex < 3) {
-    return (
-      <>
-        <GradientWelcome />
-        <GradientCharacter />
-      </>
-    )
+  if (screenIndex > 2) {
+    return null
   }
 
   return (
-    <VignetteContainer
-      $intensity={vignetteIntensity}
-      $isCharacterScreen={isCharScreen}
-    />
+    <>
+      <GradientWelcome />
+      <GradientCharacter />
+    </>
   )
 }

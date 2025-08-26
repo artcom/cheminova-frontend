@@ -1,14 +1,14 @@
+import useGlobalState from "@/hooks/useGlobalState"
 import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
-import useGlobalState from "@hooks/useGlobalState"
 import useImagePreloader from "@hooks/useImagePreloader"
-import { useState } from "react"
+import { useEffect } from "react"
 import { styled } from "styled-components"
 
 import Imprint from "@ui/Imprint"
-import MainLayout from "@ui/MainLayout"
 import Privacy from "@ui/Privacy"
 
-import { createMainLayoutScreens } from "./screenConfig"
+import LayoutRenderer from "./LayoutRenderer"
+import { createScreens } from "./screens"
 
 const AppContainer = styled.div`
   width: 100dvw;
@@ -18,67 +18,56 @@ const AppContainer = styled.div`
 `
 
 export default function App() {
-  const [screenIndex, setScreenIndex] = useState(0)
-  const [showScreen, setShowScreen] = useState(null)
   const {
+    currentScreenIndex,
+    currentScreen,
+    showModal,
+    setScreens,
+    setShowModal,
+    goNext,
     selectedCharacter,
-    setSelectedCharacter,
-    currentCharacterIndex,
-    setCurrentCharacterIndex,
   } = useGlobalState()
 
-  const handleNextScreen = () => {
-    setScreenIndex((screenIndex + 1) % 5)
+  const screens = createScreens(selectedCharacter, goNext)
+
+  useEffect(() => {
+    setScreens(screens)
+  }, [screens, setScreens])
+
+  const characterImages = () =>
+    CHARACTER_DATA.map((character) => character.image)
+
+  useImagePreloader(characterImages, currentScreenIndex === 0)
+
+  const handleShowModal = (modalType) => setShowModal(modalType)
+
+  if (showModal === "privacy") {
+    return (
+      <AppContainer $scroll>
+        <Privacy />
+      </AppContainer>
+    )
   }
 
-  const handlePrevScreen = () => {
-    setScreenIndex((i) => (i - 1 + 5) % 5)
+  if (showModal === "imprint") {
+    return (
+      <AppContainer $scroll>
+        <Imprint />
+      </AppContainer>
+    )
   }
 
-  const characterNavHandlers = {
-    onPrev: () => {
-      const newIndex =
-        currentCharacterIndex > 0
-          ? currentCharacterIndex - 1
-          : CHARACTER_DATA.length - 1
-      setCurrentCharacterIndex(newIndex)
-      setSelectedCharacter(CHARACTER_DATA[newIndex])
-    },
-    onNext: () => {
-      const newIndex = (currentCharacterIndex + 1) % CHARACTER_DATA.length
-      setCurrentCharacterIndex(newIndex)
-      setSelectedCharacter(CHARACTER_DATA[newIndex])
-    },
-    onSelect: () => {
-      setScreenIndex((prevIndex) => (prevIndex + 1) % 5)
-    },
+  if (!currentScreen) {
+    return (
+      <AppContainer>
+        <div>Loading...</div>
+      </AppContainer>
+    )
   }
-
-  const mainLayoutScreens = createMainLayoutScreens(
-    setScreenIndex,
-    selectedCharacter,
-    setSelectedCharacter,
-    characterNavHandlers,
-  )
-
-  const characterImages = CHARACTER_DATA.map((character) => character.image)
-  useImagePreloader(characterImages, screenIndex === 0)
-
-  const currentScreen = mainLayoutScreens[screenIndex]
 
   return (
-    <AppContainer $scroll={showScreen !== null}>
-      {showScreen === "privacy" && <Privacy />}
-      {showScreen === "imprint" && <Imprint />}
-      {showScreen === null && (
-        <MainLayout
-          onNext={handleNextScreen}
-          onPrev={handlePrevScreen}
-          screenIndex={screenIndex}
-          setShowScreen={setShowScreen}
-          {...currentScreen}
-        />
-      )}
+    <AppContainer>
+      <LayoutRenderer screen={currentScreen} setShowScreen={handleShowModal} />
     </AppContainer>
   )
 }

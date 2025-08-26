@@ -1,6 +1,7 @@
+import useGlobalState from "@/hooks/useGlobalState"
 import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
-import useGlobalState from "@hooks/useGlobalState"
-import { useEffect, useState } from "react"
+import { useScroll, useTransform } from "motion/react"
+import { useRef } from "react"
 
 import IconButton from "@ui/IconButton"
 
@@ -16,25 +17,17 @@ import {
   TextBlock,
 } from "./styles"
 
-export default function Introduction({ onNext }) {
-  const { selectedCharacter, currentCharacterIndex } = useGlobalState()
-  const [scrollY, setScrollY] = useState(0)
+export default function Introduction() {
+  const { selectedCharacter, currentCharacterIndex, goNext } = useGlobalState()
+  const containerRef = useRef(null)
+  const { scrollY } = useScroll({ container: containerRef })
+  const y = useTransform(scrollY, (v) => -v * 0.5)
 
   const currentCharacter =
     selectedCharacter || CHARACTER_DATA[currentCharacterIndex]
 
-  useEffect(() => {
-    const handleScroll = (e) => {
-      setScrollY(e.target.scrollTop)
-    }
-
-    const container = document.querySelector("[data-introduction-container]")
-    container.addEventListener("scroll", handleScroll)
-    return () => container.removeEventListener("scroll", handleScroll)
-  }, [])
-
   return (
-    <IntroductionContainer data-introduction-container>
+    <IntroductionContainer data-introduction-container ref={containerRef}>
       <CharacterImageContainer>
         <CharacterImage
           src={currentCharacter.selectedImage}
@@ -42,11 +35,7 @@ export default function Introduction({ onNext }) {
         />
       </CharacterImageContainer>
 
-      <ContentContainer
-        initial={{ x: "-50%", y: 0 }}
-        animate={{ x: "-50%", y: -scrollY * 0.5 }}
-        transition={{ type: "tween", ease: "linear" }}
-      >
+      <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
         <Headline>Hello Passenger,</Headline>
 
         <TextBlock>
@@ -66,7 +55,7 @@ export default function Introduction({ onNext }) {
         </TextBlock>
 
         <CameraButtonContainer>
-          <IconButton variant="camera" onClick={onNext} />
+          <IconButton variant="camera" onClick={goNext} />
         </CameraButtonContainer>
       </ContentContainer>
     </IntroductionContainer>
