@@ -1,12 +1,14 @@
-import { useState } from "react"
-import Privacy from "@ui/Privacy"
-import Imprint from "@ui/Imprint"
-import { styled } from "styled-components"
-import MainLayout from "@ui/MainLayout"
-import useImagePreloader from "@hooks/useImagePreloader"
-import useGlobalState from "@hooks/useGlobalState"
-import { createMainLayoutScreens } from "./screenConfig.jsx"
 import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
+import useGlobalState from "@hooks/useGlobalState"
+import useImagePreloader from "@hooks/useImagePreloader"
+import { useState } from "react"
+import { styled } from "styled-components"
+
+import Imprint from "@ui/Imprint"
+import MainLayout from "@ui/MainLayout"
+import Privacy from "@ui/Privacy"
+
+import { createMainLayoutScreens } from "./screenConfig"
 
 const AppContainer = styled.div`
   width: 100dvw;
@@ -25,15 +27,12 @@ export default function App() {
     setCurrentCharacterIndex,
   } = useGlobalState()
 
-  function handleNextScreen() {
-    const nextIndex = (screenIndex + 1) % 5
-    setScreenIndex(nextIndex)
+  const handleNextScreen = () => {
+    setScreenIndex((screenIndex + 1) % 5)
   }
 
-  function handlePrevScreen() {
-    setScreenIndex(
-      (i) => (i - 1 + mainLayoutScreens.length) % mainLayoutScreens.length,
-    )
+  const handlePrevScreen = () => {
+    setScreenIndex((i) => (i - 1 + 5) % 5)
   }
 
   const characterNavHandlers = {
