@@ -1,11 +1,10 @@
 import { styled } from "styled-components"
 
+import Description from "@ui/Description"
 import FullscreenButton from "@ui/FullscreenButton"
-
-import Description from "./Description"
-import Header from "./Header"
-import Navigation from "./Navigation"
-import Vignette from "./Vignette"
+import Header from "@ui/Header"
+import Navigation from "@ui/Navigation"
+import Vignette from "@ui/Vignette"
 
 const Layout = styled.div`
   display: flex;
@@ -14,9 +13,8 @@ const Layout = styled.div`
   flex-direction: column;
   align-items: flex-start;
   gap: 0.625rem;
-  background-color: ${(props) => props.theme.colors.background.dark};
-  background-image: ${({ $backgroundImage }) =>
-    $backgroundImage ? `url(${$backgroundImage})` : "none"};
+  background-color: ${({ theme }) => theme.colors.background.dark};
+  background-image: ${({ $backgroundImage }) => `url(${$backgroundImage})`};
   background-size: cover;
   background-position: center;
   position: absolute;
@@ -55,12 +53,12 @@ export default function MainLayout({
   onSelect,
   backgroundImage,
   children,
-  vignetteIntensity = 25,
-  navigationMode = "dual",
-  singleButtonVariant = "arrowDown",
-  navigationPosition = "default",
-  isFirstPage = false,
-  screenIndex = 0,
+  vignetteIntensity,
+  navigationMode,
+  singleButtonVariant,
+  navigationPosition,
+  isFirstPage,
+  screenIndex,
   setShowScreen,
 }) {
   if (children && !headline && !descriptionTitle && !navigationMode) {
@@ -70,13 +68,11 @@ export default function MainLayout({
   return (
     <Layout $backgroundImage={backgroundImage}>
       {children && <ChildrenContainer>{children}</ChildrenContainer>}
-      {(backgroundImage || vignetteIntensity) && (
-        <Vignette
-          intensity={vignetteIntensity}
-          isCharacterScreen={screenIndex === 1}
-          screenIndex={screenIndex}
-        />
-      )}
+      <Vignette
+        intensity={vignetteIntensity || 25}
+        isCharacterScreen={screenIndex === 1}
+        screenIndex={screenIndex || 0}
+      />
       {isFirstPage && <FullscreenButton />}
       {(headline || descriptionTitle) && (
         <TextLayout $hasDescription={!!descriptionTitle}>
@@ -99,12 +95,12 @@ export default function MainLayout({
         </TextLayout>
       )}
       <Navigation
-        mode={navigationMode}
+        mode={navigationMode || "dual"}
         onPrev={onPrev}
         onNext={onNext}
         onSelect={onSelect}
-        singleButtonVariant={singleButtonVariant}
-        position={navigationPosition}
+        singleButtonVariant={singleButtonVariant || "arrowDown"}
+        position={navigationPosition || "default"}
       />
     </Layout>
   )
