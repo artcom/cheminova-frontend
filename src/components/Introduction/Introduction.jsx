@@ -1,7 +1,8 @@
 import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
-import IconButton from "@components/UI/IconButton"
 import useGlobalState from "@hooks/useGlobalState"
 import { useEffect, useState } from "react"
+
+import IconButton from "@ui/IconButton"
 
 import Rectangle from "./Rectangle.png"
 import {
@@ -28,18 +29,16 @@ export default function Introduction({ onNext }) {
     }
 
     const container = document.querySelector("[data-introduction-container]")
-    if (container) {
-      container.addEventListener("scroll", handleScroll)
-      return () => container.removeEventListener("scroll", handleScroll)
-    }
+    container.addEventListener("scroll", handleScroll)
+    return () => container.removeEventListener("scroll", handleScroll)
   }, [])
 
   return (
     <IntroductionContainer data-introduction-container>
       <CharacterImageContainer>
         <CharacterImage
-          src={currentCharacter?.selectedImage}
-          alt={currentCharacter?.name || "Character"}
+          src={currentCharacter.selectedImage}
+          alt={currentCharacter.name}
         />
       </CharacterImageContainer>
 
