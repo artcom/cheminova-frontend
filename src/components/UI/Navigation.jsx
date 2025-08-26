@@ -1,6 +1,7 @@
 import { styled } from "styled-components"
-import IconButton from "@ui/IconButton"
+
 import Button from "@ui/Button"
+import IconButton from "@ui/IconButton"
 
 const NavigationContainer = styled.div`
   display: flex;

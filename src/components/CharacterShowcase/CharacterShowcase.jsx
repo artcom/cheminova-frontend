@@ -1,9 +1,10 @@
-import { useState, useEffect } from "react"
-import { MainLayoutContainer } from "./styles"
-import { CHARACTER_DATA } from "./constants"
 import useGlobalState from "@hooks/useGlobalState"
-import IntroScreen from "./components/IntroScreen"
+import { useEffect, useState } from "react"
+
 import CharacterCarousel from "./components/CharacterCarousel"
+import IntroScreen from "./components/IntroScreen"
+import { CHARACTER_DATA } from "./constants"
+import { MainLayoutContainer } from "./styles"
 
 const CharacterShowcase = ({
   onCharacterSelected,

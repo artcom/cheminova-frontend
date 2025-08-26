@@ -1,8 +1,9 @@
-import LaNau from "@ui/assets/LaNau.webp"
 import CharacterShowcase from "@components/CharacterShowcase"
-import PhotoCapture from "@components/PhotoCapture"
-import Introduction from "@components/Introduction"
 import Gallery from "@components/Gallery"
+import Introduction from "@components/Introduction"
+import PhotoCapture from "@components/PhotoCapture"
+
+import LaNau from "@ui/assets/LaNau.webp"
 
 export const createMainLayoutScreens = (
   setScreenIndex,

@@ -1,6 +1,6 @@
-import useDevicePlatform from "@hooks/useDevicePlatform"
 import SmallButton from "@components/UI/SmallButton"
-import { useEffect, useMemo, useState, useRef } from "react"
+import useDevicePlatform from "@hooks/useDevicePlatform"
+import { useEffect, useMemo, useRef, useState } from "react"
 import { styled } from "styled-components"
 
 const PhotoCaptureContainer = styled.div`

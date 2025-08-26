@@ -1,5 +1,6 @@
-import { styled } from "styled-components"
 import { motion } from "framer-motion"
+import { styled } from "styled-components"
+
 import IntroductionBackground from "./IntroductionBackground.png"
 
 export const IntroductionContainer = styled.div`

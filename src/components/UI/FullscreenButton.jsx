@@ -1,6 +1,7 @@
-import { styled } from "styled-components"
-import IconButton from "./IconButton"
 import useFullscreen from "@hooks/useFullscreen"
+import { styled } from "styled-components"
+
+import IconButton from "./IconButton"
 
 const FullscreenButton = styled(({ className, ...props }) => {
   const { isIOSDevice, toggleFullscreen } = useFullscreen()

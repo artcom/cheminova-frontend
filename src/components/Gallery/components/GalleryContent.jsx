@@ -1,20 +1,21 @@
-import { useEffect, useMemo, useRef } from "react"
-import AnimatingTile from "./AnimatingTile"
 import { useThree } from "@react-three/fiber"
+import { useEffect, useMemo, useRef } from "react"
+
 import {
   ANIMATION_DURATION,
-  MAX_RANDOM_DELAY,
-  DISPLACEMENT_RATIO,
   BASE_IMAGE_SCALE,
-  PERSONAL_SCALE_MULTIPLIER,
   DEBUG_GALLERY,
+  DISPLACEMENT_RATIO,
+  MAX_RANDOM_DELAY,
+  PERSONAL_SCALE_MULTIPLIER,
 } from "../config"
 import {
-  computeGridMetrics,
-  selectCentralIndices,
   buildDelays,
   buildTileData,
+  computeGridMetrics,
+  selectCentralIndices,
 } from "../utils"
+import AnimatingTile from "./AnimatingTile"
 
 export default function GalleryContent({
   imagePool,

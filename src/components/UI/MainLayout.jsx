@@ -1,8 +1,10 @@
 import { styled } from "styled-components"
+
+import FullscreenButton from "@ui/FullscreenButton"
+
+import Description from "./Description"
 import Header from "./Header"
 import Navigation from "./Navigation"
-import Description from "./Description"
-import FullscreenButton from "@ui/FullscreenButton"
 import Vignette from "./Vignette"
 
 const Layout = styled.div`

@@ -1,10 +1,11 @@
+import { useFrame, useThree } from "@react-three/fiber"
 import { useEffect, useRef } from "react"
-import { useThree, useFrame } from "@react-three/fiber"
+
 import {
   CAMERA_DEFAULT_Z,
-  DETAIL_CAMERA_Z,
   CAMERA_LERP,
   DEBUG_GALLERY,
+  DETAIL_CAMERA_Z,
 } from "../config"
 
 export default function CameraController({ detailMode }) {

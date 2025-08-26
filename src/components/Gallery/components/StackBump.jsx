@@ -1,9 +1,10 @@
-import { useRef } from "react"
 import { useFrame } from "@react-three/fiber"
+import { useRef } from "react"
+
 import {
-  STACK_SWITCH_DUR,
-  STACK_BUMP_AMPLITUDE,
   DEBUG_GALLERY,
+  STACK_BUMP_AMPLITUDE,
+  STACK_SWITCH_DUR,
 } from "../config"
 
 export default function StackBump({

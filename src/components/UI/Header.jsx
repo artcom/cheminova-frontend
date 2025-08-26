@@ -1,8 +1,9 @@
-import { motion, AnimatePresence } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 import { styled } from "styled-components"
+
 import Headline from "./Headline"
-import SubHeadline from "./SubHeadline"
 import LegalNotice from "./LegalNotice"
+import SubHeadline from "./SubHeadline"
 
 const HeaderLayout = styled(motion.div)`
   display: flex;

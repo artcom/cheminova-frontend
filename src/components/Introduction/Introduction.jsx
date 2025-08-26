@@ -1,18 +1,19 @@
-import { useState, useEffect } from "react"
-import useGlobalState from "@hooks/useGlobalState"
 import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
 import IconButton from "@components/UI/IconButton"
+import useGlobalState from "@hooks/useGlobalState"
+import { useEffect, useState } from "react"
+
+import Rectangle from "./Rectangle.png"
 import {
-  IntroductionContainer,
-  CharacterImageContainer,
+  CameraButtonContainer,
   CharacterImage,
+  CharacterImageContainer,
   ContentContainer,
   Headline,
-  TextBlock,
   Image,
-  CameraButtonContainer,
+  IntroductionContainer,
+  TextBlock,
 } from "./styles"
-import Rectangle from "./Rectangle.png"
 
 export default function Introduction({ onNext }) {
   const { selectedCharacter, currentCharacterIndex } = useGlobalState()

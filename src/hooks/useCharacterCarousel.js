@@ -1,5 +1,5 @@
-import { useEffect, useState } from "react"
 import { animate, useMotionValue } from "motion/react"
+import { useEffect, useState } from "react"
 
 export const useCharacterCarousel = (
   selectedIndex,

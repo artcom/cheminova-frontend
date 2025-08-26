@@ -1,5 +1,5 @@
-import { styled } from "styled-components"
 import { motion } from "motion/react"
+import { styled } from "styled-components"
 
 const SubHeadline = styled(motion.div)`
   color: ${(props) => props.theme.colors.background.paper};

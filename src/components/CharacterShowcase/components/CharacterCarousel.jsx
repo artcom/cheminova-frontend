@@ -1,7 +1,8 @@
 import { motion } from "motion/react"
 import { styled } from "styled-components"
-import { CHARACTER_DATA } from "../constants"
+
 import { useCharacterCarousel } from "../../../hooks/useCharacterCarousel"
+import { CHARACTER_DATA } from "../constants"
 import { CAROUSEL_ANIMATION, DRAG_CONFIG } from "../utils/transformUtils"
 
 const CarouselContainer = styled(motion.div)`

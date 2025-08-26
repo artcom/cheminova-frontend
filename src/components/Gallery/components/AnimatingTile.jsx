@@ -1,28 +1,29 @@
+import { Image } from "@react-three/drei"
+import { extend, useFrame, useThree } from "@react-three/fiber"
+import { geometry } from "maath"
 import { useEffect, useMemo, useRef } from "react"
 import { Vector3 } from "three"
-import { useFrame, extend, useThree } from "@react-three/fiber"
-import { Image } from "@react-three/drei"
-import { geometry } from "maath"
+
+import { animateNormal, animatePersonal } from "../animationUtils"
 import ANIMATION_CONFIG, {
-  STACK_LERP,
-  ENABLE_DECK_EFFECT,
+  CAMERA_DEFAULT_Z,
+  DEBUG_GALLERY,
+  DEBUG_THROTTLE_MS,
   DECK_OFFSET_AMPLITUDE,
   DECK_ROTATION_MAX,
+  DETAIL_ACTIVE_LIFT,
+  DETAIL_CAMERA_Z,
+  ENABLE_DECK_EFFECT,
+  RESTORE_LERP,
+  SCALE_COMP_MAX,
+  SCALE_COMP_MIN,
+  STACK_ASSEMBLY_DUR,
+  STACK_FADE_LERP,
+  STACK_LERP,
   STACK_SWITCH_DUR,
   WRAP_EXTRA_DEPTH,
   WRAP_ROTATION,
-  DEBUG_GALLERY,
-  DEBUG_THROTTLE_MS,
-  CAMERA_DEFAULT_Z,
-  DETAIL_CAMERA_Z,
-  DETAIL_ACTIVE_LIFT,
-  SCALE_COMP_MIN,
-  SCALE_COMP_MAX,
-  RESTORE_LERP,
-  STACK_ASSEMBLY_DUR,
-  STACK_FADE_LERP,
 } from "../config"
-import { animatePersonal, animateNormal } from "../animationUtils"
 
 extend({ RoundedPlaneGeometry: geometry.RoundedPlaneGeometry })
 
