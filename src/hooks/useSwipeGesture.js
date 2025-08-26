@@ -33,14 +33,12 @@ export default function useSwipeGesture({
       touchEndY = e.targetTouches[0].clientY
     }
 
-    const isHorizontalSwipe = () =>
-      direction === "horizontal" && touchStartX !== null && touchEndX !== null
-
-    const isVerticalSwipe = () =>
-      direction === "vertical" && touchStartY !== null && touchEndY !== null
-
     const handleTouchEnd = () => {
-      if (isHorizontalSwipe()) {
+      if (
+        direction === "horizontal" &&
+        touchStartX !== null &&
+        touchEndX !== null
+      ) {
         const distanceX = touchStartX - touchEndX
         const isLeftSwipe = distanceX > minSwipeDistance
         const isRightSwipe = distanceX < -minSwipeDistance
@@ -54,7 +52,11 @@ export default function useSwipeGesture({
         }
       }
 
-      if (isVerticalSwipe()) {
+      if (
+        direction === "vertical" &&
+        touchStartY !== null &&
+        touchEndY !== null
+      ) {
         const distanceY = touchStartY - touchEndY
         const isUpSwipe = distanceY > minSwipeDistance
         const isDownSwipe = distanceY < -minSwipeDistance
@@ -81,9 +83,7 @@ export default function useSwipeGesture({
       signal: controller.signal,
     })
 
-    return () => {
-      controller.abort()
-    }
+    return () => controller.abort()
   }, [
     onSwipeLeft,
     onSwipeRight,
