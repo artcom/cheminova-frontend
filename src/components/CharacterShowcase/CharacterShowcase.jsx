@@ -21,9 +21,9 @@ const CharacterShowcase = ({
   } = useGlobalState()
 
   useEffect(() => {
-    if (!showIntro && onCharacterChange) {
+    if (!showIntro) {
       const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
-      onCharacterChange(currentCharacter)
+      onCharacterChange?.(currentCharacter)
     }
   }, [currentCharacterIndex, showIntro, onCharacterChange])
 
@@ -33,9 +33,7 @@ const CharacterShowcase = ({
 
   const handleCharacterSelection = (index) => {
     setCurrentCharacterIndex(index)
-    if (showIntro) {
-      setShowIntro(false)
-    }
+    setShowIntro(false)
   }
 
   const handleCharacterChange = (newIndex) => {
@@ -45,49 +43,47 @@ const CharacterShowcase = ({
   const handleSelectCharacter = () => {
     const selectedCharacter = CHARACTER_DATA[currentCharacterIndex]
     setSelectedCharacter(selectedCharacter)
-    if (onCharacterSelected) {
-      onCharacterSelected()
-    }
+    onCharacterSelected?.()
   }
 
   const handlePrevCharacter = () => {
     if (onPrev) {
       onPrev()
-    } else {
-      const newIndex =
-        currentCharacterIndex > 0
-          ? currentCharacterIndex - 1
-          : CHARACTER_DATA.length - 1
-      setCurrentCharacterIndex(newIndex)
+      return
     }
+
+    const newIndex =
+      currentCharacterIndex > 0
+        ? currentCharacterIndex - 1
+        : CHARACTER_DATA.length - 1
+    setCurrentCharacterIndex(newIndex)
   }
 
   const handleNextCharacter = () => {
     if (onNext) {
       onNext()
-    } else {
-      const newIndex = (currentCharacterIndex + 1) % CHARACTER_DATA.length
-      setCurrentCharacterIndex(newIndex)
+      return
     }
+
+    const newIndex = (currentCharacterIndex + 1) % CHARACTER_DATA.length
+    setCurrentCharacterIndex(newIndex)
   }
 
   const handleSelectAndContinue = () => {
     handleSelectCharacter()
-    if (onSelect) onSelect()
+    onSelect?.()
   }
 
   const handleSingleNavigation = () => {
     if (showIntro) {
       handleIntroComplete()
     } else {
-      if (onNext) onNext()
+      onNext?.()
     }
   }
 
-  const ContainerComponent = MainLayoutContainer
-
   return (
-    <ContainerComponent>
+    <MainLayoutContainer>
       {showIntro ? (
         <IntroScreen
           onCharacterSelect={handleCharacterSelection}
@@ -103,7 +99,7 @@ const CharacterShowcase = ({
           onSingleNavigation={handleSingleNavigation}
         />
       )}
-    </ContainerComponent>
+    </MainLayoutContainer>
   )
 }
 
