@@ -1,9 +1,16 @@
 import useFullscreen from "@hooks/useFullscreen"
 import { styled } from "styled-components"
 
-import IconButton from "./IconButton"
+import IconButton from "@ui/IconButton"
 
-const FullscreenButton = styled(({ className, ...props }) => {
+const StyledFullscreenButton = styled(IconButton)`
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+  z-index: 10;
+`
+
+export default function FullscreenButton(props) {
   const { isIOSDevice, toggleFullscreen } = useFullscreen()
 
   if (isIOSDevice) {
@@ -11,18 +18,10 @@ const FullscreenButton = styled(({ className, ...props }) => {
   }
 
   return (
-    <IconButton
-      className={className}
+    <StyledFullscreenButton
       variant="fullscreen"
       onClick={toggleFullscreen}
       {...props}
     />
   )
-})`
-  position: absolute;
-  top: 1rem;
-  right: 1rem;
-  z-index: 10;
-`
-
-export default FullscreenButton
+}

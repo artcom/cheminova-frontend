@@ -1,4 +1,4 @@
-import styled from "styled-components"
+import { styled } from "styled-components"
 
 const Container = styled.div`
   max-width: 900px;
@@ -42,48 +42,48 @@ const ListItem = styled.li`
   margin-bottom: 8px;
 `
 
-const Imprint = () => (
-  <Container>
-    <Title>Impressum / Imprint</Title>
-    <SectionTitle>Vorstand / Board</SectionTitle>
-    <Paragraph>Andreas Wiek</Paragraph>
-    <SectionTitle>Aufsichtsrat / Supervisory Board</SectionTitle>
-    <List>
-      <ListItem>Volker Tietgens (Vorsitzender / Chairman)</ListItem>
-      <ListItem>Dr. Miloš Stefanović</ListItem>
-      <ListItem>Dr. Uwe S. Schuricht</ListItem>
-    </List>
-    <SectionTitle>Registergericht / Registered at</SectionTitle>
-    <Paragraph>Amtsgericht Charlottenburg, Berlin</Paragraph>
-    <SectionTitle>Registernummer / No.</SectionTitle>
-    <Paragraph>HRB 68308</Paragraph>
-    <SectionTitle>Umsatzsteuer-Identifikationsnummer / VAT ID</SectionTitle>
-    <Paragraph>DE 811998328</Paragraph>
-    <SectionTitle>Adresse / Address</SectionTitle>
-    <Paragraph>
-      ART+COM GmbH
-      <br />
-      Prinzessinnenstraße 1<br />
-      10969 Berlin
-      <br />
-      Deutschland / Germany
-      <br />
-      Telefon / Telephone: +49 30 21001-0
-      <br />
-      info@artcom.de
-    </Paragraph>
-    <SectionTitle>Haftungshinweis / Note on liability</SectionTitle>
-    <Paragraph>
-      Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung für
-      die Inhalte externer Links. Für den Inhalt der verlinkten Seiten sind
-      ausschließlich deren Betreiber verantwortlich.
-      <br />
-      <br />
-      Although we make every effort to verify outside material we are unable to
-      accept liability for the content of external links. Responsibility for
-      this material lies solely with the relevant website owners.
-    </Paragraph>
-  </Container>
-)
-
-export default Imprint
+export default function Imprint() {
+  return (
+    <Container>
+      <Title>Impressum / Imprint</Title>
+      <SectionTitle>Vorstand / Board</SectionTitle>
+      <Paragraph>Andreas Wiek</Paragraph>
+      <SectionTitle>Aufsichtsrat / Supervisory Board</SectionTitle>
+      <List>
+        <ListItem>Volker Tietgens (Vorsitzender / Chairman)</ListItem>
+        <ListItem>Dr. Miloš Stefanović</ListItem>
+        <ListItem>Dr. Uwe S. Schuricht</ListItem>
+      </List>
+      <SectionTitle>Registergericht / Registered at</SectionTitle>
+      <Paragraph>Amtsgericht Charlottenburg, Berlin</Paragraph>
+      <SectionTitle>Registernummer / No.</SectionTitle>
+      <Paragraph>HRB 68308</Paragraph>
+      <SectionTitle>Umsatzsteuer-Identifikationsnummer / VAT ID</SectionTitle>
+      <Paragraph>DE 811998328</Paragraph>
+      <SectionTitle>Adresse / Address</SectionTitle>
+      <Paragraph>
+        ART+COM GmbH
+        <br />
+        Prinzessinnenstraße 1<br />
+        10969 Berlin
+        <br />
+        Deutschland / Germany
+        <br />
+        Telefon / Telephone: +49 30 21001-0
+        <br />
+        info@artcom.de
+      </Paragraph>
+      <SectionTitle>Haftungshinweis / Note on liability</SectionTitle>
+      <Paragraph>
+        Trotz sorgfältiger inhaltlicher Kontrolle übernehmen wir keine Haftung
+        für die Inhalte externer Links. Für den Inhalt der verlinkten Seiten
+        sind ausschließlich deren Betreiber verantwortlich.
+        <br />
+        <br />
+        Although we make every effort to verify outside material we are unable
+        to accept liability for the content of external links. Responsibility
+        for this material lies solely with the relevant website owners.
+      </Paragraph>
+    </Container>
+  )
+}

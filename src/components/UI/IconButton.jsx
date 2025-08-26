@@ -169,38 +169,17 @@ const ICON_VARIANTS = {
   },
 }
 
-function IconButton({
-  variant = "arrowDown",
-  onClick,
-  disabled = false,
-  className,
-  ...props
-}) {
-  const iconVariant = ICON_VARIANTS[variant]
-
-  if (!iconVariant) {
-    console.warn(
-      `IconButton: Unknown variant "${variant}". Available variants: ${Object.keys(ICON_VARIANTS).join(", ")}`,
-    )
-    return null
-  }
-
-  const handleClick = (event) => {
-    if (disabled || !onClick) return
-    onClick(event)
-  }
+export default function IconButton({ variant, onClick, disabled, ...props }) {
+  const iconVariant = ICON_VARIANTS[variant || "arrowDown"]
 
   return (
     <StyledButton
       type="button"
-      onClick={handleClick}
+      onClick={onClick}
       disabled={disabled}
-      className={className}
       {...props}
     >
       {iconVariant.svg}
     </StyledButton>
   )
 }
-
-export default IconButton

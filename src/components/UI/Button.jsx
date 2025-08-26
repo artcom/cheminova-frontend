@@ -1,6 +1,6 @@
 import { styled } from "styled-components"
 
-const Container = styled.button`
+const StyledButton = styled.button`
   all: unset;
   width: 8.875rem;
   height: 3.4375rem;
@@ -10,18 +10,20 @@ const Container = styled.button`
   display: flex;
   flex-direction: column;
   justify-content: center;
-  flex-shrink: 0;
   color: #fff;
-
   text-align: center;
   font-size: 1.25rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
+  cursor: pointer;
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
 `
 
-function Button({ children, ...props }) {
-  return <Container {...props}>{children}</Container>
+export default function Button({ children, ...props }) {
+  return <StyledButton {...props}>{children}</StyledButton>
 }
-
-export default Button
