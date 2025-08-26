@@ -5,14 +5,11 @@ const StyledButton = styled.button`
   width: 3.4375rem;
   height: 3.4375rem;
   flex-shrink: 0;
-  cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
 
   &:disabled {
-    cursor: not-allowed;
-
     svg rect {
       stroke: #888;
     }
