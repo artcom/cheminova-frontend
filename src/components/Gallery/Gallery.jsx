@@ -1,13 +1,13 @@
+import useImagePreloader from "@hooks/useImagePreloader"
+import useResponsiveTilesPerRow from "@hooks/useResponsiveTilesPerRow"
 import { Canvas } from "@react-three/fiber"
+import theme from "@theme"
 import { AnimatePresence, motion } from "framer-motion"
 import { useMemo, useRef, useState } from "react"
 import styled from "styled-components"
 
 import Navigation from "@ui/Navigation"
 
-import useImagePreloader from "../../hooks/useImagePreloader"
-import useResponsiveTilesPerRow from "../../hooks/useResponsiveTilesPerRow"
-import theme from "../../theme"
 import PersonalImage1 from "./assets/1.jpg"
 import PersonalImage2 from "./assets/2.jpg"
 import PersonalImage3 from "./assets/3.jpg"
@@ -92,7 +92,6 @@ export default function Gallery() {
   const [showDebugOverlay, setShowDebugOverlay] = useState(false)
   const [tileDebugData, setTileDebugData] = useState([])
 
-  // Load personal images from localStorage if present
   const personalImages = useMemo(
     () => getPersistedPersonalImages(defaultPersonalImages),
     [],
@@ -100,9 +99,10 @@ export default function Gallery() {
 
   const imagePool = useMemo(() => buildImagePoolFromGlob(cologneImages), [])
 
-  const allImages = useMemo(() => {
-    return [...imagePool, ...personalImages]
-  }, [imagePool, personalImages])
+  const allImages = useMemo(
+    () => [...imagePool, ...personalImages],
+    [imagePool, personalImages],
+  )
 
   const { isLoading, loadedCount, totalImages } = useImagePreloader(allImages)
 
@@ -132,7 +132,7 @@ export default function Gallery() {
             switchDir={switchDir}
             switchStartRef={switchStartRef}
             onEnd={() => {
-              if (DEBUG_GALLERY) console.debug("[StackBump] end")
+              DEBUG_GALLERY && console.debug("[StackBump] end")
               setSwitchDir(0)
               switchStartRef.current = 0
             }}
@@ -150,7 +150,8 @@ export default function Gallery() {
               detailStackScale={detailStackScale}
               setDetailStackScale={setDetailStackScale}
               onStackSizeChange={(n) => {
-                if (n !== stackSize && DEBUG_GALLERY)
+                n !== stackSize &&
+                  DEBUG_GALLERY &&
                   console.debug("[Gallery] stack size", n)
                 setStackSize(n)
               }}
@@ -279,13 +280,13 @@ export default function Gallery() {
                 position="bottom"
                 selectLabel="Close"
                 onSelect={() => {
-                  if (DEBUG_GALLERY) console.debug("[Gallery] exit detail")
+                  DEBUG_GALLERY && console.debug("[Gallery] exit detail")
                   setDetailMode(false)
                   setDetailStackScale(null)
                 }}
                 onPrev={() => {
                   if (stackSize <= 0) return
-                  if (DEBUG_GALLERY)
+                  DEBUG_GALLERY &&
                     console.debug("[Gallery] prev", { stackSize, activeIndex })
                   setSwitchDir(-1)
                   switchStartRef.current = performance.now()
@@ -293,7 +294,7 @@ export default function Gallery() {
                 }}
                 onNext={() => {
                   if (stackSize <= 0) return
-                  if (DEBUG_GALLERY)
+                  DEBUG_GALLERY &&
                     console.debug("[Gallery] next", { stackSize, activeIndex })
                   setSwitchDir(1)
                   switchStartRef.current = performance.now()

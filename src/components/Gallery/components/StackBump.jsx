@@ -15,16 +15,14 @@ export default function StackBump({
 }) {
   const groupRef = useRef()
   const endCalledForStartRef = useRef(0)
-  // Drive timer and bump easing per frame
+
   useFrame(() => {
     const g = groupRef.current
     if (!g) return
     if (!switchDir || !switchStartRef.current) {
-      // settle back
       g.position.y = g.position.y + (0 - g.position.y) * 0.3
       return
     }
-    // Simple up-then-down bump: y = amp * sin(pi * progress)
     const now = performance.now()
     const elapsed = (now - switchStartRef.current) / 1000
     const progress = Math.min(1, Math.max(0, elapsed / STACK_SWITCH_DUR))

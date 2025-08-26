@@ -12,7 +12,6 @@ export default function CameraController({ detailMode }) {
   const { camera } = useThree()
   const lastCamLogRef = useRef(0)
 
-  // Ensure default Z when not in detail mode
   useEffect(() => {
     if (!detailMode) {
       camera.position.set(
@@ -23,7 +22,6 @@ export default function CameraController({ detailMode }) {
     }
   }, [detailMode, camera])
 
-  // Only animate camera when in detail mode
   useFrame(() => {
     if (!detailMode) return
     const dz = DETAIL_CAMERA_Z - camera.position.z

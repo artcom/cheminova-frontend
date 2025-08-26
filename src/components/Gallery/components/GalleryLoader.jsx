@@ -1,7 +1,6 @@
+import theme from "@theme"
 import { motion } from "framer-motion"
 import { styled } from "styled-components"
-
-import theme from "../../../theme"
 
 const Wrapper = styled.div`
   display: flex;
@@ -16,8 +15,8 @@ const Wrapper = styled.div`
 `
 
 const SpinnerRing = styled(motion.div)`
-  width: ${(p) => p.$size || 40}px;
-  height: ${(p) => p.$size || 40}px;
+  width: ${(p) => p.$size}px;
+  height: ${(p) => p.$size}px;
   border: 3px solid ${theme.colors.background.paper}30;
   border-top: 3px solid ${theme.colors.background.paper};
   border-radius: 50%;
@@ -61,7 +60,7 @@ const Hint = styled.p`
 `
 
 export default function GalleryLoader({ loadedCount, totalImages }) {
-  const progress = totalImages > 0 ? (loadedCount / totalImages) * 100 : 0
+  const progress = (loadedCount / totalImages) * 100
 
   return (
     <Wrapper>

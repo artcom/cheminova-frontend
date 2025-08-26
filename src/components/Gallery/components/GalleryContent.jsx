@@ -19,13 +19,13 @@ import AnimatingTile from "./AnimatingTile"
 
 export default function GalleryContent({
   imagePool,
-  targetTilesPerRow = 5,
-  personalImages = [],
+  targetTilesPerRow,
+  personalImages,
   onAllAnimationsDone,
-  detailMode = false,
+  detailMode,
   setDetailMode,
-  canEnterDetail = false,
-  activeIndex = 0,
+  canEnterDetail,
+  activeIndex,
   setActiveIndex,
   detailStackScale,
   setDetailStackScale,
@@ -34,8 +34,8 @@ export default function GalleryContent({
   onDebugDataUpdate,
 }) {
   const { viewport } = useThree()
-  const vw = viewport?.width || 0
-  const vh = viewport?.height || 0
+  const vw = viewport.width
+  const vh = viewport.height
   const ready = vw > 0 && vh > 0
 
   const { tileData, personalAnimationStartTime } = useMemo(() => {
@@ -69,7 +69,6 @@ export default function GalleryContent({
     const maxDelay = Math.max(...delays)
     const personalAnimationStartTime = maxDelay + ANIMATION_DURATION
 
-    // On small screens, reduce base scale slightly so 5 columns fit without overlap
     const responsiveBaseScale =
       vw <= 480 ? Math.min(1.2, BASE_IMAGE_SCALE) * 0.9 : BASE_IMAGE_SCALE
     const responsivePersonalMultiplier =
@@ -100,19 +99,15 @@ export default function GalleryContent({
     }
   }, [ready, vw, vh, targetTilesPerRow, imagePool, personalImages])
 
-  // Freeze tile data and timings once we enter detail mode to avoid jank from
-  // camera-affected viewport changes recomputing grid metrics mid-stack.
   const frozenRef = useRef({ tileData: null, personalStart: 0 })
   const prevDetailRef = useRef(false)
   useEffect(() => {
     if (detailMode && !prevDetailRef.current) {
-      // taking a snapshot at the moment of entering detail view
       frozenRef.current = {
         tileData,
         personalStart: personalAnimationStartTime,
       }
     } else if (!detailMode && prevDetailRef.current) {
-      // leaving detail view
       frozenRef.current = { tileData: null, personalStart: 0 }
     }
     prevDetailRef.current = detailMode
@@ -130,10 +125,9 @@ export default function GalleryContent({
   // If not yet captured, default to the first tile’s scale; once captured, keep it until exit
   const computedDefaultDetailScale = useMemo(() => {
     if (!ready || !tileData.length) return 1
-    return tileData[0]?.scale || 1
+    return tileData[0].scale
   }, [ready, tileData])
 
-  // Completion tracking
   const completedRef = useRef(0)
   const total = effectiveTileData.length
   useEffect(() => {
@@ -147,15 +141,13 @@ export default function GalleryContent({
   }
 
   useEffect(() => {
-    if (onStackSizeChange) onStackSizeChange(effectiveTileData.length)
+    onStackSizeChange && onStackSizeChange(effectiveTileData.length)
   }, [effectiveTileData.length, onStackSizeChange])
 
-  // Track real-time positions for debug overlay
   const currentPositionsRef = useRef({})
 
   const handlePositionUpdate = (tileIndex, position) => {
     currentPositionsRef.current[tileIndex] = position
-    // Update debug data with current positions
     if (onDebugDataUpdate && effectiveTileData.length > 0) {
       const updatedTileData = effectiveTileData.map((tile, idx) => ({
         ...tile,
@@ -165,7 +157,6 @@ export default function GalleryContent({
     }
   }
 
-  // Update debug data when tileData changes
   useEffect(() => {
     if (onDebugDataUpdate && effectiveTileData.length > 0) {
       const updatedTileData = effectiveTileData.map((tile, idx) => ({
@@ -192,11 +183,10 @@ export default function GalleryContent({
             if (canEnterDetail && setDetailMode) {
               if (setActiveIndex) {
                 setActiveIndex(idx)
-                if (DEBUG_GALLERY)
+                DEBUG_GALLERY &&
                   console.debug("[GalleryContent] enter detail idx", idx)
               }
               if (!detailStackScale && setDetailStackScale) {
-                // Capture the scale of the clicked tile to preserve perceived size
                 setDetailStackScale(tile.scale)
               }
               setDetailMode(true)
