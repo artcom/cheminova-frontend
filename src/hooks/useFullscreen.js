@@ -10,13 +10,15 @@ export const useFullscreen = () => {
 
     const detectiOS = () => {
       const userAgent = window.navigator.userAgent.toLowerCase()
-      const regex = new RegExp("iphone|ipad|ipod|macintosh")
-      return regex.test(userAgent) && "ontouchend" in document
+      return (
+        /iphone|ipad|ipod|macintosh/.test(userAgent) && "ontouchend" in document
+      )
     }
 
-    setIsIOSDevice(detectiOS())
+    const isIOS = detectiOS()
+    setIsIOSDevice(isIOS)
 
-    if (!detectiOS()) {
+    if (!isIOS) {
       const handleFullscreenChange = () => {
         setIsFullscreen(!!document.fullscreenElement)
       }
@@ -26,16 +28,12 @@ export const useFullscreen = () => {
       })
     }
 
-    return () => {
-      abortController.abort()
-    }
+    return () => abortController.abort()
   }, [])
 
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
-      document.documentElement.requestFullscreen().catch((err) => {
-        console.error(`Error: ${err.message}`)
-      })
+      document.documentElement.requestFullscreen()
     } else {
       document.exitFullscreen()
     }
