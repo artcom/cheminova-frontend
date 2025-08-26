@@ -1,4 +1,4 @@
-import { fetchPosts } from "@api/fetchData"
+import { fetchPosts } from "@/api/fetchData"
 import { useQuery } from "@tanstack/react-query"
 
 export default function useFetchPosts() {
