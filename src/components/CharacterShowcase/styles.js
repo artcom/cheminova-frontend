@@ -1,4 +1,4 @@
-import { motion as m } from "framer-motion"
+import { motion as m } from "motion/react"
 import { styled } from "styled-components"
 
 export const Container = styled(m.div)`
