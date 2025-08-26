@@ -1,3 +1,4 @@
+import useGlobalState from "@/hooks/useGlobalState"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { styled } from "styled-components"
@@ -54,7 +55,7 @@ const TaskCard = styled.div`
 
 const TaskHeadline = styled.h2`
   color: #000;
-  font-size: 1.5rem;
+  font-size: 1.3rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
@@ -84,14 +85,28 @@ const HiddenInput = styled.input`
   display: none;
 `
 
+const CompletionCard = styled(TaskCard)`
+  background-color: #d4edda;
+  border: 2px solid #28a745;
+`
+
+const CompletionButton = styled(SmallButton)`
+  background-color: #28a745;
+  color: white;
+`
+
 export default function PhotoCapture() {
+  const { navigateToScreenById } = useGlobalState()
   const [currentTaskIndex, setCurrentTaskIndex] = useState(0)
   const [taskImages, setTaskImages] = useState({})
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
   const { isAndroid } = useDevicePlatform()
 
-  const tasks = useMemo(() => ["Of La Nau", "Of yourself", "Of Kölle"], [])
+  const tasks = useMemo(
+    () => ["La Nau", "Your surroundings", "Something special"],
+    [],
+  )
 
   useEffect(() => {
     const stored = JSON.parse(localStorage.getItem("personalImages") || "[]")
@@ -145,6 +160,12 @@ export default function PhotoCapture() {
   const handleOpenGallery = () => {
     galleryInputRef.current.click()
   }
+
+  const handleContinueToGallery = () => {
+    navigateToScreenById("gallery")
+  }
+
+  const allTasksCompleted = Object.keys(taskImages).length === tasks.length
 
   return (
     <>
@@ -212,10 +233,15 @@ export default function PhotoCapture() {
         </TasksContainer>
       </PhotoCaptureContainer>
 
-      {Object.keys(taskImages).length === tasks.length && (
-        <TaskCard>
+      {allTasksCompleted && (
+        <CompletionCard>
           <TaskHeadline>All tasks completed!</TaskHeadline>
-        </TaskCard>
+          <TaskContent>
+            <CompletionButton onClick={handleContinueToGallery}>
+              Continue to Gallery
+            </CompletionButton>
+          </TaskContent>
+        </CompletionCard>
       )}
     </>
   )

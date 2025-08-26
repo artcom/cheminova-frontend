@@ -6,7 +6,7 @@ import {
   IntroContainer,
 } from "@components/CharacterShowcase/styles"
 
-export default function IntroScreen({ onCharacterSelect }) {
+export default function Intro({ onCharacterSelect }) {
   return (
     <IntroContainer>
       <IntroCharactersRow

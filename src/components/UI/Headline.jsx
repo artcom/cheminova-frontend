@@ -11,6 +11,11 @@ const Headline = styled(motion.div)`
   position: relative;
   z-index: 3;
   width: 100%;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
 `
 
 export default Headline

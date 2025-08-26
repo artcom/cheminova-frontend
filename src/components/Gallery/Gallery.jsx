@@ -1,3 +1,4 @@
+import useGlobalState from "@/hooks/useGlobalState"
 import useImagePreloader from "@hooks/useImagePreloader"
 import useResponsiveTilesPerRow from "@hooks/useResponsiveTilesPerRow"
 import { Canvas } from "@react-three/fiber"
@@ -72,6 +73,21 @@ const DebugButton = styled.button`
   font-size: 11px;
 `
 
+const ExitButton = styled.button`
+  position: absolute;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid #333;
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 50;
+`
+
 const defaultPersonalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
 
 const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
@@ -81,13 +97,14 @@ const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
 })
 
 export default function Gallery() {
+  const { goStart } = useGlobalState()
   const tilesPerRow = useResponsiveTilesPerRow()
   const [allAnimsDone, setAllAnimsDone] = useState(false)
   const [detailMode, setDetailMode] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [stackSize, setStackSize] = useState(0)
-  const [switchDir, setSwitchDir] = useState(0) // 1 next, -1 prev, 0 idle
-  const switchStartRef = useRef(0) // performance.now() timestamp
+  const [switchDir, setSwitchDir] = useState(0)
+  const switchStartRef = useRef(0)
   const [detailStackScale, setDetailStackScale] = useState(null)
   const [showDebugOverlay, setShowDebugOverlay] = useState(false)
   const [tileDebugData, setTileDebugData] = useState([])
@@ -106,10 +123,15 @@ export default function Gallery() {
 
   const { isLoading, loadedCount, totalImages } = useImagePreloader(allImages)
 
+  const handleExitGallery = () => {
+    goStart()
+  }
+
   if (isLoading) {
     return (
       <Page>
         <Title>Gallery</Title>
+        <ExitButton onClick={handleExitGallery}>Exit Gallery</ExitButton>
         <GalleryLoader loadedCount={loadedCount} totalImages={totalImages} />
       </Page>
     )
@@ -120,6 +142,7 @@ export default function Gallery() {
       <Title>
         {allAnimsDone && !detailMode ? "Click an image" : "Gallery"}
       </Title>
+      <ExitButton onClick={handleExitGallery}>Exit Gallery</ExitButton>
       <Stage>
         <Canvas
           camera={{ position: [0, 0, CAMERA_DEFAULT_Z], fov: 75 }}

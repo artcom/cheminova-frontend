@@ -1,34 +1,57 @@
-import useGlobalState from "@hooks/useGlobalState"
+import useGlobalState from "@/hooks/useGlobalState"
 import { useEffect, useState } from "react"
 
 import CharacterCarousel from "./components/CharacterCarousel"
-import IntroScreen from "./components/IntroScreen"
+import Intro from "./components/Intro"
 import { CHARACTER_DATA } from "./constants"
 import { MainLayoutContainer } from "./styles"
 
-const CharacterShowcase = ({
-  onCharacterSelected,
-  onCharacterChange,
-  onPrev,
-  onNext,
-  onSelect,
-}) => {
+export default function CharacterShowcase() {
   const [showIntro, setShowIntro] = useState(true)
   const {
     setSelectedCharacter,
     currentCharacterIndex,
     setCurrentCharacterIndex,
+    goNext,
+    handleCharacterPrev,
+    handleCharacterNext,
+    handleCharacterSelect,
+    setHeadline,
+    setDescription,
   } = useGlobalState()
 
   useEffect(() => {
     if (!showIntro) {
       const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
-      onCharacterChange?.(currentCharacter)
+      setSelectedCharacter(currentCharacter)
+      setHeadline(currentCharacter.title)
+      setDescription({
+        title: currentCharacter.name,
+        text: currentCharacter.description,
+      })
+    } else {
+      setHeadline("La Nau")
+      setDescription({
+        title: "Choose your guide",
+        text: "Select your guide for this immersive journey through La Nau.",
+      })
     }
-  }, [currentCharacterIndex, showIntro, onCharacterChange])
+  }, [
+    currentCharacterIndex,
+    showIntro,
+    setSelectedCharacter,
+    setHeadline,
+    setDescription,
+  ])
 
   const handleIntroComplete = () => {
     setShowIntro(false)
+    const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
+    setHeadline(currentCharacter.title)
+    setDescription({
+      title: currentCharacter.name,
+      text: currentCharacter.description,
+    })
   }
 
   const handleCharacterSelection = (index) => {
@@ -40,52 +63,22 @@ const CharacterShowcase = ({
     setCurrentCharacterIndex(newIndex)
   }
 
-  const handleSelectCharacter = () => {
-    const selectedCharacter = CHARACTER_DATA[currentCharacterIndex]
-    setSelectedCharacter(selectedCharacter)
-    onCharacterSelected?.()
-  }
-
-  const handlePrevCharacter = () => {
-    if (onPrev) {
-      onPrev()
-      return
-    }
-
-    const newIndex =
-      currentCharacterIndex > 0
-        ? currentCharacterIndex - 1
-        : CHARACTER_DATA.length - 1
-    setCurrentCharacterIndex(newIndex)
-  }
-
-  const handleNextCharacter = () => {
-    if (onNext) {
-      onNext()
-      return
-    }
-
-    const newIndex = (currentCharacterIndex + 1) % CHARACTER_DATA.length
-    setCurrentCharacterIndex(newIndex)
-  }
-
   const handleSelectAndContinue = () => {
-    handleSelectCharacter()
-    onSelect?.()
+    handleCharacterSelect()
   }
 
   const handleSingleNavigation = () => {
     if (showIntro) {
       handleIntroComplete()
     } else {
-      onNext?.()
+      goNext()
     }
   }
 
   return (
     <MainLayoutContainer>
       {showIntro ? (
-        <IntroScreen
+        <Intro
           onCharacterSelect={handleCharacterSelection}
           onContinue={handleIntroComplete}
         />
@@ -94,13 +87,11 @@ const CharacterShowcase = ({
           selectedIndex={currentCharacterIndex}
           onSelectionChange={handleCharacterChange}
           onSelectCharacter={handleSelectAndContinue}
-          onPrev={handlePrevCharacter}
-          onNext={handleNextCharacter}
+          onPrev={handleCharacterPrev}
+          onNext={handleCharacterNext}
           onSingleNavigation={handleSingleNavigation}
         />
       )}
     </MainLayoutContainer>
   )
 }
-
-export default CharacterShowcase
