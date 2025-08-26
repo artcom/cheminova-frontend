@@ -162,7 +162,8 @@ export default function PhotoCapture() {
   }
 
   const handleContinueToGallery = () => {
-    navigateToScreenById("gallery")
+    // First go to exploration after completing tasks, then user can continue to gallery
+    navigateToScreenById("exploration")
   }
 
   const allTasksCompleted = Object.keys(taskImages).length === tasks.length

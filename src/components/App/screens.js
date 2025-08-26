@@ -1,4 +1,5 @@
 import CharacterShowcase from "@components/CharacterShowcase"
+import Exploration from "@components/Exploration"
 import Gallery from "@components/Gallery"
 import Introduction from "@components/Introduction"
 import PhotoCapture from "@components/PhotoCapture"
@@ -59,6 +60,16 @@ export const createScreens = (_selectedCharacter, goNext) => {
       navigation: {
         mode: "single",
         position: "bottom",
+      },
+    },
+    {
+      id: "exploration",
+      component: Exploration,
+      layout: {
+        type: "full",
+      },
+      navigation: {
+        mode: "single",
       },
     },
 
