@@ -1,4 +1,4 @@
-import { uploadPost } from "@api/uploadData"
+import { uploadPost } from "@/api/uploadData"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 
 export default function useUploadPost() {
@@ -8,9 +8,6 @@ export default function useUploadPost() {
     mutationFn: uploadPost,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["posts"] })
-    },
-    onError: (error) => {
-      console.error("Upload mutation error:", error)
     },
   })
 }
