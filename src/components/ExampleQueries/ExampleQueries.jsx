@@ -65,11 +65,11 @@ export default function ExampleQueries() {
         ) : error ? (
           <div>
             <p>Error loading posts: {error.message}</p>
-            <button onClick={() => refetch()}>Try Again</button>
+            <button onClick={refetch}>Try Again</button>
           </div>
         ) : (
           <ul>
-            {posts?.map((post) => (
+            {posts.map((post) => (
               <li key={post.id}>
                 <h3>{post.title}</h3>
                 <p>{post.body}</p>
