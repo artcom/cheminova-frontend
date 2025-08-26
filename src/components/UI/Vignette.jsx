@@ -60,11 +60,15 @@ const GradientCharacter = styled.div`
 `
 
 export default function Vignette({
-  intensity = 25,
-  isCharacterScreen = false,
-  screenIndex = 0,
+  intensity,
+  isCharacterScreen,
+  screenIndex,
 }) {
-  if (screenIndex < 3) {
+  const vignetteIntensity = intensity || 25
+  const isCharScreen = isCharacterScreen || false
+  const currentScreenIndex = screenIndex || 0
+
+  if (currentScreenIndex < 3) {
     return (
       <>
         <GradientWelcome />
@@ -75,8 +79,8 @@ export default function Vignette({
 
   return (
     <VignetteContainer
-      $intensity={intensity}
-      $isCharacterScreen={isCharacterScreen}
+      $intensity={vignetteIntensity}
+      $isCharacterScreen={isCharScreen}
     />
   )
 }
