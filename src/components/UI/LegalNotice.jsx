@@ -19,7 +19,6 @@ const LegalNoticeContainer = styled.div`
 
 const LinkSpan = styled.span`
   text-decoration: underline;
-  cursor: pointer;
 `
 
 export default function LegalNotice({ setShowScreen }) {
