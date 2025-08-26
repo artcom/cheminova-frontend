@@ -1,7 +1,7 @@
 import {
   CHARACTER_DATA,
   DRAG_THRESHOLD,
-} from "@/components/CharacterShowcase/constants"
+} from "@components/CharacterShowcase/constants"
 import { useEffect, useState } from "react"
 
 export const useCharacterSelection = () => {
