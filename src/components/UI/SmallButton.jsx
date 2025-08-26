@@ -6,25 +6,15 @@ const StyledSmallButton = styled.button`
   border-radius: 2.75rem;
   border: 1px solid black;
   background: transparent;
-  cursor: pointer;
   display: flex;
   justify-content: center;
   align-items: center;
   color: black;
   text-align: center;
-  font-family:
-    "Bricolage Grotesque",
-    system-ui,
-    -apple-system,
-    sans-serif;
   font-size: 1rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
-
-  &:hover {
-    opacity: 0.8;
-  }
 
   &:active {
     transform: scale(0.98);
@@ -32,7 +22,6 @@ const StyledSmallButton = styled.button`
 
   &:disabled {
     opacity: 0.5;
-    cursor: not-allowed;
   }
 `
 
