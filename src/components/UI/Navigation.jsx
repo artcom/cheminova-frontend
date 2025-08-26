@@ -50,7 +50,7 @@ const NavigationContainer = styled.div`
   }}
 `
 
-export default function aNavigation({
+export default function Navigation({
   mode = "horizontal",
   onPrev,
   onNext,
