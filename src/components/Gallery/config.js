@@ -40,7 +40,7 @@ export const STACK_ASSEMBLY_DUR = 0.35 // seconds
 export const STACK_FADE_LERP = 0.18 // per-frame opacity lerp while assembling
 
 // Debugging
-export const DEBUG_GALLERY = true
+export const DEBUG_GALLERY = import.meta.env.DEV
 export const DEBUG_THROTTLE_MS = 150
 
 // Per-tile animation config
