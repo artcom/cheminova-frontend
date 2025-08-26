@@ -174,7 +174,6 @@ function IconButton({
   onClick,
   disabled = false,
   className,
-  testId,
   ...props
 }) {
   const iconVariant = ICON_VARIANTS[variant]
@@ -197,7 +196,6 @@ function IconButton({
       onClick={handleClick}
       disabled={disabled}
       className={className}
-      data-testid={testId}
       {...props}
     >
       {iconVariant.svg}
