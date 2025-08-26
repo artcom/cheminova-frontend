@@ -1,10 +1,10 @@
-import { CHARACTER_DATA } from "../constants"
+import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
 import {
   IntroCharacterImage,
   IntroCharacterItem,
   IntroCharactersRow,
   IntroContainer,
-} from "../styles"
+} from "@components/CharacterShowcase/styles"
 
 export default function IntroScreen({ onCharacterSelect }) {
   return (
