@@ -93,10 +93,6 @@ const CompletionCard = styled(TaskCard)`
 const CompletionButton = styled(SmallButton)`
   background-color: #28a745;
   color: white;
-
-  &:hover {
-    background-color: #218838;
-  }
 `
 
 export default function PhotoCapture() {

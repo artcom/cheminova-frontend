@@ -86,10 +86,6 @@ const ExitButton = styled.button`
   font-size: 14px;
   cursor: pointer;
   z-index: 50;
-
-  &:hover {
-    background: rgba(0, 0, 0, 0.9);
-  }
 `
 
 const defaultPersonalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
