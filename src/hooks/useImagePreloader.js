@@ -6,29 +6,20 @@ const useImagePreloader = (imageUrls = [], shouldPreload = true) => {
   const [preloadedCount, setPreloadedCount] = useState(0)
 
   useEffect(() => {
-    if (!shouldPreload || !imageUrls.length) {
-      return
-    }
+    if (!shouldPreload || !imageUrls.length) return
 
     const imagesMap = imageElements.current
     const preloadedSet = preloadedImages.current
 
     const preloadImages = () => {
       imageUrls.forEach((url) => {
-        if (preloadedSet.has(url)) {
-          return
-        }
+        if (preloadedSet.has(url)) return
 
         const img = new Image()
 
         img.onload = () => {
           preloadedSet.add(url)
           setPreloadedCount(preloadedSet.size)
-          console.log(`✅ Preloaded image: ${url}`)
-        }
-
-        img.onerror = () => {
-          console.warn(`❌ Failed to preload image: ${url}`)
         }
 
         imagesMap.set(url, img)
@@ -37,7 +28,6 @@ const useImagePreloader = (imageUrls = [], shouldPreload = true) => {
     }
 
     const timeoutId = setTimeout(preloadImages, 100)
-
     return () => {
       clearTimeout(timeoutId)
       imagesMap.clear()
@@ -45,7 +35,6 @@ const useImagePreloader = (imageUrls = [], shouldPreload = true) => {
   }, [imageUrls, shouldPreload])
 
   useEffect(() => {
-    // Snapshot refs for cleanup on unmount
     const imagesMap = imageElements.current
     const preloadedSet = preloadedImages.current
     return () => {
