@@ -23,6 +23,7 @@ export default function CharacterShowcase() {
   useEffect(() => {
     if (!showIntro) {
       const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
+      console.log("Current character:", currentCharacter)
       setSelectedCharacter(currentCharacter)
       setHeadline(currentCharacter.title)
       setDescription({

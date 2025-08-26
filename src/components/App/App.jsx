@@ -1,7 +1,7 @@
 import useGlobalState from "@/hooks/useGlobalState"
 import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
 import useImagePreloader from "@hooks/useImagePreloader"
-import { useEffect } from "react"
+import { useEffect, useRef } from "react"
 import { styled } from "styled-components"
 
 import Imprint from "@ui/Imprint"
@@ -25,14 +25,15 @@ export default function App() {
     setScreens,
     setShowModal,
     goNext,
-    selectedCharacter,
   } = useGlobalState()
 
-  const screens = createScreens(selectedCharacter, goNext)
-
+  // Initialize screens once to avoid clobbering runtime layout updates (e.g., from CharacterShowcase)
+  const didInit = useRef(false)
   useEffect(() => {
-    setScreens(screens)
-  }, [screens, setScreens])
+    if (didInit.current) return
+    setScreens(createScreens(null, goNext))
+    didInit.current = true
+  }, [goNext, setScreens])
 
   const characterImages = () =>
     CHARACTER_DATA.map((character) => character.image)
