@@ -17,30 +17,19 @@ const LegalNoticeContainer = styled.div`
   line-height: normal;
 `
 
-function LegalNotice({ setShowScreen }) {
+const LinkSpan = styled.span`
+  text-decoration: underline;
+  cursor: pointer;
+`
+
+export default function LegalNotice({ setShowScreen }) {
   return (
     <LegalNoticeContainer>
-      <span
-        style={{
-          textDecoration: "underline",
-          cursor: "pointer",
-        }}
-        onClick={() => setShowScreen && setShowScreen("imprint")}
-      >
-        Legal Notice
-      </span>
+      <LinkSpan onClick={() => setShowScreen("imprint")}>Legal Notice</LinkSpan>
       &nbsp;&amp;&nbsp;
-      <span
-        style={{
-          textDecoration: "underline",
-          cursor: "pointer",
-        }}
-        onClick={() => setShowScreen && setShowScreen("privacy")}
-      >
+      <LinkSpan onClick={() => setShowScreen("privacy")}>
         Privacy Policy
-      </span>
+      </LinkSpan>
     </LegalNoticeContainer>
   )
 }
-
-export default LegalNotice
