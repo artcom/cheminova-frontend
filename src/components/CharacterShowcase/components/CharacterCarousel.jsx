@@ -1,7 +1,7 @@
+import { useCharacterCarousel } from "@hooks/useCharacterCarousel"
 import { motion } from "motion/react"
 import { styled } from "styled-components"
 
-import { useCharacterCarousel } from "../../../hooks/useCharacterCarousel"
 import { CHARACTER_DATA } from "../constants"
 import { CAROUSEL_ANIMATION, DRAG_CONFIG } from "../utils/transformUtils"
 
@@ -37,20 +37,15 @@ const CharacterImage = styled(motion.img)`
   height: 60dvh;
   margin-bottom: 5.25rem;
   object-fit: contain;
-  filter: ${(props) =>
-    `drop-shadow(0 ${0.5 + props.$shadowIntensity * 0.25}rem ${0.75 + props.$shadowIntensity * 0.5}rem rgba(0, 0, 0, ${0.4 - props.$shadowIntensity * 0.1}))`};
+  filter: ${({ $shadowIntensity }) =>
+    `drop-shadow(0 ${0.5 + $shadowIntensity * 0.25}rem ${0.75 + $shadowIntensity * 0.5}rem rgba(0, 0, 0, ${0.4 - $shadowIntensity * 0.1}))`};
 `
 
-export default function CharacterCarousel({
-  selectedIndex,
-  onSelectionChange,
-}) {
+const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
   const { x, handleDragEnd, dragConstraints } = useCharacterCarousel(
     selectedIndex,
     CHARACTER_DATA.length,
-    (newIndex) => {
-      onSelectionChange(newIndex)
-    },
+    onSelectionChange,
   )
 
   return (
@@ -76,7 +71,7 @@ export default function CharacterCarousel({
           const absoluteOffset = Math.abs(offset)
           return (
             <CharacterCard
-              key={index}
+              key={character.id}
               character={character}
               scale={Math.max(1 - absoluteOffset * 0.2, 0.8)}
               shadowIntensity={absoluteOffset}
@@ -88,34 +83,34 @@ export default function CharacterCarousel({
   )
 }
 
-const CharacterCard = ({ character, scale, shadowIntensity }) => {
-  return (
-    <CharacterCardContainer
-      initial={{ opacity: 0, y: 20 }}
-      animate={{
-        opacity: 1,
-        y: 0,
-        scale: scale,
-      }}
+const CharacterCard = ({ character, scale, shadowIntensity }) => (
+  <CharacterCardContainer
+    initial={{ opacity: 0, y: 20 }}
+    animate={{
+      opacity: 1,
+      y: 0,
+      scale,
+    }}
+    transition={{
+      duration: 0.5,
+      delay: 0.4,
+      ease: "easeOut",
+      scale: CAROUSEL_ANIMATION,
+    }}
+  >
+    <CharacterImage
+      initial={{ opacity: 0, scale: 0.8 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{
-        duration: 0.5,
-        delay: 0.4,
+        duration: 0.6,
+        delay: 0.6,
         ease: "easeOut",
-        scale: CAROUSEL_ANIMATION,
       }}
-    >
-      <CharacterImage
-        initial={{ opacity: 0, scale: 0.8 }}
-        animate={{ opacity: 1, scale: 1 }}
-        transition={{
-          duration: 0.6,
-          delay: 0.6,
-          ease: "easeOut",
-        }}
-        src={character.image}
-        alt={character.name}
-        $shadowIntensity={shadowIntensity}
-      />
-    </CharacterCardContainer>
-  )
-}
+      src={character.image}
+      alt={character.name}
+      $shadowIntensity={shadowIntensity}
+    />
+  </CharacterCardContainer>
+)
+
+export default CharacterCarousel
