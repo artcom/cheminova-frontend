@@ -2,9 +2,9 @@ import useImagePreloader from "@hooks/useImagePreloader"
 import useResponsiveTilesPerRow from "@hooks/useResponsiveTilesPerRow"
 import { Canvas } from "@react-three/fiber"
 import theme from "@theme"
-import { AnimatePresence, motion } from "framer-motion"
+import { AnimatePresence, motion } from "motion/react"
 import { useMemo, useRef, useState } from "react"
-import styled from "styled-components"
+import { styled } from "styled-components"
 
 import Navigation from "@ui/Navigation"
 

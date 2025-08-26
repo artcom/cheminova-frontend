@@ -1,10 +1,7 @@
-import { Image } from "@react-three/drei"
-import { extend, useFrame, useThree } from "@react-three/fiber"
-import { geometry } from "maath"
-import { useEffect, useMemo, useRef } from "react"
-import { Vector3 } from "three"
-
-import { animateNormal, animatePersonal } from "../animationUtils"
+import {
+  animateNormal,
+  animatePersonal,
+} from "@components/Gallery/animationUtils"
 import ANIMATION_CONFIG, {
   CAMERA_DEFAULT_Z,
   DEBUG_GALLERY,
@@ -23,7 +20,12 @@ import ANIMATION_CONFIG, {
   STACK_SWITCH_DUR,
   WRAP_EXTRA_DEPTH,
   WRAP_ROTATION,
-} from "../config"
+} from "@components/Gallery/config"
+import { Image } from "@react-three/drei"
+import { extend, useFrame, useThree } from "@react-three/fiber"
+import { geometry } from "maath"
+import { useEffect, useMemo, useRef } from "react"
+import { Vector3 } from "three"
 
 extend({ RoundedPlaneGeometry: geometry.RoundedPlaneGeometry })
 
