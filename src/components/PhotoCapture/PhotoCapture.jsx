@@ -1,7 +1,8 @@
-import SmallButton from "@components/UI/SmallButton"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useEffect, useMemo, useRef, useState } from "react"
 import { styled } from "styled-components"
+
+import SmallButton from "@ui/SmallButton"
 
 const PhotoCaptureContainer = styled.div`
   display: flex;
@@ -92,24 +93,16 @@ export default function PhotoCapture() {
 
   const tasks = useMemo(() => ["Of La Nau", "Of yourself", "Of Kölle"], [])
 
-  // Load from localStorage on mount
   useEffect(() => {
-    try {
-      const stored = JSON.parse(localStorage.getItem("personalImages") || "[]")
-      if (Array.isArray(stored) && stored.length) {
-        const mapped = stored.reduce((acc, url, idx) => {
-          if (url) acc[idx] = url
-          return acc
-        }, {})
-        setTaskImages(mapped)
-        // set current index to first missing one
-        const firstMissing = tasks.findIndex((_, i) => !mapped[i])
-        setCurrentTaskIndex(
-          firstMissing === -1 ? tasks.length - 1 : firstMissing,
-        )
-      }
-    } catch {
-      // ignore storage parse failures
+    const stored = JSON.parse(localStorage.getItem("personalImages") || "[]")
+    if (Array.isArray(stored) && stored.length) {
+      const mapped = stored.reduce((acc, url, idx) => {
+        if (url) acc[idx] = url
+        return acc
+      }, {})
+      setTaskImages(mapped)
+      const firstMissing = tasks.findIndex((_, i) => !mapped[i])
+      setCurrentTaskIndex(firstMissing === -1 ? tasks.length - 1 : firstMissing)
     }
   }, [tasks])
 
@@ -120,21 +113,19 @@ export default function PhotoCapture() {
 
   const handleFileChange = (event) => {
     const file = event.target.files[0]
-    if (file) {
-      const reader = new FileReader()
-      reader.onload = () => {
-        const dataUrl = reader.result
-        setTaskImages((prev) => {
-          const next = { ...prev, [currentTaskIndex]: dataUrl }
-          persistTaskImages(next)
-          return next
-        })
-        if (currentTaskIndex < tasks.length - 1) {
-          setCurrentTaskIndex((prev) => prev + 1)
-        }
+    const reader = new FileReader()
+    reader.onload = () => {
+      const dataUrl = reader.result
+      setTaskImages((prev) => {
+        const next = { ...prev, [currentTaskIndex]: dataUrl }
+        persistTaskImages(next)
+        return next
+      })
+      if (currentTaskIndex < tasks.length - 1) {
+        setCurrentTaskIndex((prev) => prev + 1)
       }
-      reader.readAsDataURL(file)
     }
+    reader.readAsDataURL(file)
   }
 
   const handleRetake = (taskIndex) => {
