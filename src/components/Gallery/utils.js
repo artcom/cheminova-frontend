@@ -23,7 +23,6 @@ export const computeGridMetrics = ({
 const chebyshev = (r1, c1, r2, c2) =>
   Math.max(Math.abs(r1 - r2), Math.abs(c1 - c2))
 
-// Deterministic PRNG helpers (mulberry32)
 const mulberry32 = (seed) => {
   let t = seed >>> 0
   return () => {
@@ -170,7 +169,6 @@ export const buildTileData = ({
     const y = zeroY - row * idealTileWidth
 
     const displacementRange = idealTileWidth * displacementRatio
-    // deterministic jitter per index
     const jx = (rand() - 0.5) * 2
     const jy = (rand() - 0.5) * 2
     const randomX = jx * displacementRange

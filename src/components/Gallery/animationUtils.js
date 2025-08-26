@@ -15,7 +15,7 @@ export const setGrayscale = (mat, value) => {
   if (mat && mat.grayscale !== undefined) mat.grayscale = value
 }
 
-export function animatePersonal({
+export const animatePersonal = ({
   img,
   mat,
   elapsedTime,
@@ -23,7 +23,7 @@ export function animatePersonal({
   targetScale,
   targetZ,
   flags,
-}) {
+}) => {
   const { startScale, startOpacity, endOpacity, startZ, duration } =
     ANIMATION_CONFIG.personal
 
@@ -45,7 +45,7 @@ export function animatePersonal({
   if (t >= 1) flags.initialDone.current = true
 }
 
-export function animateNormal({
+export const animateNormal = ({
   img,
   mat,
   elapsedTime,
@@ -54,7 +54,7 @@ export function animateNormal({
   targetZ,
   grayscaleStart,
   flags,
-}) {
+}) => {
   const { startScale, startOpacity, endOpacity, startZ, duration } =
     ANIMATION_CONFIG.normal
   const {
