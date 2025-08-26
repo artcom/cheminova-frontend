@@ -52,38 +52,43 @@ const NavigationContainer = styled.div`
 `
 
 export default function Navigation({
-  mode = "horizontal",
+  mode,
   onPrev,
   onNext,
   onSelect,
-  singleButtonVariant = "arrowDown",
-  position = "default",
-  selectLabel = "Select",
+  singleButtonVariant,
+  position,
+  selectLabel,
 }) {
-  if (mode === "single") {
+  const navigationMode = mode || "horizontal"
+  const buttonVariant = singleButtonVariant || "arrowDown"
+  const navPosition = position || "default"
+  const label = selectLabel || "Select"
+
+  if (navigationMode === "single") {
     return (
-      <NavigationContainer $mode="single" $position={position}>
-        <IconButton variant={singleButtonVariant} onClick={onNext} />
+      <NavigationContainer $mode="single" $position={navPosition}>
+        <IconButton variant={buttonVariant} onClick={onNext} />
       </NavigationContainer>
     )
   }
 
-  if (mode === "select") {
+  if (navigationMode === "select") {
     return (
-      <NavigationContainer $mode="select" $position={position}>
+      <NavigationContainer $mode="select" $position={navPosition}>
         <IconButton variant="arrowLeft" onClick={onPrev} />
-        <Button onClick={onSelect}>{selectLabel}</Button>
+        <Button onClick={onSelect}>{label}</Button>
         <IconButton variant="arrowRight" onClick={onNext} />
       </NavigationContainer>
     )
   }
 
-  if (mode === null) {
-    return <NavigationContainer $position={position} />
+  if (navigationMode === null) {
+    return <NavigationContainer $position={navPosition} />
   }
 
   return (
-    <NavigationContainer $mode="horizontal" $position={position}>
+    <NavigationContainer $mode="horizontal" $position={navPosition}>
       <IconButton variant="arrowLeft" onClick={onPrev} />
       <IconButton variant="arrowRight" onClick={onNext} />
     </NavigationContainer>
