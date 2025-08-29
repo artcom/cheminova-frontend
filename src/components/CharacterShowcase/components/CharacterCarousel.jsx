@@ -32,6 +32,8 @@ const CharacterCardContainer = styled(motion.div)`
   align-items: center;
   justify-content: flex-end;
   user-select: none;
+  margin-bottom: 5.25rem;
+  transform-origin: bottom;
 `
 
 const CharacterImage = styled(motion.img)`
@@ -75,7 +77,7 @@ const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
             <CharacterCard
               key={character.id}
               character={character}
-              scale={Math.max(1 - absoluteOffset * 0.2, 0.8)}
+              scale={Math.max(1 - absoluteOffset * 0.2, 0.9)}
               shadowIntensity={absoluteOffset}
             />
           )
