@@ -1,3 +1,4 @@
+import MobileOnlyGuard from "@/components/UI/MobileOnlyGuard"
 import useGlobalState from "@/hooks/useGlobalState"
 import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
 import useImagePreloader from "@hooks/useImagePreloader"
@@ -67,8 +68,13 @@ export default function App() {
   }
 
   return (
-    <AppContainer>
-      <LayoutRenderer screen={currentScreen} setShowScreen={handleShowModal} />
-    </AppContainer>
+    <MobileOnlyGuard>
+      <AppContainer>
+        <LayoutRenderer
+          screen={currentScreen}
+          setShowScreen={handleShowModal}
+        />
+      </AppContainer>
+    </MobileOnlyGuard>
   )
 }
