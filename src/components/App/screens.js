@@ -2,7 +2,9 @@ import CharacterShowcase from "@components/CharacterShowcase"
 import Exploration from "@components/Exploration"
 import Gallery from "@components/Gallery"
 import Introduction from "@components/Introduction"
+import Perspective from "@components/Perspective"
 import PhotoCapture from "@components/PhotoCapture"
+import Upload from "@components/Upload"
 
 import LaNau from "@ui/assets/LaNau.webp"
 
@@ -65,6 +67,33 @@ export const createScreens = (_selectedCharacter, goNext) => {
     {
       id: "exploration",
       component: Exploration,
+      layout: {
+        type: "full",
+      },
+      navigation: {
+        mode: "single",
+      },
+    },
+
+    {
+      id: "perspective",
+      component: Perspective,
+      layout: {
+        type: "overlay",
+        headline: "Your perspective",
+        description: {
+          title: "Your perspective",
+          text: "You’ve seen the monument through new eyes. Now, add your vision to a living collage, together with others who care, just like you.",
+        },
+      },
+      navigation: {
+        mode: "single",
+      },
+    },
+
+    {
+      id: "upload",
+      component: Upload,
       layout: {
         type: "full",
       },
