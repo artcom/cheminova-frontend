@@ -4,7 +4,7 @@ const StyledSmallButton = styled.button`
   width: 7.8125rem;
   height: 2.4375rem;
   border-radius: 2.75rem;
-  border: 1px solid black;
+  border: 1px solid black; /* Can be overridden by parent wrapper */
   background: transparent;
   display: flex;
   justify-content: center;

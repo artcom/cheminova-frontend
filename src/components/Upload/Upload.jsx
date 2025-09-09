@@ -1,5 +1,6 @@
 import { uploadPost } from "@/api/uploadData"
 import useGlobalState from "@/hooks/useGlobalState"
+import { theme } from "@/theme"
 import { useCallback, useEffect, useMemo, useState } from "react"
 import { styled } from "styled-components"
 
@@ -83,6 +84,10 @@ const Question = styled.h1`
 const Actions = styled.div`
   display: flex;
   gap: 1rem;
+  & > button {
+    border-color: ${theme.colors.background.light};
+    color: ${theme.colors.background.light};
+  }
 `
 
 const Hint = styled.p`
