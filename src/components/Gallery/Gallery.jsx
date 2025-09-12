@@ -96,7 +96,7 @@ const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
   import: "default",
 })
 
-export default function Gallery() {
+export default function Gallery({ goToEnding }) {
   const { goStart } = useGlobalState()
   const tilesPerRow = useResponsiveTilesPerRow()
   const [allAnimsDone, setAllAnimsDone] = useState(false)
@@ -142,7 +142,7 @@ export default function Gallery() {
       <Title>
         {allAnimsDone && !detailMode ? "Click an image" : "Gallery"}
       </Title>
-      <ExitButton onClick={handleExitGallery}>Exit Gallery</ExitButton>
+      <ExitButton onClick={goToEnding}>Exit Gallery</ExitButton>
       <Stage>
         <Canvas
           camera={{ position: [0, 0, CAMERA_DEFAULT_Z], fov: 75 }}

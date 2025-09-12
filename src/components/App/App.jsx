@@ -6,6 +6,7 @@ import { styled } from "styled-components"
 import Imprint from "@ui/Imprint"
 import Privacy from "@ui/Privacy"
 
+import Ending from "../Ending"
 import Exploration from "../Exploration"
 import Gallery from "../Gallery"
 import Introduction from "../Introduction"
@@ -69,7 +70,12 @@ export default function App() {
         {state === "upload" && (
           <Upload goToGallery={() => setState("gallery")} />
         )}
-        {state === "gallery" && <Gallery />}
+        {state === "gallery" && (
+          <Gallery goToEnding={() => setState("ending")} />
+        )}
+        {state === "ending" && (
+          <Ending goToWelcome={() => setState("welcome")} />
+        )}
       </AppContainer>
     </MobileOnlyGuard>
   )
