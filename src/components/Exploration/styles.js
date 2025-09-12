@@ -34,7 +34,7 @@ export const ContentContainer = styled(motion.div)`
   left: 50%;
   display: flex;
   width: 90%;
-  height: 70.5625rem;
+  height: 80.5625rem;
   padding: 1.75rem 1.5rem;
   flex-direction: column;
   align-items: flex-start;

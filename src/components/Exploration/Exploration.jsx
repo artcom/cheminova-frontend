@@ -2,6 +2,7 @@ import useGlobalState from "@/hooks/useGlobalState"
 import { CHARACTER_DATA } from "@components/Welcome/CharacterShowcase/constants"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
+import { styled } from "styled-components"
 
 import Navigation from "../UI/Navigation"
 import FirstImage from "./1stImage.png"
@@ -15,6 +16,11 @@ import {
   IntroductionContainer,
   TextBlock,
 } from "./styles"
+
+const StyledNavigation = styled(Navigation)`
+  padding-bottom: 2rem;
+  bottom: 20%;
+`
 
 export default function Exploration({ goToPerspective }) {
   const { selectedCharacter, currentCharacterIndex } = useGlobalState()
@@ -54,7 +60,7 @@ export default function Exploration({ goToPerspective }) {
           stone, it’s actually fighting a secret battle everyday!
         </TextBlock>
 
-        <Navigation
+        <StyledNavigation
           mode="single"
           onSelect={goToPerspective}
           iconColor="black"
