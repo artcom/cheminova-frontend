@@ -47,11 +47,12 @@ const CharacterImage = styled(motion.img)`
 `
 
 const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
-  const { x, handleDragEnd, dragConstraints } = useCharacterCarousel(
-    selectedIndex,
-    CHARACTER_DATA.length,
-    onSelectionChange,
-  )
+  const { x, handleDragStart, handleDragEnd, dragConstraints } =
+    useCharacterCarousel(
+      selectedIndex,
+      CHARACTER_DATA.length,
+      onSelectionChange,
+    )
 
   return (
     <CarouselContainer
@@ -69,6 +70,7 @@ const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
         dragConstraints={dragConstraints}
         dragElastic={DRAG_CONFIG.elastic}
         dragMomentum={DRAG_CONFIG.momentum}
+        onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
         {CHARACTER_DATA.map((character, index) => {

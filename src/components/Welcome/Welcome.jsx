@@ -16,7 +16,7 @@ export default function Welcome({ goToIntroduction }) {
   const [step, setStep] = useState(0)
   const [content, setContent] = useState(config.steps[0])
   const [showIntro, setShowIntro] = useState(true)
-  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(1)
+  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
 
   useEffect(() => {
     if (step === 1) {
@@ -31,8 +31,8 @@ export default function Welcome({ goToIntroduction }) {
       return
     }
     if (step === 1 && showIntro) {
-      setCurrentCharacterIndex(1)
-      console.log("Character selected:", CHARACTER_DATA[1])
+      // Keep current selection (default 0) rather than forcing index 1
+      console.log("Character confirmed:", CHARACTER_DATA[currentCharacterIndex])
       setShowIntro(false)
     }
     if (step === 1 && !showIntro) {

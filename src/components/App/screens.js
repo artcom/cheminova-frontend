@@ -7,7 +7,7 @@ import Upload from "@components/Upload"
 
 import LaNau from "@ui/assets/LaNau.webp"
 
-export const createScreens = (_selectedCharacter, goNext) => {
+export const createScreens = (goNext) => {
   return [
     {
       id: "welcome",

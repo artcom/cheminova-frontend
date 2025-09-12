@@ -1,6 +1,6 @@
 // Moved from src/hooks/useCharacterCarousel.js
 import { animate, useMotionValue } from "motion/react"
-import { useEffect, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 
 export const useCharacterCarousel = (
   selectedIndex,
@@ -8,6 +8,9 @@ export const useCharacterCarousel = (
   onSelectionChange,
 ) => {
   const x = useMotionValue(0)
+  const lastDragX = useRef(0)
+  const dragStartX = useRef(0)
+  const dragStartTime = useRef(0)
   const [spacing, setSpacing] = useState(0)
 
   useEffect(() => {
@@ -37,33 +40,59 @@ export const useCharacterCarousel = (
     })
   }, [selectedIndex, spacing, x])
 
-  const handleDragEnd = () => {
-    const currentPosition = x.get()
-    const calculatedIndex = Math.round(-currentPosition / spacing)
-    const clampedIndex = Math.min(
-      Math.max(calculatedIndex, 0),
-      charactersLength - 1,
-    )
+  const MIN_DRAG_RATIO = 0.3 // fraction of spacing (reduced for sensitivity)
+  const MIN_VELOCITY_PX_MS = 0.3 // swipe speed threshold
 
-    if (clampedIndex !== selectedIndex) {
-      onSelectionChange(clampedIndex)
+  const handleDragStart = () => {
+    dragStartX.current = x.get()
+    lastDragX.current = dragStartX.current
+    dragStartTime.current = performance.now()
+  }
+
+  const handleDragEnd = () => {
+    const endX = x.get()
+    const delta = endX - dragStartX.current
+    const durationMs = Math.max(performance.now() - dragStartTime.current, 1)
+    const velocity = delta / durationMs // px per ms
+
+    let targetIndex = selectedIndex
+    const dragThreshold = spacing * MIN_DRAG_RATIO
+
+    if (spacing > 0) {
+      if (delta < -dragThreshold || velocity < -MIN_VELOCITY_PX_MS) {
+        // swipe left -> next (wrap to first from last)
+        targetIndex = (selectedIndex + 1) % charactersLength
+      } else if (delta > dragThreshold || velocity > MIN_VELOCITY_PX_MS) {
+        // swipe right -> prev (wrap to last from first)
+        targetIndex = (selectedIndex - 1 + charactersLength) % charactersLength
+      } else {
+        // fallback to nearest if no threshold met
+        const calculatedIndex = Math.round(-endX / spacing)
+        // wrap by distance to edges if close beyond thresholds
+        targetIndex =
+          ((calculatedIndex % charactersLength) + charactersLength) %
+          charactersLength
+      }
     }
 
-    animate(x, -clampedIndex * spacing, {
+    if (targetIndex !== selectedIndex) {
+      onSelectionChange(targetIndex)
+    }
+
+    animate(x, -targetIndex * spacing, {
       type: "spring",
       stiffness: 300,
       damping: 30,
     })
   }
 
-  const dragConstraints = {
-    left: -(charactersLength - 1) * spacing,
-    right: 0,
-  }
+  // Disable hard constraints to allow continuity in perception; still limit visually via snapping
+  const dragConstraints = false
 
   return {
     x,
     spacing,
+    handleDragStart,
     handleDragEnd,
     dragConstraints,
   }

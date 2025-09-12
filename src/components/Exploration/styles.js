@@ -40,7 +40,8 @@ export const ContentContainer = styled(motion.div)`
   align-items: flex-start;
   gap: 2rem;
   flex-shrink: 0;
-  border-radius: 1.75rem 1.75rem 0 0;
+  border-radius: 1.75rem 1.75rem;
+  margin-bottom: 3rem;
   background: #f1ece1;
   z-index: 2;
 `

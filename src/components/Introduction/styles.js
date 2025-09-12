@@ -40,7 +40,7 @@ export const ContentContainer = styled(motion.div)`
   align-items: flex-start;
   gap: 2rem;
   flex-shrink: 0;
-  border-radius: 1.75rem 1.75rem 0 0;
+  border-radius: 1.75rem;
   background: #f1ece1;
   z-index: 2;
 `
@@ -77,7 +77,8 @@ export const Image = styled.img`
 export const CameraButtonContainer = styled.div`
   display: flex;
   height: 7.1875rem;
-  padding: 1.75rem 0;
+  padding: 3.75rem 0;
+  margin-bottom: 10rem;
   flex-direction: column;
   justify-content: flex-end;
   align-items: center;

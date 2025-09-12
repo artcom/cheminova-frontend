@@ -18,18 +18,18 @@ import {
 } from "./styles"
 
 const StyledNavigation = styled(Navigation)`
-  padding-bottom: 2rem;
-  bottom: 20%;
+  bottom: 10%;
 `
 
 export default function Exploration({ goToPerspective }) {
-  const { selectedCharacter, currentCharacterIndex } = useGlobalState()
+  const { currentCharacterIndex } = useGlobalState()
   const containerRef = useRef(null)
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
 
-  const currentCharacter =
-    selectedCharacter || CHARACTER_DATA[currentCharacterIndex]
+  const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
+
+  console.log("Rendering Exploration for character:", currentCharacter.name)
 
   return (
     <IntroductionContainer data-introduction-container ref={containerRef}>

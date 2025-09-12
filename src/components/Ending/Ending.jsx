@@ -36,9 +36,7 @@ const Description = styled.p`
 export default function Ending({ goToWelcome }) {
   return (
     <>
-      <Headline>
-        Thank <br /> You
-      </Headline>
+      <Headline>Thank You</Headline>
       <Description>
         Thank you for contributing to this monument and keeping it alive. Now
         take a further look around La Nau.

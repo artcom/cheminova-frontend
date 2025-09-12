@@ -1,3 +1,4 @@
+import { forwardRef } from "react"
 import { styled } from "styled-components"
 
 import Button from "@ui/Button"
@@ -10,15 +11,16 @@ const NavigationContainer = styled.div`
   flex-shrink: 0;
   z-index: 10;
   margin: 0 auto;
+  position: ${({ $position }) => ($position === "bottom" ? "fixed" : "static")};
   ${({ $position }) =>
-    $position === "bottom"
-      ? `
-    position: fixed;
-    left: 50%;
-    transform: translateX(-50%);
-    bottom: 0;
-  `
-      : ``};
+    $position === "bottom" &&
+    `
+      left: 50%;
+      transform: translateX(-50%);
+      bottom: 0.75rem;
+      pointer-events: none;
+      & > * { pointer-events: auto; }
+    `};
 
   ${({ $mode }) => {
     switch ($mode) {
@@ -51,24 +53,43 @@ const NavigationContainer = styled.div`
   }}
 `
 
-export default function Navigation({
-  mode,
-  singleButtonVariant,
-  position,
-  selectLabel,
-  iconColor,
-  onSelect,
-  onNext,
-  onPrev,
-}) {
+const Navigation = forwardRef(function Navigation(
+  {
+    mode,
+    singleButtonVariant,
+    position,
+    selectLabel,
+    iconColor,
+    offsetBottom,
+    onSelect,
+    onNext,
+    onPrev,
+    className,
+    style: userStyle,
+    ...rest
+  },
+  ref,
+) {
   const navigationMode = mode || "horizontal"
   const buttonVariant = singleButtonVariant || "arrowDown"
   const navPosition = position || "bottom"
   const label = selectLabel || "Select"
 
+  const mergedStyle = { ...userStyle }
+  if (navPosition === "bottom" && typeof offsetBottom === "number") {
+    mergedStyle.bottom = `calc(env(safe-area-inset-bottom, 0) + ${offsetBottom}rem)`
+  }
+
   if (navigationMode === "single") {
     return (
-      <NavigationContainer $mode="single" $position={navPosition}>
+      <NavigationContainer
+        ref={ref}
+        $mode="single"
+        $position={navPosition}
+        className={className}
+        style={mergedStyle}
+        {...rest}
+      >
         <IconButton
           variant={buttonVariant}
           onClick={onSelect}
@@ -80,7 +101,14 @@ export default function Navigation({
 
   if (navigationMode === "select") {
     return (
-      <NavigationContainer $mode="select" $position={navPosition}>
+      <NavigationContainer
+        ref={ref}
+        $mode="select"
+        $position={navPosition}
+        className={className}
+        style={mergedStyle}
+        {...rest}
+      >
         <IconButton variant="arrowLeft" onClick={onPrev} color={iconColor} />
         <Button onClick={onSelect}>{label}</Button>
         <IconButton variant="arrowRight" onClick={onNext} color={iconColor} />
@@ -89,13 +117,30 @@ export default function Navigation({
   }
 
   if (navigationMode === null) {
-    return <NavigationContainer $position={navPosition} />
+    return (
+      <NavigationContainer
+        ref={ref}
+        $position={navPosition}
+        className={className}
+        style={mergedStyle}
+        {...rest}
+      />
+    )
   }
 
   return (
-    <NavigationContainer $mode="horizontal" $position={navPosition}>
+    <NavigationContainer
+      ref={ref}
+      $mode="horizontal"
+      $position={navPosition}
+      className={className}
+      style={mergedStyle}
+      {...rest}
+    >
       <IconButton variant="arrowLeft" onClick={onPrev} color={iconColor} />
       <IconButton variant="arrowRight" onClick={onNext} color={iconColor} />
     </NavigationContainer>
   )
-}
+})
+
+export default Navigation

@@ -18,13 +18,14 @@ import {
 } from "./styles"
 
 export default function Introduction({ goToPhotoCapture }) {
-  const { selectedCharacter, currentCharacterIndex } = useGlobalState()
+  const { currentCharacterIndex } = useGlobalState()
   const containerRef = useRef(null)
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
 
-  const currentCharacter =
-    selectedCharacter || CHARACTER_DATA[currentCharacterIndex]
+  const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
+
+  console.log("Rendering Introduction for character:", currentCharacter.name)
 
   return (
     <IntroductionContainer data-introduction-container ref={containerRef}>

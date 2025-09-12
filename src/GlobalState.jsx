@@ -4,8 +4,7 @@ import { createContext, useState } from "react"
 export const StateContext = createContext()
 
 export default function StateProvider({ children }) {
-  const [selectedCharacter, setSelectedCharacter] = useState(null)
-  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(1)
+  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0)
   const [navigationHistory, setNavigationHistory] = useState([0])
   const [showModal, setShowModal] = useState(null)
@@ -69,14 +68,12 @@ export default function StateProvider({ children }) {
     const total = CHARACTER_DATA.length
     const newIndex = (currentCharacterIndex - 1 + total) % total
     setCurrentCharacterIndex(newIndex)
-    setSelectedCharacter(CHARACTER_DATA[newIndex])
   }
 
   function handleCharacterNext() {
     const total = CHARACTER_DATA.length
     const newIndex = (currentCharacterIndex + 1) % total
     setCurrentCharacterIndex(newIndex)
-    setSelectedCharacter(CHARACTER_DATA[newIndex])
   }
 
   function handleCharacterSelect() {
@@ -88,8 +85,6 @@ export default function StateProvider({ children }) {
   const canGoPrev = currentScreenIndex > 0
 
   const value = {
-    selectedCharacter,
-    setSelectedCharacter,
     currentCharacterIndex,
     setCurrentCharacterIndex,
     handleCharacterPrev,
