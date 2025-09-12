@@ -31,6 +31,9 @@ export default function Header({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
+            {legalNotice && (
+              <LegalNotice key="test-dino" setShowScreen={setShowScreen} />
+            )}
             {subheadline}
           </SubHeadline>
         )}
@@ -46,9 +49,6 @@ export default function Header({
           transition={{ layout: { duration: 0.2, ease: "easeInOut" } }}
         >
           {headline}
-          {legalNotice && (
-            <LegalNotice key="test-dino" setShowScreen={setShowScreen} />
-          )}
         </Headline>
       </AnimatePresence>
     </HeaderLayout>

@@ -1,1 +1,1 @@
-export { default } from "./ExampleQueries"
+export {}

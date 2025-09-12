@@ -34,7 +34,7 @@ export const ContentContainer = styled(motion.div)`
   left: 50%;
   display: flex;
   width: 90%;
-  height: 59.5625rem;
+  height: 70.5625rem;
   padding: 1.75rem 1.5rem;
   flex-direction: column;
   align-items: flex-start;
@@ -61,7 +61,7 @@ export const TextBlock = styled.p`
   font-weight: 400;
   line-height: normal;
   letter-spacing: -0.01rem;
-  height: 12.125rem;
+  height: 6.125rem;
   flex-shrink: 0;
   align-self: stretch;
   margin: 0;

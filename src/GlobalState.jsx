@@ -1,4 +1,4 @@
-import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
+import { CHARACTER_DATA } from "@components/Welcome/CharacterShowcase/constants"
 import { createContext, useState } from "react"
 
 export const StateContext = createContext()
@@ -27,14 +27,6 @@ export default function StateProvider({ children }) {
           : s,
       ),
     )
-  }
-
-  function setHeadline(text, index = currentScreenIndex) {
-    setLayout({ headline: text }, index)
-  }
-
-  function setDescription(description, index = currentScreenIndex) {
-    setLayout({ description }, index)
   }
 
   function navigateToScreen(screenIndex) {
@@ -73,7 +65,6 @@ export default function StateProvider({ children }) {
     navigateToScreen(0)
   }
 
-  // Simple character navigation helpers
   function handleCharacterPrev() {
     const total = CHARACTER_DATA.length
     const newIndex = (currentCharacterIndex - 1 + total) % total
@@ -114,8 +105,6 @@ export default function StateProvider({ children }) {
     // Imperative screen layout APIs
     setLayout,
     setNavigation,
-    setHeadline,
-    setDescription,
     navigateToScreen,
     navigateToScreenById,
     goNext,

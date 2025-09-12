@@ -1,6 +1,4 @@
 import useGlobalState from "@/hooks/useGlobalState"
-import useImagePreloader from "@hooks/useImagePreloader"
-import useResponsiveTilesPerRow from "@hooks/useResponsiveTilesPerRow"
 import { Canvas } from "@react-three/fiber"
 import theme from "@theme"
 import { AnimatePresence, motion } from "motion/react"
@@ -18,6 +16,8 @@ import GalleryLoader from "./components/GalleryLoader"
 import StackBump from "./components/StackBump"
 import { CAMERA_DEFAULT_Z, DEBUG_GALLERY } from "./config"
 import { buildImagePoolFromGlob, getPersistedPersonalImages } from "./helpers"
+import useImagePreloader from "./hooks/useImagePreloader"
+import useResponsiveTilesPerRow from "./hooks/useResponsiveTilesPerRow"
 
 const Page = styled.div`
   background-color: ${theme.colors.background.dark};

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 
-export const useFullscreen = () => {
+const useFullscreen = () => {
   const [isFullscreen, setIsFullscreen] = useState(false)
   const [isIOSDevice, setIsIOSDevice] = useState(false)
 

@@ -1,172 +1,39 @@
-import useGlobalState from "@/hooks/useGlobalState"
 import useDevicePlatform from "@hooks/useDevicePlatform"
-import { useEffect, useMemo, useRef, useState } from "react"
-import { styled } from "styled-components"
+import { useRef } from "react"
 
 import SmallButton from "@ui/SmallButton"
 
-const PhotoCaptureContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  width: 100%;
-  padding: 0 0 34.75rem 0;
-`
+import Navigation from "../UI/Navigation"
+import usePhotoTasks from "./hooks/usePhotoTasks"
+import {
+  HeaderContainer,
+  HeaderText,
+  HiddenInput,
+  PhotoCaptureContainer,
+  TaskCard,
+  TaskContent,
+  TaskHeadline,
+  TaskImage,
+  TasksContainer,
+} from "./styles"
 
-const HeaderContainer = styled.div`
-  display: flex;
-  width: 21.4375rem;
-  flex-direction: column;
-  align-items: flex-start;
-  padding: 1.5625rem;
-`
-
-const HeaderText = styled.h1`
-  color: #fff;
-  font-size: 1.5rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  margin: 0;
-  text-align: center;
-`
-
-const TasksContainer = styled.div`
-  display: flex;
-  flex-direction: column;
-  gap: 1.5rem;
-  width: 100%;
-  align-items: flex-start;
-`
-
-const TaskCard = styled.div`
-  display: flex;
-  width: 23rem;
-  height: 9.4375rem;
-  padding: 1.75rem 1.625rem;
-  flex-direction: column;
-  align-items: flex-start;
-  gap: 1.125rem;
-  flex-shrink: 0;
-  border-radius: 0 1.75rem 1.75rem 0;
-  background-color: #f1ece1;
-  position: relative;
-`
-
-const TaskHeadline = styled.h2`
-  color: #000;
-  font-size: 1.3rem;
-  font-style: normal;
-  font-weight: 700;
-  line-height: normal;
-  margin: 0;
-`
-
-const TaskContent = styled.div`
-  display: flex;
-  align-items: center;
-  gap: 1rem;
-  width: 100%;
-`
-
-const TaskImage = styled.img`
-  width: 7rem;
-  height: 7rem;
-  position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  margin-right: 2rem;
-  border-radius: 1rem;
-  object-fit: cover;
-`
-
-const HiddenInput = styled.input`
-  display: none;
-`
-
-const CompletionCard = styled(TaskCard)`
-  background-color: #d4edda;
-  border: 2px solid #28a745;
-`
-
-const CompletionButton = styled(SmallButton)`
-  background-color: #28a745;
-  color: white;
-`
-
-export default function PhotoCapture() {
-  const { navigateToScreenById } = useGlobalState()
-  const [currentTaskIndex, setCurrentTaskIndex] = useState(0)
-  const [taskImages, setTaskImages] = useState({})
+export default function PhotoCapture({ goToExploration }) {
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
   const { isAndroid } = useDevicePlatform()
 
-  const tasks = useMemo(
-    () => ["La Nau", "Your surroundings", "Something special"],
-    [],
-  )
-
-  useEffect(() => {
-    const stored = JSON.parse(localStorage.getItem("personalImages") || "[]")
-    if (Array.isArray(stored) && stored.length) {
-      const mapped = stored.reduce((acc, url, idx) => {
-        if (url) acc[idx] = url
-        return acc
-      }, {})
-      setTaskImages(mapped)
-      const firstMissing = tasks.findIndex((_, i) => !mapped[i])
-      setCurrentTaskIndex(firstMissing === -1 ? tasks.length - 1 : firstMissing)
-    }
-  }, [tasks])
-
-  const persistTaskImages = (nextObj) => {
-    const arr = tasks.map((_, i) => nextObj[i] || null)
-    localStorage.setItem("personalImages", JSON.stringify(arr))
-  }
+  const { tasks, taskImages, currentTaskIndex, handleFileObject, retake } =
+    usePhotoTasks()
 
   const handleFileChange = (event) => {
-    const file = event.target.files[0]
-    const reader = new FileReader()
-    reader.onload = () => {
-      const dataUrl = reader.result
-      setTaskImages((prev) => {
-        const next = { ...prev, [currentTaskIndex]: dataUrl }
-        persistTaskImages(next)
-        return next
-      })
-      if (currentTaskIndex < tasks.length - 1) {
-        setCurrentTaskIndex((prev) => prev + 1)
-      }
-    }
-    reader.readAsDataURL(file)
+    const file = event.target.files?.[0]
+    if (file) handleFileObject(file)
+    // Reset the input value so selecting the same file again still triggers change
+    event.target.value = ""
   }
 
-  const handleRetake = (taskIndex) => {
-    setTaskImages((prev) => {
-      const newImages = { ...prev }
-      delete newImages[taskIndex]
-      persistTaskImages(newImages)
-      return newImages
-    })
-    setCurrentTaskIndex(taskIndex)
-  }
-
-  const handleOpenCamera = () => {
-    cameraInputRef.current.click()
-  }
-
-  const handleOpenGallery = () => {
-    galleryInputRef.current.click()
-  }
-
-  const handleContinueToGallery = () => {
-    // First go to exploration after completing tasks, then user can continue to gallery
-    navigateToScreenById("exploration")
-  }
-
-  const allTasksCompleted = Object.keys(taskImages).length === tasks.length
+  const handleOpenCamera = () => cameraInputRef.current?.click()
+  const handleOpenGallery = () => galleryInputRef.current?.click()
 
   return (
     <>
@@ -200,7 +67,7 @@ export default function PhotoCapture() {
               <TaskContent>
                 {taskImages[index] && (
                   <>
-                    <SmallButton onClick={() => handleRetake(index)}>
+                    <SmallButton onClick={() => retake(index)}>
                       Retake
                     </SmallButton>
                     <TaskImage
@@ -232,18 +99,8 @@ export default function PhotoCapture() {
             </TaskCard>
           ))}
         </TasksContainer>
+        <Navigation mode="single" onSelect={goToExploration} />
       </PhotoCaptureContainer>
-
-      {allTasksCompleted && (
-        <CompletionCard>
-          <TaskHeadline>All tasks completed!</TaskHeadline>
-          <TaskContent>
-            <CompletionButton onClick={handleContinueToGallery}>
-              Continue to Gallery
-            </CompletionButton>
-          </TaskContent>
-        </CompletionCard>
-      )}
     </>
   )
 }

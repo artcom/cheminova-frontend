@@ -1,15 +1,18 @@
 import MobileOnlyGuard from "@/components/UI/MobileOnlyGuard"
 import useGlobalState from "@/hooks/useGlobalState"
-import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
-import useImagePreloader from "@hooks/useImagePreloader"
-import { useEffect, useRef } from "react"
+import { useEffect, useRef, useState } from "react"
 import { styled } from "styled-components"
 
 import Imprint from "@ui/Imprint"
 import Privacy from "@ui/Privacy"
 
-import LayoutRenderer from "./LayoutRenderer"
-import { createScreens } from "./screens"
+import Exploration from "../Exploration"
+import Gallery from "../Gallery"
+import Introduction from "../Introduction"
+import Perspective from "../Perspective"
+import PhotoCapture from "../PhotoCapture"
+import Upload from "../Upload"
+import Welcome from "../Welcome"
 
 const AppContainer = styled.div`
   width: 100dvw;
@@ -19,29 +22,15 @@ const AppContainer = styled.div`
 `
 
 export default function App() {
-  const {
-    currentScreenIndex,
-    currentScreen,
-    showModal,
-    setScreens,
-    setShowModal,
-    goNext,
-  } = useGlobalState()
+  const { showModal, setScreens, goNext } = useGlobalState()
 
-  // Initialize screens once to avoid clobbering runtime layout updates (e.g., from CharacterShowcase)
+  const [state, setState] = useState("welcome") // "welcome", "introductio", "photoCapture", "exploration", "perspective", "upload", "gallery"
+
   const didInit = useRef(false)
   useEffect(() => {
     if (didInit.current) return
-    setScreens(createScreens(null, goNext))
     didInit.current = true
   }, [goNext, setScreens])
-
-  const characterImages = () =>
-    CHARACTER_DATA.map((character) => character.image)
-
-  useImagePreloader(characterImages, currentScreenIndex === 0)
-
-  const handleShowModal = (modalType) => setShowModal(modalType)
 
   if (showModal === "privacy") {
     return (
@@ -59,21 +48,28 @@ export default function App() {
     )
   }
 
-  if (!currentScreen) {
-    return (
-      <AppContainer>
-        <div>Loading...</div>
-      </AppContainer>
-    )
-  }
-
   return (
     <MobileOnlyGuard>
       <AppContainer>
-        <LayoutRenderer
-          screen={currentScreen}
-          setShowScreen={handleShowModal}
-        />
+        {state === "welcome" && (
+          <Welcome goToIntroduction={() => setState("introduction")} />
+        )}
+        {state === "introduction" && (
+          <Introduction goToPhotoCapture={() => setState("photoCapture")} />
+        )}
+        {state === "photoCapture" && (
+          <PhotoCapture goToExploration={() => setState("exploration")} />
+        )}
+        {state === "exploration" && (
+          <Exploration goToPerspective={() => setState("perspective")} />
+        )}
+        {state === "perspective" && (
+          <Perspective goToUpload={() => setState("upload")} />
+        )}
+        {state === "upload" && (
+          <Upload goToGallery={() => setState("gallery")} />
+        )}
+        {state === "gallery" && <Gallery />}
       </AppContainer>
     </MobileOnlyGuard>
   )

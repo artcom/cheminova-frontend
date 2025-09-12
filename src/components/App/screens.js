@@ -1,4 +1,3 @@
-import CharacterShowcase from "@components/CharacterShowcase"
 import Exploration from "@components/Exploration"
 import Gallery from "@components/Gallery"
 import Introduction from "@components/Introduction"
@@ -28,7 +27,6 @@ export const createScreens = (_selectedCharacter, goNext) => {
 
     {
       id: "character-selection",
-      component: CharacterShowcase,
       layout: {
         type: "overlay",
         backgroundImage: LaNau,

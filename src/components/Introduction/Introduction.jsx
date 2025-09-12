@@ -1,5 +1,5 @@
 import useGlobalState from "@/hooks/useGlobalState"
-import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
+import { CHARACTER_DATA } from "@components/Welcome/CharacterShowcase/constants"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
 
@@ -17,8 +17,8 @@ import {
   TextBlock,
 } from "./styles"
 
-export default function Introduction() {
-  const { selectedCharacter, currentCharacterIndex, goNext } = useGlobalState()
+export default function Introduction({ goToPhotoCapture }) {
+  const { selectedCharacter, currentCharacterIndex } = useGlobalState()
   const containerRef = useRef(null)
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
@@ -55,7 +55,7 @@ export default function Introduction() {
         </TextBlock>
 
         <CameraButtonContainer>
-          <IconButton variant="camera" onClick={goNext} />
+          <IconButton variant="camera" onClick={goToPhotoCapture} />
         </CameraButtonContainer>
       </ContentContainer>
     </IntroductionContainer>

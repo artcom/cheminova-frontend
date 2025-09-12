@@ -8,6 +8,18 @@ const StyledButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  &[data-color="black"] svg rect {
+    stroke: black;
+  }
+  &[data-color="black"] svg path {
+    fill: black;
+  }
+  &[data-color="black"]:disabled svg rect {
+    stroke: #444;
+  }
+  &[data-color="black"]:disabled svg path {
+    fill: #444;
+  }
 
   &:disabled {
     svg rect {
@@ -166,7 +178,13 @@ const ICON_VARIANTS = {
   },
 }
 
-export default function IconButton({ variant, onClick, disabled, ...props }) {
+export default function IconButton({
+  variant,
+  onClick,
+  disabled,
+  color,
+  ...props
+}) {
   const iconVariant = ICON_VARIANTS[variant || "arrowDown"]
 
   return (
@@ -174,6 +192,7 @@ export default function IconButton({ variant, onClick, disabled, ...props }) {
       type="button"
       onClick={onClick}
       disabled={disabled}
+      data-color={color}
       {...props}
     >
       {iconVariant.svg}

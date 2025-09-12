@@ -1,4 +1,3 @@
-import useGlobalState from "@/hooks/useGlobalState"
 import { styled } from "styled-components"
 
 import Button from "@ui/Button"
@@ -57,19 +56,24 @@ export default function Navigation({
   singleButtonVariant,
   position,
   selectLabel,
+  iconColor,
+  onSelect,
+  onNext,
+  onPrev,
 }) {
   const navigationMode = mode || "horizontal"
   const buttonVariant = singleButtonVariant || "arrowDown"
-  const navPosition = position || "default"
+  const navPosition = position || "bottom"
   const label = selectLabel || "Select"
-  const { goNext, goPrev } = useGlobalState()
-
-  console.log("Navigation mode:", navigationMode)
 
   if (navigationMode === "single") {
     return (
       <NavigationContainer $mode="single" $position={navPosition}>
-        <IconButton variant={buttonVariant} onClick={goNext} />
+        <IconButton
+          variant={buttonVariant}
+          onClick={onSelect}
+          color={iconColor}
+        />
       </NavigationContainer>
     )
   }
@@ -77,9 +81,9 @@ export default function Navigation({
   if (navigationMode === "select") {
     return (
       <NavigationContainer $mode="select" $position={navPosition}>
-        <IconButton variant="arrowLeft" onClick={goPrev} />
-        <Button onClick={goNext}>{label}</Button>
-        <IconButton variant="arrowRight" onClick={goNext} />
+        <IconButton variant="arrowLeft" onClick={onPrev} color={iconColor} />
+        <Button onClick={onSelect}>{label}</Button>
+        <IconButton variant="arrowRight" onClick={onNext} color={iconColor} />
       </NavigationContainer>
     )
   }
@@ -90,8 +94,8 @@ export default function Navigation({
 
   return (
     <NavigationContainer $mode="horizontal" $position={navPosition}>
-      <IconButton variant="arrowLeft" onClick={goPrev} />
-      <IconButton variant="arrowRight" onClick={goNext} />
+      <IconButton variant="arrowLeft" onClick={onPrev} color={iconColor} />
+      <IconButton variant="arrowRight" onClick={onNext} color={iconColor} />
     </NavigationContainer>
   )
 }

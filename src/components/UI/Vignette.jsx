@@ -31,13 +31,7 @@ const GradientCharacter = styled.div`
   );
 `
 
-export default function Vignette({ screenIndex }) {
-  console.log("Vignette render")
-
-  if (screenIndex > 2) {
-    return null
-  }
-
+export default function Vignette() {
   return (
     <>
       <GradientWelcome />

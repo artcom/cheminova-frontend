@@ -1,11 +1,12 @@
-import { CHARACTER_DATA } from "@components/CharacterShowcase/constants"
+import { CHARACTER_DATA } from "@components/Welcome/CharacterShowcase/constants"
 import {
   CAROUSEL_ANIMATION,
   DRAG_CONFIG,
-} from "@components/CharacterShowcase/utils/transformUtils"
-import { useCharacterCarousel } from "@hooks/useCharacterCarousel"
+} from "@components/Welcome/CharacterShowcase/utils/transformUtils"
 import { motion } from "motion/react"
 import { styled } from "styled-components"
+
+import { useCharacterCarousel } from "../hooks/useCharacterCarousel"
 
 const CarouselContainer = styled(motion.div)`
   width: 100dvw;
