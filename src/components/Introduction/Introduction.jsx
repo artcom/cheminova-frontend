@@ -25,8 +25,6 @@ export default function Introduction({ goToPhotoCapture }) {
 
   const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
 
-  console.log("Rendering Introduction for character:", currentCharacter.name)
-
   return (
     <IntroductionContainer data-introduction-container ref={containerRef}>
       <CharacterImageContainer>

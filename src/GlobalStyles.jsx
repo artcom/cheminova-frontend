@@ -1,6 +1,7 @@
 import { createGlobalStyle } from "styled-components"
 
 const GlobalStyles = createGlobalStyle`
+  /* Global reset & interaction tuning */
   * {
     box-sizing: border-box;
     margin: 0;
@@ -9,9 +10,17 @@ const GlobalStyles = createGlobalStyle`
     user-select: none;
     -webkit-user-select: none;
     -moz-user-select: none;
-    user-select: none; 
     -webkit-touch-callout: none;
     -webkit-tap-highlight-color: transparent;
+  }
+
+  /* CSS custom properties for safe areas & z-index scale */
+  :root {
+    --safe-inset-top: env(safe-area-inset-top, 0px);
+    --safe-inset-bottom: env(safe-area-inset-bottom, 0px);
+    --z-base: 0;
+    --z-overlay: 10;
+    --z-modal: 100;
   }
 
   html,
@@ -19,7 +28,8 @@ const GlobalStyles = createGlobalStyle`
     background-color: ${(props) => props.theme.colors.background.dark};
     width: 100%;
     height: 100%;
-    overflow: hidden;
+    min-height: 100dvh; /* Support dynamic viewport on mobile browsers */
+    overflow: hidden; /* Kiosk-style: lock scroll intentionally */
     color: ${(props) => props.theme.colors.text.primary};
     font-family: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-optical-sizing: auto;
@@ -27,8 +37,6 @@ const GlobalStyles = createGlobalStyle`
     font-variation-settings: "wdth" 100;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
-    overflow: hidden;
-
   }
 
   #root {
@@ -39,10 +47,7 @@ const GlobalStyles = createGlobalStyle`
     place-items: center;
   }
 
-  input, textarea, select {
-    font-family: inherit;
-  }
-
+  input, textarea, select { font-family: inherit; }
 `
 
 export default GlobalStyles

@@ -4,7 +4,6 @@ import SmallButton from "@ui/SmallButton"
 
 import {
   Actions,
-  Hint,
   ImageRow,
   ImagesGrid,
   Missing,
@@ -27,8 +26,6 @@ export default function Upload({ goToGallery }) {
     if (Array.isArray(stored)) setImages(stored)
   }, [])
 
-  const allPresent = tasks.every((_, i) => !!images[i])
-
   return (
     <UploadContainer>
       <ImagesGrid>
@@ -49,7 +46,6 @@ export default function Upload({ goToGallery }) {
           <SmallButton onClick={goToGallery}>Yes</SmallButton>
           <SmallButton onClick={goToGallery}>No</SmallButton>
         </Actions>
-        {!allPresent && <Hint>Please complete all three images first.</Hint>}
       </QuestionBlock>
     </UploadContainer>
   )

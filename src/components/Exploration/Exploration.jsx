@@ -29,8 +29,6 @@ export default function Exploration({ goToPerspective }) {
 
   const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
 
-  console.log("Rendering Exploration for character:", currentCharacter.name)
-
   return (
     <IntroductionContainer data-introduction-container ref={containerRef}>
       <CharacterImageContainer>

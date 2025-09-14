@@ -12,44 +12,46 @@ import { CHARACTER_DATA } from "./CharacterShowcase/constants"
 import { config } from "./config"
 import { ChildrenContainer, Layout, TextLayout } from "./styles"
 
+// Step definition constants to avoid magic numbers and improve readability
+const STEP = Object.freeze({
+  INTRO: 0,
+  CHARACTER: 1,
+})
+
 export default function Welcome({ goToIntroduction }) {
-  const [step, setStep] = useState(0)
+  const [step, setStep] = useState(STEP.INTRO)
   const [content, setContent] = useState(config.steps[0])
   const [showIntro, setShowIntro] = useState(true)
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
 
   useEffect(() => {
-    if (step === 1) {
+    if (step === STEP.CHARACTER && showIntro) {
+      // When first entering character step but still in intro, reflect the second config step
       setContent(config.steps[1])
-      return
     }
-  }, [step])
+  }, [step, showIntro])
+
+  const advanceFromIntro = () => setStep(STEP.CHARACTER)
+  const confirmCharacter = () => {
+    setShowIntro(false)
+  }
+  const proceedAfterConfirmation = () => goToIntroduction()
 
   const onSelect = () => {
-    if (step === 0) {
-      setStep(1)
-      return
-    }
-    if (step === 1 && showIntro) {
-      // Keep current selection (default 0) rather than forcing index 1
-      console.log("Character confirmed:", CHARACTER_DATA[currentCharacterIndex])
-      setShowIntro(false)
-    }
-    if (step === 1 && !showIntro) {
-      goToIntroduction()
-    }
+    if (step === STEP.INTRO) return advanceFromIntro()
+    if (step === STEP.CHARACTER && showIntro) return confirmCharacter()
+    if (step === STEP.CHARACTER && !showIntro) return proceedAfterConfirmation()
   }
 
   function handleCharacterPrev() {
-    const total = CHARACTER_DATA.length
-    const newIndex = (currentCharacterIndex - 1 + total) % total
-    setCurrentCharacterIndex(newIndex)
+    if (currentCharacterIndex === 0) return
+    setCurrentCharacterIndex(currentCharacterIndex - 1)
   }
 
   function handleCharacterNext() {
-    const total = CHARACTER_DATA.length
-    const newIndex = (currentCharacterIndex + 1) % total
-    setCurrentCharacterIndex(newIndex)
+    const last = CHARACTER_DATA.length - 1
+    if (currentCharacterIndex === last) return
+    setCurrentCharacterIndex(currentCharacterIndex + 1)
   }
 
   const headline = content.headline
@@ -59,8 +61,8 @@ export default function Welcome({ goToIntroduction }) {
 
   return (
     <Layout $backgroundImage={LaNau}>
-      {step < 1 && <FullscreenButton />}
-      {step === 1 && (
+      {step < STEP.CHARACTER && <FullscreenButton />}
+      {step === STEP.CHARACTER && (
         <ChildrenContainer>
           <CharacterShowcase
             onSelect={() => setStep(2)}
@@ -77,7 +79,7 @@ export default function Welcome({ goToIntroduction }) {
           <Header
             headline={headline}
             subheadline={subHeadline}
-            legalNotice={step === 0}
+            legalNotice={step === STEP.INTRO}
           />
         )}
 
@@ -96,6 +98,9 @@ export default function Welcome({ goToIntroduction }) {
         onSelect={onSelect}
         onPrev={handleCharacterPrev}
         onNext={handleCharacterNext}
+        /* Pass disabled state via data attributes consumed by IconButton if needed */
+        prevDisabled={currentCharacterIndex === 0}
+        nextDisabled={currentCharacterIndex === CHARACTER_DATA.length - 1}
       />
       <Vignette />
     </Layout>

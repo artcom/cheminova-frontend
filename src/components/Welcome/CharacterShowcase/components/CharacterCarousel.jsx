@@ -35,6 +35,7 @@ const CharacterCardContainer = styled(motion.div)`
   user-select: none;
   margin-bottom: 5.25rem;
   transform-origin: bottom;
+  z-index: -1;
 `
 
 const CharacterImage = styled(motion.img)`

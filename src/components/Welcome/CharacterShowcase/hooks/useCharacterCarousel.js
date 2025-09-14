@@ -60,18 +60,18 @@ export const useCharacterCarousel = (
 
     if (spacing > 0) {
       if (delta < -dragThreshold || velocity < -MIN_VELOCITY_PX_MS) {
-        // swipe left -> next (wrap to first from last)
-        targetIndex = (selectedIndex + 1) % charactersLength
+        // swipe left -> next (clamp at upper bound)
+        targetIndex = Math.min(selectedIndex + 1, charactersLength - 1)
       } else if (delta > dragThreshold || velocity > MIN_VELOCITY_PX_MS) {
-        // swipe right -> prev (wrap to last from first)
-        targetIndex = (selectedIndex - 1 + charactersLength) % charactersLength
+        // swipe right -> prev (clamp at lower bound)
+        targetIndex = Math.max(selectedIndex - 1, 0)
       } else {
-        // fallback to nearest if no threshold met
+        // fallback to nearest index without wrapping
         const calculatedIndex = Math.round(-endX / spacing)
-        // wrap by distance to edges if close beyond thresholds
-        targetIndex =
-          ((calculatedIndex % charactersLength) + charactersLength) %
-          charactersLength
+        targetIndex = Math.min(
+          Math.max(calculatedIndex, 0),
+          charactersLength - 1,
+        )
       }
     }
 

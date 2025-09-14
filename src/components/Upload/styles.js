@@ -17,7 +17,8 @@ export const ImagesGrid = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  gap: 1rem;
+  gap: 2rem;
+  justify-content: flex-start;
 `
 
 export const ImageRow = styled.div`
@@ -30,6 +31,7 @@ export const ImageRow = styled.div`
   position: relative;
   min-height: 6.25rem;
   overflow: hidden;
+  width: 80%;
 `
 
 export const TaskLabel = styled.h2`
@@ -65,9 +67,10 @@ export const QuestionBlock = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1rem;
+  gap: 5rem;
   text-align: center;
   max-width: 32rem;
+  width: 80%;
 `
 
 export const Question = styled.h1`
@@ -83,10 +86,4 @@ export const Actions = styled.div`
     border-color: ${theme.colors.background.light};
     color: ${theme.colors.background.light};
   }
-`
-
-export const Hint = styled.p`
-  margin: 0;
-  font-size: 0.75rem;
-  color: #999;
 `

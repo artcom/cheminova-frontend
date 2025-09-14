@@ -1,14 +1,22 @@
-import useGlobalState from "@/hooks/useGlobalState"
-import { CHARACTER_DATA } from "@components/Welcome/CharacterShowcase/constants"
 import { styled } from "styled-components"
 
 import Navigation from "../UI/Navigation"
 
-const Headline = styled.h1`
-  position: fixed;
-  top: 11.75rem;
-  left: 1.625rem;
+const Screen = styled.div`
+  position: relative;
+  width: 100dvw;
+  height: 100dvh;
+  padding: var(--safe-inset-top) 1.625rem calc(var(--safe-inset-bottom) + 7rem)
+    1.625rem;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
   color: #fff;
+  overflow: hidden; /* kiosk style */
+`
+
+const Headline = styled.h1`
+  margin-top: 10.75rem; /* approximate previous visual spacing (top 11.75rem minus top padding) */
   font-family: "Bricolage Grotesque";
   font-size: 2.625rem;
   font-style: normal;
@@ -18,13 +26,9 @@ const Headline = styled.h1`
 `
 
 const Description = styled.p`
-  position: fixed;
-  top: 20.5rem;
-  left: 1.625rem;
+  margin-top: 1.5rem;
   width: 21.375rem;
-  height: 13.75rem;
-  flex-shrink: 0;
-  color: #fff;
+  max-width: 100%;
   font-family: "Bricolage Grotesque";
   font-size: 1.5rem;
   font-style: normal;
@@ -34,14 +38,11 @@ const Description = styled.p`
 `
 
 export default function Perspective({ goToUpload }) {
-  const { currentCharacterIndex } = useGlobalState()
-  const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
-
-  // Character derived purely from index; no separate selectedCharacter state needed
-  console.log("Rendering Perspective for character:", currentCharacter.name)
+  // Access to global state retained if personalization reintroduced:
+  // const { currentCharacterIndex } = useGlobalState()
 
   return (
-    <>
+    <Screen>
       <Headline>
         Your <br /> Perspective
       </Headline>
@@ -50,6 +51,6 @@ export default function Perspective({ goToUpload }) {
         living collage, together with others who care, just like you.
       </Description>
       <Navigation mode="single" onSelect={goToUpload} />
-    </>
+    </Screen>
   )
 }

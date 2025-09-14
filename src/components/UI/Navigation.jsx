@@ -51,6 +51,8 @@ const NavigationContainer = styled.div`
         `
     }
   }}
+  /* Ensure container never sits flush off-screen when not using fixed bottom mode */
+  margin-bottom: env(safe-area-inset-bottom, 0);
 `
 
 const Navigation = forwardRef(function Navigation(
@@ -60,12 +62,12 @@ const Navigation = forwardRef(function Navigation(
     position,
     selectLabel,
     iconColor,
-    offsetBottom,
     onSelect,
     onNext,
     onPrev,
     className,
-    style: userStyle,
+    prevDisabled,
+    nextDisabled,
     ...rest
   },
   ref,
@@ -75,11 +77,6 @@ const Navigation = forwardRef(function Navigation(
   const navPosition = position || "bottom"
   const label = selectLabel || "Select"
 
-  const mergedStyle = { ...userStyle }
-  if (navPosition === "bottom" && typeof offsetBottom === "number") {
-    mergedStyle.bottom = `calc(env(safe-area-inset-bottom, 0) + ${offsetBottom}rem)`
-  }
-
   if (navigationMode === "single") {
     return (
       <NavigationContainer
@@ -87,7 +84,6 @@ const Navigation = forwardRef(function Navigation(
         $mode="single"
         $position={navPosition}
         className={className}
-        style={mergedStyle}
         {...rest}
       >
         <IconButton
@@ -106,12 +102,21 @@ const Navigation = forwardRef(function Navigation(
         $mode="select"
         $position={navPosition}
         className={className}
-        style={mergedStyle}
         {...rest}
       >
-        <IconButton variant="arrowLeft" onClick={onPrev} color={iconColor} />
+        <IconButton
+          variant="arrowLeft"
+          onClick={prevDisabled ? undefined : onPrev}
+          disabled={prevDisabled}
+          color={iconColor}
+        />
         <Button onClick={onSelect}>{label}</Button>
-        <IconButton variant="arrowRight" onClick={onNext} color={iconColor} />
+        <IconButton
+          variant="arrowRight"
+          onClick={nextDisabled ? undefined : onNext}
+          disabled={nextDisabled}
+          color={iconColor}
+        />
       </NavigationContainer>
     )
   }
@@ -122,7 +127,6 @@ const Navigation = forwardRef(function Navigation(
         ref={ref}
         $position={navPosition}
         className={className}
-        style={mergedStyle}
         {...rest}
       />
     )
@@ -134,11 +138,20 @@ const Navigation = forwardRef(function Navigation(
       $mode="horizontal"
       $position={navPosition}
       className={className}
-      style={mergedStyle}
       {...rest}
     >
-      <IconButton variant="arrowLeft" onClick={onPrev} color={iconColor} />
-      <IconButton variant="arrowRight" onClick={onNext} color={iconColor} />
+      <IconButton
+        variant="arrowLeft"
+        onClick={prevDisabled ? undefined : onPrev}
+        disabled={prevDisabled}
+        color={iconColor}
+      />
+      <IconButton
+        variant="arrowRight"
+        onClick={nextDisabled ? undefined : onNext}
+        disabled={nextDisabled}
+        color={iconColor}
+      />
     </NavigationContainer>
   )
 })
