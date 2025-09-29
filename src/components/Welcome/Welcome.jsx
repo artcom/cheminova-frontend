@@ -3,8 +3,8 @@ import {
   useCharactersFromAll,
   useWelcomeFromAll,
 } from "@/api/hooks"
-import useGlobalState from "@/hooks/useGlobalState"
-import { useEffect, useState } from "react"
+import {  useState } from "react"
+import { useTranslation } from "react-i18next"
 
 import LaNau from "@ui/assets/LaNau.webp"
 import Description from "@ui/Description"
@@ -13,7 +13,6 @@ import Navigation from "@ui/Navigation"
 import Vignette from "@ui/Vignette"
 
 import CharacterShowcase from "./CharacterShowcase"
-import { config } from "./config"
 import { ChildrenContainer, Layout, TextLayout } from "./styles"
 
 const STEP = Object.freeze({
@@ -23,9 +22,9 @@ const STEP = Object.freeze({
 
 export default function Welcome({ goToIntroduction }) {
   const [step, setStep] = useState(STEP.INTRO)
-  const [content, setContent] = useState(config.steps[0])
   const [showIntro, setShowIntro] = useState(true)
-  const { currentCharacterIndex, setCurrentCharacterIndex } = useGlobalState()
+  const { t } = useTranslation()
+  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
 
   const { data: welcomeData, isLoading: welcomeLoading } = useWelcomeFromAll()
   const { data: characterOverviewData, isLoading: characterOverviewLoading } =
@@ -36,12 +35,6 @@ export default function Welcome({ goToIntroduction }) {
   console.log("Welcome Data:", welcomeData)
   console.log("Character Overview Data:", characterOverviewData)
   console.log("Characters Data:", charactersData)
-
-  useEffect(() => {
-    if (step === STEP.CHARACTER && showIntro) {
-      setContent(config.steps[1])
-    }
-  }, [step, showIntro])
 
   const advanceFromIntro = () => setStep(STEP.CHARACTER)
   const confirmCharacter = () => {
@@ -67,26 +60,31 @@ export default function Welcome({ goToIntroduction }) {
   }
 
   const getContent = () => {
-    if (step === STEP.INTRO && welcomeData) {
+    if (step === STEP.INTRO) {
       return {
-        headline: welcomeData.title,
-        subHeadline: welcomeData.siteName,
+        headline: t("welcome.title"),
+        subHeadline: t("welcome.subtitle"),
         description: {
           title: "",
-          text: welcomeData.description,
+          text: t("welcome.description"),
         },
-        navigationMode: content.navigationMode,
+        navigationMode: "single",
       }
     } else if (step === STEP.CHARACTER && showIntro) {
       return {
-        headline: characterOverviewData.title,
+        headline: t("introduction.title"),
         description: {
           title: "",
-          text: characterOverviewData.onboarding.replace(/<[^>]*>/g, ""),
+          text: t("introduction.description"),
         },
-        navigationMode: content.navigationMode,
+        navigationMode: "single",
       }
-    } else if (step === STEP.CHARACTER && !showIntro && charactersData) {
+    } else if (
+      step === STEP.CHARACTER &&
+      !showIntro &&
+      charactersData &&
+      charactersData[currentCharacterIndex]
+    ) {
       const character = charactersData[currentCharacterIndex]
       return {
         headline: character.name,
@@ -95,12 +93,13 @@ export default function Welcome({ goToIntroduction }) {
           title: "",
           text: character.description.replace(/<[^>]*>/g, ""),
         },
+        navigationMode: "double",
       }
     }
-    return content
   }
 
-  const { headline, subHeadline, description, navigationMode } = getContent()
+  const { headline, subHeadline, description, navigationMode } =
+    getContent() || {}
 
   const getBackgroundImage = () => {
     if (step === STEP.INTRO && welcomeData?.backgroundImage?.file) {
@@ -133,7 +132,6 @@ export default function Welcome({ goToIntroduction }) {
         <ChildrenContainer>
           <CharacterShowcase
             onSelect={() => setStep(2)}
-            setContent={setContent}
             showIntro={showIntro}
             setShowIntro={setShowIntro}
           />
