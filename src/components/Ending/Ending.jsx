@@ -1,5 +1,5 @@
 import useEndingContent from "@/hooks/useEndingContent"
-import { parseRichText, processImageUrl } from "@/utils/apiUtils"
+import { processImageUrl } from "@/utils/apiUtils"
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
@@ -161,10 +161,9 @@ export default function Ending({ goToWelcome }) {
     return () => clearTimeout(timer)
   }, [])
 
-  const title = endingData?.title || t("ending.title")
-  const description = endingData?.description
-    ? parseRichText(endingData.description)
-    : t("ending.description")
+  // Always prefer translations over API content for proper localization
+  const title = t("ending.title")
+  const description = t("ending.description")
 
   const backgroundImageUrl =
     imageLoaded && endingData?.backgroundImage
@@ -191,32 +190,12 @@ export default function Ending({ goToWelcome }) {
         )}
 
         <Description $isLoading={isLoading}>
-          {endingData ? (
-            <div dangerouslySetInnerHTML={{ __html: description }} />
-          ) : (
-            <FallbackContent>{description}</FallbackContent>
-          )}
+          <FallbackContent>{description}</FallbackContent>
         </Description>
 
         <ThankYouMessage $visible={showCelebration && !isLoading}>
-          {endingData
-            ? "Your contribution has been recorded and will help preserve this monument for future generations."
-            : "Thank you for being part of this cultural preservation journey!"}
+          {t("ending.thankYouMessage")}
         </ThankYouMessage>
-
-        {endingData && !isLoading && (
-          <div
-            style={{
-              fontSize: "0.875rem",
-              opacity: "0.7",
-              marginBottom: "1rem",
-              fontStyle: "italic",
-              textAlign: "center",
-            }}
-          >
-            Journey complete - Content personalized for your experience
-          </div>
-        )}
 
         <NavigationWrapper>
           <Navigation
