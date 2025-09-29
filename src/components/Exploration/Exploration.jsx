@@ -1,7 +1,8 @@
+import { useCharactersFromAll, usePhotographyFromAll } from "@/api/hooks"
 import useGlobalState from "@/hooks/useGlobalState"
-import { CHARACTER_DATA } from "@components/Welcome/CharacterShowcase/constants"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
+import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
 
 import Navigation from "../UI/Navigation"
@@ -22,41 +23,51 @@ const StyledNavigation = styled(Navigation)`
 `
 
 export default function Exploration({ goToPerspective }) {
+  const { t } = useTranslation()
   const { currentCharacterIndex } = useGlobalState()
+  const { data: charactersData } = useCharactersFromAll()
+  const { data: photographyData } = usePhotographyFromAll(currentCharacterIndex)
   const containerRef = useRef(null)
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
 
-  const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
+  const currentCharacter = charactersData[currentCharacterIndex]
+
+  const getExplorationContent = () => {
+    if (photographyData) {
+      return {
+        heading: photographyData.heading || t("exploration.title"),
+        description: photographyData.description
+          ? photographyData.description.replace(/<[^>]*>/g, "")
+          : t("exploration.content.stone1"),
+      }
+    }
+    return {
+      heading: t("exploration.title"),
+      description: t("exploration.content.stone1"),
+    }
+  }
+
+  const explorationContent = getExplorationContent()
 
   return (
-    <IntroductionContainer data-introduction-container ref={containerRef}>
+    <IntroductionContainer ref={containerRef}>
       <CharacterImageContainer>
         <CharacterImage src={currentCharacter.selectedImage} />
       </CharacterImageContainer>
 
       <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
-        <Headline>Look, what I’ve found,</Headline>
+        <Headline>{explorationContent.heading}</Headline>
 
         <Image src={FirstImage} />
 
-        <TextBlock>
-          Stones with lots of tiny pores (like limestone), frequently found in
-          ancient monuments are more vulnerable to corrosion because they act
-          like little sponges!
-        </TextBlock>
+        <TextBlock>{t("exploration.content.stone1")}</TextBlock>
 
-        <TextBlock>
-          These porous stones absorb moisture, pollutants, and even acidic rain
-          more easily than denser stones, this mechanism speeds up weathering.
-        </TextBlock>
+        <TextBlock>{t("exploration.content.stone2")}</TextBlock>
 
         <Image src={SecondImage} />
 
-        <TextBlock>
-          So, while a monument may look strong and solid, if it’s made of porous
-          stone, it’s actually fighting a secret battle everyday!
-        </TextBlock>
+        <TextBlock>{explorationContent.description}</TextBlock>
 
         <StyledNavigation
           mode="single"

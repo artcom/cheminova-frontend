@@ -1,19 +1,21 @@
+import {
+  useCharacterOverviewFromAll,
+  useCharactersFromAll,
+  useWelcomeFromAll,
+} from "@/api/hooks"
 import useGlobalState from "@/hooks/useGlobalState"
 import { useEffect, useState } from "react"
 
 import LaNau from "@ui/assets/LaNau.webp"
 import Description from "@ui/Description"
-import FullscreenButton from "@ui/FullscreenButton"
 import Header from "@ui/Header"
 import Navigation from "@ui/Navigation"
 import Vignette from "@ui/Vignette"
 
 import CharacterShowcase from "./CharacterShowcase"
-import { CHARACTER_DATA } from "./CharacterShowcase/constants"
 import { config } from "./config"
 import { ChildrenContainer, Layout, TextLayout } from "./styles"
 
-// Step definition constants to avoid magic numbers and improve readability
 const STEP = Object.freeze({
   INTRO: 0,
   CHARACTER: 1,
@@ -25,9 +27,18 @@ export default function Welcome({ goToIntroduction }) {
   const [showIntro, setShowIntro] = useState(true)
   const { currentCharacterIndex, setCurrentCharacterIndex } = useGlobalState()
 
+  const { data: welcomeData, isLoading: welcomeLoading } = useWelcomeFromAll()
+  const { data: characterOverviewData, isLoading: characterOverviewLoading } =
+    useCharacterOverviewFromAll()
+  const { data: charactersData, isLoading: charactersLoading } =
+    useCharactersFromAll()
+
+  console.log("Welcome Data:", welcomeData)
+  console.log("Character Overview Data:", characterOverviewData)
+  console.log("Characters Data:", charactersData)
+
   useEffect(() => {
     if (step === STEP.CHARACTER && showIntro) {
-      // When first entering character step but still in intro, reflect the second config step
       setContent(config.steps[1])
     }
   }, [step, showIntro])
@@ -36,12 +47,11 @@ export default function Welcome({ goToIntroduction }) {
   const confirmCharacter = () => {
     setShowIntro(false)
   }
-  const proceedAfterConfirmation = () => goToIntroduction()
 
   const onSelect = () => {
     if (step === STEP.INTRO) return advanceFromIntro()
     if (step === STEP.CHARACTER && showIntro) return confirmCharacter()
-    if (step === STEP.CHARACTER && !showIntro) return proceedAfterConfirmation()
+    if (step === STEP.CHARACTER && !showIntro) return goToIntroduction()
   }
 
   function handleCharacterPrev() {
@@ -50,19 +60,75 @@ export default function Welcome({ goToIntroduction }) {
   }
 
   function handleCharacterNext() {
-    const last = CHARACTER_DATA.length - 1
+    const totalCharacters = charactersData?.length || 0
+    const last = totalCharacters - 1
     if (currentCharacterIndex === last) return
     setCurrentCharacterIndex(currentCharacterIndex + 1)
   }
 
-  const headline = content.headline
-  const subHeadline = content.subHeadline
-  const description = content.description
-  const navigationMode = content.navigationMode
+  const getContent = () => {
+    if (step === STEP.INTRO && welcomeData) {
+      return {
+        headline: welcomeData.title,
+        subHeadline: welcomeData.siteName,
+        description: {
+          title: "",
+          text: welcomeData.description,
+        },
+        navigationMode: content.navigationMode,
+      }
+    } else if (step === STEP.CHARACTER && showIntro) {
+      return {
+        headline: characterOverviewData.title,
+        description: {
+          title: "",
+          text: characterOverviewData.onboarding.replace(/<[^>]*>/g, ""),
+        },
+        navigationMode: content.navigationMode,
+      }
+    } else if (step === STEP.CHARACTER && !showIntro && charactersData) {
+      const character = charactersData[currentCharacterIndex]
+      return {
+        headline: character.name,
+        subHeadline: character.role,
+        description: {
+          title: "",
+          text: character.description.replace(/<[^>]*>/g, ""),
+        },
+      }
+    }
+    return content
+  }
+
+  const { headline, subHeadline, description, navigationMode } = getContent()
+
+  const getBackgroundImage = () => {
+    if (step === STEP.INTRO && welcomeData?.backgroundImage?.file) {
+      return welcomeData.backgroundImage.file
+    } else if (
+      step === STEP.CHARACTER &&
+      characterOverviewData?.backgroundImage?.file
+    ) {
+      return characterOverviewData.backgroundImage.file
+    }
+    return LaNau
+  }
+
+  if (
+    (step === STEP.INTRO && welcomeLoading) ||
+    (step === STEP.CHARACTER && (characterOverviewLoading || charactersLoading))
+  ) {
+    return (
+      <Layout $backgroundImage={LaNau}>
+        <TextLayout>
+          <Header headline="Loading..." />
+        </TextLayout>
+      </Layout>
+    )
+  }
 
   return (
-    <Layout $backgroundImage={LaNau}>
-      {step < STEP.CHARACTER && <FullscreenButton />}
+    <Layout $backgroundImage={getBackgroundImage()}>
       {step === STEP.CHARACTER && (
         <ChildrenContainer>
           <CharacterShowcase
@@ -97,9 +163,10 @@ export default function Welcome({ goToIntroduction }) {
         onSelect={onSelect}
         onPrev={handleCharacterPrev}
         onNext={handleCharacterNext}
-        /* Pass disabled state via data attributes consumed by IconButton if needed */
         prevDisabled={currentCharacterIndex === 0}
-        nextDisabled={currentCharacterIndex === CHARACTER_DATA.length - 1}
+        nextDisabled={
+          currentCharacterIndex === (charactersData?.length || 0) - 1
+        }
       />
       <Vignette />
     </Layout>

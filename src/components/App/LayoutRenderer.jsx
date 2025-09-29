@@ -2,7 +2,6 @@ import useGlobalState from "@/hooks/useGlobalState"
 import { styled } from "styled-components"
 
 import Description from "@ui/Description"
-import FullscreenButton from "@ui/FullscreenButton"
 import Header from "@ui/Header"
 import Navigation from "@ui/Navigation"
 import Vignette from "@ui/Vignette"
@@ -64,13 +63,7 @@ export default function LayoutRenderer({ screen, setShowScreen }) {
     )
   }
 
-  const {
-    backgroundImage,
-    headline,
-    subheadline,
-    description,
-    showFullscreenButton = false,
-  } = layout
+  const { backgroundImage, headline, subheadline, description } = layout
 
   const {
     mode = "none",
@@ -87,8 +80,6 @@ export default function LayoutRenderer({ screen, setShowScreen }) {
       )}
 
       <Vignette screenIndex={currentScreenIndex} />
-
-      {(showFullscreenButton || isFirstPage) && <FullscreenButton />}
 
       {(headline || description) && (
         <TextLayout $hasDescription={!!description}>

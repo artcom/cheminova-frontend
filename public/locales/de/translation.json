@@ -1,0 +1,94 @@
+{
+  "navigation": {
+    "next": "Weiter",
+    "previous": "Zurück",
+    "close": "Schließen",
+    "select": "Auswählen"
+  },
+  "welcome": {
+    "title": "Willkommen",
+    "subtitle": "La Nau",
+    "description": "Erleben Sie dieses Monument mit neuen Augen"
+  },
+  "introduction": {
+    "title": "Wählen Sie Ihren Führer",
+    "description": "Wählen Sie Ihren Führer für diese immersive Reise durch La Nau."
+  },
+  "photoCapture": {
+    "title": "Rahmen Sie Ihre Perspektive",
+    "tasks": {
+      "laNau": "La Nau",
+      "surroundings": "Ihre Umgebung",
+      "special": "Etwas Besonderes"
+    },
+    "buttons": {
+      "takePhoto": "Foto machen",
+      "gallery": "Galerie",
+      "retake": "Wiederholen"
+    }
+  },
+  "exploration": {
+    "title": "Schau, was ich gefunden habe,",
+    "content": {
+      "stone1": "Steine mit vielen kleinen Poren (wie Kalkstein), die häufig in alten Monumenten zu finden sind, sind anfälliger für Korrosion, da sie wie kleine Schwämme wirken!",
+      "stone2": "Diese porösen Steine absorbieren Feuchtigkeit, Schadstoffe und sogar sauren Regen leichter als dichtere Steine, dieser Mechanismus beschleunigt die Verwitterung.",
+      "stone3": "Während ein Monument stark und solide aussehen mag, kämpft es, wenn es aus porösem Stein besteht, tatsächlich jeden Tag einen geheimen Kampf!"
+    }
+  },
+  "perspective": {
+    "title": "Ihre Perspektive",
+    "description": "Sie haben das Monument mit neuen Augen gesehen. Fügen Sie nun Ihre Vision zu einer lebendigen Collage hinzu, zusammen mit anderen, denen es genauso wichtig ist wie Ihnen.",
+    "loading": "Lade Ihre personalisierte Perspektive...",
+    "fallback": "Erleben Sie diese einzigartige Perspektive von La Nau",
+    "success": "Personalisierte Inhalte erfolgreich geladen"
+  },
+  "upload": {
+    "title": "Sammlung hochladen",
+    "question": "Möchten Sie die Sammlung hochladen?",
+    "buttons": {
+      "yes": "Ja",
+      "no": "Nein",
+      "uploading": "Wird hochgeladen...",
+      "retry": "Upload wiederholen",
+      "pleaseWait": "Bitte warten..."
+    },
+    "status": {
+      "preparing": "Vorbereitung",
+      "uploading": "Wird hochgeladen",
+      "success": "Upload erfolgreich",
+      "error": "Upload fehlgeschlagen",
+      "allComplete": "Alle Uploads erfolgreich abgeschlossen!",
+      "someFailedRetry": "Upload(s) fehlgeschlagen"
+    },
+    "missing": "Fehlt"
+  },
+  "gallery": {
+    "title": "Galerie",
+    "clickImage": "Klicken Sie auf ein Bild",
+    "exitGallery": "Galerie verlassen"
+  },
+  "ending": {
+    "title": "Vielen Dank",
+    "description": "Vielen Dank, dass Sie zu diesem Monument beigetragen und es am Leben erhalten haben. Schauen Sie sich nun weiter in La Nau um.",
+    "loading": "Ihre Reise wird abgeschlossen...",
+    "celebration": "Ihr Beitrag wurde aufgezeichnet!",
+    "thankYouMessage": "Vielen Dank, dass Sie Teil dieser kulturellen Erhaltungsreise sind!",
+    "completionMessage": "Reise abgeschlossen - Ihre Erfahrung wurde personalisiert",
+    "preservationNote": "Ihr Beitrag wird helfen, dieses Monument für zukünftige Generationen zu bewahren"
+  },
+  "errors": {
+    "unknown": "Unbekannter Fehler",
+    "uploadFailed": "Upload fehlgeschlagen",
+    "networkError": "Netzwerkfehler aufgetreten",
+    "unexpectedError": "Unerwarteter Fehler aufgetreten",
+    "contentLoadFailed": "Personalisierte Inhalte konnten nicht geladen werden",
+    "imageLoadFailed": "Hintergrundbild konnte nicht geladen werden"
+  },
+  "loading": {
+    "default": "Wird geladen...",
+    "content": "Inhalte werden geladen...",
+    "images": "Bilder werden geladen...",
+    "perspective": "Ihre Perspektive wird geladen...",
+    "ending": "Ihre Reise wird finalisiert..."
+  }
+}

@@ -1,6 +1,6 @@
 import MobileOnlyGuard from "@/components/UI/MobileOnlyGuard"
 import useGlobalState from "@/hooks/useGlobalState"
-import { useEffect, useRef, useState } from "react"
+import { useState } from "react"
 import { styled } from "styled-components"
 
 import Imprint from "@ui/Imprint"
@@ -12,6 +12,7 @@ import Gallery from "../Gallery"
 import Introduction from "../Introduction"
 import Perspective from "../Perspective"
 import PhotoCapture from "../PhotoCapture"
+import LanguageSelector from "../UI/LanguageSelector"
 import Upload from "../Upload"
 import Welcome from "../Welcome"
 
@@ -22,21 +23,33 @@ const AppContainer = styled.div`
   position: relative;
 `
 
+const LanguageSelectorContainer = styled.div`
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 1000;
+`
+
 export default function App() {
-  const { showModal, setScreens, goNext } = useGlobalState()
+  const { showModal } = useGlobalState()
+  const [state, setState] = useState("welcome")
+  const [capturedImages, setCapturedImages] = useState([])
 
-  const [state, setState] = useState("welcome") // "welcome", "introductio", "photoCapture", "exploration", "perspective", "upload", "gallery"
+  const handleImageCaptured = (imageData) => {
+    setCapturedImages((prev) => [...prev, imageData])
+  }
 
-  const didInit = useRef(false)
-  useEffect(() => {
-    if (didInit.current) return
-    didInit.current = true
-  }, [goNext, setScreens])
+  const handleClearImages = () => {
+    setCapturedImages([])
+  }
 
   if (showModal === "privacy") {
     return (
       <AppContainer $scroll>
         <Privacy />
+        <LanguageSelectorContainer>
+          <LanguageSelector />
+        </LanguageSelectorContainer>
       </AppContainer>
     )
   }
@@ -45,6 +58,9 @@ export default function App() {
     return (
       <AppContainer $scroll>
         <Imprint />
+        <LanguageSelectorContainer>
+          <LanguageSelector />
+        </LanguageSelectorContainer>
       </AppContainer>
     )
   }
@@ -53,13 +69,27 @@ export default function App() {
     <MobileOnlyGuard>
       <AppContainer>
         {state === "welcome" && (
-          <Welcome goToIntroduction={() => setState("introduction")} />
+          <>
+            <Welcome
+              goToIntroduction={() => {
+                setState("introduction")
+                handleClearImages()
+              }}
+            />
+            <LanguageSelectorContainer>
+              <LanguageSelector />
+            </LanguageSelectorContainer>
+          </>
         )}
         {state === "introduction" && (
           <Introduction goToPhotoCapture={() => setState("photoCapture")} />
         )}
         {state === "photoCapture" && (
-          <PhotoCapture goToExploration={() => setState("exploration")} />
+          <PhotoCapture
+            goToExploration={() => setState("exploration")}
+            onImageCaptured={handleImageCaptured}
+            capturedImages={capturedImages}
+          />
         )}
         {state === "exploration" && (
           <Exploration goToPerspective={() => setState("perspective")} />
@@ -68,10 +98,16 @@ export default function App() {
           <Perspective goToUpload={() => setState("upload")} />
         )}
         {state === "upload" && (
-          <Upload goToGallery={() => setState("gallery")} />
+          <Upload
+            goToGallery={() => setState("gallery")}
+            images={capturedImages}
+          />
         )}
         {state === "gallery" && (
-          <Gallery goToEnding={() => setState("ending")} />
+          <Gallery
+            goToEnding={() => setState("ending")}
+            capturedImages={capturedImages}
+          />
         )}
         {state === "ending" && (
           <Ending goToWelcome={() => setState("welcome")} />

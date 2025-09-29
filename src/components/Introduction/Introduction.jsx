@@ -1,5 +1,5 @@
+import { useCharactersFromAll, useIntroductionFromAll } from "@/api/hooks"
 import useGlobalState from "@/hooks/useGlobalState"
-import { CHARACTER_DATA } from "@components/Welcome/CharacterShowcase/constants"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
 
@@ -23,38 +23,64 @@ export default function Introduction({ goToPhotoCapture }) {
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
 
-  const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
+  const { data: charactersData } = useCharactersFromAll()
+  const { data: introData } = useIntroductionFromAll(currentCharacterIndex)
+
+  const currentCharacter = charactersData[currentCharacterIndex]
+
+  const getIntroContent = () => {
+    if (introData) {
+      return {
+        heading: introData.heading,
+        description: introData.description,
+        image: introData.image?.file,
+      }
+    }
+  }
+
+  const introContent = getIntroContent()
+
+  const cleanDescription = introContent.description
+    .replace(/<[^>]*>/g, "")
+    .trim()
+
+  const paragraphs = cleanDescription.split("\n\n").filter((p) => p.trim())
 
   return (
     <IntroductionContainer data-introduction-container ref={containerRef}>
       <CharacterImageContainer>
         <CharacterImage
-          src={currentCharacter.selectedImage}
+          src={
+            currentCharacter.selectedImage ||
+            currentCharacter.characterImage?.file
+          }
           alt={currentCharacter.name}
         />
       </CharacterImageContainer>
 
       <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
-        <Headline>Hello Passenger,</Headline>
+        <Headline>{introContent.heading}</Headline>
 
-        <TextBlock>
-          It&apos;s great to have you here. I have been working intensively on
-          this monument over the last few months.
-          <br />
-          <br />
-          As an artist, I look for meaning in details others might overlook: a
-          shadow, a surface, a shape.
-        </TextBlock>
+        {paragraphs.map((paragraph, index) => (
+          <TextBlock key={index}>
+            {paragraph}
+            {index < paragraphs.length - 1 && <br />}
+          </TextBlock>
+        ))}
 
-        <Image src={Rectangle} />
+        {introContent.image && (
+          <Image src={introContent.image} alt="Introduction scene" />
+        )}
 
-        <TextBlock>
-          This monument is full of stories, if you take the time to notice them.
-          Use your camera to explore. What catches your eye?
-        </TextBlock>
+        {!introContent.image && <Image src={Rectangle} />}
 
         <CameraButtonContainer>
-          <IconButton variant="camera" onClick={goToPhotoCapture} />
+          <IconButton
+            variant="camera"
+            onClick={() => {
+              goToPhotoCapture()
+            }}
+          />
         </CameraButtonContainer>
       </ContentContainer>
     </IntroductionContainer>

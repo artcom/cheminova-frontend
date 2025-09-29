@@ -87,3 +87,36 @@ export const Actions = styled.div`
     color: ${theme.colors.background.light};
   }
 `
+
+export const StatusIndicator = styled.span`
+  margin-left: 8px;
+  font-size: 0.7rem;
+  color: ${({ $status }) => {
+    switch ($status) {
+      case "success":
+        return "#4ecdc4"
+      case "error":
+        return "#ff6b6b"
+      default:
+        return "#ffa500"
+    }
+  }};
+`
+
+export const ProgressMessage = styled.div`
+  color: ${({ $hasErrors }) => ($hasErrors ? "#ff6b6b" : "#4ecdc4")};
+  margin-bottom: 1rem;
+  font-size: 0.9rem;
+  text-align: center;
+`
+
+export const ErrorList = styled.div`
+  color: #ff6b6b;
+  margin-bottom: 1rem;
+  font-size: 0.8rem;
+  text-align: center;
+
+  div {
+    margin-bottom: 0.25rem;
+  }
+`

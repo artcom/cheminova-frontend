@@ -1,7 +1,6 @@
 import { styled } from "styled-components"
 
 import Description from "@ui/Description"
-import FullscreenButton from "@ui/FullscreenButton"
 import Header from "@ui/Header"
 import Navigation from "@ui/Navigation"
 import Vignette from "@ui/Vignette"
@@ -73,7 +72,6 @@ export default function MainLayout({
         isCharacterScreen={screenIndex === 1}
         screenIndex={screenIndex || 0}
       />
-      {isFirstPage && <FullscreenButton />}
       {(headline || descriptionTitle) && (
         <TextLayout $hasDescription={!!descriptionTitle}>
           {headline && (

@@ -1,0 +1,77 @@
+{
+  "navigation": {
+    "next": "Siguiente",
+    "previous": "Anterior",
+    "close": "Cerrar",
+    "select": "Seleccionar"
+  },
+  "welcome": {
+    "title": "Bienvenido",
+    "subtitle": "La Nau",
+    "description": "Experimenta este monumento con nuevos ojos"
+  },
+  "introduction": {
+    "title": "Elige tu guía",
+    "description": "Selecciona tu guía para este viaje inmersivo a través de La Nau."
+  },
+  "photoCapture": {
+    "title": "Encuadra tu perspectiva",
+    "tasks": {
+      "laNau": "La Nau",
+      "surroundings": "Tus alrededores",
+      "special": "Algo especial"
+    },
+    "buttons": {
+      "takePhoto": "Tomar foto",
+      "gallery": "Galería",
+      "retake": "Repetir"
+    }
+  },
+  "exploration": {
+    "title": "Mira lo que encontré,",
+    "content": {
+      "stone1": "Las piedras con muchos poros pequeños (como la piedra caliza), frecuentemente encontradas en monumentos antiguos, son más vulnerables a la corrosión porque actúan como pequeñas esponjas!",
+      "stone2": "Estas piedras porosas absorben humedad, contaminantes e incluso lluvia ácida más fácilmente que las piedras más densas, este mecanismo acelera la meteorización.",
+      "stone3": "Entonces, aunque un monumento pueda verse fuerte y sólido, si está hecho de piedra porosa, en realidad está luchando una batalla secreta todos los días!"
+    }
+  },
+  "perspective": {
+    "title": "Tu Perspectiva",
+    "description": "Has visto el monumento con nuevos ojos. Ahora, añade tu visión a un collage viviente, junto con otros que se preocupan, igual que tú."
+  },
+  "upload": {
+    "title": "Subir colección",
+    "question": "¿Quieres subir la colección?",
+    "buttons": {
+      "yes": "Sí",
+      "no": "No",
+      "uploading": "Subiendo...",
+      "retry": "Reintentar subida",
+      "pleaseWait": "Por favor espera..."
+    },
+    "status": {
+      "preparing": "Preparando",
+      "uploading": "Subiendo",
+      "success": "Subida exitosa",
+      "error": "Error en la subida",
+      "allComplete": "¡Todas las subidas completadas exitosamente!",
+      "someFailedRetry": "subida(s) fallida(s)"
+    },
+    "missing": "Faltante"
+  },
+  "gallery": {
+    "title": "Galería",
+    "clickImage": "Haz clic en una imagen",
+    "exitGallery": "Salir de la galería"
+  },
+  "ending": {
+    "title": "Gracias",
+    "description": "Gracias por contribuir a este monumento y mantenerlo vivo. Ahora echa un vistazo más profundo alrededor de La Nau."
+  },
+  "errors": {
+    "unknown": "Error desconocido",
+    "uploadFailed": "Error en la subida",
+    "networkError": "Error de red ocurrido",
+    "unexpectedError": "Error inesperado ocurrido"
+  }
+}

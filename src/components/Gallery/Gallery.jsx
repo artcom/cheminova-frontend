@@ -1,8 +1,10 @@
+import { useGalleryImages } from "@/hooks/useGallery"
 import useGlobalState from "@/hooks/useGlobalState"
 import { Canvas } from "@react-three/fiber"
 import theme from "@theme"
 import { AnimatePresence, motion } from "motion/react"
 import { useMemo, useRef, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
 
 import Navigation from "@ui/Navigation"
@@ -15,7 +17,7 @@ import GalleryContent from "./components/GalleryContent"
 import GalleryLoader from "./components/GalleryLoader"
 import StackBump from "./components/StackBump"
 import { CAMERA_DEFAULT_Z, DEBUG_GALLERY } from "./config"
-import { buildImagePoolFromGlob, getPersistedPersonalImages } from "./helpers"
+import { buildCombinedImagePool, getPersistedPersonalImages } from "./helpers"
 import useImagePreloader from "./hooks/useImagePreloader"
 import useResponsiveTilesPerRow from "./hooks/useResponsiveTilesPerRow"
 
@@ -96,7 +98,8 @@ const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
   import: "default",
 })
 
-export default function Gallery({ goToEnding }) {
+export default function Gallery({ goToEnding, capturedImages = [] }) {
+  const { t } = useTranslation()
   const { goStart } = useGlobalState()
   const tilesPerRow = useResponsiveTilesPerRow()
   const [allAnimsDone, setAllAnimsDone] = useState(false)
@@ -109,29 +112,38 @@ export default function Gallery({ goToEnding }) {
   const [showDebugOverlay, setShowDebugOverlay] = useState(false)
   const [tileDebugData, setTileDebugData] = useState([])
 
+  const { data: galleryData, isLoading: galleryLoading } = useGalleryImages()
+
   const personalImages = useMemo(
-    () => getPersistedPersonalImages(defaultPersonalImages),
-    [],
+    () => getPersistedPersonalImages(defaultPersonalImages, capturedImages),
+    [capturedImages],
   )
 
-  const imagePool = useMemo(() => buildImagePoolFromGlob(cologneImages), [])
+  const imagePoolData = useMemo(() => {
+    const uploadedImages = galleryData?.images || []
+    return buildCombinedImagePool(cologneImages, uploadedImages)
+  }, [galleryData?.images])
 
   const allImages = useMemo(
-    () => [...imagePool, ...personalImages],
-    [imagePool, personalImages],
+    () => [...imagePoolData.combined, ...personalImages],
+    [imagePoolData.combined, personalImages],
   )
 
   const { isLoading, loadedCount, totalImages } = useImagePreloader(allImages)
+
+  const isFullyLoading = isLoading || galleryLoading
 
   const handleExitGallery = () => {
     goStart()
   }
 
-  if (isLoading) {
+  if (isFullyLoading) {
     return (
       <Page>
-        <Title>Gallery</Title>
-        <ExitButton onClick={handleExitGallery}>Exit Gallery</ExitButton>
+        <Title>{t("gallery.title")}</Title>
+        <ExitButton onClick={handleExitGallery}>
+          {t("gallery.exitGallery")}
+        </ExitButton>
         <GalleryLoader loadedCount={loadedCount} totalImages={totalImages} />
       </Page>
     )
@@ -140,9 +152,11 @@ export default function Gallery({ goToEnding }) {
   return (
     <Page>
       <Title>
-        {allAnimsDone && !detailMode ? "Click an image" : "Gallery"}
+        {allAnimsDone && !detailMode
+          ? t("gallery.clickImage")
+          : `${t("gallery.title")}`}
       </Title>
-      <ExitButton onClick={goToEnding}>Exit Gallery</ExitButton>
+      <ExitButton onClick={goToEnding}>{t("gallery.exitGallery")}</ExitButton>
       <Stage>
         <Canvas
           camera={{ position: [0, 0, CAMERA_DEFAULT_Z], fov: 75 }}
@@ -161,7 +175,7 @@ export default function Gallery({ goToEnding }) {
             }}
           >
             <GalleryContent
-              imagePool={imagePool}
+              imagePool={imagePoolData.combined}
               targetTilesPerRow={tilesPerRow}
               personalImages={personalImages}
               onAllAnimationsDone={() => setAllAnimsDone(true)}
@@ -301,7 +315,7 @@ export default function Gallery({ goToEnding }) {
               <Navigation
                 mode="select"
                 position="bottom"
-                selectLabel="Close"
+                selectLabel={t("navigation.close")}
                 onSelect={() => {
                   DEBUG_GALLERY && console.debug("[Gallery] exit detail")
                   setDetailMode(false)

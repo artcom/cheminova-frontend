@@ -1,5 +1,6 @@
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useRef } from "react"
+import { useTranslation } from "react-i18next"
 
 import SmallButton from "@ui/SmallButton"
 
@@ -17,18 +18,25 @@ import {
   TasksContainer,
 } from "./styles"
 
-export default function PhotoCapture({ goToExploration }) {
+export default function PhotoCapture({
+  goToExploration,
+  onImageCaptured,
+  capturedImages = [],
+}) {
+  const { t } = useTranslation()
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
   const { isAndroid } = useDevicePlatform()
 
   const { tasks, taskImages, currentTaskIndex, handleFileObject, retake } =
-    usePhotoTasks()
+    usePhotoTasks({
+      onImageCaptured,
+      initialImages: capturedImages,
+    })
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0]
     if (file) handleFileObject(file)
-    // Reset the input value so selecting the same file again still triggers change
     event.target.value = ""
   }
 
@@ -54,9 +62,7 @@ export default function PhotoCapture({ goToExploration }) {
         />
 
         <HeaderContainer>
-          <HeaderText>
-            Frame your <br /> perspective
-          </HeaderText>
+          <HeaderText>{t("photoCapture.title")}</HeaderText>
         </HeaderContainer>
 
         <TasksContainer>
@@ -68,7 +74,7 @@ export default function PhotoCapture({ goToExploration }) {
                 {taskImages[index] && (
                   <>
                     <SmallButton onClick={() => retake(index)}>
-                      Retake
+                      {t("photoCapture.buttons.retake")}
                     </SmallButton>
                     <TaskImage
                       src={taskImages[index]}
@@ -82,15 +88,15 @@ export default function PhotoCapture({ goToExploration }) {
                     {isAndroid ? (
                       <>
                         <SmallButton onClick={handleOpenCamera}>
-                          Take Photo
+                          {t("photoCapture.buttons.takePhoto")}
                         </SmallButton>
                         <SmallButton onClick={handleOpenGallery}>
-                          Gallery
+                          {t("photoCapture.buttons.gallery")}
                         </SmallButton>
                       </>
                     ) : (
                       <SmallButton onClick={handleOpenGallery}>
-                        Take Photo
+                        {t("photoCapture.buttons.takePhoto")}
                       </SmallButton>
                     )}
                   </>
