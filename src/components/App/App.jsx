@@ -47,9 +47,6 @@ export default function App() {
     return (
       <AppContainer $scroll>
         <Privacy />
-        <LanguageSelectorContainer>
-          <LanguageSelector />
-        </LanguageSelectorContainer>
       </AppContainer>
     )
   }
@@ -58,9 +55,6 @@ export default function App() {
     return (
       <AppContainer $scroll>
         <Imprint />
-        <LanguageSelectorContainer>
-          <LanguageSelector />
-        </LanguageSelectorContainer>
       </AppContainer>
     )
   }
