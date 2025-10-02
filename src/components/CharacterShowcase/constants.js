@@ -14,18 +14,18 @@ export const CHARACTER_DATA = [
   {
     id: 2,
     image: Bob,
-    name: "Diego",
-    title: "The Legend",
+    name: "Mateo",
+    title: "The Janitor",
     description:
-      "Follow Diego through the legendary halls where football history was made.",
+      "Follow Mateo through the legendary halls where football history was made.",
   },
   {
     id: 3,
     image: Charlie,
-    name: "Luna",
-    title: "The Explorer",
+    name: "Nova",
+    title: "The Visitor from the Future.",
     description:
-      "Discover with Luna the hidden stories and secrets of Camp Nou.",
+      "Discover with Nova the hidden stories and secrets of Camp Nou.",
   },
 ]
 
