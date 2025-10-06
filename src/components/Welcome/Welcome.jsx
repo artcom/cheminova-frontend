@@ -1,3 +1,4 @@
+import useGlobalState from "@/hooks/useGlobalState"
 import { useEffect, useState } from "react"
 
 import LaNau from "@ui/assets/LaNau.webp"
@@ -22,7 +23,7 @@ export default function Welcome({ goToIntroduction }) {
   const [step, setStep] = useState(STEP.INTRO)
   const [content, setContent] = useState(config.steps[0])
   const [showIntro, setShowIntro] = useState(true)
-  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
+  const { currentCharacterIndex, setCurrentCharacterIndex } = useGlobalState()
 
   useEffect(() => {
     if (step === STEP.CHARACTER && showIntro) {
@@ -69,8 +70,6 @@ export default function Welcome({ goToIntroduction }) {
             setContent={setContent}
             showIntro={showIntro}
             setShowIntro={setShowIntro}
-            currentCharacterIndex={currentCharacterIndex}
-            setCurrentCharacterIndex={setCurrentCharacterIndex}
           />
         </ChildrenContainer>
       )}

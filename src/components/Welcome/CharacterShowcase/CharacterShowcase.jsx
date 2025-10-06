@@ -1,3 +1,4 @@
+import useGlobalState from "@/hooks/useGlobalState"
 import { useEffect } from "react"
 
 import CharacterCarousel from "./components/CharacterCarousel"
@@ -9,9 +10,9 @@ export default function CharacterShowcase({
   setContent,
   showIntro,
   setShowIntro,
-  currentCharacterIndex,
-  setCurrentCharacterIndex,
 }) {
+  const { currentCharacterIndex, setCurrentCharacterIndex } = useGlobalState()
+
   useEffect(() => {
     if (!showIntro) {
       const currentCharacter = CHARACTER_DATA[currentCharacterIndex]
