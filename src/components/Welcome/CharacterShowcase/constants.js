@@ -1,14 +1,14 @@
-import Alice from "./assets/amara.png"
+import Amara from "./assets/amara.png"
 import AmaraSelected from "./assets/amaraSelected.png"
-import Bob from "./assets/mateo.png"
+import Mateo from "./assets/mateo.png"
 import MateoSelected from "./assets/mateoSelected.png"
-import Charlie from "./assets/nova.png"
+import Nova from "./assets/nova.png"
 import NovaSelected from "./assets/novaSelected.png"
 
 export const CHARACTER_DATA = [
   {
     id: 1,
-    image: Alice,
+    image: Amara,
     selectedImage: AmaraSelected,
     name: "Amara",
     title: "The Artist",
@@ -17,21 +17,21 @@ export const CHARACTER_DATA = [
   },
   {
     id: 2,
-    image: Bob,
+    image: Mateo,
     selectedImage: MateoSelected,
-    name: "Diego",
-    title: "The Legend",
+    name: "Mateo",
+    title: "The Janitor",
     description:
-      "Follow Diego through the legendary halls where football history was made.",
+      "Follow Mateo through the legendary halls where football history was made.",
   },
   {
     id: 3,
-    image: Charlie,
+    image: Nova,
     selectedImage: NovaSelected,
-    name: "Luna",
-    title: "The Explorer",
+    name: "Nova",
+    title: "The Visitor from the Future.",
     description:
-      "Discover with Luna the hidden stories and secrets of Camp Nou.",
+      "Discover with Nova the hidden stories and secrets of Camp Nou.",
   },
 ]
 
