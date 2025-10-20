@@ -25,13 +25,26 @@ const StyledNavigation = styled(Navigation)`
 export default function Exploration({ goToPerspective }) {
   const { t } = useTranslation()
   const { currentCharacterIndex } = useGlobalState()
-  const { data: charactersData } = useCharactersFromAll()
+  const { data: charactersData, isLoading: isCharactersLoading } =
+    useCharactersFromAll()
   const { data: photographyData } = usePhotographyFromAll(currentCharacterIndex)
   const containerRef = useRef(null)
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
 
-  const currentCharacter = charactersData[currentCharacterIndex]
+  const currentCharacter = charactersData?.[currentCharacterIndex]
+
+  if (isCharactersLoading || !currentCharacter) {
+    return (
+      <IntroductionContainer ref={containerRef}>
+        <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
+          <Headline>
+            {t("loading.characters", "Loading characters...")}
+          </Headline>
+        </ContentContainer>
+      </IntroductionContainer>
+    )
+  }
 
   const getExplorationContent = () => {
     if (photographyData) {
@@ -53,7 +66,7 @@ export default function Exploration({ goToPerspective }) {
   return (
     <IntroductionContainer ref={containerRef}>
       <CharacterImageContainer>
-        <CharacterImage src={currentCharacter.selectedImage} />
+        <CharacterImage src={currentCharacter.selectedImage || ""} />
       </CharacterImageContainer>
 
       <ContentContainer initial={{ x: "-50%" }} style={{ y }}>

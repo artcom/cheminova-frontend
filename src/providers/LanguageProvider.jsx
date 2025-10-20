@@ -33,6 +33,38 @@ const sanitizeContentLocales = (content) => {
   return locales.length > 0 ? locales : SUPPORTED_LANGUAGES
 }
 
+const cloneLanguages = (languages = []) =>
+  languages.map((language) => ({ ...language }))
+
+const areLanguagesEqual = (a = [], b = []) => {
+  if (a === b) {
+    return true
+  }
+
+  if (a.length !== b.length) {
+    return false
+  }
+
+  for (let index = 0; index < a.length; index += 1) {
+    const current = a[index]
+    const next = b[index]
+
+    if (!next) {
+      return false
+    }
+
+    if (current.code !== next.code) {
+      return false
+    }
+
+    if ((current.name ?? null) !== (next.name ?? null)) {
+      return false
+    }
+  }
+
+  return true
+}
+
 export const useLanguageContext = () => {
   const context = useContext(LanguageContext)
   if (!context) {
@@ -51,7 +83,9 @@ export default function LanguageProvider({ children }) {
     retryDelay: 1000,
   })
 
-  const [languages, setLanguages] = useState(() => getSupportedLanguages())
+  const [languages, setLanguages] = useState(() =>
+    cloneLanguages(getSupportedLanguages()),
+  )
 
   useEffect(() => {
     let nextLocales = null
@@ -68,7 +102,9 @@ export default function LanguageProvider({ children }) {
 
     const runtimeLanguages = setSupportedLanguages(nextLocales)
     setLanguages((prev) =>
-      prev === runtimeLanguages ? prev : runtimeLanguages,
+      areLanguagesEqual(prev, runtimeLanguages)
+        ? prev
+        : cloneLanguages(runtimeLanguages),
     )
   }, [data, isSuccess, error])
 

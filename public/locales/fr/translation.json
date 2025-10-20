@@ -73,5 +73,13 @@
     "uploadFailed": "Échec du téléchargement",
     "networkError": "Erreur réseau survenue",
     "unexpectedError": "Erreur inattendue survenue"
+  },
+  "loading": {
+    "default": "Chargement...",
+    "content": "Chargement du contenu...",
+    "images": "Chargement des images...",
+    "perspective": "Chargement de votre perspective...",
+    "ending": "Finalisation de votre parcours...",
+    "characters": "Chargement des personnages..."
   }
 }

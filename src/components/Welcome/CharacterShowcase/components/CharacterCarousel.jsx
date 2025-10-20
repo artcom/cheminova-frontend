@@ -4,6 +4,7 @@ import {
   DRAG_CONFIG,
 } from "@components/Welcome/CharacterShowcase/utils/transformUtils"
 import { motion } from "motion/react"
+import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
 
 import { useCharacterCarousel } from "../hooks/useCharacterCarousel"
@@ -48,6 +49,7 @@ const CharacterImage = styled(motion.img)`
 `
 
 const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
+  const { t } = useTranslation()
   const { data: charactersData } = useCharactersFromAll()
 
   const { x, handleDragStart, handleDragEnd, dragConstraints } =
@@ -59,7 +61,11 @@ const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
 
   // Return early if no characters data is available yet
   if (!charactersData || charactersData.length === 0) {
-    return <CarouselContainer>Loading characters...</CarouselContainer>
+    return (
+      <CarouselContainer>
+        {t("loading.characters", "Loading characters...")}
+      </CarouselContainer>
+    )
   }
 
   return (

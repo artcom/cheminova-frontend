@@ -18,9 +18,15 @@ export const buildImagePoolFromGlob = (globObj) => {
  * @returns {Array} Array of image URLs for gallery display
  */
 export const formatUploadedImagesForGallery = (uploadedImages = []) => {
-  return uploadedImages
-    .filter((item) => item.image && (item.image.url || item.image.file))
-    .map((item) => item.image.url || item.image.file)
+  return uploadedImages.reduce((accumulator, item) => {
+    const source = item?.image?.url || item?.image?.file
+
+    if (source) {
+      accumulator.push(source)
+    }
+
+    return accumulator
+  }, [])
 }
 
 /**

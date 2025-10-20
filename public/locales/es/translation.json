@@ -73,5 +73,13 @@
     "uploadFailed": "Error en la subida",
     "networkError": "Error de red ocurrido",
     "unexpectedError": "Error inesperado ocurrido"
+  },
+  "loading": {
+    "default": "Cargando...",
+    "content": "Cargando contenido...",
+    "images": "Cargando imágenes...",
+    "perspective": "Cargando tu perspectiva...",
+    "ending": "Finalizando tu viaje...",
+    "characters": "Cargando personajes..."
   }
 }

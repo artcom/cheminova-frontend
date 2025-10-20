@@ -1,3 +1,5 @@
+export const MAX_SEARCH_DEPTH = 10
+
 export const parseRichText = (richText) => {
   if (!richText) return null
   if (typeof richText === "string") {
@@ -30,7 +32,7 @@ export const findContentByType = (localeContent, targetType) => {
   }
 
   const searchHierarchy = (children, depth = 0) => {
-    if (!children || depth > 10) return null
+    if (!children || depth > MAX_SEARCH_DEPTH) return null
     for (const child of children) {
       if (
         child.__typename === targetType ||

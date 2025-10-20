@@ -25,13 +25,26 @@ export default function Introduction({ goToPhotoCapture }) {
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
 
-  const { data: charactersData } = useCharactersFromAll()
+  const { data: charactersData, isLoading: isCharactersLoading } =
+    useCharactersFromAll()
 
-  const currentCharacter = charactersData[currentCharacterIndex]
+  const currentCharacter = charactersData?.[currentCharacterIndex]
 
   const heading = t("introduction.title")
   const description = t("introduction.description")
   const paragraphs = [description]
+
+  if (isCharactersLoading || !currentCharacter) {
+    return (
+      <IntroductionContainer data-introduction-container ref={containerRef}>
+        <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
+          <Headline>
+            {t("loading.characters", "Loading characters...")}
+          </Headline>
+        </ContentContainer>
+      </IntroductionContainer>
+    )
+  }
 
   return (
     <IntroductionContainer data-introduction-container ref={containerRef}>
@@ -39,9 +52,10 @@ export default function Introduction({ goToPhotoCapture }) {
         <CharacterImage
           src={
             currentCharacter.selectedImage ||
-            currentCharacter.characterImage?.file
+            currentCharacter.characterImage?.file ||
+            ""
           }
-          alt={currentCharacter.name}
+          alt={currentCharacter.name || ""}
         />
       </CharacterImageContainer>
 
