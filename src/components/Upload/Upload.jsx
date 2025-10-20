@@ -19,17 +19,36 @@ import {
 } from "./styles"
 
 const dataURLToFile = (dataURL, filename) => {
-  const arr = dataURL.split(",")
-  const mime = arr[0].match(/:(.*?);/)[1]
-  const bstr = atob(arr[1])
-  let n = bstr.length
-  const u8arr = new Uint8Array(n)
-
-  while (n--) {
-    u8arr[n] = bstr.charCodeAt(n)
+  if (typeof dataURL !== "string") {
+    return null
   }
 
-  return new File([u8arr], filename, { type: mime })
+  const [metadata, base64Data] = dataURL.split(",")
+  if (!metadata || !base64Data) {
+    return null
+  }
+
+  const mimeMatch = metadata.match(/:(.*?);/)
+  if (!mimeMatch) {
+    return null
+  }
+
+  let binaryString
+  try {
+    binaryString = atob(base64Data)
+  } catch (error) {
+    console.warn("Failed to decode data URL", error)
+    return null
+  }
+
+  let length = binaryString.length
+  const u8arr = new Uint8Array(length)
+
+  while (length--) {
+    u8arr[length] = binaryString.charCodeAt(length)
+  }
+
+  return new File([u8arr], filename, { type: mimeMatch[1] })
 }
 
 export default function Upload({ goToGallery, images = [] }) {
@@ -55,11 +74,14 @@ export default function Upload({ goToGallery, images = [] }) {
         `${t("upload.status.uploading")} ${validImages.length} images...`,
       )
 
+      const timestamp = Date.now()
+
       const uploadPromises = validImages.map(async (imageData, index) => {
-        const file = dataURLToFile(
-          imageData,
-          `photo-${Date.now()}-${index}.jpg`,
-        )
+        const file = dataURLToFile(imageData, `photo-${timestamp}-${index}.jpg`)
+
+        if (!file) {
+          throw new Error("Invalid image data")
+        }
         const title = `Photo ${index + 1}`
 
         return uploadImageMutation.mutateAsync({ file, title })

@@ -28,13 +28,12 @@ const apiRequest = async (endpoint, options = {}) => {
   }
 }
 
-let allLocalesContent = null
+export const ALL_LOCALES_CONTENT_QUERY_KEY = ["all-locales-content"]
 
 export const fetchAllLocalesContent = async () => {
   console.log("🌍 Fetching content for all locales...")
   try {
     const data = await apiRequest("/api/all/")
-    allLocalesContent = data
 
     console.log(
       "✅ Content loaded for locales:",
@@ -47,28 +46,25 @@ export const fetchAllLocalesContent = async () => {
   }
 }
 
-export const getContentForLocale = (locale = "en") => {
-  if (!allLocalesContent) {
-    console.warn("⚠️ Content not loaded yet, returning null")
+export const getContentForLocale = (allLocalesContent, locale = "en") => {
+  if (!Array.isArray(allLocalesContent) || allLocalesContent.length === 0) {
+    console.warn("⚠️ No localized content available yet, returning null")
     return null
   }
 
-  if (Array.isArray(allLocalesContent)) {
-    const localeContent = allLocalesContent.find(
-      (item) => item.locale === locale,
-    )
-    if (localeContent) {
-      console.log(`📋 Retrieved ${locale} content`)
-      return [localeContent]
-    }
+  const localeContent = allLocalesContent.find(
+    (item) => item?.locale === locale,
+  )
+
+  if (localeContent) {
+    console.log(`📋 Retrieved ${locale} content`)
+    return [localeContent]
   }
 
   console.warn(
     `⚠️ No content found for locale: ${locale}, falling back to first available`,
   )
-  return Array.isArray(allLocalesContent)
-    ? [allLocalesContent[0]]
-    : allLocalesContent
+  return [allLocalesContent[0]]
 }
 
 export const fetchApiRoot = async () => {
@@ -78,8 +74,6 @@ export const fetchApiRoot = async () => {
 }
 
 export const fetchAll = async (locale) => {
-  if (!allLocalesContent) {
-    await fetchAllLocalesContent()
-  }
-  return getContentForLocale(locale)
+  const allLocalesContent = await fetchAllLocalesContent()
+  return getContentForLocale(allLocalesContent, locale)
 }

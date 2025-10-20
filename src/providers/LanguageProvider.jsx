@@ -1,4 +1,7 @@
-import { fetchAllLocalesContent } from "@/api/djangoApi"
+import {
+  ALL_LOCALES_CONTENT_QUERY_KEY,
+  fetchAllLocalesContent,
+} from "@/api/djangoApi"
 import {
   changeLanguage,
   getCurrentLocale,
@@ -75,7 +78,7 @@ export const useLanguageContext = () => {
 
 export default function LanguageProvider({ children }) {
   const { data, error, isLoading, isFetching, isSuccess, refetch } = useQuery({
-    queryKey: ["all-locales-content"],
+    queryKey: ALL_LOCALES_CONTENT_QUERY_KEY,
     queryFn: fetchAllLocalesContent,
     staleTime: 30 * 60 * 1000,
     gcTime: 60 * 60 * 1000,
