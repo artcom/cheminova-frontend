@@ -5,20 +5,18 @@ import { initReactI18next } from "react-i18next"
 
 export const DEFAULT_LANGUAGE = "en"
 
-export const SUPPORTED_LANGUAGES = Object.freeze([
+export const DEFAULT_LANGUAGES = [
   { code: "en", name: "English" },
   { code: "de", name: "German" },
   { code: "es", name: "Spanish" },
   { code: "fr", name: "French" },
-])
+]
 
-const LANGUAGE_LOOKUP = new Map(
-  SUPPORTED_LANGUAGES.map((lang) => [lang.code, lang]),
+const defaultLanguageNames = new Map(
+  DEFAULT_LANGUAGES.map((language) => [language.code, language.name]),
 )
 
-export const SUPPORTED_LANGUAGE_CODES = SUPPORTED_LANGUAGES.map(
-  (lang) => lang.code,
-)
+let supportedLanguages = [...DEFAULT_LANGUAGES]
 
 export const normalizeLocale = (locale) => {
   if (typeof locale !== "string") {
@@ -28,64 +26,51 @@ export const normalizeLocale = (locale) => {
   return locale.toLowerCase().split("-")[0]
 }
 
-const toSupportedLanguageList = (languages) => {
-  if (!Array.isArray(languages)) {
-    return [...SUPPORTED_LANGUAGES]
-  }
-
-  const seen = new Set()
-  const sanitized = []
-
-  for (const candidate of languages) {
-    const normalized = normalizeLocale(
-      typeof candidate === "string" ? candidate : candidate?.code,
-    )
-
-    if (!normalized || seen.has(normalized)) {
-      continue
-    }
-
-    const match = LANGUAGE_LOOKUP.get(normalized)
-    if (match) {
-      seen.add(normalized)
-      sanitized.push(match)
-    }
-  }
-
-  return sanitized.length > 0 ? sanitized : [...SUPPORTED_LANGUAGES]
-}
-
-const languagesMatch = (a, b) => {
-  if (a.length !== b.length) {
-    return false
-  }
-
-  return a.every((lang, index) => lang.code === b[index].code)
-}
-
-let runtimeLanguages = [...SUPPORTED_LANGUAGES]
-
 export const setSupportedLanguages = (languages) => {
-  const sanitized = toSupportedLanguageList(languages)
+  if (!Array.isArray(languages) || languages.length === 0) {
+    supportedLanguages = [...DEFAULT_LANGUAGES]
+  } else {
+    const seen = new Set()
+    const next = []
 
-  if (languagesMatch(runtimeLanguages, sanitized)) {
-    return runtimeLanguages
+    for (const candidate of languages) {
+      const code = normalizeLocale(
+        typeof candidate === "string"
+          ? candidate
+          : (candidate?.code ?? candidate?.locale ?? ""),
+      )
+
+      if (!code || seen.has(code)) {
+        continue
+      }
+
+      seen.add(code)
+      const name =
+        (typeof candidate === "object" && candidate?.name) ||
+        defaultLanguageNames.get(code) ||
+        code.toUpperCase()
+
+      next.push({ code, name })
+    }
+
+    supportedLanguages = next.length > 0 ? next : [...DEFAULT_LANGUAGES]
   }
 
-  runtimeLanguages = sanitized
-  console.log("🌐 API discovered languages:", runtimeLanguages)
-  return runtimeLanguages
+  i18n.options.supportedLngs = supportedLanguages.map((lang) => lang.code)
+  return [...supportedLanguages]
 }
 
-export const getSupportedLanguages = () => runtimeLanguages
-export const getLanguageCodes = () => runtimeLanguages.map((lang) => lang.code)
+export const getSupportedLanguages = () => [...supportedLanguages]
+
+export const getLanguageCodes = () =>
+  supportedLanguages.map((language) => language.code)
 
 i18n
   .use(HttpApi)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    supportedLngs: SUPPORTED_LANGUAGE_CODES,
+    supportedLngs: getLanguageCodes(),
     fallbackLng: DEFAULT_LANGUAGE,
 
     detection: {
@@ -149,20 +134,24 @@ export const changeLanguage = async (languageCode) => {
 export const getLanguageName = (languageCode) => {
   const normalizedCode = normalizeLocale(languageCode)
 
-  const fromRuntime = runtimeLanguages.find(
-    (lang) => lang.code === normalizedCode,
-  )
+  const match =
+    supportedLanguages.find((language) => language.code === normalizedCode) ||
+    DEFAULT_LANGUAGES.find((language) => language.code === normalizedCode)
 
-  if (fromRuntime) {
-    return fromRuntime.name
+  if (match) {
+    return match.name
   }
 
-  return LANGUAGE_LOOKUP.get(normalizedCode)?.name ?? normalizedCode
+  if (normalizedCode) {
+    return normalizedCode.toUpperCase()
+  }
+
+  return DEFAULT_LANGUAGE.toUpperCase()
 }
 
 export const isLanguageSupported = (languageCode) => {
   const normalizedCode = normalizeLocale(languageCode)
-  return getLanguageCodes().includes(normalizedCode)
+  return supportedLanguages.some((language) => language.code === normalizedCode)
 }
 
 export default i18n

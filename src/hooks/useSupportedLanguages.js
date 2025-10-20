@@ -1,7 +1,4 @@
-import { useLanguageContext } from "@/providers/LanguageProvider"
-
-export const useSupportedLanguages = () => {
-  return useLanguageContext()
-}
-
-export default useSupportedLanguages
+export {
+  useLanguages as default,
+  useLanguages,
+} from "@/providers/LanguageProvider"

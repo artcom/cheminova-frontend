@@ -5,73 +5,42 @@ import {
 import {
   changeLanguage,
   getCurrentLocale,
+  getLanguageName,
   getSupportedLanguages,
+  isLanguageSupported,
   normalizeLocale,
   setSupportedLanguages,
-  SUPPORTED_LANGUAGES,
 } from "@/i18n"
 import { useQuery } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useMemo, useState } from "react"
 
 const LanguageContext = createContext(null)
 
-const sanitizeContentLocales = (content) => {
+const extractRemoteLocales = (content) => {
   if (!Array.isArray(content)) {
-    return SUPPORTED_LANGUAGES
+    return []
   }
 
   const seen = new Set()
   const locales = []
 
   for (const entry of content) {
-    const normalized = normalizeLocale(entry?.locale)
+    const normalized = normalizeLocale(entry?.locale ?? entry?.code ?? "")
     if (!normalized || seen.has(normalized)) {
       continue
     }
 
     seen.add(normalized)
-    locales.push({ code: normalized })
+    locales.push(normalized)
   }
 
-  return locales.length > 0 ? locales : SUPPORTED_LANGUAGES
+  return locales
 }
 
-const cloneLanguages = (languages = []) =>
-  languages.map((language) => ({ ...language }))
-
-const areLanguagesEqual = (a = [], b = []) => {
-  if (a === b) {
-    return true
-  }
-
-  if (a.length !== b.length) {
-    return false
-  }
-
-  for (let index = 0; index < a.length; index += 1) {
-    const current = a[index]
-    const next = b[index]
-
-    if (!next) {
-      return false
-    }
-
-    if (current.code !== next.code) {
-      return false
-    }
-
-    if ((current.name ?? null) !== (next.name ?? null)) {
-      return false
-    }
-  }
-
-  return true
-}
-
-export const useLanguageContext = () => {
+export const useLanguages = () => {
   const context = useContext(LanguageContext)
   if (!context) {
-    throw new Error("useLanguageContext must be used within LanguageProvider")
+    throw new Error("useLanguages must be used within LanguageProvider")
   }
   return context
 }
@@ -86,29 +55,21 @@ export default function LanguageProvider({ children }) {
     retryDelay: 1000,
   })
 
-  const [languages, setLanguages] = useState(() =>
-    cloneLanguages(getSupportedLanguages()),
-  )
+  const [languages, setLanguages] = useState(() => getSupportedLanguages())
 
   useEffect(() => {
-    let nextLocales = null
-
     if (isSuccess) {
-      nextLocales = sanitizeContentLocales(data)
-    } else if (error) {
-      nextLocales = SUPPORTED_LANGUAGES
-    }
-
-    if (!nextLocales) {
+      const availableLanguages = setSupportedLanguages(
+        extractRemoteLocales(data),
+      )
+      setLanguages(availableLanguages)
       return
     }
 
-    const runtimeLanguages = setSupportedLanguages(nextLocales)
-    setLanguages((prev) =>
-      areLanguagesEqual(prev, runtimeLanguages)
-        ? prev
-        : cloneLanguages(runtimeLanguages),
-    )
+    if (error) {
+      const defaultLanguages = setSupportedLanguages([])
+      setLanguages(defaultLanguages)
+    }
   }, [data, isSuccess, error])
 
   useEffect(() => {
@@ -122,32 +83,10 @@ export default function LanguageProvider({ children }) {
     }
   }, [languages])
 
-  const contextValue = useMemo(() => {
-    const languageCodes = languages.map((language) => language.code)
-
-    const getLanguageName = (code) => {
-      const normalized = normalizeLocale(code)
-      const match =
-        languages.find((language) => language.code === normalized) ||
-        SUPPORTED_LANGUAGES.find((language) => language.code === normalized)
-
-      if (match) {
-        return match.name
-      }
-
-      if (normalized) {
-        return normalized
-      }
-
-      return SUPPORTED_LANGUAGES[0]?.name ?? ""
-    }
-
-    const isLanguageSupported = (code) =>
-      languageCodes.includes(normalizeLocale(code))
-
-    return {
+  const contextValue = useMemo(
+    () => ({
       supportedLanguages: languages,
-      languageCodes,
+      languageCodes: languages.map((language) => language.code),
       isLoading,
       isFetching,
       isSuccess,
@@ -155,8 +94,9 @@ export default function LanguageProvider({ children }) {
       refetch,
       getLanguageName,
       isLanguageSupported,
-    }
-  }, [languages, isLoading, isFetching, isSuccess, error, refetch])
+    }),
+    [languages, isLoading, isFetching, isSuccess, error, refetch],
+  )
 
   return (
     <LanguageContext.Provider value={contextValue}>

@@ -1,6 +1,6 @@
-import useSupportedLanguages from "@/hooks/useSupportedLanguages"
 import { changeLanguage, getCurrentLocale } from "@/i18n"
-import { useState } from "react"
+import { useLanguages } from "@/providers/LanguageProvider"
+import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
 
@@ -100,16 +100,29 @@ const Overlay = styled.div`
 `
 
 export default function LanguageSelector({ className }) {
-  useTranslation()
+  const { i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
+  const [currentLocale, setCurrentLocale] = useState(() => getCurrentLocale())
   const {
     supportedLanguages,
     isLoading,
     getLanguageName,
     isLanguageSupported,
-  } = useSupportedLanguages()
-  const currentLocale = getCurrentLocale()
+  } = useLanguages()
   const hasMultipleLanguages = supportedLanguages.length > 1
+
+  useEffect(() => {
+    const handleLanguageChange = () => {
+      setCurrentLocale(getCurrentLocale())
+    }
+
+    handleLanguageChange()
+
+    i18n.on("languageChanged", handleLanguageChange)
+    return () => {
+      i18n.off("languageChanged", handleLanguageChange)
+    }
+  }, [i18n])
 
   const handleLanguageChange = async (languageCode) => {
     if (!isLanguageSupported(languageCode) || languageCode === currentLocale) {
@@ -148,8 +161,6 @@ export default function LanguageSelector({ className }) {
         <CurrentLanguage
           $isOpen={isOpen}
           onClick={toggleDropdown}
-          aria-label="Select language"
-          aria-expanded={isOpen}
           disabled={!hasMultipleLanguages}
         >
           {currentLanguageName}
