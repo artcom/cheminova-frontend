@@ -5,10 +5,7 @@ import CharacterCarousel from "./components/CharacterCarousel"
 import Intro from "./components/Intro"
 import { MainLayoutContainer } from "./styles"
 
-export default function CharacterShowcase({
-  showIntro,
-  setShowIntro,
-}) {
+export default function CharacterShowcase({ showIntro, setShowIntro }) {
   const { currentCharacterIndex, setCurrentCharacterIndex } = useGlobalState()
   const { data: charactersData } = useCharactersFromAll()
 

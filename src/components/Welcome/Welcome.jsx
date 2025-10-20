@@ -3,7 +3,7 @@ import {
   useCharactersFromAll,
   useWelcomeFromAll,
 } from "@/api/hooks"
-import {  useState } from "react"
+import { useState } from "react"
 
 import Description from "@ui/Description"
 import Header from "@ui/Header"
