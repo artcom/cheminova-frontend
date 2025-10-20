@@ -1,5 +1,5 @@
 import useSupportedLanguages from "@/hooks/useSupportedLanguages"
-import { changeLanguage } from "@/i18n"
+import { changeLanguage, getCurrentLocale } from "@/i18n"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
@@ -17,7 +17,8 @@ const CurrentLanguage = styled.button`
   padding: 8px 12px;
   font-size: 0.875rem;
   font-weight: 500;
-  cursor: pointer;
+  cursor: ${({ disabled }) => (disabled ? "default" : "pointer")};
+  opacity: ${({ disabled }) => (disabled ? 0.8 : 1)};
   display: flex;
   align-items: center;
   gap: 8px;
@@ -98,18 +99,45 @@ const Overlay = styled.div`
   display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
 `
 
+const normalizeLocale = (locale) =>
+  typeof locale === "string" ? locale.toLowerCase().split("-")[0] : ""
+
 export default function LanguageSelector({ className }) {
   const { i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
-  const currentLocale = i18n.language || "en"
-  const { supportedLanguages, isLoading } = useSupportedLanguages()
+  const {
+    supportedLanguages,
+    isLoading,
+    getLanguageName,
+    isLanguageSupported,
+  } = useSupportedLanguages()
+
+  const rawLocale = normalizeLocale(i18n.language)
+  const fallbackLocale = getCurrentLocale()
+  const currentLocale = isLanguageSupported(rawLocale)
+    ? rawLocale
+    : fallbackLocale
+  const hasMultipleLanguages = supportedLanguages.length > 1
 
   const handleLanguageChange = async (languageCode) => {
+    if (!isLanguageSupported(languageCode)) {
+      setIsOpen(false)
+      return
+    }
+
+    if (languageCode === currentLocale) {
+      setIsOpen(false)
+      return
+    }
+
     await changeLanguage(languageCode)
     setIsOpen(false)
   }
 
   const toggleDropdown = () => {
+    if (!hasMultipleLanguages) {
+      return
+    }
     setIsOpen(!isOpen)
   }
 
@@ -117,9 +145,7 @@ export default function LanguageSelector({ className }) {
     setIsOpen(false)
   }
 
-  const currentLanguage = supportedLanguages.find(
-    (lang) => lang.code === currentLocale,
-  )
+  const currentLanguageName = getLanguageName(currentLocale)
 
   if (isLoading) {
     return (
@@ -131,18 +157,22 @@ export default function LanguageSelector({ className }) {
 
   return (
     <>
-      <Overlay $isOpen={isOpen} onClick={closeDropdown} />
+      <Overlay
+        $isOpen={isOpen && hasMultipleLanguages}
+        onClick={closeDropdown}
+      />
       <SelectorContainer className={className}>
         <CurrentLanguage
           $isOpen={isOpen}
           onClick={toggleDropdown}
           aria-label="Select language"
           aria-expanded={isOpen}
+          disabled={!hasMultipleLanguages}
         >
-          {currentLanguage?.name || "English"}
+          {currentLanguageName}
         </CurrentLanguage>
 
-        <LanguageDropdown $isOpen={isOpen}>
+        <LanguageDropdown $isOpen={isOpen && hasMultipleLanguages}>
           {supportedLanguages.map((language) => (
             <LanguageOption
               key={language.code}

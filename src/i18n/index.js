@@ -5,24 +5,83 @@ import { initReactI18next } from "react-i18next"
 
 export const DEFAULT_LANGUAGE = "en"
 
-export const SUPPORTED_LANGUAGES = [
+export const SUPPORTED_LANGUAGES = Object.freeze([
   { code: "en", name: "English" },
   { code: "de", name: "German" },
   { code: "es", name: "Spanish" },
   { code: "fr", name: "French" },
-]
+])
+
+const STATIC_LANGUAGE_LOOKUP = new Map(
+  SUPPORTED_LANGUAGES.map((lang) => [lang.code, lang.name]),
+)
 
 export const SUPPORTED_LANGUAGE_CODES = SUPPORTED_LANGUAGES.map(
   (lang) => lang.code,
 )
 
+const normalizeLocale = (locale) => {
+  if (typeof locale !== "string") {
+    return ""
+  }
+  return locale.toLowerCase().split("-")[0]
+}
+
+const sanitizeLanguages = (languages) => {
+  if (!Array.isArray(languages)) {
+    return [...SUPPORTED_LANGUAGES]
+  }
+
+  const seen = new Set()
+  const sanitized = []
+
+  for (const entry of languages) {
+    const candidate =
+      typeof entry === "string" ? entry : normalizeLocale(entry?.code)
+
+    const normalizedCode = normalizeLocale(candidate)
+    if (!normalizedCode || seen.has(normalizedCode)) {
+      continue
+    }
+
+    if (!STATIC_LANGUAGE_LOOKUP.has(normalizedCode)) {
+      continue
+    }
+
+    seen.add(normalizedCode)
+    sanitized.push({
+      code: normalizedCode,
+      name:
+        (typeof entry === "object" && entry?.name) ||
+        STATIC_LANGUAGE_LOOKUP.get(normalizedCode),
+    })
+  }
+
+  return sanitized.length > 0 ? sanitized : [...SUPPORTED_LANGUAGES]
+}
+
+const haveSameLanguageOrder = (a, b) => {
+  if (a.length !== b.length) {
+    return false
+  }
+
+  return a.every(
+    (lang, index) => lang.code === b[index].code && lang.name === b[index].name,
+  )
+}
+
 let apiDiscoveredLanguages = [...SUPPORTED_LANGUAGES]
 
 export const setSupportedLanguages = (languages) => {
-  apiDiscoveredLanguages = languages.filter((lang) =>
-    SUPPORTED_LANGUAGE_CODES.includes(lang.code),
-  )
+  const sanitized = sanitizeLanguages(languages)
+
+  if (haveSameLanguageOrder(apiDiscoveredLanguages, sanitized)) {
+    return apiDiscoveredLanguages
+  }
+
+  apiDiscoveredLanguages = sanitized
   console.log("🌐 API discovered languages:", apiDiscoveredLanguages)
+  return apiDiscoveredLanguages
 }
 
 export const getSupportedLanguages = () => apiDiscoveredLanguages
@@ -41,7 +100,8 @@ i18n
       order: ["localStorage", "navigator", "htmlTag"],
       caches: ["localStorage"],
       lookupLocalStorage: "cheminova-language",
-      convertDetectedLanguage: (lng) => lng.split("-")[0],
+      convertDetectedLanguage: (lng) =>
+        normalizeLocale(lng) || DEFAULT_LANGUAGE,
     },
 
     backend: {
@@ -63,40 +123,53 @@ i18n
   })
 
 export const getCurrentLocale = () => {
-  const currentLang = i18n.language || DEFAULT_LANGUAGE
-  return SUPPORTED_LANGUAGE_CODES.includes(currentLang)
-    ? currentLang
-    : DEFAULT_LANGUAGE
+  const currentLang = normalizeLocale(i18n.language)
+  const languageCodes = getLanguageCodes()
+
+  if (currentLang && languageCodes.includes(currentLang)) {
+    return currentLang
+  }
+
+  return languageCodes[0] ?? DEFAULT_LANGUAGE
 }
 
 export const changeLanguage = async (languageCode) => {
-  if (!SUPPORTED_LANGUAGE_CODES.includes(languageCode)) {
+  const normalizedCode = normalizeLocale(languageCode)
+
+  if (!isLanguageSupported(normalizedCode)) {
     console.warn(
-      `⚠️ Language ${languageCode} not supported. Available: ${SUPPORTED_LANGUAGE_CODES.join(", ")}`,
+      `⚠️ Language ${languageCode} not supported. Available: ${getLanguageCodes().join(", ")}`,
     )
     return false
   }
 
   try {
-    await i18n.changeLanguage(languageCode)
-    localStorage.setItem("cheminova-language", languageCode)
-    console.log(`🌐 Language changed to: ${languageCode}`)
+    await i18n.changeLanguage(normalizedCode)
+    localStorage.setItem("cheminova-language", normalizedCode)
+    console.log(`🌐 Language changed to: ${normalizedCode}`)
     return true
   } catch (error) {
-    console.error(`❌ Failed to change language to ${languageCode}:`, error)
+    console.error(`❌ Failed to change language to ${normalizedCode}:`, error)
     return false
   }
 }
 
 export const getLanguageName = (languageCode) => {
-  const language = SUPPORTED_LANGUAGES.find(
-    (lang) => lang.code === languageCode,
+  const normalizedCode = normalizeLocale(languageCode)
+  const fromRuntime = apiDiscoveredLanguages.find(
+    (lang) => lang.code === normalizedCode,
   )
-  return language ? language.name : languageCode
+
+  if (fromRuntime) {
+    return fromRuntime.name
+  }
+
+  return STATIC_LANGUAGE_LOOKUP.get(normalizedCode) ?? normalizedCode
 }
 
 export const isLanguageSupported = (languageCode) => {
-  return SUPPORTED_LANGUAGE_CODES.includes(languageCode)
+  const normalizedCode = normalizeLocale(languageCode)
+  return getLanguageCodes().includes(normalizedCode)
 }
 
 export default i18n
