@@ -99,11 +99,8 @@ const Overlay = styled.div`
   display: ${({ $isOpen }) => ($isOpen ? "block" : "none")};
 `
 
-const normalizeLocale = (locale) =>
-  typeof locale === "string" ? locale.toLowerCase().split("-")[0] : ""
-
 export default function LanguageSelector({ className }) {
-  const { i18n } = useTranslation()
+  useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const {
     supportedLanguages,
@@ -111,21 +108,11 @@ export default function LanguageSelector({ className }) {
     getLanguageName,
     isLanguageSupported,
   } = useSupportedLanguages()
-
-  const rawLocale = normalizeLocale(i18n.language)
-  const fallbackLocale = getCurrentLocale()
-  const currentLocale = isLanguageSupported(rawLocale)
-    ? rawLocale
-    : fallbackLocale
+  const currentLocale = getCurrentLocale()
   const hasMultipleLanguages = supportedLanguages.length > 1
 
   const handleLanguageChange = async (languageCode) => {
-    if (!isLanguageSupported(languageCode)) {
-      setIsOpen(false)
-      return
-    }
-
-    if (languageCode === currentLocale) {
+    if (!isLanguageSupported(languageCode) || languageCode === currentLocale) {
       setIsOpen(false)
       return
     }
@@ -134,12 +121,8 @@ export default function LanguageSelector({ className }) {
     setIsOpen(false)
   }
 
-  const toggleDropdown = () => {
-    if (!hasMultipleLanguages) {
-      return
-    }
-    setIsOpen(!isOpen)
-  }
+  const toggleDropdown = () =>
+    hasMultipleLanguages && setIsOpen((previous) => !previous)
 
   const closeDropdown = () => {
     setIsOpen(false)
