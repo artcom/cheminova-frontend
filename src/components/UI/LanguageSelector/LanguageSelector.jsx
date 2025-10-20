@@ -1,6 +1,6 @@
 import { changeLanguage, getCurrentLocale } from "@/i18n"
 import { useLanguages } from "@/providers/LanguageProvider"
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
 
@@ -103,12 +103,12 @@ export default function LanguageSelector({ className }) {
   const { i18n } = useTranslation()
   const [isOpen, setIsOpen] = useState(false)
   const [currentLocale, setCurrentLocale] = useState(() => getCurrentLocale())
-  const {
-    supportedLanguages,
-    isLoading,
-    getLanguageName,
-    isLanguageSupported,
-  } = useLanguages()
+  const { supportedLanguages, isLoading } = useLanguages()
+  const languageMap = useMemo(
+    () =>
+      new Map(supportedLanguages.map((language) => [language.code, language])),
+    [supportedLanguages],
+  )
   const hasMultipleLanguages = supportedLanguages.length > 1
 
   useEffect(() => {
@@ -125,13 +125,18 @@ export default function LanguageSelector({ className }) {
   }, [i18n])
 
   const handleLanguageChange = async (languageCode) => {
-    if (!isLanguageSupported(languageCode) || languageCode === currentLocale) {
+    if (!languageMap.has(languageCode) || languageCode === currentLocale) {
       setIsOpen(false)
       return
     }
 
-    await changeLanguage(languageCode)
-    setIsOpen(false)
+    try {
+      await changeLanguage(languageCode)
+    } catch (error) {
+      console.error(`❌ Failed to switch language to ${languageCode}:`, error)
+    } finally {
+      setIsOpen(false)
+    }
   }
 
   const toggleDropdown = () =>
@@ -141,7 +146,10 @@ export default function LanguageSelector({ className }) {
     setIsOpen(false)
   }
 
-  const currentLanguageName = getLanguageName(currentLocale)
+  const currentLanguageName =
+    languageMap.get(currentLocale)?.name ??
+    supportedLanguages[0]?.name ??
+    currentLocale.toUpperCase()
 
   if (isLoading) {
     return (

@@ -5,80 +5,44 @@ import { initReactI18next } from "react-i18next"
 
 export const DEFAULT_LANGUAGE = "en"
 
-export const DEFAULT_LANGUAGES = [
+const LANGUAGE_LIST = [
   { code: "en", name: "English" },
   { code: "de", name: "German" },
   { code: "es", name: "Spanish" },
   { code: "fr", name: "French" },
 ]
 
-const defaultLanguageNames = new Map(
-  DEFAULT_LANGUAGES.map((language) => [language.code, language.name]),
+export const LANGUAGE_MAP = LANGUAGE_LIST.reduce((map, language) => {
+  map[language.code] = language
+  return map
+}, {})
+
+export const DEFAULT_LANGUAGE_CODES = LANGUAGE_LIST.map(
+  (language) => language.code,
 )
 
-let supportedLanguages = [...DEFAULT_LANGUAGES]
-
-export const normalizeLocale = (locale) => {
-  if (typeof locale !== "string") {
-    return ""
-  }
-
-  return locale.toLowerCase().split("-")[0]
-}
-
-export const setSupportedLanguages = (languages) => {
-  if (!Array.isArray(languages) || languages.length === 0) {
-    supportedLanguages = [...DEFAULT_LANGUAGES]
-  } else {
-    const seen = new Set()
-    const next = []
-
-    for (const candidate of languages) {
-      const code = normalizeLocale(
-        typeof candidate === "string"
-          ? candidate
-          : (candidate?.code ?? candidate?.locale ?? ""),
-      )
-
-      if (!code || seen.has(code)) {
-        continue
-      }
-
-      seen.add(code)
-      const name =
-        (typeof candidate === "object" && candidate?.name) ||
-        defaultLanguageNames.get(code) ||
-        code.toUpperCase()
-
-      next.push({ code, name })
-    }
-
-    supportedLanguages = next.length > 0 ? next : [...DEFAULT_LANGUAGES]
-  }
-
-  i18n.options.supportedLngs = supportedLanguages.map((lang) => lang.code)
-  return [...supportedLanguages]
-}
-
-export const getSupportedLanguages = () => [...supportedLanguages]
-
-export const getLanguageCodes = () =>
-  supportedLanguages.map((language) => language.code)
+export const DEFAULT_LANGUAGES = [...LANGUAGE_LIST]
 
 i18n
   .use(HttpApi)
   .use(LanguageDetector)
   .use(initReactI18next)
   .init({
-    supportedLngs: getLanguageCodes(),
+    supportedLngs: [...DEFAULT_LANGUAGE_CODES],
     fallbackLng: DEFAULT_LANGUAGE,
 
     detection: {
       order: ["localStorage", "navigator", "htmlTag"],
       caches: ["localStorage"],
       lookupLocalStorage: "cheminova-language",
-      convertDetectedLanguage: (lng) =>
-        normalizeLocale(lng) || DEFAULT_LANGUAGE,
+      convertDetectedLanguage: (lng) => {
+        if (typeof lng !== "string") {
+          return DEFAULT_LANGUAGE
+        }
+
+        const code = lng.trim().toLowerCase().split("-")[0]
+        return LANGUAGE_MAP[code] ? code : DEFAULT_LANGUAGE
+      },
     },
 
     backend: {
@@ -86,7 +50,7 @@ i18n
     },
 
     react: {
-      useSuspense: false,
+      useSuspense: true,
     },
 
     interpolation: {
@@ -100,58 +64,76 @@ i18n
   })
 
 export const getCurrentLocale = () => {
-  const currentLang = normalizeLocale(i18n.language)
-  const languageCodes = getLanguageCodes()
+  const rawLanguage = typeof i18n.language === "string" ? i18n.language : ""
+  const current = rawLanguage.trim().toLowerCase().split("-")[0]
 
-  if (currentLang && languageCodes.includes(currentLang)) {
-    return currentLang
+  const { supportedLngs } = i18n.options
+  const activeCodes =
+    Array.isArray(supportedLngs) && supportedLngs.length > 0
+      ? supportedLngs
+      : DEFAULT_LANGUAGE_CODES
+
+  if (current && activeCodes.includes(current)) {
+    return current
   }
 
-  return languageCodes[0] ?? DEFAULT_LANGUAGE
+  return activeCodes[0] ?? DEFAULT_LANGUAGE
 }
 
 export const changeLanguage = async (languageCode) => {
-  const normalizedCode = normalizeLocale(languageCode)
+  const code =
+    typeof languageCode === "string" ? languageCode.trim().toLowerCase() : ""
 
-  if (!isLanguageSupported(normalizedCode)) {
-    console.warn(
-      `⚠️ Language ${languageCode} not supported. Available: ${getLanguageCodes().join(", ")}`,
+  const { supportedLngs } = i18n.options
+  const activeCodes =
+    Array.isArray(supportedLngs) && supportedLngs.length > 0
+      ? supportedLngs
+      : DEFAULT_LANGUAGE_CODES
+
+  if (!code || !activeCodes.includes(code)) {
+    const list = activeCodes.join(", ") || "(none)"
+    throw new Error(
+      `Language "${languageCode}" is not configured. Active languages: ${list}`,
     )
-    return false
   }
 
   try {
-    await i18n.changeLanguage(normalizedCode)
-    localStorage.setItem("cheminova-language", normalizedCode)
-    console.log(`🌐 Language changed to: ${normalizedCode}`)
+    await i18n.changeLanguage(code)
+    localStorage.setItem("cheminova-language", code)
+    console.log(`🌐 Language changed to: ${code}`)
     return true
   } catch (error) {
-    console.error(`❌ Failed to change language to ${normalizedCode}:`, error)
+    console.error(`❌ Failed to change language to ${code}:`, error)
     return false
   }
 }
 
 export const getLanguageName = (languageCode) => {
-  const normalizedCode = normalizeLocale(languageCode)
+  const code =
+    typeof languageCode === "string" ? languageCode.trim().toLowerCase() : ""
 
-  const match =
-    supportedLanguages.find((language) => language.code === normalizedCode) ||
-    DEFAULT_LANGUAGES.find((language) => language.code === normalizedCode)
-
-  if (match) {
-    return match.name
+  if (LANGUAGE_MAP[code]) {
+    return LANGUAGE_MAP[code].name
   }
 
-  if (normalizedCode) {
-    return normalizedCode.toUpperCase()
+  if (code) {
+    return code.toUpperCase()
   }
 
   return DEFAULT_LANGUAGE.toUpperCase()
 }
 
 export const isLanguageSupported = (languageCode) => {
-  const normalizedCode = normalizeLocale(languageCode)
-  return supportedLanguages.some((language) => language.code === normalizedCode)
+  const code =
+    typeof languageCode === "string" ? languageCode.trim().toLowerCase() : ""
+
+  const { supportedLngs } = i18n.options
+  const activeCodes =
+    Array.isArray(supportedLngs) && supportedLngs.length > 0
+      ? supportedLngs
+      : DEFAULT_LANGUAGE_CODES
+
+  return code ? activeCodes.includes(code) : false
 }
 
 export default i18n
