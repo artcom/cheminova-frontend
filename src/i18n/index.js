@@ -12,22 +12,23 @@ export const SUPPORTED_LANGUAGES = Object.freeze([
   { code: "fr", name: "French" },
 ])
 
-const STATIC_LANGUAGE_LOOKUP = new Map(
-  SUPPORTED_LANGUAGES.map((lang) => [lang.code, lang.name]),
+const LANGUAGE_LOOKUP = new Map(
+  SUPPORTED_LANGUAGES.map((lang) => [lang.code, lang]),
 )
 
 export const SUPPORTED_LANGUAGE_CODES = SUPPORTED_LANGUAGES.map(
   (lang) => lang.code,
 )
 
-const normalizeLocale = (locale) => {
+export const normalizeLocale = (locale) => {
   if (typeof locale !== "string") {
     return ""
   }
+
   return locale.toLowerCase().split("-")[0]
 }
 
-const sanitizeLanguages = (languages) => {
+const toSupportedLanguageList = (languages) => {
   if (!Array.isArray(languages)) {
     return [...SUPPORTED_LANGUAGES]
   }
@@ -35,58 +36,49 @@ const sanitizeLanguages = (languages) => {
   const seen = new Set()
   const sanitized = []
 
-  for (const entry of languages) {
-    const candidate =
-      typeof entry === "string" ? entry : normalizeLocale(entry?.code)
+  for (const candidate of languages) {
+    const normalized = normalizeLocale(
+      typeof candidate === "string" ? candidate : candidate?.code,
+    )
 
-    const normalizedCode = normalizeLocale(candidate)
-    if (!normalizedCode || seen.has(normalizedCode)) {
+    if (!normalized || seen.has(normalized)) {
       continue
     }
 
-    if (!STATIC_LANGUAGE_LOOKUP.has(normalizedCode)) {
-      continue
+    const match = LANGUAGE_LOOKUP.get(normalized)
+    if (match) {
+      seen.add(normalized)
+      sanitized.push(match)
     }
-
-    seen.add(normalizedCode)
-    sanitized.push({
-      code: normalizedCode,
-      name:
-        (typeof entry === "object" && entry?.name) ||
-        STATIC_LANGUAGE_LOOKUP.get(normalizedCode),
-    })
   }
 
   return sanitized.length > 0 ? sanitized : [...SUPPORTED_LANGUAGES]
 }
 
-const haveSameLanguageOrder = (a, b) => {
+const languagesMatch = (a, b) => {
   if (a.length !== b.length) {
     return false
   }
 
-  return a.every(
-    (lang, index) => lang.code === b[index].code && lang.name === b[index].name,
-  )
+  return a.every((lang, index) => lang.code === b[index].code)
 }
 
-let apiDiscoveredLanguages = [...SUPPORTED_LANGUAGES]
+let runtimeLanguages = [...SUPPORTED_LANGUAGES]
 
 export const setSupportedLanguages = (languages) => {
-  const sanitized = sanitizeLanguages(languages)
+  const sanitized = toSupportedLanguageList(languages)
 
-  if (haveSameLanguageOrder(apiDiscoveredLanguages, sanitized)) {
-    return apiDiscoveredLanguages
+  if (languagesMatch(runtimeLanguages, sanitized)) {
+    return runtimeLanguages
   }
 
-  apiDiscoveredLanguages = sanitized
-  console.log("🌐 API discovered languages:", apiDiscoveredLanguages)
-  return apiDiscoveredLanguages
+  runtimeLanguages = sanitized
+  console.log("🌐 API discovered languages:", runtimeLanguages)
+  return runtimeLanguages
 }
 
-export const getSupportedLanguages = () => apiDiscoveredLanguages
-export const getLanguageCodes = () =>
-  apiDiscoveredLanguages.map((lang) => lang.code)
+export const getSupportedLanguages = () => runtimeLanguages
+export const getLanguageCodes = () => runtimeLanguages.map((lang) => lang.code)
 
 i18n
   .use(HttpApi)
@@ -156,7 +148,8 @@ export const changeLanguage = async (languageCode) => {
 
 export const getLanguageName = (languageCode) => {
   const normalizedCode = normalizeLocale(languageCode)
-  const fromRuntime = apiDiscoveredLanguages.find(
+
+  const fromRuntime = runtimeLanguages.find(
     (lang) => lang.code === normalizedCode,
   )
 
@@ -164,7 +157,7 @@ export const getLanguageName = (languageCode) => {
     return fromRuntime.name
   }
 
-  return STATIC_LANGUAGE_LOOKUP.get(normalizedCode) ?? normalizedCode
+  return LANGUAGE_LOOKUP.get(normalizedCode)?.name ?? normalizedCode
 }
 
 export const isLanguageSupported = (languageCode) => {

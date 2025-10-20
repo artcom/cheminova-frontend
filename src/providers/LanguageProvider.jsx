@@ -1,105 +1,80 @@
 import { fetchAllLocalesContent } from "@/api/djangoApi"
-import i18n, {
+import {
   changeLanguage,
-  DEFAULT_LANGUAGE,
   getCurrentLocale,
+  getSupportedLanguages,
+  normalizeLocale,
+  setSupportedLanguages,
   SUPPORTED_LANGUAGES,
-  setSupportedLanguages as syncSupportedLanguages,
 } from "@/i18n"
 import { useQuery } from "@tanstack/react-query"
 import { createContext, useContext, useEffect, useMemo, useState } from "react"
 
-const normalizeLocale = (locale) => {
-  if (typeof locale !== "string") {
-    return ""
-  }
-  return locale.toLowerCase().split("-")[0]
-}
+const DEFAULT_CODES = SUPPORTED_LANGUAGES.map((language) => language.code)
 
-const DEFAULT_LANGUAGE_MAP = new Map(
-  SUPPORTED_LANGUAGES.map((lang) => [lang.code, lang]),
-)
-
-const extractLanguagesFromContent = (content) => {
-  if (!Array.isArray(content)) {
-    return SUPPORTED_LANGUAGES
-  }
-
-  const seen = new Set()
-  const codes = []
-
-  for (const item of content) {
-    const code = normalizeLocale(item?.locale)
-
-    if (!code || seen.has(code) || !DEFAULT_LANGUAGE_MAP.has(code)) {
-      continue
-    }
-
-    seen.add(code)
-    codes.push(code)
-  }
-
-  if (codes.length === 0) {
-    return SUPPORTED_LANGUAGES
-  }
-
-  return codes.map((code) => DEFAULT_LANGUAGE_MAP.get(code))
-}
-
-const haveSameLanguages = (a, b) => {
-  if (a.length !== b.length) {
-    return false
-  }
-
-  return a.every(
-    (lang, index) => lang.code === b[index].code && lang.name === b[index].name,
+const defaultGetLanguageName = (code) => {
+  const normalized = normalizeLocale(code)
+  return (
+    SUPPORTED_LANGUAGES.find((language) => language.code === normalized)
+      ?.name ||
+    normalized ||
+    SUPPORTED_LANGUAGES[0]?.name ||
+    ""
   )
 }
 
-const defaultContextValue = {
+const defaultIsLanguageSupported = (code) =>
+  DEFAULT_CODES.includes(normalizeLocale(code))
+
+const LanguageContext = createContext({
   supportedLanguages: SUPPORTED_LANGUAGES,
-  languageCodes: SUPPORTED_LANGUAGES.map((lang) => lang.code),
+  languageCodes: DEFAULT_CODES,
   isLoading: false,
   isFetching: false,
   isSuccess: false,
   error: null,
   refetch: async () => ({ data: undefined }),
-  getLanguageName: (code) => {
-    const normalized = normalizeLocale(code)
-    return (
-      DEFAULT_LANGUAGE_MAP.get(normalized)?.name ||
-      normalized ||
-      DEFAULT_LANGUAGE
-    )
-  },
-  isLanguageSupported: (code) => {
-    const normalized = normalizeLocale(code)
-    return DEFAULT_LANGUAGE_MAP.has(normalized)
-  },
-}
+  getLanguageName: defaultGetLanguageName,
+  isLanguageSupported: defaultIsLanguageSupported,
+})
 
-export const LanguageContext = createContext(defaultContextValue)
+export const useLanguageContext = () => useContext(LanguageContext)
 
-export const useLanguageContext = () => {
-  const context = useContext(LanguageContext)
-  if (!context) {
-    throw new Error("useLanguageContext must be used within LanguageProvider")
+const extractLocalesFromContent = (content) => {
+  if (!Array.isArray(content)) {
+    return SUPPORTED_LANGUAGES
   }
-  return context
+
+  const seen = new Set()
+  const locales = []
+
+  for (const entry of content) {
+    const code = normalizeLocale(entry?.locale)
+    if (!code || seen.has(code)) {
+      continue
+    }
+
+    seen.add(code)
+    locales.push({ code })
+  }
+
+  return locales.length > 0 ? locales : SUPPORTED_LANGUAGES
 }
 
-const ensureActiveLanguage = () => {
-  const currentLanguage = normalizeLocale(i18n.language) || DEFAULT_LANGUAGE
-  const resolvedLocale = getCurrentLocale()
+const ensureActiveLanguage = (languages) => {
+  if (!languages.length) {
+    return
+  }
 
-  if (resolvedLocale !== currentLanguage) {
-    void changeLanguage(resolvedLocale)
+  const availableCodes = languages.map((language) => language.code)
+  const currentLocale = getCurrentLocale()
+
+  if (!availableCodes.includes(currentLocale)) {
+    void changeLanguage(availableCodes[0])
   }
 }
 
 export default function LanguageProvider({ children }) {
-  const [languages, setLanguages] = useState(SUPPORTED_LANGUAGES)
-
   const queryResult = useQuery({
     queryKey: ["all-locales-content"],
     queryFn: fetchAllLocalesContent,
@@ -109,19 +84,16 @@ export default function LanguageProvider({ children }) {
     retryDelay: 1000,
   })
 
+  const [languages, setLanguages] = useState(() => getSupportedLanguages())
+
   useEffect(() => {
     if (!queryResult.isSuccess) {
       return
     }
 
-    const candidateLanguages = extractLanguagesFromContent(queryResult.data)
-    const sanitizedLanguages = syncSupportedLanguages(candidateLanguages)
-
-    setLanguages((prev) =>
-      haveSameLanguages(prev, sanitizedLanguages) ? prev : sanitizedLanguages,
-    )
-
-    ensureActiveLanguage()
+    const nextLanguages = extractLocalesFromContent(queryResult.data)
+    const runtimeLanguages = setSupportedLanguages(nextLanguages)
+    setLanguages(runtimeLanguages)
   }, [queryResult.data, queryResult.isSuccess])
 
   useEffect(() => {
@@ -129,37 +101,27 @@ export default function LanguageProvider({ children }) {
       return
     }
 
-    const sanitizedLanguages = syncSupportedLanguages(SUPPORTED_LANGUAGES)
-
-    setLanguages((prev) =>
-      haveSameLanguages(prev, sanitizedLanguages) ? prev : sanitizedLanguages,
-    )
-
-    ensureActiveLanguage()
+    const runtimeLanguages = setSupportedLanguages(SUPPORTED_LANGUAGES)
+    setLanguages(runtimeLanguages)
   }, [queryResult.error])
 
+  useEffect(() => {
+    ensureActiveLanguage(languages)
+  }, [languages])
+
   const contextValue = useMemo(() => {
-    const languageCodes = languages.map((lang) => lang.code)
+    const languageCodes = languages.map((language) => language.code)
 
     const getLanguageName = (code) => {
       const normalized = normalizeLocale(code)
-      const runtimeLanguage = languages.find((lang) => lang.code === normalized)
-
-      if (runtimeLanguage) {
-        return runtimeLanguage.name
-      }
-
       return (
-        DEFAULT_LANGUAGE_MAP.get(normalized)?.name ||
-        normalized ||
-        DEFAULT_LANGUAGE
+        languages.find((language) => language.code === normalized)?.name ||
+        defaultGetLanguageName(code)
       )
     }
 
-    const isLanguageSupported = (code) => {
-      const normalized = normalizeLocale(code)
-      return languageCodes.includes(normalized)
-    }
+    const isLanguageSupported = (code) =>
+      languageCodes.includes(normalizeLocale(code))
 
     return {
       supportedLanguages: languages,
@@ -174,10 +136,10 @@ export default function LanguageProvider({ children }) {
     }
   }, [
     languages,
+    queryResult.error,
     queryResult.isFetching,
     queryResult.isLoading,
     queryResult.isSuccess,
-    queryResult.error,
     queryResult.refetch,
   ])
 
