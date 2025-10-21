@@ -1,7 +1,6 @@
-import useEndingContent from "@/hooks/useEndingContent"
-import { processImageUrl } from "@/utils/apiUtils"
+import { useEndingFromAll } from "@/api/hooks"
+import useGlobalState from "@/hooks/useGlobalState"
 import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
 
 import LoadingSpinner from "../UI/LoadingSpinner"
@@ -106,28 +105,11 @@ const ThankYouMessage = styled.div`
   transition: all 0.5s ease-in-out;
 `
 
-const ErrorMessage = styled.div`
-  background: rgba(255, 0, 0, 0.1);
-  border: 1px solid rgba(255, 0, 0, 0.3);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 2rem;
-  color: #ff6b6b;
-  font-family: "Bricolage Grotesque";
-  font-size: 1rem;
-  font-weight: 500;
-`
-
 const LoadingContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
   margin: 2rem 0;
-`
-
-const FallbackContent = styled.div`
-  opacity: 0.8;
-  font-style: italic;
 `
 
 const NavigationWrapper = styled.div`
@@ -136,13 +118,15 @@ const NavigationWrapper = styled.div`
 `
 
 export default function Ending({ goToWelcome }) {
-  const { t } = useTranslation()
-  const { data: endingData, isLoading, error, isError } = useEndingContent()
+  const { currentCharacterIndex } = useGlobalState()
+  const { data: endingData, isLoading } = useEndingFromAll(
+    currentCharacterIndex,
+  )
   const [imageLoaded, setImageLoaded] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
 
   useEffect(() => {
-    const imageUrl = processImageUrl(endingData?.backgroundImage)
+    const imageUrl = endingData?.backgroundImage?.file
     if (imageUrl) {
       const img = new Image()
       img.onload = () => setImageLoaded(true)
@@ -161,13 +145,15 @@ export default function Ending({ goToWelcome }) {
     return () => clearTimeout(timer)
   }, [])
 
-  // Always prefer translations over API content for proper localization
-  const title = t("ending.title")
-  const description = t("ending.description")
+  // Use CMS data - it's localized based on current language
+  const heading = endingData?.heading || ""
+  const description = endingData?.description
+    ? endingData.description.replace(/<[^>]*>/g, "")
+    : ""
 
   const backgroundImageUrl =
-    imageLoaded && endingData?.backgroundImage
-      ? processImageUrl(endingData.backgroundImage)
+    imageLoaded && endingData?.backgroundImage?.file
+      ? endingData.backgroundImage.file
       : null
 
   return (
@@ -175,13 +161,7 @@ export default function Ending({ goToWelcome }) {
       <BackgroundImage $imageUrl={backgroundImageUrl} />
 
       <Content>
-        <Headline $isLoading={isLoading}>{title}</Headline>
-
-        {isError && (
-          <ErrorMessage>
-            {error?.message || t("errors.networkError")}
-          </ErrorMessage>
-        )}
+        <Headline $isLoading={isLoading}>{heading}</Headline>
 
         {isLoading && (
           <LoadingContainer>
@@ -189,13 +169,13 @@ export default function Ending({ goToWelcome }) {
           </LoadingContainer>
         )}
 
-        <Description $isLoading={isLoading}>
-          <FallbackContent>{description}</FallbackContent>
-        </Description>
+        {!isLoading && description && <Description>{description}</Description>}
 
-        <ThankYouMessage $visible={showCelebration && !isLoading}>
-          {t("ending.thankYouMessage")}
-        </ThankYouMessage>
+        {!isLoading && (
+          <ThankYouMessage $visible={showCelebration}>
+            {heading}
+          </ThankYouMessage>
+        )}
 
         <NavigationWrapper>
           <Navigation

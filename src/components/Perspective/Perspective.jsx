@@ -1,7 +1,6 @@
-import usePerspectiveContent from "@/hooks/usePerspectiveContent"
-import { processImageUrl } from "@/utils/apiUtils"
+import { usePerspectiveFromAll } from "@/api/hooks"
+import useGlobalState from "@/hooks/useGlobalState"
 import { useEffect, useState } from "react"
-import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
 
 import LoadingSpinner from "../UI/LoadingSpinner"
@@ -85,18 +84,6 @@ const Description = styled.div`
   }
 `
 
-const ErrorMessage = styled.div`
-  background: rgba(255, 0, 0, 0.1);
-  border: 1px solid rgba(255, 0, 0, 0.3);
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 2rem;
-  color: #ff6b6b;
-  font-family: "Bricolage Grotesque";
-  font-size: 1rem;
-  font-weight: 500;
-`
-
 const LoadingContainer = styled.div`
   display: flex;
   align-items: center;
@@ -105,23 +92,15 @@ const LoadingContainer = styled.div`
   margin-bottom: 2rem;
 `
 
-const FallbackContent = styled.div`
-  opacity: 0.8;
-  font-style: italic;
-`
-
 export default function Perspective({ goToUpload }) {
-  const { t } = useTranslation()
-  const {
-    data: perspectiveData,
-    isLoading,
-    error,
-    isError,
-  } = usePerspectiveContent()
+  const { currentCharacterIndex } = useGlobalState()
+  const { data: perspectiveData, isLoading } = usePerspectiveFromAll(
+    currentCharacterIndex,
+  )
   const [imageLoaded, setImageLoaded] = useState(false)
 
   useEffect(() => {
-    const imageUrl = processImageUrl(perspectiveData?.backgroundImage)
+    const imageUrl = perspectiveData?.backgroundImage?.file
     if (imageUrl) {
       const img = new Image()
       img.onload = () => setImageLoaded(true)
@@ -132,13 +111,15 @@ export default function Perspective({ goToUpload }) {
     }
   }, [perspectiveData?.backgroundImage])
 
-  // Always prefer translations over API content for proper localization
-  const title = t("perspective.title")
-  const description = t("perspective.description")
+  // Use CMS data - it's localized based on current language
+  const heading = perspectiveData?.heading || ""
+  const description = perspectiveData?.description
+    ? perspectiveData.description.replace(/<[^>]*>/g, "")
+    : ""
 
   const backgroundImageUrl =
-    imageLoaded && perspectiveData?.backgroundImage
-      ? processImageUrl(perspectiveData.backgroundImage)
+    imageLoaded && perspectiveData?.backgroundImage?.file
+      ? perspectiveData.backgroundImage.file
       : null
 
   return (
@@ -146,26 +127,15 @@ export default function Perspective({ goToUpload }) {
       <BackgroundImage $imageUrl={backgroundImageUrl} />
 
       <Content>
-        <Headline $isLoading={isLoading}>{title}</Headline>
-
-        {isError && (
-          <ErrorMessage>
-            {error?.message || t("errors.networkError")}
-          </ErrorMessage>
-        )}
+        <Headline $isLoading={isLoading}>{heading}</Headline>
 
         {isLoading && (
           <LoadingContainer>
             <LoadingSpinner />
-            <div style={{ marginTop: "1rem", textAlign: "center" }}>
-              {t("perspective.loading")}
-            </div>
           </LoadingContainer>
         )}
 
-        <Description $isLoading={isLoading}>
-          <FallbackContent>{description}</FallbackContent>
-        </Description>
+        {!isLoading && description && <Description>{description}</Description>}
       </Content>
 
       <Navigation mode="single" onSelect={goToUpload} disabled={isLoading} />
