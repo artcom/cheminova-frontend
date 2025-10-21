@@ -73,6 +73,20 @@ export default function Upload({ goToGallery, images = [] }) {
   const characterName = currentCharacter?.name || "Unknown Character"
   const hasValidCharacter = Boolean(currentCharacter?.slug)
 
+  console.log("Upload Component Debug:", {
+    currentCharacterIndex,
+    charactersData,
+    charactersDataLength: charactersData?.length,
+    currentCharacter,
+    characterName,
+    characterSlug: currentCharacter?.slug,
+    hasValidCharacter,
+    validImagesLength: validImages.length,
+    isUploading,
+    buttonWillBeDisabled:
+      isUploading || (!hasValidCharacter && validImages.length > 0),
+  })
+
   // Use CMS data if available, otherwise fallback to translations
   const uploadDescription = uploadData?.description
     ? uploadData.description.replace(/<[^>]*>/g, "")
