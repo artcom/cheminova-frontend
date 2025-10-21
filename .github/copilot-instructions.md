@@ -1,123 +1,155 @@
 # Copilot Coding Agent Onboarding Guide
 
-(Keep this concise: ~2 pages max. Trust these instructions; search only if something here proves incomplete.)
-
 ## 1. Repository Summary
 
-- Purpose: Interactive color slider with advanced WebGL blur (Three.js) + animated trail + MQTT publishing of slider position.
-- Stack: React 19, TypeScript 5, Vite 7, Framer Motion, Three.js, mqtt.js, GLSL shaders (via `vite-plugin-glsl`).
-- Size: Small app (single page) but a few large source files (`SliderGesture.tsx`, `ShapeBlur.tsx`); ongoing refactor to split into smaller modules.
-- Runtime: Browser (ESM) + optional local MQTT broker (HiveMQ CE) via Docker.
-- Entry Points: `index.html` -> `src/main.tsx` -> `src/App.tsx` -> `src/SliderGesture.tsx`.
+- **Purpose**: Interactive photo gallery web app for cultural heritage site (La Nau). Users take photos, select guide characters, explore content through linear screen flow ending with 3D gallery.
+- **Stack**: React 19, Vite 7, styled-components, motion (Framer Motion), React Three Fiber (R3F), TanStack Query, i18next
+- **Size**: ~50 components, multi-screen flow (Welcome → PhotoCapture → Exploration → Gallery), CMS-driven content
+- **Runtime**: Browser (ESM). Development uses Django CMS backend API at `localhost:8080`, production at `/cms/api`
+- **Entry Points**: `index.html` → `src/main.jsx` → `src/components/App/App.jsx` (state-based screen router)
 
-## 2. Core Domains
+## 2. Core Domains & Architecture
 
-| Domain                                | Location                                                                  | Notes                                                                     |
-| ------------------------------------- | ------------------------------------------------------------------------- | ------------------------------------------------------------------------- |
-| Slider interaction (drag, dots, tail) | `src/hooks/*` + `src/SliderGesture.tsx`                                   | Hooks encapsulate logic (drag, dots, tail follower, arrival, bump).       |
-| State Machine                         | `src/state/sliderStateMachine.ts`                                         | Pure reducer + hook wrapper; events drive bump & phases.                  |
-| WebGL blur & trail                    | `src/ShapeBlur.tsx`, `src/lib/gl/*`, `src/shaders/*`                      | Uses Three.js + custom shaders; MotionValues drive uniforms.              |
-| MQTT integration                      | `src/config/mqtt.ts` + inline effect in `SliderGesture` (to be extracted) | Publishes scaled slider position to `mediaStation/norden/onSliderChange`. |
-| Configuration/constants               | `src/config/slider.ts`, `src/config/mqtt.ts`                              | Central numerical + palette constants.                                    |
-| Color utilities                       | `src/lib/color.ts`                                                        | Interpolation, saturation.                                                |
-| Refactor plans/docs                   | `REFACTOR_PLAN.md`, `REFRACTORING.MD`, `README_STATE_MACHINE.md`          | Consult before structural changes.                                        |
+| Domain                      | Location                                                             | Notes                                                                                                                                                                  |
+| --------------------------- | -------------------------------------------------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Screen Flow Router**      | `src/components/App/App.jsx`                                         | State-based routing: `welcome` → `introduction` → `photoCapture` → `exploration` → `perspective` → `upload` → `gallery` → `ending`. No React Router.                   |
+| **CMS Data Layer**          | `src/api/djangoApi.js`, `src/api/hooks.js`                           | Fetches tree structure from `/cms/api/all/` endpoint. Uses TanStack Query + custom `useLocalizedQuery` hook.                                                           |
+| **Content Tree Navigation** | `src/api/hooks.js` (`extractFromContentTree`)                        | Functions traverse hierarchical CMS data: `getWelcome()` → `getCharacterOverview()` → `getCharacter(index)` → `getIntroduction(index)` → `getPhotography(index)`, etc. |
+| **Localization**            | `src/i18n/`, `src/providers/LanguageProvider.jsx`, `public/locales/` | i18next with browser detection + localStorage. Supports EN, DE, ES, FR. CMS content is locale-specific; UI labels use translation files.                               |
+| **Global State**            | `src/GlobalState.jsx` (Context API)                                  | Manages character selection, screen navigation history, modal state (privacy/imprint). Use `useGlobalState()` hook.                                                    |
+| **3D Gallery**              | `src/components/Gallery/`                                            | React Three Fiber canvas with custom image grid, camera controller, stack bump animation. Uses `@react-three/fiber` + `@react-three/drei`.                             |
+| **Styled Components**       | `src/theme/`, inline styled components                               | Theme provider with centralized colors, spacing. Components define styled elements inline (e.g., `styled.div`).                                                        |
+
+**Key Architectural Pattern**: CMS returns nested JSON tree; extractors in `src/api/hooks.js` navigate by character index + screen depth. Example: `useExplorationFromAll(characterIndex)` traverses: Welcome → CharacterOverview → Character[index] → Introduction → Photography → **Exploration**.
 
 ## 3. Build & Run Instructions
 
-Always perform these in order after cloning or pulling changes.
+**Always perform these in order after cloning or pulling changes:**
 
-1. Install dependencies (mandatory before anything else):
+1. **Install dependencies** (mandatory before anything else):
 
 ```bash
 npm install
 ```
 
-2. Development server (hot reload):
+2. **Development server** (hot reload):
 
 ```bash
-npm run dev
+npm run dev          # Opens localhost:5173
+npm run dev:host     # Exposes to network
 ```
 
-- Opens (or logs) local Vite server (default: http://localhost:5173). No extra build step needed.
-
-3. Type check + build production bundle:
+3. **Type check + build production bundle**:
 
 ```bash
-npm run build
+npm run build        # Outputs to dist/
 ```
 
-- Runs `tsc -b` then `vite build`; outputs to `dist/`.
-
-4. Preview production build locally:
+4. **Preview production build locally**:
 
 ```bash
 npm run preview
 ```
 
-5. Lint (do this before committing):
+5. **Lint** (do this before committing):
 
 ```bash
 npm run lint
+npm run format       # Check formatting
+npm run format:write # Fix formatting
 ```
 
-6. Auto-fix lint + formatting (safe for staged or full tree):
-
-```bash
-npm run lint:fix
-npm run format
-```
-
-7. MQTT broker (only if working with publish feature):
-
-```bash
-npm run mqtt:up     # start HiveMQ CE (detached)
-npm run mqtt:logs   # view logs
-npm run mqtt:down   # stop
-```
-
-8. One-off local broker rebuild (rarely needed):
-
-```bash
-npm run mqtt:rebuild
-```
-
-Tool Versions (declared in `package.json`): Node (use >=18 LTS), TypeScript ~5.8, Vite ^7. No custom global CLIs required.
+**Tool Versions**: Node >=18 LTS, React 19, Vite 7. No custom global CLIs required.
 
 ## 4. Testing Status
 
-- Currently no formal test suite configured (no Jest/Vitest). Treat build + lint + manual run as validation gates.
-- If you add tests, prefer Vitest (integrates with Vite) and place under `src/__tests__`.
+- Currently **no formal test suite** configured (no Jest/Vitest).
+- Validation gates: `npm run lint` + `npm run build` + manual testing.
+- If adding tests, prefer Vitest (integrates with Vite) and place under `src/__tests__`.
 
 ## 5. Validation Checklist Before Submitting Changes
 
 Always ensure:
 
-1. `npm run lint` passes with no errors (warnings acceptable unless introducing new ones—prefer fixing).
-2. `npm run build` completes without TypeScript errors.
-3. App loads and slider can be dragged end-to-end without console errors.
-4. If modifying MQTT logic and broker is running: position messages publish to topic (observe via external subscriber if possible).
-5. No stray debug `console.log` left (except intentional connection logs).
+1. ✅ `npm run lint` passes with no errors
+2. ✅ `npm run build` completes without errors
+3. ✅ App loads and flows through all screens without console errors
+4. ✅ Language switching works (EN/DE/ES/FR) and persists in localStorage
+5. ✅ No stray debug `console.log` left (except intentional logs)
 
 ## 6. Environment & Configuration
 
-- MQTT broker URL resolved from `import.meta.env.VITE_MQTT_BROKER_URL` or defaults to `ws://localhost:8000/mqtt` (see `src/config/mqtt.ts`).
-- Provide `.env` (or `.env.local`) with `VITE_MQTT_BROKER_URL` only if deviating from default.
-- Do not hardcode alternative endpoints; extend config module instead.
+**API Configuration** (`src/config/api.js`):
 
-## 7. Architectural Pointers
+- Development: `http://localhost:8080` (Django CMS backend)
+- Production: `/cms/api` (absolute path works from any subdirectory)
+- Override with `.env.local`: `VITE_API_BASE_URL=http://localhost:8000`
 
-- `SliderGesture.tsx` orchestrates: sets up motion values, hooks, MQTT publish loop, and renders shape blur + dots + debug panel.
-- MotionValue dependencies: `headX`, `tailX` drive track width & WebGL uniforms; keep subscription logic centralized (avoid duplicate listeners).
-- State machine dispatch events instead of adding new booleans; extend `SliderEvent` union for new interactions.
-- WebGL `ShapeBlur` is performance sensitive: avoid triggering React re-renders for purely animated uniform changes; prefer MotionValues or refs.
-- Throttled publishing: respect `PUBLISH_MAX_FPS` constant; if adjusting, update `src/config/slider.ts` only.
+**Language Configuration** (`src/config/language.js`):
 
-## 8. Adding/Modifying Features Safely
+- Centralized constants: cache times, retry attempts, storage keys
+- Languages stored in localStorage key: `cheminova-language`
+- Supported: EN (default), DE, ES, FR
 
-- Need new slider behavior? First extend state machine events rather than layering ad-hoc flags.
-- New constants: add to appropriate config file and re-export; avoid scattering numeric literals.
-- Extra animation: place in a dedicated hook (mirroring `useBumpAnimation`) with clearly documented inputs/outputs.
-- For multi-slider potential, avoid singletons (no module-level mutable state outside React except pure constants).
+**i18next Setup** (`src/i18n/index.js`):
+
+- Auto-detects from: localStorage → navigator → htmlTag
+- UI translations: `public/locales/{lng}/translation.json`
+- CMS content: locale-specific from Django API
+
+## 7. Critical Development Patterns
+
+### CMS Content Access Pattern
+
+Always use `useLocalizedQuery` for CMS data (not raw `useQuery`). Example:
+
+```javascript
+const { data: explorationData } = useExplorationFromAll(characterIndex)
+```
+
+### Screen State Navigation
+
+Do NOT add React Router. Use state machine in `App.jsx`:
+
+```javascript
+setState("exploration") // Valid states: see App.jsx
+```
+
+### Language Detection Flow
+
+1. `LanguageProvider` fetches all locales from `/cms/api/all/`
+2. `i18next` detects user language (localStorage → browser → fallback)
+3. `useLocalizedQuery` automatically filters CMS tree by current locale
+4. Components never call `getContentForLocale` directly
+
+### Styled Components Pattern
+
+Use inline styled definitions with theme access:
+
+```javascript
+const Button = styled.button`
+  background: ${theme.colors.primary.main};
+`
+```
+
+### 3D Gallery Architecture
+
+- Canvas setup: `src/components/Gallery/Gallery.jsx`
+- Camera control: `CameraController.jsx` (drag-based navigation)
+- Image tiles: `AnimatingTile.jsx` (custom bump animation)
+- Stack effect: `StackBump.jsx` (entry animation)
+
+## 8. Common Pitfalls & Solutions
+
+| Pitfall                     | Solution                                                                                            |
+| --------------------------- | --------------------------------------------------------------------------------------------------- |
+| Accessing CMS data directly | Always use `extractFromContentTree` functions or provided hooks                                     |
+| Hardcoded UI text           | Check `public/locales/{lng}/translation.json` first; use `useTranslation()`                         |
+| Missing character context   | Components like Exploration/Introduction need `characterIndex` from global state                    |
+| CMS tree traversal errors   | Structure: Welcome → CharacterOverview → Character → Introduction → Photography → Exploration → ... |
+| Language not switching      | Verify localStorage key is `cheminova-language`, not a generic one                                  |
+| New screen in flow          | Add to `App.jsx` state machine AND update navigation handlers                                       |
+| R3F performance issues      | Avoid state updates in `useFrame`; use refs or imperative Three.js calls                            |
 
 ## 9. Directory Layout (Key Files)
 
@@ -125,70 +157,80 @@ Root important files:
 
 ```
 package.json            # scripts & deps
-vite.config.ts          # Vite + GLSL plugin
-eslint.config.js        # ESLint flat config
-tsconfig.json           # root TS build config
-tsconfig.app.json       # app tsconfig
-Dockerfile.hivemq       # broker image build
-docker-compose.mqtt.yml # compose for HiveMQ
-README*.md              # various docs & plans
+vite.config.js          # Vite + React plugins, path aliases
+eslint.config.js        # ESLint flat config (React 19 + Prettier)
+jsconfig.json           # path alias resolution for IDE
+API_CONFIGURATION.md    # CMS endpoint setup (dev vs prod)
+CMS_IMPLEMENTATION_SUMMARY.md  # Complete CMS field mapping
+LANGUAGE_SYSTEM_FLOW.md        # Deep dive into i18n architecture
+index.html              # entry point
 src/                    # application source
-public/                 # static assets
-hivemq/conf/config.xml  # broker websocket path (/mqtt)
+public/locales/         # i18n translation files (en, de, es, fr)
 ```
 
-`src/` notable:
+`src/` notable structure:
 
 ```
-App.tsx                 # root component wrapper
-SliderGesture.tsx       # main slider orchestration component
-ShapeBlur.tsx           # WebGL blur & trail rendering
-config/slider.ts        # slider constants
-config/mqtt.ts          # MQTT config + broker URL resolution
-hooks/                  # interaction + animation logic
-  useSliderDrag.ts
-  useSliderDots.ts
-  useTailFollower.ts
-  useDotArrival.ts
-  useBumpAnimation.ts
-  useShapeBlurInit.ts
-  useTailFollower.ts
-lib/
-  color.ts              # palette interpolation utilities
-  gl/                   # GL helpers (createMaterial, trailManager)
-state/sliderStateMachine.ts
-shaders/shapeBlur.*.glsl
-components/Slider/
-  SliderDots.tsx
-  SliderDebugPanel.tsx
+main.jsx                # React root with providers (QueryClient, Language, Theme, GlobalState)
+GlobalState.jsx         # Context API for character selection & navigation
+i18n/index.js           # i18next initialization
+api/
+  djangoApi.js          # API request wrapper + locale filtering
+  hooks.js              # extractFromContentTree + all content hooks
+config/
+  api.js                # API_BASE_URL resolution (dev/prod)
+  language.js           # centralized i18n constants
+providers/
+  LanguageProvider.jsx  # fetches all locales, provides supported languages
+components/
+  App/App.jsx           # state-based screen router
+  Welcome/              # character selection carousel
+  Introduction/         # character intro screen
+  PhotoCapture/         # camera interface for user photos
+  Exploration/          # CMS-driven content exploration
+  Perspective/          # conclusion/transition screen
+  Upload/               # user photo upload to CMS
+  Gallery/              # React Three Fiber 3D gallery
+    components/         # AnimatingTile, CameraController, StackBump, etc.
+  UI/                   # reusable UI components
+hooks/                  # custom hooks (useGlobalState, useLocalizedQuery, etc.)
+theme/                  # styled-components theme provider
 ```
 
 ## 10. Common Pitfalls & Guidance
 
-| Pitfall                         | Guidance                                                                             |
-| ------------------------------- | ------------------------------------------------------------------------------------ |
-| Forgetting install before build | Always run `npm install` after pulling new lockfile changes.                         |
-| Duplicating animation loops     | Use existing hooks; do not add new `requestAnimationFrame` loops unless centralized. |
-| Hardcoding MQTT URL             | Use `getMqttConfigSnapshot()` or exported constants.                                 |
-| Adding magic numbers            | Put them into slider config.                                                         |
-| Touching large files directly   | Prefer extracting logic to new small modules; update imports gradually.              |
-| Unbounded arrays in GL trail    | Respect `TRAIL_MAX_SAMPLES_GPU`; adjust constants not ad-hoc values.                 |
+| Pitfall                         | Guidance                                                                           |
+| ------------------------------- | ---------------------------------------------------------------------------------- |
+| Forgetting install before build | Always run `npm install` after pulling new lockfile changes.                       |
+| Adding React Router             | This app uses state-based routing in `App.jsx` - do NOT add react-router-dom.      |
+| Direct CMS data access          | Use `extractFromContentTree` functions; respect the tree hierarchy.                |
+| Mixing translation sources      | CMS content uses Django API; UI labels use `public/locales/` files. Keep separate. |
+| Wrong hook for CMS data         | Use `useLocalizedQuery` (not raw `useQuery`) for automatic locale filtering.       |
+| New global state                | Add to `GlobalState.jsx` context, not component-level state.                       |
+| Performance in R3F              | Minimize React state updates in `useFrame` callbacks; use refs.                    |
+| Missing character index         | Many components need `currentCharacterIndex` from `useGlobalState()`.              |
 
-## 11. Extending State Machine
+## 11. Path Aliases (jsconfig.json)
 
-- File: `src/state/sliderStateMachine.ts`
-- To add event: extend `SliderEvent` union + reducer `switch`. Keep reducer pure (no side-effects).
-- Use hook callbacks (`onCoreEnter`, `onCoreExit`, `onBumpStart`, `onBumpEnd`) for side-effects.
+```javascript
+@/           → src/
+@components  → src/components
+@hooks       → src/hooks
+@api         → src/api
+@ui          → src/components/UI
+@theme       → src/theme
+```
 
-## 12. Performance Considerations
+## 12. React 19 Features in Use
 
-- Avoid forcing React state updates inside high-frequency drag loops; rely on MotionValues.
-- Keep new subscriptions unsubscribed in cleanup; follow patterns in existing hooks.
-- Publishing loop already throttled; if adding new network loops, ensure similar throttling.
+- **React Compiler** enabled (babel-plugin-react-compiler) - avoid manual memo/useCallback
+- **Concurrent features** via Suspense boundaries for i18n and data fetching
+- **New JSX runtime** (no React import needed in .jsx files)
 
 ## 13. CI / Automation
 
-- No GitHub Actions workflows present yet; treat local lint + build as pre-merge gate.
+- **No GitHub Actions** configured yet; treat local lint + build as pre-merge gate.
+- **Husky + lint-staged**: runs on pre-commit (check `package.json` prepare script).
 - If adding CI, replicate: `npm ci && npm run lint && npm run build`.
 
 ## 14. Trust These Instructions
