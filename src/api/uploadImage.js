@@ -1,4 +1,4 @@
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || "/cms/api"
+import { API_BASE_URL } from "@/config/api"
 
 export const uploadImage = async (imageFile, title = null) => {
   const formData = new FormData()
