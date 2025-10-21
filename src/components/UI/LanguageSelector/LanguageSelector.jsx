@@ -104,15 +104,17 @@ export default function LanguageSelector({ className }) {
   const [isOpen, setIsOpen] = useState(false)
   const [currentLocale, setCurrentLocale] = useState(() => getCurrentLocale())
   const { supportedLanguages, isLoading } = useLanguages()
-  const languageMap = useMemo(
-    () =>
-      new Map(supportedLanguages.map((language) => [language.code, language])),
+  const languageCodes = useMemo(
+    () => Object.keys(supportedLanguages),
     [supportedLanguages],
   )
-  const hasMultipleLanguages = supportedLanguages.length > 1
+  const hasMultipleLanguages = languageCodes.length > 1
 
   useEffect(() => {
+    const controller = new AbortController()
+
     const handleLanguageChange = () => {
+      if (controller.signal.aborted) return
       setCurrentLocale(getCurrentLocale())
     }
 
@@ -120,23 +122,14 @@ export default function LanguageSelector({ className }) {
 
     i18n.on("languageChanged", handleLanguageChange)
     return () => {
+      controller.abort()
       i18n.off("languageChanged", handleLanguageChange)
     }
   }, [i18n])
 
   const handleLanguageChange = async (languageCode) => {
-    if (!languageMap.has(languageCode) || languageCode === currentLocale) {
-      setIsOpen(false)
-      return
-    }
-
-    try {
-      await changeLanguage(languageCode)
-    } catch (error) {
-      console.error(`❌ Failed to switch language to ${languageCode}:`, error)
-    } finally {
-      setIsOpen(false)
-    }
+    await changeLanguage(languageCode)
+    setIsOpen(false)
   }
 
   const toggleDropdown = () =>
@@ -147,8 +140,8 @@ export default function LanguageSelector({ className }) {
   }
 
   const currentLanguageName =
-    languageMap.get(currentLocale)?.name ??
-    supportedLanguages[0]?.name ??
+    supportedLanguages[currentLocale] ??
+    supportedLanguages[languageCodes[0]] ??
     currentLocale.toUpperCase()
 
   if (isLoading) {
@@ -175,13 +168,13 @@ export default function LanguageSelector({ className }) {
         </CurrentLanguage>
 
         <LanguageDropdown $isOpen={isOpen && hasMultipleLanguages}>
-          {supportedLanguages.map((language) => (
+          {languageCodes.map((code) => (
             <LanguageOption
-              key={language.code}
-              $isActive={language.code === currentLocale}
-              onClick={() => handleLanguageChange(language.code)}
+              key={code}
+              $isActive={code === currentLocale}
+              onClick={() => handleLanguageChange(code)}
             >
-              {language.name}
+              {supportedLanguages[code]}
             </LanguageOption>
           ))}
         </LanguageDropdown>
