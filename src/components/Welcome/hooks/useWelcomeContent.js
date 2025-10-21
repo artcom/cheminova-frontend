@@ -23,16 +23,15 @@ export function useWelcomeContent(
         navigationMode: "single",
       }
     } else if (step === STEP.CHARACTER && showIntro) {
-      // Use onboarding text from CMS if available
-      const onboardingText = characterOverviewData?.onboarding
-        ? characterOverviewData.onboarding.replace(/<[^>]*>/g, "")
-        : t("introduction.description")
-
+      // Use CMS data - it's localized based on current language
       return {
-        headline: t("introduction.title"),
+        headline: characterOverviewData?.title,
+        subHeadline: characterOverviewData?.siteName,
         description: {
           title: "",
-          text: onboardingText,
+          text: characterOverviewData?.onboarding
+            ? characterOverviewData.onboarding.replace(/<[^>]*>/g, "")
+            : "",
         },
         navigationMode: "single",
       }

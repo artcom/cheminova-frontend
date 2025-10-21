@@ -48,7 +48,7 @@ export const extractFromContentTree = {
     return introduction.children[0]
   },
 
-  getCollection: (data, characterIndex) => {
+  getExploration: (data, characterIndex) => {
     const photography = extractFromContentTree.getPhotography(
       data,
       characterIndex,
@@ -58,14 +58,12 @@ export const extractFromContentTree = {
   },
 
   getPerspective: (data, characterIndex) => {
-    const photography = extractFromContentTree.getPhotography(
+    const exploration = extractFromContentTree.getExploration(
       data,
       characterIndex,
     )
-    if (!photography?.children || photography.children.length === 0) return null
-    const collection = photography.children[0]
-    if (!collection?.children || collection.children.length === 0) return null
-    return collection.children[0]
+    if (!exploration?.children || exploration.children.length === 0) return null
+    return exploration.children[0]
   },
 
   getUpload: (data, characterIndex) => {
@@ -170,17 +168,17 @@ export const usePhotographyFromAll = (characterIndex, options = {}) => {
   }
 }
 
-export const useCollectionFromAll = (characterIndex, options = {}) => {
+export const useExplorationFromAll = (characterIndex, options = {}) => {
   const { data: allContent, ...queryResult } = useAllContent(options)
 
-  const collectionData = useMemo(
-    () => extractFromContentTree.getCollection(allContent, characterIndex),
+  const explorationData = useMemo(
+    () => extractFromContentTree.getExploration(allContent, characterIndex),
     [allContent, characterIndex],
   )
 
   return {
     ...queryResult,
-    data: collectionData,
+    data: explorationData,
   }
 }
 

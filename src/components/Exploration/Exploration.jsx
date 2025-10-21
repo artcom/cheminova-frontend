@@ -1,4 +1,4 @@
-import { useCharactersFromAll, usePhotographyFromAll } from "@/api/hooks"
+import { useCharactersFromAll, useExplorationFromAll } from "@/api/hooks"
 import useGlobalState from "@/hooks/useGlobalState"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
@@ -27,7 +27,7 @@ export default function Exploration({ goToPerspective }) {
   const { currentCharacterIndex } = useGlobalState()
   const { data: charactersData, isLoading: isCharactersLoading } =
     useCharactersFromAll()
-  const { data: photographyData } = usePhotographyFromAll(currentCharacterIndex)
+  const { data: explorationData } = useExplorationFromAll(currentCharacterIndex)
   const containerRef = useRef(null)
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
@@ -47,14 +47,14 @@ export default function Exploration({ goToPerspective }) {
   }
 
   const getExplorationContent = () => {
-    if (photographyData) {
+    if (explorationData) {
       return {
-        heading: photographyData.heading || t("exploration.title"),
-        description: photographyData.description
-          ? photographyData.description.replace(/<[^>]*>/g, "")
+        heading: explorationData.heading || t("exploration.title"),
+        description: explorationData.description
+          ? explorationData.description.replace(/<[^>]*>/g, "")
           : t("exploration.content.stone1"),
-        topImage: photographyData.topImage?.file || FirstImage,
-        bottomImage: photographyData.bottomImage?.file || SecondImage,
+        topImage: explorationData.topImage?.file || FirstImage,
+        bottomImage: explorationData.bottomImage?.file || SecondImage,
       }
     }
     return {

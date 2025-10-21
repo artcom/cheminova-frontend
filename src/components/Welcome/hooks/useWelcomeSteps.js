@@ -40,6 +40,7 @@ export function useWelcomeSteps({
   // Calculate navigation props based on current state
   const getNavigationProps = (navigationMode) => {
     const totalCharacters = charactersData?.length || 0
+    const currentCharacter = charactersData?.[currentCharacterIndex]
 
     return {
       mode: !showIntro ? "select" : navigationMode,
@@ -48,6 +49,10 @@ export function useWelcomeSteps({
       onNext: handleCharacterNext,
       prevDisabled: currentCharacterIndex === 0,
       nextDisabled: currentCharacterIndex === totalCharacters - 1,
+      selectLabel:
+        !showIntro && currentCharacter?.selectButtonText
+          ? currentCharacter.selectButtonText
+          : undefined,
     }
   }
 
