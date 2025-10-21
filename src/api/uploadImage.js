@@ -14,7 +14,10 @@ export const uploadImage = async (imageFile, characterSlug, title = null) => {
   }
 
   // Use character-specific endpoint
-  const response = await fetch(`${API_BASE_URL}/images/${characterSlug}/`, {
+  const uploadUrl = `${API_BASE_URL}/images/${characterSlug}/`
+  console.log("🚀 Uploading to:", uploadUrl)
+
+  const response = await fetch(uploadUrl, {
     method: "POST",
     body: formData, // Don't set Content-Type header - let browser set it for FormData
   })

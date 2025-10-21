@@ -14,6 +14,12 @@ export const useUploadImage = () => {
 
   return useMutation({
     mutationFn: ({ file, title }) => {
+      console.log("🔍 Upload Debug:", {
+        characterSlug,
+        currentCharacterIndex,
+        currentCharacter,
+        charactersData: charactersData?.length,
+      })
       if (!characterSlug) {
         throw new Error("No character selected for upload")
       }
