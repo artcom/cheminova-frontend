@@ -16,7 +16,6 @@ export const createScreens = (goNext) => {
         backgroundImage: LaNau,
         headline: "La Nau",
         subheadline: "Experiencing",
-        showFullscreenButton: true,
       },
       navigation: {
         mode: "single",

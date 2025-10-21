@@ -1,8 +1,7 @@
+import { resolve } from "path"
 import eslintPlugin from "@nabla/vite-plugin-eslint"
 import react from "@vitejs/plugin-react"
 import { defineConfig } from "vite"
-import { resolve } from "path"
-
 import webfontDownload from "vite-plugin-webfont-dl"
 
 export default defineConfig({

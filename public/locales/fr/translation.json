@@ -1,0 +1,85 @@
+{
+  "navigation": {
+    "next": "Suivant",
+    "previous": "Précédent",
+    "close": "Fermer",
+    "select": "Sélectionner"
+  },
+  "welcome": {
+    "title": "Bienvenue",
+    "subtitle": "La Nau",
+    "description": "Découvrez ce monument avec de nouveaux yeux"
+  },
+  "introduction": {
+    "title": "Choisissez votre guide",
+    "description": "Sélectionnez votre guide pour ce voyage immersif à travers La Nau."
+  },
+  "photoCapture": {
+    "title": "Cadrez votre perspective",
+    "tasks": {
+      "laNau": "La Nau",
+      "surroundings": "Vos environs",
+      "special": "Quelque chose de spécial"
+    },
+    "buttons": {
+      "takePhoto": "Prendre une photo",
+      "gallery": "Galerie",
+      "retake": "Reprendre"
+    }
+  },
+  "exploration": {
+    "title": "Regardez ce que j'ai trouvé,",
+    "content": {
+      "stone1": "Les pierres avec beaucoup de petits pores (comme le calcaire), fréquemment trouvées dans les monuments anciens, sont plus vulnérables à la corrosion car elles agissent comme de petites éponges !",
+      "stone2": "Ces pierres poreuses absorbent l'humidité, les polluants et même la pluie acide plus facilement que les pierres plus denses, ce mécanisme accélère l'altération.",
+      "stone3": "Ainsi, bien qu'un monument puisse paraître fort et solide, s'il est fait de pierre poreuse, il mène en réalité une bataille secrète chaque jour !"
+    }
+  },
+  "perspective": {
+    "title": "Votre Perspective",
+    "description": "Vous avez vu le monument avec de nouveaux yeux. Maintenant, ajoutez votre vision à un collage vivant, avec d'autres qui s'en soucient, tout comme vous."
+  },
+  "upload": {
+    "title": "Télécharger la collection",
+    "question": "Voulez-vous télécharger la collection ?",
+    "buttons": {
+      "yes": "Oui",
+      "no": "Non",
+      "uploading": "Téléchargement en cours...",
+      "retry": "Réessayer le téléchargement",
+      "pleaseWait": "Veuillez patienter..."
+    },
+    "status": {
+      "preparing": "Préparation",
+      "uploading": "Téléchargement",
+      "success": "Téléchargement réussi",
+      "error": "Échec du téléchargement",
+      "allComplete": "Tous les téléchargements terminés avec succès !",
+      "someFailedRetry": "téléchargement(s) échoué(s)"
+    },
+    "missing": "Manquant"
+  },
+  "gallery": {
+    "title": "Galerie",
+    "clickImage": "Cliquez sur une image",
+    "exitGallery": "Quitter la galerie"
+  },
+  "ending": {
+    "title": "Merci",
+    "description": "Merci d'avoir contribué à ce monument et de l'avoir maintenu en vie. Maintenant, jetez un coup d'œil plus approfondi autour de La Nau."
+  },
+  "errors": {
+    "unknown": "Erreur inconnue",
+    "uploadFailed": "Échec du téléchargement",
+    "networkError": "Erreur réseau survenue",
+    "unexpectedError": "Erreur inattendue survenue"
+  },
+  "loading": {
+    "default": "Chargement...",
+    "content": "Chargement du contenu...",
+    "images": "Chargement des images...",
+    "perspective": "Chargement de votre perspective...",
+    "ending": "Finalisation de votre parcours...",
+    "characters": "Chargement des personnages..."
+  }
+}

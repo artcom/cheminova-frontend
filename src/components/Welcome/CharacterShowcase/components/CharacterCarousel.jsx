@@ -1,9 +1,10 @@
-import { CHARACTER_DATA } from "@components/Welcome/CharacterShowcase/constants"
+import { useCharactersFromAll } from "@/api/hooks"
 import {
   CAROUSEL_ANIMATION,
   DRAG_CONFIG,
 } from "@components/Welcome/CharacterShowcase/utils/transformUtils"
 import { motion } from "motion/react"
+import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
 
 import { useCharacterCarousel } from "../hooks/useCharacterCarousel"
@@ -48,12 +49,24 @@ const CharacterImage = styled(motion.img)`
 `
 
 const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
+  const { t } = useTranslation()
+  const { data: charactersData } = useCharactersFromAll()
+
   const { x, handleDragStart, handleDragEnd, dragConstraints } =
     useCharacterCarousel(
       selectedIndex,
-      CHARACTER_DATA.length,
+      charactersData?.length || 0,
       onSelectionChange,
     )
+
+  // Return early if no characters data is available yet
+  if (!charactersData || charactersData.length === 0) {
+    return (
+      <CarouselContainer>
+        {t("loading.characters", "Loading characters...")}
+      </CarouselContainer>
+    )
+  }
 
   return (
     <CarouselContainer
@@ -66,7 +79,7 @@ const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
         animate={{ x: 0 }}
         transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
         style={{ x }}
-        $charactersLength={CHARACTER_DATA.length}
+        $charactersLength={charactersData.length}
         drag="x"
         dragConstraints={dragConstraints}
         dragElastic={DRAG_CONFIG.elastic}
@@ -74,12 +87,12 @@ const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
         onDragStart={handleDragStart}
         onDragEnd={handleDragEnd}
       >
-        {CHARACTER_DATA.map((character, index) => {
+        {charactersData.map((character, index) => {
           const offset = index - selectedIndex
           const absoluteOffset = Math.abs(offset)
           return (
             <CharacterCard
-              key={character.id}
+              key={character.id || character.name}
               character={character}
               scale={Math.max(1 - absoluteOffset * 0.2, 0.9)}
               shadowIntensity={absoluteOffset}
@@ -114,7 +127,7 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => (
         delay: 0.6,
         ease: "easeOut",
       }}
-      src={character.image}
+      src={character.image || character.characterImage?.file}
       alt={character.name}
       $shadowIntensity={shadowIntensity}
     />

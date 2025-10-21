@@ -1,9 +1,10 @@
-import { CHARACTER_DATA } from "@components/Welcome/CharacterShowcase/constants"
+import { useCharactersFromAll } from "@/api/hooks"
 import { createContext, useState } from "react"
 
 export const StateContext = createContext()
 
 export default function StateProvider({ children }) {
+  const { data: charactersData } = useCharactersFromAll()
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
   const [currentScreenIndex, setCurrentScreenIndex] = useState(0)
   const [navigationHistory, setNavigationHistory] = useState([0])
@@ -65,13 +66,15 @@ export default function StateProvider({ children }) {
   }
 
   function handleCharacterPrev() {
-    const total = CHARACTER_DATA.length
+    const total = charactersData?.length || 0
+    if (total === 0) return
     const newIndex = (currentCharacterIndex - 1 + total) % total
     setCurrentCharacterIndex(newIndex)
   }
 
   function handleCharacterNext() {
-    const total = CHARACTER_DATA.length
+    const total = charactersData?.length || 0
+    if (total === 0) return
     const newIndex = (currentCharacterIndex + 1) % total
     setCurrentCharacterIndex(newIndex)
   }
@@ -97,7 +100,6 @@ export default function StateProvider({ children }) {
     setShowModal,
     screens,
     setScreens,
-    // Imperative screen layout APIs
     setLayout,
     setNavigation,
     navigateToScreen,

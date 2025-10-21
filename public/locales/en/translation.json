@@ -1,0 +1,96 @@
+{
+  "navigation": {
+    "next": "Next",
+    "previous": "Previous",
+    "close": "Close",
+    "select": "Select"
+  },
+  "welcome": {
+    "title": "Welcome",
+    "subtitle": "La Nau",
+    "description": "Experience this monument through new eyes"
+  },
+  "introduction": {
+    "title": "Choose your guide",
+    "description": "Select your guide for this immersive journey through La Nau."
+  },
+  "photoCapture": {
+    "title": "Frame your perspective",
+    "tasks": {
+      "laNau": "La Nau",
+      "surroundings": "Your surroundings",
+      "special": "Something special"
+    },
+    "buttons": {
+      "takePhoto": "Take Photo",
+      "gallery": "Gallery",
+      "retake": "Retake"
+    }
+  },
+  "exploration": {
+    "title": "Look, what I've found,",
+    "content": {
+      "stone1": "Stones with lots of tiny pores (like limestone), frequently found in ancient monuments are more vulnerable to corrosion because they act like little sponges!",
+      "stone2": "These porous stones absorb moisture, pollutants, and even acidic rain more easily than denser stones, this mechanism speeds up weathering.",
+      "stone3": "So, while a monument may look strong and solid, if it's made of porous stone, it's actually fighting a secret battle everyday!"
+    }
+  },
+  "perspective": {
+    "title": "Your Perspective",
+    "description": "You've seen the monument through new eyes. Now, add your vision to a living collage, together with others who care, just like you.",
+    "loading": "Loading your personalized perspective...",
+    "fallback": "Experience this unique perspective of La Nau",
+    "success": "Personalized content loaded successfully"
+  },
+  "upload": {
+    "title": "Upload Collection",
+    "question": "Do you want to upload collection?",
+    "noImages": "No images to upload. Please take some photos first.",
+    "buttons": {
+      "yes": "Yes",
+      "no": "No",
+      "uploading": "Uploading...",
+      "retry": "Retry Upload",
+      "pleaseWait": "Please wait..."
+    },
+    "status": {
+      "preparing": "Preparing",
+      "uploading": "Uploading",
+      "success": "Upload successful",
+      "error": "Upload failed",
+      "allComplete": "All uploads completed successfully!",
+      "someFailedRetry": "upload(s) failed"
+    },
+    "missing": "Missing"
+  },
+  "gallery": {
+    "title": "Gallery",
+    "clickImage": "Click an image",
+    "exitGallery": "Exit Gallery"
+  },
+  "ending": {
+    "title": "Thank You",
+    "description": "Thank you for contributing to this monument and keeping it alive. Now take a further look around La Nau.",
+    "loading": "Completing your journey...",
+    "celebration": "Your contribution has been recorded!",
+    "thankYouMessage": "Thank you for being part of this cultural preservation journey!",
+    "completionMessage": "Journey complete - Your experience has been personalized",
+    "preservationNote": "Your contribution will help preserve this monument for future generations"
+  },
+  "errors": {
+    "unknown": "Unknown error",
+    "uploadFailed": "Upload failed",
+    "networkError": "Network error occurred",
+    "unexpectedError": "Unexpected error occurred",
+    "contentLoadFailed": "Failed to load personalized content",
+    "imageLoadFailed": "Background image could not be loaded"
+  },
+  "loading": {
+    "default": "Loading...",
+    "content": "Loading content...",
+    "images": "Loading images...",
+    "perspective": "Loading your perspective...",
+    "ending": "Finalizing your journey...",
+    "characters": "Loading characters..."
+  }
+}
