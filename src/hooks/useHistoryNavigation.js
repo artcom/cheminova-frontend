@@ -3,15 +3,27 @@ import { useEffect, useRef, useState } from "react"
 export default function useHistoryNavigation(initialPage = "welcome") {
   const [currentPage, setCurrentPage] = useState(initialPage)
   const isNavigatingRef = useRef(false)
+  const basePathRef = useRef(import.meta.env.BASE_URL || "/")
+
+  const getFullPath = (page) => {
+    const base = basePathRef.current.endsWith("/")
+      ? basePathRef.current.slice(0, -1)
+      : basePathRef.current
+    return `${base}/${page}`
+  }
 
   const navigateToPage = (page) => {
     isNavigatingRef.current = true
     setCurrentPage(page)
-    window.history.pushState({ page }, "", `/${page}`)
+    window.history.pushState({ page }, "", getFullPath(page))
   }
 
   useEffect(() => {
-    window.history.replaceState({ page: initialPage }, "", `/${initialPage}`)
+    window.history.replaceState(
+      { page: initialPage },
+      "",
+      getFullPath(initialPage),
+    )
 
     const handlePopState = (event) => {
       if (event.state?.page) {
