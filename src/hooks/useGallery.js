@@ -7,7 +7,7 @@ export const useGalleryImages = (options = {}) => {
   return useQuery({
     queryKey: ["gallery-images"],
     queryFn: async () => {
-      const response = await fetch(`${API_BASE_URL}/api/gallery/all-images/`)
+      const response = await fetch(`${API_BASE_URL}/gallery/all-images/`)
 
       if (!response.ok) {
         throw new Error(`Failed to fetch gallery images: ${response.status}`)

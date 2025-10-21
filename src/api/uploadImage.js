@@ -8,7 +8,7 @@ export const uploadImage = async (imageFile, title = null) => {
     formData.append("title", title)
   }
 
-  const response = await fetch(`${API_BASE_URL}/api/upload/`, {
+  const response = await fetch(`${API_BASE_URL}/upload/`, {
     method: "POST",
     body: formData, // Don't set Content-Type header - let browser set it for FormData
   })
