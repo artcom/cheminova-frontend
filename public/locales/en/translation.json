@@ -45,20 +45,27 @@
   "upload": {
     "title": "Upload Collection",
     "question": "Do you want to upload collection?",
+    "questionWithCharacter": "{{description}} Your photos will be added to {{character}}'s collection.",
     "noImages": "No images to upload. Please take some photos first.",
+    "noCharacterSelected": "Please select a character before uploading your photos.",
     "buttons": {
       "yes": "Yes",
       "no": "No",
       "uploading": "Uploading...",
       "retry": "Retry Upload",
-      "pleaseWait": "Please wait..."
+      "pleaseWait": "Please wait...",
+      "selectCharacter": "Select Character First"
     },
     "status": {
       "preparing": "Preparing",
       "uploading": "Uploading",
+      "uploadingToCharacter": "Uploading {{count}} images to {{character}}'s collection...",
+      "uploadProgress": "Uploaded {{current}} of {{total}} images to {{character}}'s collection",
       "success": "Upload successful",
       "error": "Upload failed",
       "allComplete": "All uploads completed successfully!",
+      "allCompleteForCharacter": "All uploads completed successfully for {{character}}!",
+      "partialSuccess": "{{successful}} of {{total}} uploads completed. {{failed}} failed.",
       "someFailedRetry": "upload(s) failed"
     },
     "missing": "Missing"
@@ -83,7 +90,9 @@
     "networkError": "Network error occurred",
     "unexpectedError": "Unexpected error occurred",
     "contentLoadFailed": "Failed to load personalized content",
-    "imageLoadFailed": "Background image could not be loaded"
+    "imageLoadFailed": "Background image could not be loaded",
+    "noCharacterSelected": "No character selected. Please select a character first.",
+    "characterNotFound": "Character '{{character}}' not found on server. Please try selecting a different character."
   },
   "loading": {
     "default": "Loading...",

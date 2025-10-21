@@ -42,19 +42,27 @@
   "upload": {
     "title": "Télécharger la collection",
     "question": "Voulez-vous télécharger la collection ?",
+    "questionWithCharacter": "{{description}} Vos photos seront ajoutées à la collection de {{character}}.",
+    "noImages": "Aucune image à télécharger. Veuillez d'abord prendre quelques photos.",
+    "noCharacterSelected": "Veuillez sélectionner un personnage avant de télécharger vos photos.",
     "buttons": {
       "yes": "Oui",
       "no": "Non",
       "uploading": "Téléchargement en cours...",
       "retry": "Réessayer le téléchargement",
-      "pleaseWait": "Veuillez patienter..."
+      "pleaseWait": "Veuillez patienter...",
+      "selectCharacter": "Sélectionner un personnage d'abord"
     },
     "status": {
       "preparing": "Préparation",
       "uploading": "Téléchargement",
+      "uploadingToCharacter": "Téléchargement de {{count}} images vers la collection de {{character}}...",
+      "uploadProgress": "{{current}} sur {{total}} images téléchargées vers la collection de {{character}}",
       "success": "Téléchargement réussi",
       "error": "Échec du téléchargement",
       "allComplete": "Tous les téléchargements terminés avec succès !",
+      "allCompleteForCharacter": "Tous les téléchargements terminés avec succès pour {{character}} !",
+      "partialSuccess": "{{successful}} sur {{total}} téléchargements terminés. {{failed}} ont échoué.",
       "someFailedRetry": "téléchargement(s) échoué(s)"
     },
     "missing": "Manquant"
@@ -72,7 +80,11 @@
     "unknown": "Erreur inconnue",
     "uploadFailed": "Échec du téléchargement",
     "networkError": "Erreur réseau survenue",
-    "unexpectedError": "Erreur inattendue survenue"
+    "unexpectedError": "Erreur inattendue survenue",
+    "contentLoadFailed": "Échec du chargement du contenu personnalisé",
+    "imageLoadFailed": "L'image d'arrière-plan n'a pas pu être chargée",
+    "noCharacterSelected": "Aucun personnage sélectionné. Veuillez d'abord sélectionner un personnage.",
+    "characterNotFound": "Personnage '{{character}}' non trouvé sur le serveur. Veuillez essayer de sélectionner un personnage différent."
   },
   "loading": {
     "default": "Chargement...",

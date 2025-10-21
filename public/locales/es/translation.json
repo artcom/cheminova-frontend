@@ -42,19 +42,27 @@
   "upload": {
     "title": "Subir colección",
     "question": "¿Quieres subir la colección?",
+    "questionWithCharacter": "{{description}} Tus fotos se añadirán a la colección de {{character}}.",
+    "noImages": "No hay imágenes para subir. Por favor toma algunas fotos primero.",
+    "noCharacterSelected": "Por favor selecciona un personaje antes de subir tus fotos.",
     "buttons": {
       "yes": "Sí",
       "no": "No",
       "uploading": "Subiendo...",
       "retry": "Reintentar subida",
-      "pleaseWait": "Por favor espera..."
+      "pleaseWait": "Por favor espera...",
+      "selectCharacter": "Seleccionar personaje primero"
     },
     "status": {
       "preparing": "Preparando",
       "uploading": "Subiendo",
+      "uploadingToCharacter": "Subiendo {{count}} imágenes a la colección de {{character}}...",
+      "uploadProgress": "Subidas {{current}} de {{total}} imágenes a la colección de {{character}}",
       "success": "Subida exitosa",
       "error": "Error en la subida",
       "allComplete": "¡Todas las subidas completadas exitosamente!",
+      "allCompleteForCharacter": "¡Todas las subidas completadas exitosamente para {{character}}!",
+      "partialSuccess": "{{successful}} de {{total}} subidas completadas. {{failed}} fallaron.",
       "someFailedRetry": "subida(s) fallida(s)"
     },
     "missing": "Faltante"
@@ -72,7 +80,11 @@
     "unknown": "Error desconocido",
     "uploadFailed": "Error en la subida",
     "networkError": "Error de red ocurrido",
-    "unexpectedError": "Error inesperado ocurrido"
+    "unexpectedError": "Error inesperado ocurrido",
+    "contentLoadFailed": "Error al cargar contenido personalizado",
+    "imageLoadFailed": "No se pudo cargar la imagen de fondo",
+    "noCharacterSelected": "No se ha seleccionado ningún personaje. Por favor selecciona un personaje primero.",
+    "characterNotFound": "Personaje '{{character}}' no encontrado en el servidor. Por favor intenta seleccionar un personaje diferente."
   },
   "loading": {
     "default": "Cargando...",
