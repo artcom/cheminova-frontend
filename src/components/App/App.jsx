@@ -1,5 +1,6 @@
 import MobileOnlyGuard from "@/components/UI/MobileOnlyGuard"
 import useGlobalState from "@/hooks/useGlobalState"
+import useHistoryNavigation from "@/hooks/useHistoryNavigation"
 import { useState } from "react"
 import { styled } from "styled-components"
 
@@ -32,7 +33,7 @@ const LanguageSelectorContainer = styled.div`
 
 export default function App() {
   const { showModal } = useGlobalState()
-  const [state, setState] = useState("welcome")
+  const [state, navigateToPage] = useHistoryNavigation("welcome")
   const [capturedImages, setCapturedImages] = useState([])
 
   const handleImageCaptured = (imageData) => {
@@ -66,7 +67,7 @@ export default function App() {
           <>
             <Welcome
               goToIntroduction={() => {
-                setState("introduction")
+                navigateToPage("introduction")
                 handleClearImages()
               }}
             />
@@ -76,35 +77,37 @@ export default function App() {
           </>
         )}
         {state === "introduction" && (
-          <Introduction goToPhotoCapture={() => setState("photoCapture")} />
+          <Introduction
+            goToPhotoCapture={() => navigateToPage("photoCapture")}
+          />
         )}
         {state === "photoCapture" && (
           <PhotoCapture
-            goToExploration={() => setState("exploration")}
+            goToExploration={() => navigateToPage("exploration")}
             onImageCaptured={handleImageCaptured}
             capturedImages={capturedImages}
           />
         )}
         {state === "exploration" && (
-          <Exploration goToPerspective={() => setState("perspective")} />
+          <Exploration goToPerspective={() => navigateToPage("perspective")} />
         )}
         {state === "perspective" && (
-          <Perspective goToUpload={() => setState("upload")} />
+          <Perspective goToUpload={() => navigateToPage("upload")} />
         )}
         {state === "upload" && (
           <Upload
-            goToGallery={() => setState("gallery")}
+            goToGallery={() => navigateToPage("gallery")}
             images={capturedImages}
           />
         )}
         {state === "gallery" && (
           <Gallery
-            goToEnding={() => setState("ending")}
+            goToEnding={() => navigateToPage("ending")}
             capturedImages={capturedImages}
           />
         )}
         {state === "ending" && (
-          <Ending goToWelcome={() => setState("welcome")} />
+          <Ending goToWelcome={() => navigateToPage("welcome")} />
         )}
       </AppContainer>
     </MobileOnlyGuard>
