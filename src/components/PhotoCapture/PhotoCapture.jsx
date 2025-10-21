@@ -1,3 +1,5 @@
+import { usePhotographyFromAll } from "@/api/hooks"
+import useGlobalState from "@/hooks/useGlobalState"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useRef } from "react"
 import { useTranslation } from "react-i18next"
@@ -24,12 +26,27 @@ export default function PhotoCapture({
   capturedImages = [],
 }) {
   const { t } = useTranslation()
+  const { currentCharacterIndex } = useGlobalState()
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
   const { isAndroid } = useDevicePlatform()
 
+  const { data: photographyData } = usePhotographyFromAll(currentCharacterIndex)
+
+  const heading = photographyData?.heading || t("photoCapture.title")
+  const takePhotoText =
+    photographyData?.takePhotoButtonText || t("photoCapture.buttons.takePhoto")
+  const retakeText =
+    photographyData?.retakePhotoButtonText || t("photoCapture.buttons.retake")
+  const galleryText =
+    photographyData?.galleryButtonText || t("photoCapture.buttons.gallery")
+
+  const cmsTaskDescriptions =
+    photographyData?.imageDescriptions?.map((item) => item.description) || []
+
   const { tasks, taskImages, currentTaskIndex, handleFileObject, retake } =
     usePhotoTasks({
+      tasks: cmsTaskDescriptions.length > 0 ? cmsTaskDescriptions : undefined,
       onImageCaptured,
       initialImages: capturedImages,
     })
@@ -62,7 +79,7 @@ export default function PhotoCapture({
         />
 
         <HeaderContainer>
-          <HeaderText>{t("photoCapture.title")}</HeaderText>
+          <HeaderText>{heading}</HeaderText>
         </HeaderContainer>
 
         <TasksContainer>
@@ -74,7 +91,7 @@ export default function PhotoCapture({
                 {taskImages[index] && (
                   <>
                     <SmallButton onClick={() => retake(index)}>
-                      {t("photoCapture.buttons.retake")}
+                      {retakeText}
                     </SmallButton>
                     <TaskImage
                       src={taskImages[index]}
@@ -88,15 +105,15 @@ export default function PhotoCapture({
                     {isAndroid ? (
                       <>
                         <SmallButton onClick={handleOpenCamera}>
-                          {t("photoCapture.buttons.takePhoto")}
+                          {takePhotoText}
                         </SmallButton>
                         <SmallButton onClick={handleOpenGallery}>
-                          {t("photoCapture.buttons.gallery")}
+                          {galleryText}
                         </SmallButton>
                       </>
                     ) : (
                       <SmallButton onClick={handleOpenGallery}>
-                        {t("photoCapture.buttons.takePhoto")}
+                        {takePhotoText}
                       </SmallButton>
                     )}
                   </>

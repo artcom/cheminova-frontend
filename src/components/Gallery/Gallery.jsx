@@ -1,3 +1,4 @@
+import { useGalleryFromAll } from "@/api/hooks"
 import { useGalleryImages } from "@/hooks/useGallery"
 import useGlobalState from "@/hooks/useGlobalState"
 import { Canvas } from "@react-three/fiber"
@@ -100,7 +101,7 @@ const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
 
 export default function Gallery({ goToEnding, capturedImages = [] }) {
   const { t } = useTranslation()
-  const { goStart } = useGlobalState()
+  const { goStart, currentCharacterIndex } = useGlobalState()
   const tilesPerRow = useResponsiveTilesPerRow()
   const [allAnimsDone, setAllAnimsDone] = useState(false)
   const [detailMode, setDetailMode] = useState(false)
@@ -113,6 +114,13 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
   const [tileDebugData, setTileDebugData] = useState([])
 
   const { data: galleryData, isLoading: galleryLoading } = useGalleryImages()
+
+  const { data: galleryCmsData } = useGalleryFromAll(currentCharacterIndex)
+
+  const galleryHeading = galleryCmsData?.heading || t("gallery.title")
+  const exitButtonText =
+    galleryCmsData?.exitButtonText || t("gallery.exitGallery")
+  const closeButtonText = galleryCmsData?.closeButtonText || t("gallery.close")
 
   const personalImages = useMemo(
     () => getPersistedPersonalImages(defaultPersonalImages, capturedImages),
@@ -140,10 +148,8 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
   if (isFullyLoading) {
     return (
       <Page>
-        <Title>{t("gallery.title")}</Title>
-        <ExitButton onClick={handleExitGallery}>
-          {t("gallery.exitGallery")}
-        </ExitButton>
+        <Title>{galleryHeading}</Title>
+        <ExitButton onClick={handleExitGallery}>{exitButtonText}</ExitButton>
         <GalleryLoader loadedCount={loadedCount} totalImages={totalImages} />
       </Page>
     )
@@ -152,11 +158,9 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
   return (
     <Page>
       <Title>
-        {allAnimsDone && !detailMode
-          ? t("gallery.clickImage")
-          : `${t("gallery.title")}`}
+        {allAnimsDone && !detailMode ? galleryHeading : `${galleryHeading}`}
       </Title>
-      <ExitButton onClick={goToEnding}>{t("gallery.exitGallery")}</ExitButton>
+      <ExitButton onClick={goToEnding}>{exitButtonText}</ExitButton>
       <Stage>
         <Canvas
           camera={{ position: [0, 0, CAMERA_DEFAULT_Z], fov: 75 }}
@@ -315,7 +319,7 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
               <Navigation
                 mode="select"
                 position="bottom"
-                selectLabel={t("navigation.close")}
+                selectLabel={closeButtonText}
                 onSelect={() => {
                   DEBUG_GALLERY && console.debug("[Gallery] exit detail")
                   setDetailMode(false)

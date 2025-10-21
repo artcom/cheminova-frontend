@@ -9,7 +9,7 @@ export function useWelcomeContent(
   data,
 ) {
   const { t } = useTranslation()
-  const { charactersData } = data
+  const { charactersData, characterOverviewData } = data
 
   const getContent = () => {
     if (step === STEP.INTRO) {
@@ -23,11 +23,16 @@ export function useWelcomeContent(
         navigationMode: "single",
       }
     } else if (step === STEP.CHARACTER && showIntro) {
+      // Use onboarding text from CMS if available
+      const onboardingText = characterOverviewData?.onboarding
+        ? characterOverviewData.onboarding.replace(/<[^>]*>/g, "")
+        : t("introduction.description")
+
       return {
         headline: t("introduction.title"),
         description: {
           title: "",
-          text: t("introduction.description"),
+          text: onboardingText,
         },
         navigationMode: "single",
       }
@@ -40,7 +45,7 @@ export function useWelcomeContent(
       const character = charactersData[currentCharacterIndex]
       return {
         headline: character.name,
-        subHeadline: character.role,
+        subHeadline: character.characterType || character.role,
         description: {
           title: "",
           text: character.description.replace(/<[^>]*>/g, ""),

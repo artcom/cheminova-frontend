@@ -25,7 +25,6 @@ export default function Welcome({ goToIntroduction }) {
   const { data: characterOverviewData } = useCharacterOverviewFromAll()
   const { data: charactersData } = useCharactersFromAll()
 
-  // Use custom hooks for step management and navigation
   const { step, setStep, getNavigationProps } = useWelcomeSteps({
     goToIntroduction,
     showIntro,
@@ -35,13 +34,12 @@ export default function Welcome({ goToIntroduction }) {
     charactersData,
   })
 
-  // Use custom hook for content generation
   const { headline, subHeadline, description, navigationMode } =
     useWelcomeContent(step, showIntro, currentCharacterIndex, {
       charactersData,
+      characterOverviewData,
     })
 
-  // Use custom hook for background image
   const backgroundImage = useWelcomeBackground(
     step,
     welcomeData,

@@ -1,4 +1,4 @@
-import { useCharactersFromAll } from "@/api/hooks"
+import { useCharactersFromAll, useIntroductionFromAll } from "@/api/hooks"
 import useGlobalState from "@/hooks/useGlobalState"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
@@ -30,9 +30,17 @@ export default function Introduction({ goToPhotoCapture }) {
 
   const currentCharacter = charactersData?.[currentCharacterIndex]
 
-  const heading = t("introduction.title")
-  const description = t("introduction.description")
+  const { data: introductionData } = useIntroductionFromAll(
+    currentCharacterIndex,
+  )
+
+  const heading = introductionData?.heading || t("introduction.title")
+  const description = introductionData?.description
+    ? introductionData.description.replace(/<[^>]*>/g, "")
+    : t("introduction.description")
   const paragraphs = [description]
+
+  const imageUrl = introductionData?.image?.file || Rectangle
 
   if (isCharactersLoading || !currentCharacter) {
     return (
@@ -69,7 +77,7 @@ export default function Introduction({ goToPhotoCapture }) {
           </TextBlock>
         ))}
 
-        <Image src={Rectangle} />
+        <Image src={imageUrl} />
 
         <CameraButtonContainer>
           <IconButton

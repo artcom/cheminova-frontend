@@ -68,13 +68,25 @@ export const extractFromContentTree = {
     return collection.children[0]
   },
 
-  getEnding: (data, characterIndex) => {
+  getUpload: (data, characterIndex) => {
     const perspective = extractFromContentTree.getPerspective(
       data,
       characterIndex,
     )
     if (!perspective?.children || perspective.children.length === 0) return null
     return perspective.children[0]
+  },
+
+  getGallery: (data, characterIndex) => {
+    const upload = extractFromContentTree.getUpload(data, characterIndex)
+    if (!upload?.children || upload.children.length === 0) return null
+    return upload.children[0]
+  },
+
+  getEnding: (data, characterIndex) => {
+    const gallery = extractFromContentTree.getGallery(data, characterIndex)
+    if (!gallery?.children || gallery.children.length === 0) return null
+    return gallery.children[0]
   },
 }
 
@@ -183,6 +195,34 @@ export const usePerspectiveFromAll = (characterIndex, options = {}) => {
   return {
     ...queryResult,
     data: perspectiveData,
+  }
+}
+
+export const useUploadFromAll = (characterIndex, options = {}) => {
+  const { data: allContent, ...queryResult } = useAllContent(options)
+
+  const uploadData = useMemo(
+    () => extractFromContentTree.getUpload(allContent, characterIndex),
+    [allContent, characterIndex],
+  )
+
+  return {
+    ...queryResult,
+    data: uploadData,
+  }
+}
+
+export const useGalleryFromAll = (characterIndex, options = {}) => {
+  const { data: allContent, ...queryResult } = useAllContent(options)
+
+  const galleryData = useMemo(
+    () => extractFromContentTree.getGallery(allContent, characterIndex),
+    [allContent, characterIndex],
+  )
+
+  return {
+    ...queryResult,
+    data: galleryData,
   }
 }
 

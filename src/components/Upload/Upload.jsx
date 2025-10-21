@@ -1,3 +1,5 @@
+import { useUploadFromAll } from "@/api/hooks"
+import useGlobalState from "@/hooks/useGlobalState"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
 import { useUploadImage } from "@/hooks/useUploadImage"
 import { useState } from "react"
@@ -53,13 +55,24 @@ const dataURLToFile = (dataURL, filename) => {
 
 export default function Upload({ goToGallery, images = [] }) {
   const { t } = useTranslation()
+  const { currentCharacterIndex } = useGlobalState()
   const [uploadProgress, setUploadProgress] = useState("")
   const [uploadErrors, setUploadErrors] = useState([])
   const { tasks } = usePhotoTasks()
 
+  // Fetch upload data from CMS
+  const { data: uploadData } = useUploadFromAll(currentCharacterIndex)
+
   const uploadImageMutation = useUploadImage()
   const isUploading = uploadImageMutation.isPending
   const validImages = images.filter(Boolean)
+
+  // Use CMS data if available, otherwise fallback to translations
+  const uploadDescription = uploadData?.description
+    ? uploadData.description.replace(/<[^>]*>/g, "")
+    : t("upload.question")
+  const yesButtonText = uploadData?.yesButtonText || t("upload.buttons.yes")
+  const noButtonText = uploadData?.noButtonText || t("upload.buttons.no")
 
   const handleUpload = async () => {
     setUploadErrors([])
@@ -108,7 +121,7 @@ export default function Upload({ goToGallery, images = [] }) {
     if (uploadErrors.length > 0) {
       return t("upload.buttons.retry")
     }
-    return t("upload.buttons.yes")
+    return yesButtonText
   }
 
   return (
@@ -124,7 +137,7 @@ export default function Upload({ goToGallery, images = [] }) {
 
       <QuestionBlock>
         <Question>
-          {validImages.length > 0 ? t("upload.question") : t("upload.noImages")}
+          {validImages.length > 0 ? uploadDescription : t("upload.noImages")}
         </Question>
 
         {uploadProgress && (
@@ -148,9 +161,7 @@ export default function Upload({ goToGallery, images = [] }) {
             {getButtonText()}
           </SmallButton>
           <SmallButton onClick={goToGallery} disabled={isUploading}>
-            {isUploading
-              ? t("upload.buttons.pleaseWait")
-              : t("upload.buttons.no")}
+            {isUploading ? t("upload.buttons.pleaseWait") : noButtonText}
           </SmallButton>
         </Actions>
       </QuestionBlock>

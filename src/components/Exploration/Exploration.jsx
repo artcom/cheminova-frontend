@@ -53,11 +53,15 @@ export default function Exploration({ goToPerspective }) {
         description: photographyData.description
           ? photographyData.description.replace(/<[^>]*>/g, "")
           : t("exploration.content.stone1"),
+        topImage: photographyData.topImage?.file || FirstImage,
+        bottomImage: photographyData.bottomImage?.file || SecondImage,
       }
     }
     return {
       heading: t("exploration.title"),
       description: t("exploration.content.stone1"),
+      topImage: FirstImage,
+      bottomImage: SecondImage,
     }
   }
 
@@ -72,13 +76,13 @@ export default function Exploration({ goToPerspective }) {
       <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
         <Headline>{explorationContent.heading}</Headline>
 
-        <Image src={FirstImage} />
+        <Image src={explorationContent.topImage} />
 
         <TextBlock>{t("exploration.content.stone1")}</TextBlock>
 
         <TextBlock>{t("exploration.content.stone2")}</TextBlock>
 
-        <Image src={SecondImage} />
+        <Image src={explorationContent.bottomImage} />
 
         <TextBlock>{explorationContent.description}</TextBlock>
 
