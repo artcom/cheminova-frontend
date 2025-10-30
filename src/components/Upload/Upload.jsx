@@ -71,7 +71,8 @@ export default function Upload({ goToGallery, images = [] }) {
   // Get current character info for user feedback
   const currentCharacter = charactersData?.[currentCharacterIndex]
   const characterName = currentCharacter?.name || "Unknown Character"
-  const hasValidCharacter = Boolean(currentCharacter?.slug)
+  // CMS provides 'name' field, not 'slug' - use name as identifier
+  const hasValidCharacter = Boolean(currentCharacter?.name)
 
   console.log("Upload Component Debug:", {
     currentCharacterIndex,
@@ -79,7 +80,6 @@ export default function Upload({ goToGallery, images = [] }) {
     charactersDataLength: charactersData?.length,
     currentCharacter,
     characterName,
-    characterSlug: currentCharacter?.slug,
     hasValidCharacter,
     validImagesLength: validImages.length,
     isUploading,

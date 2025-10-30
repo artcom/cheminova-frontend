@@ -30,6 +30,7 @@ export default defineConfig(() => ({
       },
     ),
   ],
+
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
@@ -38,6 +39,16 @@ export default defineConfig(() => ({
       "@api": resolve(__dirname, "./src/api"),
       "@ui": resolve(__dirname, "./src/components/UI"),
       "@theme": resolve(__dirname, "./src/theme"),
+    },
+  },
+
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+      },
     },
   },
 }))
