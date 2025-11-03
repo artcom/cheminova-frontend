@@ -108,7 +108,9 @@ export default function PhotoCapture({ onImageCaptured, capturedImages = [] }) {
                 key={index}
                 isActive={index === currentTaskIndex} // Highlight the active card
               >
-                <TaskDescription>{task}</TaskDescription>
+                {!taskImages[index] && (
+                  <TaskDescription>{task}</TaskDescription>
+                )}
 
                 <TaskContent>
                   {taskImages[index] && (
@@ -123,7 +125,7 @@ export default function PhotoCapture({ onImageCaptured, capturedImages = [] }) {
                     </>
                   )}
 
-                  {index === currentTaskIndex && !taskImages[index] && (
+                  {index === currentTaskIndex && (
                     <CameraButtonContainer>
                       <IconButton
                         variant="camera"
