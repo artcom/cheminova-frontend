@@ -14,6 +14,8 @@ import {
   HeaderContainer,
   HeaderText,
   HiddenInput,
+  PaginationContainer,
+  PaginationDot,
   PhotoCaptureContainer,
   TaskCard,
   TaskContent,
@@ -126,6 +128,11 @@ export default function PhotoCapture({
             </>
           ))}
         </TasksContainer>
+        <PaginationContainer>
+          {tasks.map((_, index) => (
+            <PaginationDot key={index} isActive={index === currentTaskIndex} />
+          ))}
+        </PaginationContainer>
         <Navigation mode="single" onSelect={goToExploration} />
       </PhotoCaptureContainer>
     </>

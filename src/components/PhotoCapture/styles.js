@@ -100,3 +100,20 @@ export const CameraButtonContainer = styled.div`
   position: absolute;
   bottom: 0;
 `
+
+export const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 1rem;
+`
+
+export const PaginationDot = styled.div`
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background-color: ${({ isActive }) => (isActive ? "#fff" : "#transparent")};
+  transition: background-color 0.3s ease;
+`
