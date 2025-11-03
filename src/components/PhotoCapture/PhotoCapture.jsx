@@ -7,7 +7,6 @@ import { useTranslation } from "react-i18next"
 import SmallButton from "@ui/SmallButton"
 
 import IconButton from "../UI/IconButton"
-import Navigation from "../UI/Navigation"
 import usePhotoTasks from "./hooks/usePhotoTasks"
 import {
   CameraButtonContainer,
@@ -25,11 +24,7 @@ import {
   TasksContainer,
 } from "./styles"
 
-export default function PhotoCapture({
-  goToExploration,
-  onImageCaptured,
-  capturedImages = [],
-}) {
+export default function PhotoCapture({ onImageCaptured, capturedImages = [] }) {
   const { t } = useTranslation()
   const { currentCharacterIndex } = useGlobalState()
   const cameraInputRef = useRef(null)
@@ -151,8 +146,6 @@ export default function PhotoCapture({
         <SmallButton color="#FFF" onClick={handleNextTask}>
           {photographyData.continueButtonText}
         </SmallButton>
-
-        <Navigation mode="single" onSelect={goToExploration} />
       </PhotoCaptureContainer>
     </>
   )
