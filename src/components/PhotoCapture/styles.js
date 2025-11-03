@@ -1,4 +1,4 @@
-import { styled } from "styled-components"
+import { css, styled } from "styled-components"
 
 export const PhotoCaptureContainer = styled.div`
   display: flex;
@@ -31,7 +31,7 @@ export const TasksContainer = styled.div`
   display: flex;
   flex-direction: column;
   gap: 1.5rem;
-  width: 100%;
+  width: 19.25rem;
   height: 100%;
   justify-content: center;
   align-items: center;
@@ -49,6 +49,14 @@ export const TaskCard = styled.div`
   border-radius: 1.75rem 1.75rem 1.75rem 1.75rem;
   background-color: #f1ece1;
   position: relative;
+
+  ${({ $characterIndex }) =>
+    $characterIndex !== undefined &&
+    css`
+      background-color: ${characterStyles[$characterIndex]?.backgroundColor ||
+      "#f1ece1"};
+      border: ${characterStyles[$characterIndex]?.border || "none"};
+    `}
 `
 
 export const TaskDescription = styled.h2`
@@ -58,6 +66,11 @@ export const TaskDescription = styled.h2`
   font-weight: 400;
   line-height: normal;
   margin: 0;
+  ${({ $characterIndex }) =>
+    $characterIndex !== undefined &&
+    css`
+      color: ${characterStyles[$characterIndex]?.textColor || "#000"};
+    `}
 `
 
 export const TaskHeadline = styled.h2`
@@ -76,6 +89,11 @@ export const TaskContent = styled.div`
   justify-content: center;
   gap: 1rem;
   width: 100%;
+  ${({ $characterIndex }) =>
+    $characterIndex !== undefined &&
+    css`
+      color: ${characterStyles[$characterIndex]?.textColor || "#000"};
+    `}
 `
 
 export const TaskImage = styled.img`
@@ -84,6 +102,11 @@ export const TaskImage = styled.img`
   position: absolute;
   border-radius: 1rem;
   object-fit: cover;
+  ${({ $characterIndex }) =>
+    $characterIndex !== undefined &&
+    css`
+      border: ${characterStyles[$characterIndex]?.border || "none"};
+    `}
 `
 
 export const HiddenInput = styled.input`
@@ -114,3 +137,21 @@ export const PaginationDot = styled.div`
   background-color: ${({ isActive }) => (isActive ? "#fff" : "#transparent")};
   transition: background-color 0.3s ease;
 `
+
+const characterStyles = [
+  {
+    backgroundColor: "#f1ece1",
+    border: "1px solid #000",
+    extraBorder: "1px solid #000",
+    textColor: "#000",
+  },
+  {
+    backgroundColor: "#1f1f1f99",
+    border: "1px solid #fff",
+    textColor: "#ffffff",
+  },
+  {
+    backgroundColor: "#f1ece1",
+    textColor: "#000",
+  },
+]

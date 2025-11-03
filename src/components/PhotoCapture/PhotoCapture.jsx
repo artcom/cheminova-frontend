@@ -77,7 +77,7 @@ export default function PhotoCapture({
 
   //const plainTextContent = lala.replace(/<[^>]*>/g, "")
 
-  console.log()
+  console.log(currentTaskIndex)
 
   return (
     <>
@@ -104,25 +104,29 @@ export default function PhotoCapture({
         <TasksContainer>
           {tasks.slice(0, 1).map((task, index) => (
             <>
-              <TaskHeadline>
+              <TaskHeadline key={index}>
                 {photographyData.imageDescriptions[index].shortDescription}
               </TaskHeadline>
 
               <TaskCard
                 key={index}
                 isActive={index === currentTaskIndex} // Highlight the active card
+                $characterIndex={currentCharacterIndex}
               >
                 {!taskImages[index] && (
-                  <TaskDescription>{task}</TaskDescription>
+                  <TaskDescription $characterIndex={currentCharacterIndex}>
+                    {task}
+                  </TaskDescription>
                 )}
 
-                <TaskContent>
+                <TaskContent $characterIndex={currentCharacterIndex}>
                   {taskImages[index] && (
                     <>
                       <SmallButton onClick={() => retake(index)}>
                         {retakeText}
                       </SmallButton>
                       <TaskImage
+                        $characterIndex={currentCharacterIndex}
                         src={taskImages[index]}
                         alt={`Task ${index + 1} completed`}
                       />
@@ -133,6 +137,7 @@ export default function PhotoCapture({
                     <CameraButtonContainer>
                       <IconButton
                         variant="camera"
+                        color={currentCharacterIndex === 1 ? "white" : "black"}
                         onClick={
                           isAndroid ? handleOpenCamera : handleOpenGallery
                         }
