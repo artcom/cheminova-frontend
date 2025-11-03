@@ -91,7 +91,7 @@ export default function PhotoCapture({
         </HeaderContainer>
 
         <TasksContainer>
-          {tasks.map((task, index) => (
+          {tasks.slice(0, 1).map((task, index) => (
             <>
               <TaskHeadline>
                 {photographyData.imageDescriptions[index].shortDescription}
