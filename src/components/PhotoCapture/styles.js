@@ -3,7 +3,7 @@ import { styled } from "styled-components"
 export const PhotoCaptureContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
   padding: 0 0 34.75rem 0;
 `
@@ -12,7 +12,7 @@ export const HeaderContainer = styled.div`
   display: flex;
   width: 21.4375rem;
   flex-direction: column;
-  align-items: flex-start;
+  justify-items: center;
   padding: 1.5625rem;
 `
 
@@ -31,35 +31,37 @@ export const TasksContainer = styled.div`
   flex-direction: column;
   gap: 1.5rem;
   width: 100%;
-  align-items: flex-start;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
 `
 
 export const TaskCard = styled.div`
   display: flex;
-  width: 23rem;
-  height: 9.4375rem;
+  width: 19.25rem;
+  height: 24.625rem;
   padding: 1.75rem 1.625rem;
   flex-direction: column;
-  align-items: flex-start;
+  justify-items: center;
   gap: 1.125rem;
   flex-shrink: 0;
-  border-radius: 0 1.75rem 1.75rem 0;
+  border-radius: 1.75rem 1.75rem 1.75rem 1.75rem;
   background-color: #f1ece1;
   position: relative;
 `
 
 export const TaskHeadline = styled.h2`
   color: #000;
-  font-size: 1.3rem;
+  font-size: 1rem;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400;
   line-height: normal;
   margin: 0;
 `
 
 export const TaskContent = styled.div`
   display: flex;
-  align-items: center;
+  justify-content: center;
   gap: 1rem;
   width: 100%;
 `
