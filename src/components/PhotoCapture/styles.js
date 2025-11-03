@@ -18,8 +18,8 @@ export const HeaderContainer = styled.div`
 
 export const HeaderText = styled.h1`
   color: #fff;
-  font-size: 1.5rem;
-  font-style: normal;
+  font-size: 2.375rem;
+  font-style: bold;
   font-weight: 700;
   line-height: normal;
   margin: 0;
@@ -50,12 +50,23 @@ export const TaskCard = styled.div`
   position: relative;
 `
 
-export const TaskHeadline = styled.h2`
+export const TaskDescription = styled.h2`
   color: #000;
   font-size: 1rem;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  margin: 0;
+`
+
+export const TaskHeadline = styled.h2`
+  color: #000;
+  font-size: 1.5rem;
+  font-style: bold;
+  font-weight: 600;
+  line-height: normal;
+  text-align: center;
+  color: #fff;
   margin: 0;
 `
 

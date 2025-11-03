@@ -17,6 +17,7 @@ import {
   PhotoCaptureContainer,
   TaskCard,
   TaskContent,
+  TaskDescription,
   TaskHeadline,
   TaskImage,
   TasksContainer,
@@ -89,32 +90,40 @@ export default function PhotoCapture({
 
         <TasksContainer>
           {tasks.map((task, index) => (
-            <TaskCard key={index}>
-              <TaskHeadline>{task}</TaskHeadline>
+            <>
+              <TaskHeadline>
+                {photographyData.imageDescriptions[index].shortDescription}
+              </TaskHeadline>
 
-              <TaskContent>
-                {taskImages[index] && (
-                  <>
-                    <SmallButton onClick={() => retake(index)}>
-                      {retakeText}
-                    </SmallButton>
-                    <TaskImage
-                      src={taskImages[index]}
-                      alt={`Task ${index + 1} completed`}
-                    />
-                  </>
-                )}
+              <TaskCard key={index}>
+                <TaskDescription>{task}</TaskDescription>
 
-                {index === currentTaskIndex && !taskImages[index] && (
-                  <CameraButtonContainer>
-                    <IconButton
-                      variant="camera"
-                      onClick={isAndroid ? handleOpenCamera : handleOpenGallery}
-                    />
-                  </CameraButtonContainer>
-                )}
-              </TaskContent>
-            </TaskCard>
+                <TaskContent>
+                  {taskImages[index] && (
+                    <>
+                      <SmallButton onClick={() => retake(index)}>
+                        {retakeText}
+                      </SmallButton>
+                      <TaskImage
+                        src={taskImages[index]}
+                        alt={`Task ${index + 1} completed`}
+                      />
+                    </>
+                  )}
+
+                  {index === currentTaskIndex && !taskImages[index] && (
+                    <CameraButtonContainer>
+                      <IconButton
+                        variant="camera"
+                        onClick={
+                          isAndroid ? handleOpenCamera : handleOpenGallery
+                        }
+                      />
+                    </CameraButtonContainer>
+                  )}
+                </TaskContent>
+              </TaskCard>
+            </>
           ))}
         </TasksContainer>
         <Navigation mode="single" onSelect={goToExploration} />
