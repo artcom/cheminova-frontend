@@ -46,12 +46,18 @@ export default function PhotoCapture({
   const cmsTaskDescriptions =
     photographyData?.imageDescriptions?.map((item) => item.description) || []
 
-  const { tasks, taskImages, currentTaskIndex, handleFileObject, retake } =
-    usePhotoTasks({
-      tasks: cmsTaskDescriptions.length > 0 ? cmsTaskDescriptions : undefined,
-      onImageCaptured,
-      initialImages: capturedImages,
-    })
+  const {
+    tasks,
+    taskImages,
+    currentTaskIndex,
+    setCurrentTaskIndex,
+    handleFileObject,
+    retake,
+  } = usePhotoTasks({
+    tasks: cmsTaskDescriptions.length > 0 ? cmsTaskDescriptions : undefined,
+    onImageCaptured,
+    initialImages: capturedImages,
+  })
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0]
@@ -61,6 +67,12 @@ export default function PhotoCapture({
 
   const handleOpenCamera = () => cameraInputRef.current?.click()
   const handleOpenGallery = () => galleryInputRef.current?.click()
+
+  const totalTasks = tasks.length
+
+  const handleNextTask = () => {
+    setCurrentTaskIndex((prevIndex) => (prevIndex + 1) % totalTasks) // Cycle through cards
+  }
 
   //const lala = photographyData.imageDescriptions[0].description
 
@@ -97,7 +109,10 @@ export default function PhotoCapture({
                 {photographyData.imageDescriptions[index].shortDescription}
               </TaskHeadline>
 
-              <TaskCard key={index}>
+              <TaskCard
+                key={index}
+                isActive={index === currentTaskIndex} // Highlight the active card
+              >
                 <TaskDescription>{task}</TaskDescription>
 
                 <TaskContent>
@@ -133,6 +148,10 @@ export default function PhotoCapture({
             <PaginationDot key={index} isActive={index === currentTaskIndex} />
           ))}
         </PaginationContainer>
+        <SmallButton color="#FFF" onClick={handleNextTask}>
+          {photographyData.continueButtonText}
+        </SmallButton>
+
         <Navigation mode="single" onSelect={goToExploration} />
       </PhotoCaptureContainer>
     </>
