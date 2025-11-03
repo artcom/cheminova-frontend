@@ -81,3 +81,11 @@ export const TaskImage = styled.img`
 export const HiddenInput = styled.input`
   display: none;
 `
+export const CameraButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 7rem;
+  position: absolute;
+  bottom: 0;
+`

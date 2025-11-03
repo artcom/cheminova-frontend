@@ -6,9 +6,11 @@ import { useTranslation } from "react-i18next"
 
 import SmallButton from "@ui/SmallButton"
 
+import IconButton from "../UI/IconButton"
 import Navigation from "../UI/Navigation"
 import usePhotoTasks from "./hooks/usePhotoTasks"
 import {
+  CameraButtonContainer,
   HeaderContainer,
   HeaderText,
   HiddenInput,
@@ -38,8 +40,6 @@ export default function PhotoCapture({
     photographyData?.takePhotoButtonText || t("photoCapture.buttons.takePhoto")
   const retakeText =
     photographyData?.retakePhotoButtonText || t("photoCapture.buttons.retake")
-  const galleryText =
-    photographyData?.galleryButtonText || t("photoCapture.buttons.gallery")
 
   const cmsTaskDescriptions =
     photographyData?.imageDescriptions?.map((item) => item.description) || []
@@ -110,12 +110,12 @@ export default function PhotoCapture({
                   <>
                     {isAndroid ? (
                       <>
-                        <SmallButton onClick={handleOpenCamera}>
-                          {takePhotoText}
-                        </SmallButton>
-                        <SmallButton onClick={handleOpenGallery}>
-                          {galleryText}
-                        </SmallButton>
+                        <CameraButtonContainer>
+                          <IconButton
+                            variant="camera"
+                            onClick={handleOpenCamera}
+                          />
+                        </CameraButtonContainer>
                       </>
                     ) : (
                       <SmallButton onClick={handleOpenGallery}>
