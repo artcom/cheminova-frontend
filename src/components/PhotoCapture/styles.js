@@ -6,6 +6,7 @@ export const PhotoCaptureContainer = styled.div`
   align-items: center;
   width: 100%;
   padding: 0 0 34.75rem 0;
+  justify-content: space-between;
 `
 
 export const HeaderContainer = styled.div`
@@ -106,7 +107,8 @@ export const PaginationContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 1rem;
+  margin-top: 3rem;
+  margin-bottom: 3rem;
 `
 
 export const PaginationDot = styled.div`
