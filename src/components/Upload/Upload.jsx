@@ -141,9 +141,7 @@ export default function Upload({ goToGallery, images = [] }) {
           if (!file) {
             throw new Error(`Invalid image data for photo ${index + 1}`)
           }
-          const title = `Photo ${index + 1}`
-
-          const result = await uploadImageMutation.mutateAsync({ file, title })
+          const result = await uploadImageMutation.mutateAsync({ file })
           uploadResults.push(result)
 
           // Update progress for each successful upload

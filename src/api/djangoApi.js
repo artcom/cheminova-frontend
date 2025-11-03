@@ -46,6 +46,17 @@ export const fetchAllLocalesContent = async () => {
   }
 }
 
+export const fetchCharacterMetadata = async (locale) => {
+  const params = new URLSearchParams({ browsable: "false" })
+  if (locale) {
+    params.set("locale", locale)
+  }
+
+  const query = params.toString()
+  const endpoint = `/characters/${query ? `?${query}` : ""}`
+  return apiRequest(endpoint)
+}
+
 export const getContentForLocale = (allLocalesContent, locale = "en") => {
   if (!Array.isArray(allLocalesContent) || allLocalesContent.length === 0) {
     console.warn("⚠️ No localized content available yet, returning null")
