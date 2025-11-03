@@ -79,13 +79,9 @@ export const TaskContent = styled.div`
 `
 
 export const TaskImage = styled.img`
-  width: 7rem;
-  height: 7rem;
+  width: 16.875rem;
+  height: 16.875rem;
   position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  margin-right: 2rem;
   border-radius: 1rem;
   object-fit: cover;
 `
@@ -97,9 +93,8 @@ export const CameraButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  height: 7rem;
   position: absolute;
-  bottom: 0;
+  bottom: 1.5rem;
 `
 
 export const PaginationContainer = styled.div`
