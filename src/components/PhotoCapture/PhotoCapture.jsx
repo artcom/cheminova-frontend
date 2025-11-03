@@ -60,6 +60,12 @@ export default function PhotoCapture({
   const handleOpenCamera = () => cameraInputRef.current?.click()
   const handleOpenGallery = () => galleryInputRef.current?.click()
 
+  const lala = photographyData.imageDescriptions[0].description
+
+  const plainTextContent = lala.replace(/<[^>]*>/g, "")
+
+  console.log(plainTextContent)
+
   return (
     <>
       <PhotoCaptureContainer>

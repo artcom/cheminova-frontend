@@ -19,7 +19,7 @@ export default function Intro({ onCharacterSelect }) {
       </IntroContainer>
     )
   }
-
+  console.dir(charactersData)
   return (
     <IntroContainer>
       <IntroCharactersRow
