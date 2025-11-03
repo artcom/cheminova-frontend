@@ -4,12 +4,12 @@ const StyledSmallButton = styled.button`
   width: 7.8125rem;
   height: 2.4375rem;
   border-radius: 2.75rem;
-  border: 1px solid black; /* Can be overridden by parent wrapper */
+  border: 1px solid ${({ color }) => color || "black"};
   background: transparent;
   display: flex;
   justify-content: center;
   align-items: center;
-  color: black;
+  color: ${({ color }) => color || "black"};
   text-align: center;
   font-size: 1rem;
   font-style: normal;
