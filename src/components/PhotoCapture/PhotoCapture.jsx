@@ -10,6 +10,7 @@ import IconButton from "../UI/IconButton"
 import usePhotoTasks from "./hooks/usePhotoTasks"
 import {
   CameraButtonContainer,
+  ExtraBorder,
   HeaderContainer,
   HeaderText,
   HiddenInput,
@@ -114,9 +115,12 @@ export default function PhotoCapture({
                 $characterIndex={currentCharacterIndex}
               >
                 {!taskImages[index] && (
-                  <TaskDescription $characterIndex={currentCharacterIndex}>
-                    {task}
-                  </TaskDescription>
+                  <>
+                    {currentCharacterIndex === 0 && <ExtraBorder />}
+                    <TaskDescription $characterIndex={currentCharacterIndex}>
+                      {task}
+                    </TaskDescription>
+                  </>
                 )}
 
                 <TaskContent $characterIndex={currentCharacterIndex}>

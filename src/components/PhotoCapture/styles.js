@@ -100,13 +100,24 @@ export const TaskImage = styled.img`
   width: 16.875rem;
   height: 16.875rem;
   position: absolute;
+  top: 1rem;
   border-radius: 1rem;
   object-fit: cover;
   ${({ $characterIndex }) =>
     $characterIndex !== undefined &&
     css`
-      border: ${characterStyles[$characterIndex]?.border || "none"};
+      border: ${characterStyles[$characterIndex]?.imageBorder || "none"};
     `}
+`
+
+export const ExtraBorder = styled.img`
+  width: 17.438rem;
+  height: 16.375rem;
+  position: absolute;
+  top: 0.9rem;
+  left: 0.9rem;
+  border-radius: 1rem;
+  border: 1px solid #000;
 `
 
 export const HiddenInput = styled.input`
@@ -141,9 +152,8 @@ export const PaginationDot = styled.div`
 const characterStyles = [
   {
     backgroundColor: "#f1ece1",
-    border: "1px solid #000",
-    extraBorder: "1px solid #000",
     textColor: "#000",
+    imageBorder: "1px solid #000",
   },
   {
     backgroundColor: "#1f1f1f99",
@@ -152,6 +162,7 @@ const characterStyles = [
   },
   {
     backgroundColor: "#f1ece1",
+    border: "1px solid #000",
     textColor: "#000",
   },
 ]
