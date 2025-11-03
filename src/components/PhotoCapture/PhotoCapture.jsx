@@ -36,8 +36,7 @@ export default function PhotoCapture({
   const { data: photographyData } = usePhotographyFromAll(currentCharacterIndex)
 
   const heading = photographyData?.heading || t("photoCapture.title")
-  const takePhotoText =
-    photographyData?.takePhotoButtonText || t("photoCapture.buttons.takePhoto")
+
   const retakeText =
     photographyData?.retakePhotoButtonText || t("photoCapture.buttons.retake")
 
@@ -107,22 +106,12 @@ export default function PhotoCapture({
                 )}
 
                 {index === currentTaskIndex && !taskImages[index] && (
-                  <>
-                    {isAndroid ? (
-                      <>
-                        <CameraButtonContainer>
-                          <IconButton
-                            variant="camera"
-                            onClick={handleOpenCamera}
-                          />
-                        </CameraButtonContainer>
-                      </>
-                    ) : (
-                      <SmallButton onClick={handleOpenGallery}>
-                        {takePhotoText}
-                      </SmallButton>
-                    )}
-                  </>
+                  <CameraButtonContainer>
+                    <IconButton
+                      variant="camera"
+                      onClick={isAndroid ? handleOpenCamera : handleOpenGallery}
+                    />
+                  </CameraButtonContainer>
                 )}
               </TaskContent>
             </TaskCard>
