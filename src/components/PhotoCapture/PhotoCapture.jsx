@@ -24,7 +24,11 @@ import {
   TasksContainer,
 } from "./styles"
 
-export default function PhotoCapture({ onImageCaptured, capturedImages = [] }) {
+export default function PhotoCapture({
+  goToExploration,
+  onImageCaptured,
+  capturedImages = [],
+}) {
   const { t } = useTranslation()
   const { currentCharacterIndex } = useGlobalState()
   const cameraInputRef = useRef(null)
@@ -45,7 +49,7 @@ export default function PhotoCapture({ onImageCaptured, capturedImages = [] }) {
     tasks,
     taskImages,
     currentTaskIndex,
-    setCurrentTaskIndex,
+    //setCurrentTaskIndex,
     handleFileObject,
     retake,
   } = usePhotoTasks({
@@ -63,11 +67,11 @@ export default function PhotoCapture({ onImageCaptured, capturedImages = [] }) {
   const handleOpenCamera = () => cameraInputRef.current?.click()
   const handleOpenGallery = () => galleryInputRef.current?.click()
 
-  const totalTasks = tasks.length
+  //const totalTasks = tasks.length
 
-  const handleNextTask = () => {
-    setCurrentTaskIndex((prevIndex) => (prevIndex + 1) % totalTasks) // Cycle through cards
-  }
+  // const handleNextTask = () => {
+  //   setCurrentTaskIndex((prevIndex) => (prevIndex + 1) % totalTasks) // Cycle through cards
+  // }
 
   //const lala = photographyData.imageDescriptions[0].description
 
@@ -145,7 +149,7 @@ export default function PhotoCapture({ onImageCaptured, capturedImages = [] }) {
             <PaginationDot key={index} isActive={index === currentTaskIndex} />
           ))}
         </PaginationContainer>
-        <SmallButton color="#FFF" onClick={handleNextTask}>
+        <SmallButton color="#FFF" onClick={goToExploration}>
           {photographyData.continueButtonText}
         </SmallButton>
       </PhotoCaptureContainer>
