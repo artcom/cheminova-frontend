@@ -1,4 +1,4 @@
-import { css, styled } from "styled-components"
+import { styled } from "styled-components"
 
 export const PhotoCaptureContainer = styled.div`
   display: flex;
@@ -46,41 +46,31 @@ export const TaskCard = styled.div`
   justify-items: center;
   gap: 1.125rem;
   flex-shrink: 0;
-  border-radius: 1.75rem 1.75rem 1.75rem 1.75rem;
-  background-color: #f1ece1;
+  border-radius: 1.75rem;
+  background-color: ${({ $characterIndex }) =>
+    characterStyles[$characterIndex]?.backgroundColor || "#f1ece1"};
+  border: ${({ $characterIndex }) =>
+    characterStyles[$characterIndex]?.border || "none"};
   position: relative;
-
-  ${({ $characterIndex }) =>
-    $characterIndex !== undefined &&
-    css`
-      background-color: ${characterStyles[$characterIndex]?.backgroundColor ||
-      "#f1ece1"};
-      border: ${characterStyles[$characterIndex]?.border || "none"};
-    `}
 `
 
 export const TaskDescription = styled.h2`
-  color: #000;
+  color: ${({ $characterIndex }) =>
+    characterStyles[$characterIndex]?.textColor || "#000"};
   font-size: 1rem;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
   margin: 0;
-  ${({ $characterIndex }) =>
-    $characterIndex !== undefined &&
-    css`
-      color: ${characterStyles[$characterIndex]?.textColor || "#000"};
-    `}
 `
 
 export const TaskHeadline = styled.h2`
-  color: #000;
+  color: #fff;
   font-size: 1.5rem;
   font-style: bold;
   font-weight: 600;
   line-height: normal;
   text-align: center;
-  color: #fff;
   margin: 0;
 `
 
@@ -89,11 +79,8 @@ export const TaskContent = styled.div`
   justify-content: center;
   gap: 1rem;
   width: 100%;
-  ${({ $characterIndex }) =>
-    $characterIndex !== undefined &&
-    css`
-      color: ${characterStyles[$characterIndex]?.textColor || "#000"};
-    `}
+  color: ${({ $characterIndex }) =>
+    characterStyles[$characterIndex]?.textColor || "#000"};
 `
 
 export const TaskImage = styled.img`
@@ -103,11 +90,8 @@ export const TaskImage = styled.img`
   top: 1rem;
   border-radius: 1rem;
   object-fit: cover;
-  ${({ $characterIndex }) =>
-    $characterIndex !== undefined &&
-    css`
-      border: ${characterStyles[$characterIndex]?.imageBorder || "none"};
-    `}
+  border: ${({ $characterIndex }) =>
+    characterStyles[$characterIndex]?.imageBorder || "none"};
 `
 
 export const ExtraBorder = styled.img`
@@ -123,6 +107,7 @@ export const ExtraBorder = styled.img`
 export const HiddenInput = styled.input`
   display: none;
 `
+
 export const CameraButtonContainer = styled.div`
   display: flex;
   justify-content: center;
@@ -145,7 +130,7 @@ export const PaginationDot = styled.div`
   height: 0.75rem;
   border-radius: 50%;
   border: 2px solid #fff;
-  background-color: ${({ isActive }) => (isActive ? "#fff" : "#transparent")};
+  background-color: ${({ isActive }) => (isActive ? "#fff" : "transparent")};
   transition: background-color 0.3s ease;
 `
 
