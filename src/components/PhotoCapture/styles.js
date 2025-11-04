@@ -52,7 +52,7 @@ export const TaskCard = styled.div`
     characterStyles[$characterIndex]?.backgroundColor || "#f1ece1"};
   border: ${({ $characterIndex }) =>
     characterStyles[$characterIndex]?.border || "none"};
-  position: relative;
+  margin-bottom: 2rem;
 `
 
 export const TaskDescription = styled.h2`
