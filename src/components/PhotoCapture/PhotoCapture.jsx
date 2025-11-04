@@ -130,6 +130,10 @@ export default function PhotoCapture({
                   key={index}
                   isActive={isActive}
                   $characterIndex={currentCharacterIndex}
+                  style={{
+                    zIndex: isActive ? 2 : 1,
+                    opacity: isActive ? 1 : 0.5,
+                  }}
                 >
                   {!taskImages[index] && (
                     <>
