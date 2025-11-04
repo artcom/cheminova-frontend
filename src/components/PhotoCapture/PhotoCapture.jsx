@@ -1,4 +1,4 @@
-import { useCharactersFromAll, usePhotographyFromAll } from "@/api/hooks"
+import { usePhotographyFromAll } from "@/api/hooks"
 import useGlobalState from "@/hooks/useGlobalState"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useMemo, useRef, useState } from "react"
@@ -41,17 +41,6 @@ export default function PhotoCapture({
   const [photoMetadata, setPhotoMetadata] = useState({})
 
   const { data: photographyData } = usePhotographyFromAll(currentCharacterIndex)
-  const { data: charactersData } = useCharactersFromAll()
-
-  const currentCharacter = charactersData?.[currentCharacterIndex]
-  const characterSlug = currentCharacter?.slug
-
-  console.log("PhotoCapture Debug:", {
-    currentCharacterIndex,
-    currentCharacter,
-    characterSlug,
-    charactersDataLength: charactersData?.length,
-  })
 
   const heading = photographyData?.heading || t("photoCapture.title")
   const takePhotoText =

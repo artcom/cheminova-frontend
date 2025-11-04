@@ -32,12 +32,10 @@ export const useUploadImage = () => {
       lastUploadedCharacterSlugRef.current = slug
       return uploadImage(file, slug, { text, userName })
     },
-    onSuccess: (data) => {
-      console.log("✅ Upload mutation onSuccess:", data)
+    onSuccess: () => {
       const slug = lastUploadedCharacterSlugRef.current
       if (slug) {
         queryClient.invalidateQueries({ queryKey: ["images", slug] })
-        console.log("🔄 Invalidated images query for:", slug)
       }
       queryClient.invalidateQueries({ queryKey: ["gallery-images"] })
       queryClient.invalidateQueries({ queryKey: ["recent-images"] })

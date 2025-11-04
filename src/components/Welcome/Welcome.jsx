@@ -26,13 +26,6 @@ export default function Welcome({ goToIntroduction }) {
   const { data: characterOverviewData } = useCharacterOverviewFromAll()
   const { data: charactersData } = useCharactersFromAll()
 
-  console.log("Welcome Component Debug:", {
-    currentCharacterIndex,
-    charactersData,
-    charactersDataLength: charactersData?.length,
-    selectedCharacter: charactersData?.[currentCharacterIndex],
-  })
-
   const { step, setStep, getNavigationProps } = useWelcomeSteps({
     goToIntroduction,
     showIntro,
