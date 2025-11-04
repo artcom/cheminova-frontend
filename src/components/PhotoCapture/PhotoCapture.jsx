@@ -131,6 +131,12 @@ export default function PhotoCapture({
                   isActive={isActive}
                   $characterIndex={currentCharacterIndex}
                   style={{
+                    position: isActive ? "fixed" : "relative", // Fix the active card in place
+                    marginLeft: isActive ? "0" : "2rem",
+
+                    top: isActive ? "27rem" : "auto", // Center the active card vertically
+                    left: isActive ? "12.5rem" : "auto", // Center the active card horizontally
+                    transform: isActive ? "translate(-9.7rem, -14rem)" : "none", // Adjust for centering
                     zIndex: isActive ? 2 : 1,
                     opacity: isActive ? 1 : 0.5,
                   }}
