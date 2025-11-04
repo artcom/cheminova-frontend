@@ -113,6 +113,9 @@ export default function PhotoCapture({
         <TasksContainer>
           {tasks.map((task, index) => {
             const isActive = index === currentTaskIndex
+            const taskDescriptionRaw =
+              photographyData.imageDescriptions[0].description
+            const taskDescription = taskDescriptionRaw.replace(/<[^>]*>/g, "")
 
             return (
               <>
@@ -123,7 +126,6 @@ export default function PhotoCapture({
                   style={{
                     position: isActive ? "fixed" : "relative", // Fix the active card in place
                     marginLeft: isActive ? "0" : "2rem",
-
                     top: isActive ? "27rem" : "auto", // Center the active card vertically
                     left: isActive ? "12.5rem" : "auto", // Center the active card horizontally
                     transform: isActive ? "translate(-9.7rem, -14rem)" : "none", // Adjust for centering
@@ -136,7 +138,7 @@ export default function PhotoCapture({
                     <>
                       {currentCharacterIndex === 0 && <ExtraBorder />}
                       <TaskDescription $characterIndex={currentCharacterIndex}>
-                        {task}
+                        {taskDescription}
                       </TaskDescription>
                     </>
                   )}
