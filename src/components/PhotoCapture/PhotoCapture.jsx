@@ -3,6 +3,7 @@ import useGlobalState from "@/hooks/useGlobalState"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useRef } from "react"
 import { useTranslation } from "react-i18next"
+import { useSwipeable } from "react-swipeable"
 
 import SmallButton from "@ui/SmallButton"
 
@@ -50,7 +51,7 @@ export default function PhotoCapture({
     tasks,
     taskImages,
     currentTaskIndex,
-    //setCurrentTaskIndex,
+    setCurrentTaskIndex,
     handleFileObject,
     retake,
   } = usePhotoTasks({
@@ -68,6 +69,20 @@ export default function PhotoCapture({
   const handleOpenCamera = () => cameraInputRef.current?.click()
   const handleOpenGallery = () => galleryInputRef.current?.click()
 
+  const swipeHandlers = useSwipeable({
+    onSwipedLeft: () => {
+      setCurrentTaskIndex((prevIndex) =>
+        prevIndex === 0 ? tasks.length - 1 : prevIndex - 1,
+      )
+    },
+    onSwipedRight: () => {
+      setCurrentTaskIndex((prevIndex) => (prevIndex + 1) % tasks.length)
+    },
+    preventDefaultTouchmoveEvent: true,
+    trackTouch: true,
+    trackMouse: false,
+  })
+
   //const totalTasks = tasks.length
 
   // const handleNextTask = () => {
@@ -82,7 +97,7 @@ export default function PhotoCapture({
 
   return (
     <>
-      <PhotoCaptureContainer>
+      <PhotoCaptureContainer {...swipeHandlers}>
         <HiddenInput
           type="file"
           accept="image/*"
@@ -106,51 +121,57 @@ export default function PhotoCapture({
         </TaskHeadline>
 
         <TasksContainer>
-          {tasks.map((task, index) => (
-            <>
-              <TaskCard
-                key={index}
-                isActive={index === currentTaskIndex}
-                $characterIndex={currentCharacterIndex}
-              >
-                {!taskImages[index] && (
-                  <>
-                    {currentCharacterIndex === 0 && <ExtraBorder />}
-                    <TaskDescription $characterIndex={currentCharacterIndex}>
-                      {task}
-                    </TaskDescription>
-                  </>
-                )}
+          {tasks.map((task, index) => {
+            const isActive = index === currentTaskIndex
 
-                <TaskContent $characterIndex={currentCharacterIndex}>
-                  {taskImages[index] && (
+            return (
+              <>
+                <TaskCard
+                  key={index}
+                  isActive={isActive}
+                  $characterIndex={currentCharacterIndex}
+                >
+                  {!taskImages[index] && (
                     <>
-                      <SmallButton onClick={() => retake(index)}>
-                        {retakeText}
-                      </SmallButton>
-                      <TaskImage
-                        $characterIndex={currentCharacterIndex}
-                        src={taskImages[index]}
-                        alt={`Task ${index + 1} completed`}
-                      />
+                      {currentCharacterIndex === 0 && <ExtraBorder />}
+                      <TaskDescription $characterIndex={currentCharacterIndex}>
+                        {task}
+                      </TaskDescription>
                     </>
                   )}
 
-                  {index === currentTaskIndex && (
-                    <CameraButtonContainer>
-                      <IconButton
-                        variant="camera"
-                        color={currentCharacterIndex === 1 ? "white" : "black"}
-                        onClick={
-                          isAndroid ? handleOpenCamera : handleOpenGallery
-                        }
-                      />
-                    </CameraButtonContainer>
-                  )}
-                </TaskContent>
-              </TaskCard>
-            </>
-          ))}
+                  <TaskContent $characterIndex={currentCharacterIndex}>
+                    {taskImages[index] && (
+                      <>
+                        <SmallButton onClick={() => retake(index)}>
+                          {retakeText}
+                        </SmallButton>
+                        <TaskImage
+                          $characterIndex={currentCharacterIndex}
+                          src={taskImages[index]}
+                          alt={`Task ${index + 1} completed`}
+                        />
+                      </>
+                    )}
+
+                    {index === currentTaskIndex && (
+                      <CameraButtonContainer>
+                        <IconButton
+                          variant="camera"
+                          color={
+                            currentCharacterIndex === 1 ? "white" : "black"
+                          }
+                          onClick={
+                            isAndroid ? handleOpenCamera : handleOpenGallery
+                          }
+                        />
+                      </CameraButtonContainer>
+                    )}
+                  </TaskContent>
+                </TaskCard>
+              </>
+            )
+          })}
         </TasksContainer>
         <PaginationContainer>
           {tasks.map((_, index) => (
