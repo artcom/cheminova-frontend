@@ -26,6 +26,12 @@ import {
   TasksContainer,
 } from "./styles"
 
+const cardPositions = [
+  { x: "-11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
+  { x: "0px", y: "28rem", opacity: 1, zIndex: 2 },
+  { x: "11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
+]
+
 export default function PhotoCapture({
   goToExploration,
   onImageCaptured,
@@ -69,21 +75,23 @@ export default function PhotoCapture({
   const handleOpenCamera = () => cameraInputRef.current?.click()
   const handleOpenGallery = () => galleryInputRef.current?.click()
 
+  const cycleCards = (direction) => {
+    setCurrentTaskIndex((prevIndex) => {
+      if (direction === "left") {
+        return (prevIndex + 1) % tasks.length
+      } else if (direction === "right") {
+        return (prevIndex - 1 + tasks.length) % tasks.length
+      }
+      return prevIndex
+    })
+  }
+
   const swipeHandlers = useSwipeable({
-    onSwipedLeft: () => {
-      setCurrentTaskIndex((prevIndex) =>
-        prevIndex === 0 ? tasks.length - 1 : prevIndex - 1,
-      )
-    },
-    onSwipedRight: () => {
-      setCurrentTaskIndex((prevIndex) => (prevIndex + 1) % tasks.length)
-    },
+    onSwipedLeft: () => cycleCards("left"),
+    onSwipedRight: () => cycleCards("right"),
     preventDefaultTouchmoveEvent: true,
     trackTouch: true,
-    trackMouse: false,
   })
-
-  console.log(currentTaskIndex)
 
   return (
     <>
@@ -117,6 +125,10 @@ export default function PhotoCapture({
               photographyData.imageDescriptions[index].description
             const taskDescription = taskDescriptionRaw.replace(/<[^>]*>/g, "")
 
+            const positionIndex =
+              (index - currentTaskIndex + tasks.length) % tasks.length
+            const { x, y, opacity, zIndex } = cardPositions[positionIndex]
+
             return (
               <>
                 <TaskCard
@@ -124,14 +136,13 @@ export default function PhotoCapture({
                   isActive={isActive}
                   $characterIndex={currentCharacterIndex}
                   style={{
-                    position: isActive ? "fixed" : "relative", // Fix the active card in place
-                    marginLeft: isActive ? "0" : "2rem",
-                    top: isActive ? "27rem" : "auto", // Center the active card vertically
-                    left: isActive ? "12.5rem" : "auto", // Center the active card horizontally
-                    transform: isActive ? "translate(-9.7rem, -14rem)" : "none", // Adjust for centering
-                    zIndex: isActive ? 2 : 1,
-                    opacity: isActive ? 1 : 0.5,
-                    transition: "all 0.6s ease-in-out",
+                    position: "absolute",
+                    top: y,
+                    left: `calc(50% + ${x})`,
+                    transform: `translate(-50%, -50%)`,
+                    opacity,
+                    zIndex,
+                    transition: "all 0.3s ease, opacity 0.3s ease",
                   }}
                 >
                   {!taskImages[index] && (
