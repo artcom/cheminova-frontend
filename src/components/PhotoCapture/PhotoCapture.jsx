@@ -114,7 +114,7 @@ export default function PhotoCapture({
           {tasks.map((task, index) => {
             const isActive = index === currentTaskIndex
             const taskDescriptionRaw =
-              photographyData.imageDescriptions[0].description
+              photographyData.imageDescriptions[index].description
             const taskDescription = taskDescriptionRaw.replace(/<[^>]*>/g, "")
 
             return (
