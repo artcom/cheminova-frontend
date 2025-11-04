@@ -46,7 +46,7 @@ export const fetchAllLocalesContent = async () => {
   }
 }
 
-export const fetchCharacterMetadata = async (locale) => {
+export const fetchCharacterSlugs = async (locale) => {
   const params = new URLSearchParams({ browsable: "false" })
   if (locale) {
     params.set("locale", locale)

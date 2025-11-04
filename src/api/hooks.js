@@ -10,8 +10,6 @@ export const queryKeys = {
 }
 
 export const extractFromContentTree = {
-  // New hierarchy: WelcomeLanguage -> WelcomeIntro -> Welcome -> WelcomeCharacter -> ChooseCharacter -> Introduction -> ...
-
   getWelcomeLanguage: (data) => {
     if (!data || !Array.isArray(data) || data.length === 0) return null
     return data[0]

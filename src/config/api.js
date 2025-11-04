@@ -1,6 +1,8 @@
 const isDevelopment = import.meta.env.DEV
 
-export const API_BASE_URL = isDevelopment ? "/api" : "/cms/api"
+export const API_BASE_URL = isDevelopment
+  ? "http://localhost:8080/api" // Direct to Django backend (bypasses Vite proxy)
+  : "/cms/api" // Production: relative path
 
 export const getApiConfig = () => ({
   baseUrl: API_BASE_URL,
@@ -11,6 +13,6 @@ if (isDevelopment) {
   console.log("🔧 API Config:", {
     baseUrl: API_BASE_URL,
     environment: "development",
-    note: "Django backend should be serving at http://localhost:8080/api/all",
+    note: "Direct connection to Django backend at localhost:8080",
   })
 }

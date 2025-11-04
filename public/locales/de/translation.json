@@ -25,6 +25,15 @@
       "takePhoto": "Foto machen",
       "gallery": "Galerie",
       "retake": "Wiederholen"
+    },
+    "metadata": {
+      "title": "Details zu Ihrem Foto hinzufügen",
+      "comment": "Kommentar (optional)",
+      "commentPlaceholder": "Teilen Sie Ihre Gedanken zu diesem Foto...",
+      "username": "Ihr Name (optional)",
+      "usernamePlaceholder": "Geben Sie Ihren Namen ein",
+      "save": "Speichern",
+      "skip": "Überspringen"
     }
   },
   "exploration": {
