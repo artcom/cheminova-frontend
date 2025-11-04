@@ -1,4 +1,4 @@
-import { useRive } from "@rive-app/react-canvas"
+import { Alignment, Fit, Layout, useRive } from "@rive-app/react-canvas"
 import styled from "styled-components"
 
 const RiveContainer = styled.div`
@@ -20,6 +20,10 @@ export default function RiveAnimation({
     src,
     stateMachines,
     autoplay,
+    layout: new Layout({
+      fit: Fit.FitHeight,
+      alignment: Alignment.BottomRight,
+    }),
     onLoad: onLoad ? () => onLoad(rive) : undefined,
   })
 
