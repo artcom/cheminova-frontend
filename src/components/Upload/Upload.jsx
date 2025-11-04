@@ -21,33 +21,14 @@ import {
 } from "./styles"
 
 const dataURLToFile = (dataURL, filename) => {
-  if (typeof dataURL !== "string") {
-    return null
-  }
-
   const [metadata, base64Data] = dataURL.split(",")
-  if (!metadata || !base64Data) {
-    return null
-  }
-
   const mimeMatch = metadata.match(/:(.*?);/)
-  if (!mimeMatch) {
-    return null
-  }
-
-  let binaryString
-  try {
-    binaryString = atob(base64Data)
-  } catch (error) {
-    console.warn("Failed to decode data URL", error)
-    return null
-  }
-
-  let length = binaryString.length
+  const binaryString = atob(base64Data)
+  const length = binaryString.length
   const u8arr = new Uint8Array(length)
 
-  while (length--) {
-    u8arr[length] = binaryString.charCodeAt(length)
+  for (let i = 0; i < length; i++) {
+    u8arr[i] = binaryString.charCodeAt(i)
   }
 
   return new File([u8arr], filename, { type: mimeMatch[1] })
@@ -68,26 +49,9 @@ export default function Upload({ goToGallery, images = [] }) {
   const isUploading = uploadImageMutation.isPending
   const validImages = images.filter(Boolean)
 
-  // Get current character info for user feedback
-  const currentCharacter = charactersData?.[currentCharacterIndex]
-  const characterName = currentCharacter?.name || "Unknown Character"
-  // CMS provides 'name' field, not 'slug' - use name as identifier
-  const hasValidCharacter = Boolean(currentCharacter?.name)
+  const currentCharacter = charactersData[currentCharacterIndex]
+  const characterName = currentCharacter.name
 
-  console.log("Upload Component Debug:", {
-    currentCharacterIndex,
-    charactersData,
-    charactersDataLength: charactersData?.length,
-    currentCharacter,
-    characterName,
-    hasValidCharacter,
-    validImagesLength: validImages.length,
-    isUploading,
-    buttonWillBeDisabled:
-      isUploading || (!hasValidCharacter && validImages.length > 0),
-  })
-
-  // Use CMS data if available, otherwise fallback to translations
   const uploadDescription = uploadData?.description
     ? uploadData.description.replace(/<[^>]*>/g, "")
     : t("upload.question")
@@ -99,20 +63,6 @@ export default function Upload({ goToGallery, images = [] }) {
 
     if (validImages.length === 0) {
       goToGallery()
-      return
-    }
-
-    // Check for character context before starting upload
-    if (!hasValidCharacter) {
-      setUploadErrors([
-        {
-          error: t("errors.noCharacterSelected", {
-            defaultValue:
-              "No character selected. Please select a character first.",
-          }),
-        },
-      ])
-      setUploadProgress(t("errors.uploadFailed"))
       return
     }
 
@@ -129,7 +79,6 @@ export default function Upload({ goToGallery, images = [] }) {
       const uploadResults = []
       const uploadErrors = []
 
-      // Process uploads sequentially to maintain consistent character context
       for (let index = 0; index < validImages.length; index++) {
         const imageData = validImages[index]
         try {
@@ -137,14 +86,9 @@ export default function Upload({ goToGallery, images = [] }) {
             imageData,
             `photo-${timestamp}-${index}.jpg`,
           )
-
-          if (!file) {
-            throw new Error(`Invalid image data for photo ${index + 1}`)
-          }
           const result = await uploadImageMutation.mutateAsync({ file })
           uploadResults.push(result)
 
-          // Update progress for each successful upload
           setUploadProgress(
             t("upload.status.uploadProgress", {
               current: index + 1,
@@ -154,7 +98,6 @@ export default function Upload({ goToGallery, images = [] }) {
             }),
           )
         } catch (error) {
-          console.error(`Upload error for image ${index + 1}:`, error)
           uploadErrors.push({
             index: index + 1,
             error: error.message || t("errors.unexpectedError"),
@@ -162,7 +105,6 @@ export default function Upload({ goToGallery, images = [] }) {
         }
       }
 
-      // Handle results
       if (uploadErrors.length === 0) {
         setUploadProgress(
           t("upload.status.allCompleteForCharacter", {
@@ -174,7 +116,6 @@ export default function Upload({ goToGallery, images = [] }) {
           goToGallery()
         }, 2000)
       } else if (uploadResults.length > 0) {
-        // Partial success
         setUploadErrors(uploadErrors)
         setUploadProgress(
           t("upload.status.partialSuccess", {
@@ -185,69 +126,23 @@ export default function Upload({ goToGallery, images = [] }) {
           }),
         )
       } else {
-        // All failed
         setUploadErrors(uploadErrors)
         setUploadProgress(t("errors.uploadFailed"))
       }
     } catch (error) {
-      console.error("Upload error:", error)
-      const errorMessage = error.message || t("errors.unexpectedError")
-
-      // Provide specific feedback for character-related errors
-      if (
-        errorMessage.includes("Character") &&
-        errorMessage.includes("not found")
-      ) {
-        setUploadErrors([
-          {
-            error: t("errors.characterNotFound", {
-              character: characterName,
-              defaultValue: `Character '${characterName}' not found on server. Please try selecting a different character.`,
-            }),
-          },
-        ])
-      } else if (errorMessage.includes("No character selected")) {
-        setUploadErrors([
-          {
-            error: t("errors.noCharacterSelected", {
-              defaultValue:
-                "No character selected. Please select a character first.",
-            }),
-          },
-        ])
-      } else {
-        setUploadErrors([{ error: errorMessage }])
-      }
-
+      setUploadErrors([{ error: error.message }])
       setUploadProgress(t("errors.uploadFailed"))
     }
   }
 
   const getButtonText = () => {
-    if (isUploading) {
-      return uploadProgress || t("upload.buttons.uploading")
-    }
-    if (uploadErrors.length > 0) {
-      return t("upload.buttons.retry")
-    }
-    if (!hasValidCharacter) {
-      return t("upload.buttons.selectCharacter", {
-        defaultValue: "Select Character First",
-      })
-    }
+    if (isUploading) return uploadProgress || t("upload.buttons.uploading")
+    if (uploadErrors.length > 0) return t("upload.buttons.retry")
     return yesButtonText
   }
 
   const getUploadDescription = () => {
-    if (validImages.length === 0) {
-      return t("upload.noImages")
-    }
-
-    if (!hasValidCharacter) {
-      return t("upload.noCharacterSelected", {
-        defaultValue: "Please select a character before uploading your photos.",
-      })
-    }
+    if (validImages.length === 0) return t("upload.noImages")
 
     const baseDescription = uploadDescription || t("upload.question")
     return t("upload.questionWithCharacter", {
@@ -289,12 +184,7 @@ export default function Upload({ goToGallery, images = [] }) {
         )}
 
         <Actions>
-          <SmallButton
-            onClick={handleUpload}
-            disabled={
-              isUploading || (!hasValidCharacter && validImages.length > 0)
-            }
-          >
+          <SmallButton onClick={handleUpload} disabled={isUploading}>
             {getButtonText()}
           </SmallButton>
           <SmallButton onClick={goToGallery} disabled={isUploading}>
