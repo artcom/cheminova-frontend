@@ -34,18 +34,9 @@ export const useUploadImage = () => {
     },
     onSuccess: () => {
       const slug = lastUploadedCharacterSlugRef.current
-      if (slug) {
-        queryClient.invalidateQueries({ queryKey: ["images", slug] })
-      }
+      queryClient.invalidateQueries({ queryKey: ["images", slug] })
       queryClient.invalidateQueries({ queryKey: ["gallery-images"] })
       queryClient.invalidateQueries({ queryKey: ["recent-images"] })
-    },
-    onError: (error) => {
-      console.error("❌ Upload mutation onError:", {
-        name: error.name,
-        message: error.message,
-        stack: error.stack,
-      })
     },
   })
 }

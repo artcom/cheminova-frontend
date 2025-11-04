@@ -8,11 +8,3 @@ export const getApiConfig = () => ({
   baseUrl: API_BASE_URL,
   isDevelopment,
 })
-
-if (isDevelopment) {
-  console.log("🔧 API Config:", {
-    baseUrl: API_BASE_URL,
-    environment: "development",
-    note: "Direct connection to Django backend at localhost:8080",
-  })
-}
