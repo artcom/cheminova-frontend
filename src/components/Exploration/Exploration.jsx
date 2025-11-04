@@ -1,8 +1,10 @@
-import { useCharactersFromAll, useExplorationFromAll } from "@/api/hooks"
-import useGlobalState from "@/hooks/useGlobalState"
+import { extractFromContentTree } from "@/api/hooks"
+import { allContentQuery } from "@/api/queries"
+import { getCurrentLocale } from "@/i18n"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
 import { useTranslation } from "react-i18next"
+import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
 import Navigation from "../UI/Navigation"
@@ -22,19 +24,19 @@ const StyledNavigation = styled(Navigation)`
   bottom: 10%;
 `
 
-export default function Exploration({ goToPerspective }) {
+export default function Exploration() {
   const { t } = useTranslation()
-  const { currentCharacterIndex } = useGlobalState()
-  const { data: charactersData, isLoading: isCharactersLoading } =
-    useCharactersFromAll()
-  const { data: explorationData } = useExplorationFromAll(currentCharacterIndex)
+  const {
+    characterIndex: currentCharacterIndex,
+    character,
+    exploration,
+  } = useLoaderData()
   const containerRef = useRef(null)
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
+  const navigate = useNavigate()
 
-  const currentCharacter = charactersData?.[currentCharacterIndex]
-
-  if (isCharactersLoading || !currentCharacter) {
+  if (!character) {
     return (
       <IntroductionContainer ref={containerRef}>
         <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
@@ -47,14 +49,14 @@ export default function Exploration({ goToPerspective }) {
   }
 
   const getExplorationContent = () => {
-    if (explorationData) {
+    if (exploration) {
       return {
-        heading: explorationData.heading || t("exploration.title"),
-        description: explorationData.description
-          ? explorationData.description.replace(/<[^>]*>/g, "")
+        heading: exploration.heading || t("exploration.title"),
+        description: exploration.description
+          ? exploration.description.replace(/<[^>]*>/g, "")
           : t("exploration.content.stone1"),
-        topImage: explorationData.topImage?.file || FirstImage,
-        bottomImage: explorationData.bottomImage?.file || SecondImage,
+        topImage: exploration.topImage?.file || FirstImage,
+        bottomImage: exploration.bottomImage?.file || SecondImage,
       }
     }
     return {
@@ -70,7 +72,7 @@ export default function Exploration({ goToPerspective }) {
   return (
     <IntroductionContainer ref={containerRef}>
       <CharacterImageContainer>
-        <CharacterImage src={currentCharacter.selectedImage || ""} />
+        <CharacterImage src={character.selectedImage || ""} />
       </CharacterImageContainer>
 
       <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
@@ -88,10 +90,43 @@ export default function Exploration({ goToPerspective }) {
 
         <StyledNavigation
           mode="single"
-          onSelect={goToPerspective}
+          onSelect={() =>
+            navigate(`/characters/${currentCharacterIndex}/perspective`)
+          }
           iconColor="black"
         />
       </ContentContainer>
     </IntroductionContainer>
   )
 }
+
+export const loader =
+  (queryClient) =>
+  async ({ params }) => {
+    const locale = getCurrentLocale()
+    const query = allContentQuery(locale)
+    const content = await queryClient.ensureQueryData(query)
+
+    const characterId = params.characterId
+    const characterIndex = Number.parseInt(characterId ?? "", 10)
+
+    if (Number.isNaN(characterIndex) || characterIndex < 0) {
+      throw new Response("Character not found", { status: 404 })
+    }
+
+    const character = extractFromContentTree.getCharacter(
+      content,
+      characterIndex,
+    )
+
+    if (!character) {
+      throw new Response("Character not found", { status: 404 })
+    }
+
+    const exploration = extractFromContentTree.getExploration(
+      content,
+      characterIndex,
+    )
+
+    return { characterIndex, character, exploration }
+  }

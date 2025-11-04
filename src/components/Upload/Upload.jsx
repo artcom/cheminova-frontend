@@ -1,9 +1,12 @@
-import { useCharactersFromAll, useUploadFromAll } from "@/api/hooks"
+import { extractFromContentTree } from "@/api/hooks"
+import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
 import { useUploadImage } from "@/hooks/useUploadImage"
+import { getCurrentLocale } from "@/i18n"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
+import { useLoaderData, useNavigate } from "react-router-dom"
 
 import SmallButton from "@ui/SmallButton"
 
@@ -34,29 +37,34 @@ const dataURLToFile = (dataURL, filename) => {
   return new File([u8arr], filename, { type: mimeMatch[1] })
 }
 
-export default function Upload({ goToGallery, images = [] }) {
+export default function Upload() {
   const { t } = useTranslation()
-  const { currentCharacterIndex } = useGlobalState()
+  const { capturedImages } = useGlobalState()
   const [uploadProgress, setUploadProgress] = useState("")
   const [uploadErrors, setUploadErrors] = useState([])
   const { tasks } = usePhotoTasks()
-
-  // Fetch upload data from CMS and character data
-  const { data: uploadData } = useUploadFromAll(currentCharacterIndex)
-  const { data: charactersData } = useCharactersFromAll()
+  const navigate = useNavigate()
+  const {
+    characterIndex: currentCharacterIndex,
+    character,
+    upload: uploadData,
+  } = useLoaderData()
 
   const uploadImageMutation = useUploadImage()
   const isUploading = uploadImageMutation.isPending
+  const images = capturedImages || []
   const validImages = images.filter(Boolean)
 
-  const currentCharacter = charactersData[currentCharacterIndex]
-  const characterName = currentCharacter.name
+  const characterName = character?.name || ""
 
   const uploadDescription = uploadData?.description
     ? uploadData.description.replace(/<[^>]*>/g, "")
     : t("upload.question")
   const yesButtonText = uploadData?.yesButtonText || t("upload.buttons.yes")
   const noButtonText = uploadData?.noButtonText || t("upload.buttons.no")
+
+  const goToGallery = () =>
+    navigate(`/characters/${currentCharacterIndex}/gallery`)
 
   const handleUpload = async () => {
     setUploadErrors([])
@@ -195,3 +203,31 @@ export default function Upload({ goToGallery, images = [] }) {
     </UploadContainer>
   )
 }
+
+export const loader =
+  (queryClient) =>
+  async ({ params }) => {
+    const locale = getCurrentLocale()
+    const query = allContentQuery(locale)
+    const content = await queryClient.ensureQueryData(query)
+
+    const characterId = params.characterId
+    const characterIndex = Number.parseInt(characterId ?? "", 10)
+
+    if (Number.isNaN(characterIndex) || characterIndex < 0) {
+      throw new Response("Character not found", { status: 404 })
+    }
+
+    const character = extractFromContentTree.getCharacter(
+      content,
+      characterIndex,
+    )
+
+    if (!character) {
+      throw new Response("Character not found", { status: 404 })
+    }
+
+    const upload = extractFromContentTree.getUpload(content, characterIndex)
+
+    return { characterIndex, character, upload }
+  }

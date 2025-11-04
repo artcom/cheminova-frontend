@@ -1,8 +1,11 @@
-import { usePhotographyFromAll } from "@/api/hooks"
+import { extractFromContentTree } from "@/api/hooks"
+import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
+import { getCurrentLocale } from "@/i18n"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { useLoaderData, useNavigate } from "react-router-dom"
 
 import SmallButton from "@ui/SmallButton"
 
@@ -25,30 +28,27 @@ import {
 
 const DEFAULT_TASK_KEYS = ["laNau", "surroundings", "special"]
 
-export default function PhotoCapture({
-  goToExploration,
-  onImageCaptured,
-  capturedImages = [],
-}) {
+export default function PhotoCapture() {
   const { t } = useTranslation()
-  const { currentCharacterIndex } = useGlobalState()
+  const { capturedImages, setCapturedImageAt } = useGlobalState()
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
   const { isAndroid } = useDevicePlatform()
+  const navigate = useNavigate()
 
   const [showMetadataModal, setShowMetadataModal] = useState(false)
   const [pendingImageData, setPendingImageData] = useState(null)
   const [photoMetadata, setPhotoMetadata] = useState({})
 
-  const { data: photographyData } = usePhotographyFromAll(currentCharacterIndex)
+  const { characterIndex, photography } = useLoaderData()
 
-  const heading = photographyData?.heading || t("photoCapture.title")
+  const heading = photography?.heading || t("photoCapture.title")
   const takePhotoText =
-    photographyData?.takePhotoButtonText || t("photoCapture.buttons.takePhoto")
+    photography?.takePhotoButtonText || t("photoCapture.buttons.takePhoto")
   const retakeText =
-    photographyData?.retakePhotoButtonText || t("photoCapture.buttons.retake")
+    photography?.retakePhotoButtonText || t("photoCapture.buttons.retake")
   const galleryText =
-    photographyData?.galleryButtonText || t("photoCapture.buttons.gallery")
+    photography?.galleryButtonText || t("photoCapture.buttons.gallery")
 
   const fallbackTitles = useMemo(
     () => DEFAULT_TASK_KEYS.map((key) => t(`photoCapture.tasks.${key}`)),
@@ -56,7 +56,7 @@ export default function PhotoCapture({
   )
 
   const taskMetadata = useMemo(() => {
-    const cmsTasks = photographyData?.imageDescriptions
+    const cmsTasks = photography?.imageDescriptions
     if (cmsTasks && cmsTasks.length > 0) {
       return cmsTasks.map((item, index) => {
         const titleFallback = fallbackTitles[index] || fallbackTitles[0] || ""
@@ -71,7 +71,7 @@ export default function PhotoCapture({
       title,
       description: "",
     }))
-  }, [photographyData?.imageDescriptions, fallbackTitles])
+  }, [photography?.imageDescriptions, fallbackTitles])
 
   const tasksForHook = useMemo(
     () =>
@@ -104,8 +104,8 @@ export default function PhotoCapture({
       [taskIndex]: { text, userName },
     }))
 
-    if (onImageCaptured && pendingImageData) {
-      onImageCaptured(pendingImageData.dataUrl, taskIndex, { text, userName })
+    if (pendingImageData) {
+      setCapturedImageAt(taskIndex, pendingImageData.dataUrl)
     }
 
     setShowMetadataModal(false)
@@ -113,11 +113,8 @@ export default function PhotoCapture({
   }
 
   const handleMetadataSkip = (taskIndex) => {
-    if (onImageCaptured && pendingImageData) {
-      onImageCaptured(pendingImageData.dataUrl, taskIndex, {
-        text: "",
-        userName: "",
-      })
+    if (pendingImageData) {
+      setCapturedImageAt(taskIndex, pendingImageData.dataUrl)
     }
 
     setShowMetadataModal(false)
@@ -209,7 +206,10 @@ export default function PhotoCapture({
             )
           })}
         </TasksContainer>
-        <Navigation mode="single" onSelect={goToExploration} />
+        <Navigation
+          mode="single"
+          onSelect={() => navigate(`/characters/${characterIndex}/exploration`)}
+        />
       </PhotoCaptureContainer>
 
       {showMetadataModal && pendingImageData && (
@@ -228,3 +228,25 @@ export default function PhotoCapture({
     </>
   )
 }
+
+export const loader =
+  (queryClient) =>
+  async ({ params }) => {
+    const locale = getCurrentLocale()
+    const query = allContentQuery(locale)
+    const content = await queryClient.ensureQueryData(query)
+
+    const characterId = params.characterId
+    const characterIndex = Number.parseInt(characterId ?? "", 10)
+
+    if (Number.isNaN(characterIndex) || characterIndex < 0) {
+      throw new Response("Character not found", { status: 404 })
+    }
+
+    const photography = extractFromContentTree.getPhotography(
+      content,
+      characterIndex,
+    )
+
+    return { characterIndex, photography }
+  }

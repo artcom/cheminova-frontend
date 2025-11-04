@@ -1,8 +1,10 @@
-import { useCharactersFromAll, useIntroductionFromAll } from "@/api/hooks"
-import useGlobalState from "@/hooks/useGlobalState"
+import { extractFromContentTree } from "@/api/hooks"
+import { allContentQuery } from "@/api/queries"
+import { getCurrentLocale } from "@/i18n"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
 import { useTranslation } from "react-i18next"
+import { useLoaderData, useNavigate } from "react-router-dom"
 
 import IconButton from "@ui/IconButton"
 import RiveAnimation from "@ui/RiveAnimation"
@@ -20,31 +22,28 @@ import {
   TextBlock,
 } from "./styles"
 
-export default function Introduction({ goToPhotoCapture }) {
-  const { currentCharacterIndex } = useGlobalState()
+export default function Introduction() {
   const { t } = useTranslation()
+  const navigate = useNavigate()
   const containerRef = useRef(null)
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
 
-  const { data: charactersData, isLoading: isCharactersLoading } =
-    useCharactersFromAll()
+  const {
+    characterIndex: currentCharacterIndex,
+    character,
+    introduction,
+  } = useLoaderData()
 
-  const currentCharacter = charactersData?.[currentCharacterIndex]
-
-  const { data: introductionData } = useIntroductionFromAll(
-    currentCharacterIndex,
-  )
-
-  const heading = introductionData?.heading || t("introduction.title")
-  const description = introductionData?.description
-    ? introductionData.description.replace(/<[^>]*>/g, "")
+  const heading = introduction?.heading || t("introduction.title")
+  const description = introduction?.description
+    ? introduction.description.replace(/<[^>]*>/g, "")
     : t("introduction.description")
   const paragraphs = [description]
 
-  const imageUrl = introductionData?.image?.file || Rectangle
+  const imageUrl = introduction?.image?.file || Rectangle
 
-  if (isCharactersLoading || !currentCharacter) {
+  if (!character) {
     return (
       <IntroductionContainer data-introduction-container ref={containerRef}>
         <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
@@ -66,11 +65,9 @@ export default function Introduction({ goToPhotoCapture }) {
         <CharacterImageContainer>
           <CharacterImage
             src={
-              currentCharacter.selectedImage ||
-              currentCharacter.characterImage?.file ||
-              ""
+              character.selectedImage || character.characterImage?.file || ""
             }
-            alt={currentCharacter.name || ""}
+            alt={character.name || ""}
           />
         </CharacterImageContainer>
       )}
@@ -91,7 +88,7 @@ export default function Introduction({ goToPhotoCapture }) {
           <IconButton
             variant="camera"
             onClick={() => {
-              goToPhotoCapture()
+              navigate(`/characters/${currentCharacterIndex}/photo-capture`)
             }}
           />
         </CameraButtonContainer>
@@ -99,3 +96,34 @@ export default function Introduction({ goToPhotoCapture }) {
     </IntroductionContainer>
   )
 }
+
+export const loader =
+  (queryClient) =>
+  async ({ params }) => {
+    const locale = getCurrentLocale()
+    const query = allContentQuery(locale)
+    const content = await queryClient.ensureQueryData(query)
+
+    const characterId = params.characterId
+    const characterIndex = Number.parseInt(characterId ?? "", 10)
+
+    if (Number.isNaN(characterIndex) || characterIndex < 0) {
+      throw new Response("Character not found", { status: 404 })
+    }
+
+    const character = extractFromContentTree.getCharacter(
+      content,
+      characterIndex,
+    )
+
+    if (!character) {
+      throw new Response("Character not found", { status: 404 })
+    }
+
+    const introduction = extractFromContentTree.getIntroduction(
+      content,
+      characterIndex,
+    )
+
+    return { characterIndex, character, introduction }
+  }

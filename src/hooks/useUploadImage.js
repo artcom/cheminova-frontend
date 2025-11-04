@@ -1,17 +1,18 @@
 import { fetchCharacterSlugs } from "@/api/djangoApi"
 import { uploadImage } from "@/api/uploadImage"
 import { DEFAULT_LANGUAGE } from "@/config/language"
-import useGlobalState from "@/hooks/useGlobalState"
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
 import { useRef } from "react"
 import { useTranslation } from "react-i18next"
+import { useParams } from "react-router-dom"
 
 export const useUploadImage = () => {
   const queryClient = useQueryClient()
-  const { currentCharacterIndex } = useGlobalState()
   const { i18n } = useTranslation()
   const locale = i18n.language || DEFAULT_LANGUAGE
   const lastUploadedCharacterSlugRef = useRef(null)
+  const { characterId } = useParams()
+  const currentCharacterIndex = Number.parseInt(characterId ?? "", 10) || 0
 
   const { data: characterSlugsData } = useQuery({
     queryKey: ["character-slugs", locale],

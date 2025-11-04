@@ -1,11 +1,14 @@
-import { useGalleryFromAll } from "@/api/hooks"
+import { extractFromContentTree } from "@/api/hooks"
+import { allContentQuery } from "@/api/queries"
 import { useGalleryImages } from "@/hooks/useGallery"
 import useGlobalState from "@/hooks/useGlobalState"
+import { getCurrentLocale } from "@/i18n"
 import { Canvas } from "@react-three/fiber"
 import theme from "@theme"
 import { AnimatePresence, motion } from "motion/react"
 import { useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
 import Navigation from "@ui/Navigation"
@@ -64,9 +67,9 @@ const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
   import: "default",
 })
 
-export default function Gallery({ goToEnding, capturedImages = [] }) {
+export default function Gallery() {
   const { t } = useTranslation()
-  const { goStart, currentCharacterIndex } = useGlobalState()
+  const { capturedImages = [] } = useGlobalState()
   const tilesPerRow = useResponsiveTilesPerRow()
   const [allAnimsDone, setAllAnimsDone] = useState(false)
   const [detailMode, setDetailMode] = useState(false)
@@ -75,15 +78,14 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
   const [switchDir, setSwitchDir] = useState(0)
   const switchStartRef = useRef(0)
   const [detailStackScale, setDetailStackScale] = useState(null)
+  const navigate = useNavigate()
+  const { characterIndex: currentCharacterIndex, gallery } = useLoaderData()
 
   const { data: galleryData, isLoading: galleryLoading } = useGalleryImages()
 
-  const { data: galleryCmsData } = useGalleryFromAll(currentCharacterIndex)
-
-  const galleryHeading = galleryCmsData?.heading || t("gallery.title")
-  const exitButtonText =
-    galleryCmsData?.exitButtonText || t("gallery.exitGallery")
-  const closeButtonText = galleryCmsData?.closeButtonText || t("gallery.close")
+  const galleryHeading = gallery?.heading || t("gallery.title")
+  const exitButtonText = gallery?.exitButtonText || t("gallery.exitGallery")
+  const closeButtonText = gallery?.closeButtonText || t("gallery.close")
 
   const personalImages = useMemo(
     () => getPersistedPersonalImages(defaultPersonalImages, capturedImages),
@@ -105,7 +107,7 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
   const isFullyLoading = isLoading || galleryLoading
 
   const handleExitGallery = () => {
-    goStart()
+    navigate("/")
   }
 
   if (isFullyLoading) {
@@ -123,7 +125,11 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
       <Title>
         {allAnimsDone && !detailMode ? galleryHeading : `${galleryHeading}`}
       </Title>
-      <ExitButton onClick={goToEnding}>{exitButtonText}</ExitButton>
+      <ExitButton
+        onClick={() => navigate(`/characters/${currentCharacterIndex}/ending`)}
+      >
+        {exitButtonText}
+      </ExitButton>
       <Stage>
         <Canvas
           camera={{ position: [0, 0, CAMERA_DEFAULT_Z], fov: 75 }}
@@ -211,3 +217,22 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
     </Page>
   )
 }
+
+export const loader =
+  (queryClient) =>
+  async ({ params }) => {
+    const locale = getCurrentLocale()
+    const query = allContentQuery(locale)
+    const content = await queryClient.ensureQueryData(query)
+
+    const characterId = params.characterId
+    const characterIndex = Number.parseInt(characterId ?? "", 10)
+
+    if (Number.isNaN(characterIndex) || characterIndex < 0) {
+      throw new Response("Character not found", { status: 404 })
+    }
+
+    const gallery = extractFromContentTree.getGallery(content, characterIndex)
+
+    return { characterIndex, gallery }
+  }

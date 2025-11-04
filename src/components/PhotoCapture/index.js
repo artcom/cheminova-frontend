@@ -1,1 +1,1 @@
-export { default } from "./PhotoCapture"
+export { default, loader } from "./PhotoCapture"

@@ -17,10 +17,20 @@ import { initReactI18next } from "react-i18next"
 
 export { LANGUAGE_LIST }
 
+const sanitizeLanguageCode = (value) => {
+  if (typeof value !== "string") return ""
+  return value.trim().toLowerCase()
+}
+
+const ensureSupportedLanguage = (code) => {
+  const normalized = sanitizeLanguageCode(code)
+  return findLanguageByCode(normalized) ? normalized : DEFAULT_LANGUAGE
+}
+
 const convertDetectedLanguage = (lng) => {
-  const baseCode = lng.trim().toLowerCase().split("-")[0]
-  const isSupported = findLanguageByCode(baseCode)
-  return isSupported ? baseCode : DEFAULT_LANGUAGE
+  const sanitized = sanitizeLanguageCode(lng)
+  const baseCode = sanitized.split("-")[0]
+  return ensureSupportedLanguage(baseCode)
 }
 
 i18n
@@ -51,23 +61,25 @@ i18n
   })
 
 export const getCurrentLocale = () => {
-  return i18n.language.trim().toLowerCase().split("-")[0]
+  const language = sanitizeLanguageCode(i18n.language)
+  const baseCode = language.split("-")[0]
+  return ensureSupportedLanguage(baseCode)
 }
 
 export const changeLanguage = async (languageCode) => {
-  const code = languageCode.trim().toLowerCase()
+  const code = ensureSupportedLanguage(languageCode)
   await i18n.changeLanguage(code)
   localStorage.setItem(LANGUAGE_CONFIG.STORAGE_KEY, code)
 }
 
 export const getLanguageName = (languageCode) => {
-  const code = languageCode.trim().toLowerCase()
+  const code = ensureSupportedLanguage(languageCode)
   const language = findLanguageByCode(code)
   return language ? language.name : code.toUpperCase()
 }
 
 export const isLanguageSupported = (languageCode) => {
-  const code = languageCode.trim().toLowerCase()
+  const code = sanitizeLanguageCode(languageCode)
   return i18n.options.supportedLngs.includes(code)
 }
 

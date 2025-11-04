@@ -38,3 +38,10 @@ export const ChildrenContainer = styled.div`
      you can enable pass-through: pointer-events: none; and re-enable
      on specific interactive descendants with pointer-events: auto. */
 `
+
+export const LanguageSelectorContainer = styled.div`
+  position: fixed;
+  top: 2rem;
+  right: 2rem;
+  z-index: 1000;
+`
