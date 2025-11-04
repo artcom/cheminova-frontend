@@ -83,16 +83,6 @@ export default function PhotoCapture({
     trackMouse: false,
   })
 
-  //const totalTasks = tasks.length
-
-  // const handleNextTask = () => {
-  //   setCurrentTaskIndex((prevIndex) => (prevIndex + 1) % totalTasks) // Cycle through cards
-  // }
-
-  //const lala = photographyData.imageDescriptions[0].description
-
-  //const plainTextContent = lala.replace(/<[^>]*>/g, "")
-
   console.log(currentTaskIndex)
 
   return (
