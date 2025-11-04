@@ -153,20 +153,19 @@ export default function PhotoCapture({
                         />
                       </>
                     )}
-
-                    {index === currentTaskIndex && (
-                      <CameraButtonContainer>
-                        <IconButton
-                          variant="camera"
-                          color={
-                            currentCharacterIndex === 1 ? "white" : "black"
-                          }
-                          onClick={
-                            isAndroid ? handleOpenCamera : handleOpenGallery
-                          }
-                        />
-                      </CameraButtonContainer>
-                    )}
+                    <CameraButtonContainer>
+                      <IconButton
+                        variant="camera"
+                        color={currentCharacterIndex === 1 ? "white" : "black"}
+                        onClick={
+                          isActive
+                            ? isAndroid
+                              ? handleOpenCamera
+                              : handleOpenGallery
+                            : undefined
+                        }
+                      />
+                    </CameraButtonContainer>
                   </TaskContent>
                 </TaskCard>
               </>
