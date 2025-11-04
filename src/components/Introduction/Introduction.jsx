@@ -5,6 +5,7 @@ import { useRef } from "react"
 import { useTranslation } from "react-i18next"
 
 import IconButton from "@ui/IconButton"
+import RiveAnimation from "@ui/RiveAnimation"
 
 import Rectangle from "./Rectangle.png"
 import {
@@ -15,6 +16,7 @@ import {
   Headline,
   Image,
   IntroductionContainer,
+  RiveAnimationContainer,
   TextBlock,
 } from "./styles"
 
@@ -56,16 +58,22 @@ export default function Introduction({ goToPhotoCapture }) {
 
   return (
     <IntroductionContainer data-introduction-container ref={containerRef}>
-      <CharacterImageContainer>
-        <CharacterImage
-          src={
-            currentCharacter.selectedImage ||
-            currentCharacter.characterImage?.file ||
-            ""
-          }
-          alt={currentCharacter.name || ""}
-        />
-      </CharacterImageContainer>
+      {currentCharacterIndex === 0 ? (
+        <RiveAnimationContainer>
+          <RiveAnimation src="/amaraWriting.riv" autoplay />
+        </RiveAnimationContainer>
+      ) : (
+        <CharacterImageContainer>
+          <CharacterImage
+            src={
+              currentCharacter.selectedImage ||
+              currentCharacter.characterImage?.file ||
+              ""
+            }
+            alt={currentCharacter.name || ""}
+          />
+        </CharacterImageContainer>
+      )}
 
       <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
         <Headline>{heading}</Headline>
