@@ -122,7 +122,7 @@ export const PaginationContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 3rem;
+  margin-top: 33rem;
   margin-bottom: 3rem;
 `
 
