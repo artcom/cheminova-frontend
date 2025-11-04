@@ -30,6 +30,7 @@ export default defineConfig(() => ({
       },
     ),
   ],
+
   resolve: {
     alias: {
       "@": resolve(__dirname, "./src"),
@@ -38,6 +39,32 @@ export default defineConfig(() => ({
       "@api": resolve(__dirname, "./src/api"),
       "@ui": resolve(__dirname, "./src/components/UI"),
       "@theme": resolve(__dirname, "./src/theme"),
+    },
+  },
+
+  server: {
+    proxy: {
+      "/api": {
+        target: "http://localhost:8080",
+        changeOrigin: true,
+        secure: false,
+        ws: true,
+        configure: (proxy) => {
+          proxy.on("error", (err) => {
+            console.log("proxy error", err)
+          })
+          proxy.on("proxyReq", (_proxyReq, req) => {
+            console.log("Sending Request to the Target:", req.method, req.url)
+          })
+          proxy.on("proxyRes", (proxyRes, req) => {
+            console.log(
+              "Received Response from the Target:",
+              proxyRes.statusCode,
+              req.url,
+            )
+          })
+        },
+      },
     },
   },
 }))

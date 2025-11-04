@@ -1,13 +1,8 @@
 export const MAX_SEARCH_DEPTH = 10
 
 export const parseRichText = (richText) => {
-  if (!richText) return null
-  if (typeof richText === "string") {
-    return richText
-  }
-  if (richText.text) {
-    return richText.text
-  }
+  if (typeof richText === "string") return richText
+  if (richText.text) return richText.text
   if (Array.isArray(richText)) {
     return richText
       .map((item) => {
@@ -22,17 +17,10 @@ export const parseRichText = (richText) => {
 }
 
 export const findContentByType = (localeContent, targetType) => {
-  if (!localeContent || !Array.isArray(localeContent)) {
-    return null
-  }
-
   const welcome = localeContent[0]
-  if (!welcome || !welcome.children) {
-    return null
-  }
 
   const searchHierarchy = (children, depth = 0) => {
-    if (!children || depth > MAX_SEARCH_DEPTH) return null
+    if (depth > MAX_SEARCH_DEPTH) return null
     for (const child of children) {
       if (
         child.__typename === targetType ||
@@ -41,7 +29,7 @@ export const findContentByType = (localeContent, targetType) => {
       ) {
         return child
       }
-      if (child.children && child.children.length > 0) {
+      if (child.children?.length > 0) {
         const found = searchHierarchy(child.children, depth + 1)
         if (found) return found
       }
@@ -53,79 +41,39 @@ export const findContentByType = (localeContent, targetType) => {
 }
 
 export const navigateToScreen = (localeContent, targetType) => {
-  if (!localeContent || !Array.isArray(localeContent)) {
-    return null
-  }
+  const welcome = localeContent[0]
+  const characterOverview = welcome.children.find(
+    (child) =>
+      child.title === "Character Overview" ||
+      child.__typename === "CharacterOverview",
+  )
 
-  try {
-    const welcome = localeContent[0]
-    if (!welcome || !welcome.children) {
-      return null
-    }
+  const chooseCharacter = characterOverview.children[0]
+  const introSearchAndCollect = chooseCharacter.children[0]
+  const photographyScreen = introSearchAndCollect.children[0]
+  const yourCollection = photographyScreen.children[0]
 
-    const characterOverview = welcome.children.find(
+  if (targetType === "PerspectiveScreen") {
+    return yourCollection.children.find(
       (child) =>
-        child.title === "Character Overview" ||
-        child.__typename === "CharacterOverview",
+        child.title === "Perspective Screen" ||
+        child.__typename === "PerspectiveScreen",
     )
-
-    if (!characterOverview || !characterOverview.children) {
-      return null
-    }
-
-    const chooseCharacter = characterOverview.children[0]
-    if (!chooseCharacter || !chooseCharacter.children) {
-      return null
-    }
-
-    const introSearchAndCollect = chooseCharacter.children[0]
-    if (!introSearchAndCollect || !introSearchAndCollect.children) {
-      return null
-    }
-
-    const photographyScreen = introSearchAndCollect.children[0]
-    if (!photographyScreen || !photographyScreen.children) {
-      return null
-    }
-
-    const yourCollection = photographyScreen.children[0]
-    if (!yourCollection || !yourCollection.children) {
-      return null
-    }
-
-    if (targetType === "PerspectiveScreen") {
-      const perspectiveScreen = yourCollection.children.find(
-        (child) =>
-          child.title === "Perspective Screen" ||
-          child.__typename === "PerspectiveScreen",
-      )
-      return perspectiveScreen
-    }
-
-    if (targetType === "EndingScreen") {
-      const perspectiveScreen = yourCollection.children.find(
-        (child) =>
-          child.title === "Perspective Screen" ||
-          child.__typename === "PerspectiveScreen",
-      )
-
-      if (!perspectiveScreen || !perspectiveScreen.children) {
-        return null
-      }
-
-      const endingScreen = perspectiveScreen.children.find(
-        (child) =>
-          child.title === "Ending Screen" ||
-          child.__typename === "EndingScreen",
-      )
-      return endingScreen
-    }
-
-    return null
-  } catch (error) {
-    console.warn(`Error navigating to ${targetType}:`, error)
-    return null
   }
+
+  if (targetType === "EndingScreen") {
+    const perspectiveScreen = yourCollection.children.find(
+      (child) =>
+        child.title === "Perspective Screen" ||
+        child.__typename === "PerspectiveScreen",
+    )
+    return perspectiveScreen.children.find(
+      (child) =>
+        child.title === "Ending Screen" || child.__typename === "EndingScreen",
+    )
+  }
+
+  return null
 }
 
 export const transformScreenData = (
@@ -133,16 +81,6 @@ export const transformScreenData = (
   fallbackTitle = "",
   fallbackDescription = "",
 ) => {
-  if (!screenData) {
-    return {
-      id: null,
-      title: fallbackTitle,
-      description: fallbackDescription,
-      backgroundImage: null,
-      locale: "en",
-    }
-  }
-
   return {
     id: screenData.id,
     title: screenData.heading || screenData.title || fallbackTitle,
@@ -153,8 +91,6 @@ export const transformScreenData = (
 }
 
 export const handleApiError = (error, context = "API request") => {
-  console.error(`❌ ${context} failed:`, error)
-
   let userMessage = "An unexpected error occurred"
   let errorCode = "UNKNOWN_ERROR"
 
@@ -183,10 +119,6 @@ export const handleApiError = (error, context = "API request") => {
 }
 
 export const processImageUrl = (imageData, baseUrl = "") => {
-  if (!imageData || !imageData.file) {
-    return null
-  }
-
   const imageUrl = imageData.file
 
   if (imageUrl.startsWith("http://") || imageUrl.startsWith("https://")) {
@@ -220,7 +152,6 @@ export const retryWithBackoff = async (
       }
 
       const delayTime = baseDelay * Math.pow(2, attempt - 1)
-      console.log(`Attempt ${attempt} failed, retrying in ${delayTime}ms...`)
       await delay(delayTime)
     }
   }

@@ -100,18 +100,9 @@ export default function usePhotoTasks(options = {}) {
 
   const handleFileObject = useCallback(
     async (file) => {
-      if (!file) return null
-
-      try {
-        const dataUrl = await compressImageFile(file)
-        if (typeof dataUrl === "string") {
-          addImageForCurrentTask(dataUrl)
-        }
-        return dataUrl
-      } catch (err) {
-        console.error("[usePhotoTasks] Failed to process image file", err)
-        return null
-      }
+      const dataUrl = await compressImageFile(file)
+      addImageForCurrentTask(dataUrl)
+      return dataUrl
     },
     [addImageForCurrentTask, compressImageFile],
   )

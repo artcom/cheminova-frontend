@@ -10,9 +10,23 @@ export const queryKeys = {
 }
 
 export const extractFromContentTree = {
-  getWelcome: (data) => {
+  getWelcomeLanguage: (data) => {
     if (!data || !Array.isArray(data) || data.length === 0) return null
     return data[0]
+  },
+
+  getWelcomeIntro: (data) => {
+    const welcomeLanguage = extractFromContentTree.getWelcomeLanguage(data)
+    if (!welcomeLanguage?.children || welcomeLanguage.children.length === 0)
+      return null
+    return welcomeLanguage.children[0]
+  },
+
+  getWelcome: (data) => {
+    const welcomeIntro = extractFromContentTree.getWelcomeIntro(data)
+    if (!welcomeIntro?.children || welcomeIntro.children.length === 0)
+      return null
+    return welcomeIntro.children[0]
   },
 
   getCharacterOverview: (data) => {
@@ -96,6 +110,34 @@ export const useAllContent = (options = {}) => {
     retryDelay: (attemptIndex) => Math.min(1000 * 2 ** attemptIndex, 30000),
     ...options,
   })
+}
+
+export const useWelcomeLanguageFromAll = (options = {}) => {
+  const { data: allContent, ...queryResult } = useAllContent(options)
+
+  const welcomeLanguageData = useMemo(
+    () => extractFromContentTree.getWelcomeLanguage(allContent),
+    [allContent],
+  )
+
+  return {
+    ...queryResult,
+    data: welcomeLanguageData,
+  }
+}
+
+export const useWelcomeIntroFromAll = (options = {}) => {
+  const { data: allContent, ...queryResult } = useAllContent(options)
+
+  const welcomeIntroData = useMemo(
+    () => extractFromContentTree.getWelcomeIntro(allContent),
+    [allContent],
+  )
+
+  return {
+    ...queryResult,
+    data: welcomeIntroData,
+  }
 }
 
 export const useWelcomeFromAll = (options = {}) => {

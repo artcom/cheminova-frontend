@@ -12,7 +12,6 @@ export default function CharacterShowcase({ showIntro, setShowIntro }) {
   const handleCharacterSelection = (index) => {
     if (charactersData && charactersData.length > 0) {
       setCurrentCharacterIndex(index)
-      console.log("Character selected:", charactersData[index].name)
       setShowIntro(false)
     }
   }

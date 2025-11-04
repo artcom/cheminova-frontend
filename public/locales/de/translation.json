@@ -25,6 +25,15 @@
       "takePhoto": "Foto machen",
       "gallery": "Galerie",
       "retake": "Wiederholen"
+    },
+    "metadata": {
+      "title": "Details zu Ihrem Foto hinzufügen",
+      "comment": "Kommentar (optional)",
+      "commentPlaceholder": "Teilen Sie Ihre Gedanken zu diesem Foto...",
+      "username": "Ihr Name (optional)",
+      "usernamePlaceholder": "Geben Sie Ihren Namen ein",
+      "save": "Speichern",
+      "skip": "Überspringen"
     }
   },
   "exploration": {
@@ -45,19 +54,27 @@
   "upload": {
     "title": "Sammlung hochladen",
     "question": "Möchten Sie die Sammlung hochladen?",
+    "questionWithCharacter": "{{description}} Ihre Fotos werden zu {{character}}s Sammlung hinzugefügt.",
+    "noImages": "Keine Bilder zum Hochladen. Bitte machen Sie zuerst einige Fotos.",
+    "noCharacterSelected": "Bitte wählen Sie einen Charakter aus, bevor Sie Ihre Fotos hochladen.",
     "buttons": {
       "yes": "Ja",
       "no": "Nein",
       "uploading": "Wird hochgeladen...",
       "retry": "Upload wiederholen",
-      "pleaseWait": "Bitte warten..."
+      "pleaseWait": "Bitte warten...",
+      "selectCharacter": "Charakter zuerst auswählen"
     },
     "status": {
       "preparing": "Vorbereitung",
       "uploading": "Wird hochgeladen",
+      "uploadingToCharacter": "{{count}} Bilder werden zu {{character}}s Sammlung hochgeladen...",
+      "uploadProgress": "{{current}} von {{total}} Bildern zu {{character}}s Sammlung hochgeladen",
       "success": "Upload erfolgreich",
       "error": "Upload fehlgeschlagen",
       "allComplete": "Alle Uploads erfolgreich abgeschlossen!",
+      "allCompleteForCharacter": "Alle Uploads für {{character}} erfolgreich abgeschlossen!",
+      "partialSuccess": "{{successful}} von {{total}} Uploads abgeschlossen. {{failed}} fehlgeschlagen.",
       "someFailedRetry": "Upload(s) fehlgeschlagen"
     },
     "missing": "Fehlt"
@@ -82,7 +99,9 @@
     "networkError": "Netzwerkfehler aufgetreten",
     "unexpectedError": "Unerwarteter Fehler aufgetreten",
     "contentLoadFailed": "Personalisierte Inhalte konnten nicht geladen werden",
-    "imageLoadFailed": "Hintergrundbild konnte nicht geladen werden"
+    "imageLoadFailed": "Hintergrundbild konnte nicht geladen werden",
+    "noCharacterSelected": "Kein Charakter ausgewählt. Bitte wählen Sie zuerst einen Charakter aus.",
+    "characterNotFound": "Charakter '{{character}}' wurde auf dem Server nicht gefunden. Bitte versuchen Sie, einen anderen Charakter auszuwählen."
   },
   "loading": {
     "default": "Wird geladen...",

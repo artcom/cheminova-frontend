@@ -1,4 +1,4 @@
-import { useUploadFromAll } from "@/api/hooks"
+import { useCharactersFromAll, useUploadFromAll } from "@/api/hooks"
 import useGlobalState from "@/hooks/useGlobalState"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
 import { useUploadImage } from "@/hooks/useUploadImage"
@@ -21,33 +21,14 @@ import {
 } from "./styles"
 
 const dataURLToFile = (dataURL, filename) => {
-  if (typeof dataURL !== "string") {
-    return null
-  }
-
   const [metadata, base64Data] = dataURL.split(",")
-  if (!metadata || !base64Data) {
-    return null
-  }
-
   const mimeMatch = metadata.match(/:(.*?);/)
-  if (!mimeMatch) {
-    return null
-  }
-
-  let binaryString
-  try {
-    binaryString = atob(base64Data)
-  } catch (error) {
-    console.warn("Failed to decode data URL", error)
-    return null
-  }
-
-  let length = binaryString.length
+  const binaryString = atob(base64Data)
+  const length = binaryString.length
   const u8arr = new Uint8Array(length)
 
-  while (length--) {
-    u8arr[length] = binaryString.charCodeAt(length)
+  for (let i = 0; i < length; i++) {
+    u8arr[i] = binaryString.charCodeAt(i)
   }
 
   return new File([u8arr], filename, { type: mimeMatch[1] })
@@ -60,14 +41,17 @@ export default function Upload({ goToGallery, images = [] }) {
   const [uploadErrors, setUploadErrors] = useState([])
   const { tasks } = usePhotoTasks()
 
-  // Fetch upload data from CMS
+  // Fetch upload data from CMS and character data
   const { data: uploadData } = useUploadFromAll(currentCharacterIndex)
+  const { data: charactersData } = useCharactersFromAll()
 
   const uploadImageMutation = useUploadImage()
   const isUploading = uploadImageMutation.isPending
   const validImages = images.filter(Boolean)
 
-  // Use CMS data if available, otherwise fallback to translations
+  const currentCharacter = charactersData[currentCharacterIndex]
+  const characterName = currentCharacter.name
+
   const uploadDescription = uploadData?.description
     ? uploadData.description.replace(/<[^>]*>/g, "")
     : t("upload.question")
@@ -84,44 +68,88 @@ export default function Upload({ goToGallery, images = [] }) {
 
     try {
       setUploadProgress(
-        `${t("upload.status.uploading")} ${validImages.length} images...`,
+        t("upload.status.uploadingToCharacter", {
+          count: validImages.length,
+          character: characterName,
+          defaultValue: `Uploading ${validImages.length} images to ${characterName}'s collection...`,
+        }),
       )
 
       const timestamp = Date.now()
+      const uploadResults = []
+      const uploadErrors = []
 
-      const uploadPromises = validImages.map(async (imageData, index) => {
-        const file = dataURLToFile(imageData, `photo-${timestamp}-${index}.jpg`)
+      for (let index = 0; index < validImages.length; index++) {
+        const imageData = validImages[index]
+        try {
+          const file = dataURLToFile(
+            imageData,
+            `photo-${timestamp}-${index}.jpg`,
+          )
+          const result = await uploadImageMutation.mutateAsync({ file })
+          uploadResults.push(result)
 
-        if (!file) {
-          throw new Error("Invalid image data")
+          setUploadProgress(
+            t("upload.status.uploadProgress", {
+              current: index + 1,
+              total: validImages.length,
+              character: characterName,
+              defaultValue: `Uploaded ${index + 1} of ${validImages.length} images to ${characterName}'s collection`,
+            }),
+          )
+        } catch (error) {
+          uploadErrors.push({
+            index: index + 1,
+            error: error.message || t("errors.unexpectedError"),
+          })
         }
-        const title = `Photo ${index + 1}`
+      }
 
-        return uploadImageMutation.mutateAsync({ file, title })
-      })
-
-      await Promise.all(uploadPromises)
-
-      setUploadProgress(t("upload.status.allComplete"))
-
-      setTimeout(() => {
-        goToGallery()
-      }, 2000)
+      if (uploadErrors.length === 0) {
+        setUploadProgress(
+          t("upload.status.allCompleteForCharacter", {
+            character: characterName,
+            defaultValue: `All uploads completed successfully for ${characterName}!`,
+          }),
+        )
+        setTimeout(() => {
+          goToGallery()
+        }, 2000)
+      } else if (uploadResults.length > 0) {
+        setUploadErrors(uploadErrors)
+        setUploadProgress(
+          t("upload.status.partialSuccess", {
+            successful: uploadResults.length,
+            failed: uploadErrors.length,
+            total: validImages.length,
+            defaultValue: `${uploadResults.length} of ${validImages.length} uploads completed. ${uploadErrors.length} failed.`,
+          }),
+        )
+      } else {
+        setUploadErrors(uploadErrors)
+        setUploadProgress(t("errors.uploadFailed"))
+      }
     } catch (error) {
-      console.error("Upload error:", error)
-      setUploadErrors([{ error: error.message || t("errors.unexpectedError") }])
+      setUploadErrors([{ error: error.message }])
       setUploadProgress(t("errors.uploadFailed"))
     }
   }
 
   const getButtonText = () => {
-    if (isUploading) {
-      return uploadProgress || t("upload.buttons.uploading")
-    }
-    if (uploadErrors.length > 0) {
-      return t("upload.buttons.retry")
-    }
+    if (isUploading) return uploadProgress || t("upload.buttons.uploading")
+    if (uploadErrors.length > 0) return t("upload.buttons.retry")
     return yesButtonText
+  }
+
+  const getUploadDescription = () => {
+    if (validImages.length === 0) return t("upload.noImages")
+
+    const baseDescription = uploadDescription || t("upload.question")
+    return t("upload.questionWithCharacter", {
+      description: baseDescription,
+      character: characterName,
+      defaultValue: `${baseDescription} Your photos will be added to ${characterName}'s collection.`,
+    })
   }
 
   return (
@@ -136,9 +164,7 @@ export default function Upload({ goToGallery, images = [] }) {
       </ImagesGrid>
 
       <QuestionBlock>
-        <Question>
-          {validImages.length > 0 ? uploadDescription : t("upload.noImages")}
-        </Question>
+        <Question>{getUploadDescription()}</Question>
 
         {uploadProgress && (
           <ProgressMessage $hasErrors={uploadErrors.length > 0}>
@@ -150,6 +176,7 @@ export default function Upload({ goToGallery, images = [] }) {
           <ErrorList>
             {uploadErrors.map((error, index) => (
               <div key={index}>
+                {error.index && `Photo ${error.index}: `}
                 {error.error?.message || error.error || "Unknown error"}
               </div>
             ))}

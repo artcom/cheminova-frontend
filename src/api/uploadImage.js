@@ -1,16 +1,27 @@
 import { API_BASE_URL } from "@/config/api"
 
-export const uploadImage = async (imageFile, title = null) => {
+export const uploadImage = async (
+  imageFile,
+  characterSlug,
+  { text, userName } = {},
+) => {
   const formData = new FormData()
   formData.append("image", imageFile)
 
-  if (title) {
-    formData.append("title", title)
+  if (text?.trim()) {
+    formData.append("text", text.trim())
   }
 
-  const response = await fetch(`${API_BASE_URL}/upload/`, {
+  if (userName?.trim()) {
+    formData.append("userName", userName.trim())
+  }
+
+  const response = await fetch(`${API_BASE_URL}/images/${characterSlug}/`, {
     method: "POST",
-    body: formData, // Don't set Content-Type header - let browser set it for FormData
+    body: formData,
+    headers: {
+      Accept: "application/json",
+    },
   })
 
   if (!response.ok) {

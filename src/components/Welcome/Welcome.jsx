@@ -3,6 +3,7 @@ import {
   useCharactersFromAll,
   useWelcomeFromAll,
 } from "@/api/hooks"
+import useGlobalState from "@/hooks/useGlobalState"
 import { useState } from "react"
 
 import Description from "@ui/Description"
@@ -19,7 +20,7 @@ import { ChildrenContainer, Layout, TextLayout } from "./styles"
 
 export default function Welcome({ goToIntroduction }) {
   const [showIntro, setShowIntro] = useState(true)
-  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
+  const { currentCharacterIndex, setCurrentCharacterIndex } = useGlobalState()
 
   const { data: welcomeData } = useWelcomeFromAll()
   const { data: characterOverviewData } = useCharacterOverviewFromAll()
