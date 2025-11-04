@@ -101,17 +101,16 @@ export default function PhotoCapture({
         <HeaderContainer>
           <HeaderText>{heading}</HeaderText>
         </HeaderContainer>
+        <TaskHeadline>
+          {photographyData.imageDescriptions[currentTaskIndex].shortDescription}
+        </TaskHeadline>
 
         <TasksContainer>
-          {tasks.slice(0, 1).map((task, index) => (
+          {tasks.map((task, index) => (
             <>
-              <TaskHeadline key={index}>
-                {photographyData.imageDescriptions[index].shortDescription}
-              </TaskHeadline>
-
               <TaskCard
                 key={index}
-                isActive={index === currentTaskIndex} // Highlight the active card
+                isActive={index === currentTaskIndex}
                 $characterIndex={currentCharacterIndex}
               >
                 {!taskImages[index] && (

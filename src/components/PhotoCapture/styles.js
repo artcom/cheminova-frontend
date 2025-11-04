@@ -39,6 +39,7 @@ export const TasksContainer = styled.div`
 
 export const TaskCard = styled.div`
   display: flex;
+  margin-top: 1.5rem;
   width: 19.25rem;
   height: 24.625rem;
   padding: 1.75rem 1.625rem;
