@@ -29,7 +29,7 @@ export const HeaderText = styled.h1`
 
 export const TasksContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 1.5rem;
   width: 19.25rem;
   height: 100%;
