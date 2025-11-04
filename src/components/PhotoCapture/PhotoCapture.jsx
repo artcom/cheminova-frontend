@@ -131,7 +131,7 @@ export default function PhotoCapture({
                     transform: isActive ? "translate(-9.7rem, -14rem)" : "none", // Adjust for centering
                     zIndex: isActive ? 2 : 1,
                     opacity: isActive ? 1 : 0.5,
-                    transition: "all 0.3s ease-in-out",
+                    transition: "all 0.6s ease-in-out",
                   }}
                 >
                   {!taskImages[index] && (
