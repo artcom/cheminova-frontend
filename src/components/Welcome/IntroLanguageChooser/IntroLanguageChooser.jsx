@@ -45,9 +45,10 @@ export default function IntroLanguageChooser() {
     <AnimatePresence>
       {!hasSelected && (
         <MotionChooserContainer
-          initial={{ opacity: 1 }}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.5, ease: "easeOut" }}
+          transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
         >
           <Title>Choose Language</Title>
           <LanguageOptions>
