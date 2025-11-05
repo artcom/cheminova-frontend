@@ -41,9 +41,7 @@ export default function PhotoCapture({
   const { data: photographyData } = usePhotographyFromAll(currentCharacterIndex)
 
   const heading = photographyData?.heading || t("photoCapture.title")
-
-  const cmsTaskDescriptions =
-    photographyData?.imageDescriptions?.map((item) => item.description) || []
+  const cmsTasks = photographyData?.imageDescriptions || []
 
   const {
     tasks,
@@ -52,7 +50,7 @@ export default function PhotoCapture({
     setCurrentTaskIndex,
     handleFileObject,
   } = usePhotoTasks({
-    tasks: cmsTaskDescriptions.length > 0 ? cmsTaskDescriptions : undefined,
+    tasks: cmsTasks.length > 0 ? cmsTasks : undefined,
     onImageCaptured,
     initialImages: capturedImages,
   })
@@ -107,17 +105,11 @@ export default function PhotoCapture({
         <HeaderContainer>
           <HeaderText>{heading}</HeaderText>
         </HeaderContainer>
-        <TaskHeadline>
-          {photographyData.imageDescriptions[currentTaskIndex].shortDescription}
-        </TaskHeadline>
+        <TaskHeadline>{tasks[currentTaskIndex].shortDescription}</TaskHeadline>
 
         <TasksContainer>
           {tasks.map((task, index) => {
             const isActive = index === currentTaskIndex
-            const taskDescriptionRaw =
-              photographyData.imageDescriptions[index].description
-            const taskDescription = taskDescriptionRaw.replace(/<[^>]*>/g, "")
-
             const positionIndex =
               (index - currentTaskIndex + tasks.length) % tasks.length
             const { x, y, opacity, zIndex } = cardPositions[positionIndex]
@@ -136,7 +128,7 @@ export default function PhotoCapture({
                   <>
                     {currentCharacterIndex === 0 && <ExtraBorder />}
                     <TaskDescription $characterIndex={currentCharacterIndex}>
-                      {taskDescription}
+                      {task.description}
                     </TaskDescription>
                   </>
                 )}

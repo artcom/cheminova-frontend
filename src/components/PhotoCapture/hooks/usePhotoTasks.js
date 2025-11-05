@@ -5,16 +5,30 @@ import { useTranslation } from "react-i18next"
 export default function usePhotoTasks(options = {}) {
   const { tasks: providedTasks, onImageCaptured, initialImages = [] } = options
   const { t } = useTranslation()
+  const sanitizeDescription = (description) =>
+    description.replace(/<[^>]*>/g, "") // Remove HTML tags
 
   // Create tasks array with translations
   const tasks = useMemo(() => {
     if (providedTasks && providedTasks.length > 0) {
-      return providedTasks
+      return providedTasks.map((task) => ({
+        ...task,
+        description: sanitizeDescription(task.description || ""),
+      }))
     }
     return [
-      t("photoCapture.tasks.laNau"),
-      t("photoCapture.tasks.surroundings"),
-      t("photoCapture.tasks.special"),
+      {
+        shortDescription: t("photoCapture.tasks.laNau"),
+        description: t("photoCapture.tasks.laNau"),
+      },
+      {
+        shortDescription: t("photoCapture.tasks.surroundings"),
+        description: t("photoCapture.tasks.surroundings"),
+      },
+      {
+        shortDescription: t("photoCapture.tasks.special"),
+        description: t("photoCapture.tasks.special"),
+      },
     ]
   }, [providedTasks, t])
 
