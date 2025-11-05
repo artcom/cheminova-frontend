@@ -3,6 +3,7 @@ import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { preloadImages, WELCOME_LAYER_IMAGES } from "@/utils/preloadImages"
 import { AnimatePresence, motion } from "motion/react"
 import { useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
@@ -169,7 +170,11 @@ export const id = "welcome"
 export async function clientLoader() {
   const locale = getCurrentLocale()
   const query = allContentQuery(locale)
-  const content = await queryClient.ensureQueryData(query)
+
+  const [content] = await Promise.all([
+    queryClient.ensureQueryData(query),
+    preloadImages(WELCOME_LAYER_IMAGES),
+  ])
 
   const welcome = extractFromContentTree.getWelcome(content)
   const characterOverview = extractFromContentTree.getCharacterOverview(content)
