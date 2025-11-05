@@ -42,9 +42,6 @@ export default function PhotoCapture({
 
   const heading = photographyData?.heading || t("photoCapture.title")
 
-  const retakeText =
-    photographyData?.retakePhotoButtonText || t("photoCapture.buttons.retake")
-
   const cmsTaskDescriptions =
     photographyData?.imageDescriptions?.map((item) => item.description) || []
 
@@ -54,7 +51,6 @@ export default function PhotoCapture({
     currentTaskIndex,
     setCurrentTaskIndex,
     handleFileObject,
-    retake,
   } = usePhotoTasks({
     tasks: cmsTaskDescriptions.length > 0 ? cmsTaskDescriptions : undefined,
     onImageCaptured,
@@ -148,9 +144,6 @@ export default function PhotoCapture({
                 <TaskContent $characterIndex={currentCharacterIndex}>
                   {taskImages[index] && (
                     <>
-                      <SmallButton onClick={() => retake(index)}>
-                        {retakeText}
-                      </SmallButton>
                       <TaskImage
                         $characterIndex={currentCharacterIndex}
                         src={taskImages[index]}
