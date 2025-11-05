@@ -1,5 +1,6 @@
 import { usePhotographyFromAll } from "@/api/hooks"
 import useGlobalState from "@/hooks/useGlobalState"
+import { useSwipe } from "@/hooks/useSwipe"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useRef } from "react"
 import { useTranslation } from "react-i18next"
@@ -60,36 +61,10 @@ export default function PhotoCapture({
     initialImages: capturedImages,
   })
 
-  const touchStartX = useRef(0)
-  const touchEndX = useRef(0)
-
-  const handleTouchStart = (event) => {
-    touchStartX.current = event.touches[0].clientX
-  }
-
-  const handleTouchMove = (event) => {
-    touchEndX.current = event.touches[0].clientX
-  }
-
-  const handleTouchEnd = () => {
-    const swipeDistance = touchStartX.current - touchEndX.current
-    const swipeThreshold = 50
-
-    if (swipeDistance > swipeThreshold) {
-      cycleCards("left")
-    } else if (swipeDistance < -swipeThreshold) {
-      cycleCards("right")
-    }
-  }
-
-  const handleFileChange = (event) => {
-    const file = event.target.files?.[0]
-    if (file) handleFileObject(file)
-    event.target.value = ""
-  }
-
-  const handleOpenCamera = () => cameraInputRef.current?.click()
-  const handleOpenGallery = () => galleryInputRef.current?.click()
+  const { handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipe(
+    () => cycleCards("left"),
+    () => cycleCards("right"),
+  )
 
   const cycleCards = (direction) => {
     setCurrentTaskIndex((prevIndex) => {
@@ -101,6 +76,15 @@ export default function PhotoCapture({
       return prevIndex
     })
   }
+
+  const handleFileChange = (event) => {
+    const file = event.target.files?.[0]
+    if (file) handleFileObject(file)
+    event.target.value = ""
+  }
+
+  const handleOpenCamera = () => cameraInputRef.current?.click()
+  const handleOpenGallery = () => galleryInputRef.current?.click()
 
   return (
     <>
