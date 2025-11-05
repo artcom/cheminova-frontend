@@ -118,11 +118,11 @@ export default function PhotoCapture({
               <TaskCard
                 key={index}
                 $characterIndex={currentCharacterIndex}
-                top={y}
-                left={`calc(50% + ${x})`}
+                $top={y}
+                $left={`calc(50% + ${x})`}
                 transform={`translate(-50%, -50%)`}
                 opacity={opacity}
-                zIndex={zIndex}
+                $zIndex={zIndex}
               >
                 {!taskImages[index] && (
                   <>

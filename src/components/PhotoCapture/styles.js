@@ -41,15 +41,15 @@ export const TaskCard = styled.div`
   position: absolute;
   width: 19.25rem;
   height: 24.625rem;
-  top: ${({ top }) => top};
-  left: ${({ left }) => left};
+  top: ${({ $top }) => $top};
+  left: ${({ $left }) => $left};
   display: flex;
   flex-direction: column;
   padding: 1.75rem 1.625rem;
   border-radius: 1.75rem;
   transform: ${({ transform }) => transform};
   opacity: ${({ opacity }) => opacity};
-  z-index: ${({ zIndex }) => zIndex};
+  z-index: ${({ $zIndex }) => $zIndex};
   background-color: ${({ $characterIndex }) =>
     characterStyles[$characterIndex]?.backgroundColor || "#f1ece1"};
   border: ${({ $characterIndex }) =>
