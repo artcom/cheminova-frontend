@@ -39,13 +39,6 @@ export const ChildrenContainer = styled.div`
      on specific interactive descendants with pointer-events: auto. */
 `
 
-export const LanguageSelectorContainer = styled.div`
-  position: fixed;
-  top: 2rem;
-  right: 2rem;
-  z-index: 1000;
-`
-
 export const LayersContainer = styled.div`
   position: fixed;
   bottom: 0;

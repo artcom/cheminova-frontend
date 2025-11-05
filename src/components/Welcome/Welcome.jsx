@@ -9,7 +9,6 @@ import { useLoaderData, useNavigate } from "react-router-dom"
 
 import Description from "@ui/Description"
 import Header from "@ui/Header"
-import LanguageSelector from "@ui/LanguageSelector"
 import Navigation from "@ui/Navigation"
 import Vignette from "@ui/Vignette"
 
@@ -18,9 +17,9 @@ import { STEP } from "./constants"
 import { useWelcomeBackground } from "./hooks/useWelcomeBackground"
 import { useWelcomeContent } from "./hooks/useWelcomeContent"
 import { useWelcomeSteps } from "./hooks/useWelcomeSteps"
+import IntroLanguageChooser from "./IntroLanguageChooser"
 import {
   ChildrenContainer,
-  LanguageSelectorContainer,
   LayerImage,
   LayersContainer,
   Layout,
@@ -54,6 +53,9 @@ const PARALLAX_LAYERS = [
     transition: { duration: 0.8, ease: "easeOut" },
   },
 ]
+
+// Create motion component once outside the component to prevent re-creation on each render
+const MotionLayerImage = motion.create(LayerImage)
 
 export default function Welcome() {
   const [showIntro, setShowIntro] = useState(true)
@@ -108,13 +110,11 @@ export default function Welcome() {
     characterOverviewData,
   )
 
-  const MotionLayerImage = motion.create(LayerImage)
-
   return (
     <Layout $backgroundImage={backgroundImage}>
-      <AnimatePresence>
+      <AnimatePresence mode="wait">
         {step === STEP.INTRO && (
-          <LayersContainer>
+          <LayersContainer key="intro-layers">
             {PARALLAX_LAYERS.map((layer) => (
               <MotionLayerImage
                 key={layer.id}
@@ -129,6 +129,7 @@ export default function Welcome() {
           </LayersContainer>
         )}
       </AnimatePresence>
+      {step === STEP.INTRO && <IntroLanguageChooser />}
       {step === STEP.CHARACTER && (
         <ChildrenContainer>
           <CharacterShowcase
@@ -159,9 +160,6 @@ export default function Welcome() {
       </TextLayout>
       <Navigation position="default" {...getNavigationProps(navigationMode)} />
       <Vignette />
-      <LanguageSelectorContainer>
-        <LanguageSelector />
-      </LanguageSelectorContainer>
     </Layout>
   )
 }
