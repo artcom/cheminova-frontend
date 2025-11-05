@@ -3,6 +3,7 @@ import { allContentQuery } from "@/api/queries"
 import { useGalleryImages } from "@/hooks/useGallery"
 import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
+import { queryClient } from "@/queryClient"
 import { Canvas } from "@react-three/fiber"
 import theme from "@theme"
 import { AnimatePresence, motion } from "motion/react"
@@ -218,21 +219,19 @@ export default function Gallery() {
   )
 }
 
-export const loader =
-  (queryClient) =>
-  async ({ params }) => {
-    const locale = getCurrentLocale()
-    const query = allContentQuery(locale)
-    const content = await queryClient.ensureQueryData(query)
+export async function clientLoader({ params }) {
+  const locale = getCurrentLocale()
+  const query = allContentQuery(locale)
+  const content = await queryClient.ensureQueryData(query)
 
-    const characterId = params.characterId
-    const characterIndex = Number.parseInt(characterId ?? "", 10)
+  const characterId = params.characterId
+  const characterIndex = Number.parseInt(characterId ?? "", 10)
 
-    if (Number.isNaN(characterIndex) || characterIndex < 0) {
-      throw new Response("Character not found", { status: 404 })
-    }
-
-    const gallery = extractFromContentTree.getGallery(content, characterIndex)
-
-    return { characterIndex, gallery }
+  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+    throw new Response("Character not found", { status: 404 })
   }
+
+  const gallery = extractFromContentTree.getGallery(content, characterIndex)
+
+  return { characterIndex, gallery }
+}

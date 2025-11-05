@@ -2,6 +2,7 @@ import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
+import { queryClient } from "@/queryClient"
 import { useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
@@ -103,7 +104,9 @@ export default function Welcome() {
   )
 }
 
-export const loader = (queryClient) => async () => {
+export const id = "welcome"
+
+export async function clientLoader() {
   const locale = getCurrentLocale()
   const query = allContentQuery(locale)
   const content = await queryClient.ensureQueryData(query)

@@ -1,27 +1,7 @@
 import StateProvider from "@/GlobalState"
 import GlobalStyles from "@/GlobalStyles"
 import LanguageProvider from "@/providers/LanguageProvider"
-import CharacterLayout, {
-  loader as characterLoader,
-} from "@/routes/CharacterLayout"
-import ErrorPage from "@/routes/ErrorPage"
-import Root, { AppLayout, loader as rootLoader } from "@/routes/Root"
-import Ending, { loader as endingLoader } from "@components/Ending"
-import Exploration, {
-  loader as explorationLoader,
-} from "@components/Exploration"
-import Gallery, { loader as galleryLoader } from "@components/Gallery"
-import Introduction, {
-  loader as introductionLoader,
-} from "@components/Introduction"
-import Perspective, {
-  loader as perspectiveLoader,
-} from "@components/Perspective"
-import PhotoCapture, {
-  loader as photoCaptureLoader,
-} from "@components/PhotoCapture"
-import Upload, { loader as uploadLoader } from "@components/Upload"
-import Welcome, { loader as welcomeLoader } from "@components/Welcome"
+import { queryClient } from "@/queryClient"
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import AppThemeProvider from "@theme/ThemeProvider"
@@ -32,30 +12,61 @@ import { createBrowserRouter, Navigate, RouterProvider } from "react-router-dom"
 // Initialize i18n
 import "@/i18n"
 
-const queryClient = new QueryClient()
+const queryClientInstance = queryClient ?? new QueryClient()
+
+function convert(module) {
+  const {
+    clientLoader,
+    clientAction,
+    default: Component,
+    ErrorBoundary,
+    HydrateFallback,
+    PendingComponent,
+    shouldRevalidate,
+    clientShouldRevalidate,
+    handle,
+    id,
+    links,
+    meta,
+    headers,
+  } = module
+
+  const route = {}
+
+  if (Component) route.Component = Component
+  if (clientLoader) route.loader = clientLoader
+  else if (module.loader) route.loader = module.loader
+  if (clientAction) route.action = clientAction
+  else if (module.action) route.action = module.action
+  if (ErrorBoundary) route.ErrorBoundary = ErrorBoundary
+  if (HydrateFallback) route.HydrateFallback = HydrateFallback
+  if (PendingComponent) route.PendingComponent = PendingComponent
+
+  const revalidate = clientShouldRevalidate ?? shouldRevalidate
+  if (typeof revalidate !== "undefined") {
+    route.shouldRevalidate = revalidate
+  }
+
+  if (typeof handle !== "undefined") route.handle = handle
+  if (typeof id !== "undefined") route.id = id
+  if (typeof links !== "undefined") route.links = links
+  if (typeof meta !== "undefined") route.meta = meta
+  if (typeof headers !== "undefined") route.headers = headers
+
+  return route
+}
 
 const router = createBrowserRouter([
   {
-    id: "root",
-    element: <Root />,
-    loader: rootLoader(queryClient),
-    errorElement: (
-      <AppLayout>
-        <ErrorPage />
-      </AppLayout>
-    ),
+    lazy: () => import("@/routes/Root").then(convert),
     children: [
       {
         index: true,
-        id: "welcome",
-        loader: welcomeLoader(queryClient),
-        element: <Welcome />,
+        lazy: () => import("@components/Welcome/Welcome").then(convert),
       },
       {
         path: "characters/:characterId",
-        id: "character",
-        loader: characterLoader(queryClient),
-        element: <CharacterLayout />,
+        lazy: () => import("@/routes/CharacterLayout").then(convert),
         children: [
           {
             index: true,
@@ -63,38 +74,35 @@ const router = createBrowserRouter([
           },
           {
             path: "introduction",
-            loader: introductionLoader(queryClient),
-            element: <Introduction />,
+            lazy: () =>
+              import("@components/Introduction/Introduction").then(convert),
           },
           {
             path: "photo-capture",
-            loader: photoCaptureLoader(queryClient),
-            element: <PhotoCapture />,
+            lazy: () =>
+              import("@components/PhotoCapture/PhotoCapture").then(convert),
           },
           {
             path: "exploration",
-            loader: explorationLoader(queryClient),
-            element: <Exploration />,
+            lazy: () =>
+              import("@components/Exploration/Exploration").then(convert),
           },
           {
             path: "perspective",
-            loader: perspectiveLoader(queryClient),
-            element: <Perspective />,
+            lazy: () =>
+              import("@components/Perspective/Perspective").then(convert),
           },
           {
             path: "upload",
-            loader: uploadLoader(queryClient),
-            element: <Upload />,
+            lazy: () => import("@components/Upload/Upload").then(convert),
           },
           {
             path: "gallery",
-            loader: galleryLoader(queryClient),
-            element: <Gallery />,
+            lazy: () => import("@components/Gallery/Gallery").then(convert),
           },
           {
             path: "ending",
-            loader: endingLoader(queryClient),
-            element: <Ending />,
+            lazy: () => import("@components/Ending/Ending").then(convert),
           },
         ],
       },
@@ -104,7 +112,7 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <StrictMode>
-    <QueryClientProvider client={queryClient}>
+    <QueryClientProvider client={queryClientInstance}>
       <LanguageProvider>
         <StateProvider>
           <AppThemeProvider>

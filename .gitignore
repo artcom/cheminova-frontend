@@ -3,3 +3,5 @@ dist
 .eslintcache
 .vscode
 .env
+.react-router/
+build

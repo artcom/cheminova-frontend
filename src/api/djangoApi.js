@@ -17,6 +17,16 @@ const apiRequest = async (endpoint, options = {}) => {
     throw new Error(`HTTP error! status: ${response.status}`)
   }
 
+  const contentType = response.headers.get("content-type") || ""
+
+  if (!contentType.toLowerCase().includes("application/json")) {
+    const preview = await response.text()
+    const snippet = preview.slice(0, 120)
+    throw new Error(
+      `Unexpected response format from ${url}. Expected JSON but received ${contentType || "unknown"}. Preview: ${snippet}`,
+    )
+  }
+
   return response.json()
 }
 

@@ -1,6 +1,7 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
 import { getCurrentLocale } from "@/i18n"
+import { queryClient } from "@/queryClient"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
 import { useTranslation } from "react-i18next"
@@ -97,33 +98,28 @@ export default function Introduction() {
   )
 }
 
-export const loader =
-  (queryClient) =>
-  async ({ params }) => {
-    const locale = getCurrentLocale()
-    const query = allContentQuery(locale)
-    const content = await queryClient.ensureQueryData(query)
+export async function clientLoader({ params }) {
+  const locale = getCurrentLocale()
+  const query = allContentQuery(locale)
+  const content = await queryClient.ensureQueryData(query)
 
-    const characterId = params.characterId
-    const characterIndex = Number.parseInt(characterId ?? "", 10)
+  const characterId = params.characterId
+  const characterIndex = Number.parseInt(characterId ?? "", 10)
 
-    if (Number.isNaN(characterIndex) || characterIndex < 0) {
-      throw new Response("Character not found", { status: 404 })
-    }
-
-    const character = extractFromContentTree.getCharacter(
-      content,
-      characterIndex,
-    )
-
-    if (!character) {
-      throw new Response("Character not found", { status: 404 })
-    }
-
-    const introduction = extractFromContentTree.getIntroduction(
-      content,
-      characterIndex,
-    )
-
-    return { characterIndex, character, introduction }
+  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+    throw new Response("Character not found", { status: 404 })
   }
+
+  const character = extractFromContentTree.getCharacter(content, characterIndex)
+
+  if (!character) {
+    throw new Response("Character not found", { status: 404 })
+  }
+
+  const introduction = extractFromContentTree.getIntroduction(
+    content,
+    characterIndex,
+  )
+
+  return { characterIndex, character, introduction }
+}

@@ -13,7 +13,7 @@
 npm i
 ```
 
-**Start the Vite development server**
+**Start the development server (React Router + Vite)**
 
 ```bash
 npm run dev
@@ -23,10 +23,18 @@ Open http://localhost:5173 in your browser. The server automatically reloads on 
 
 ### Bundling
 
-To bundle the application with vite which uses rollup, run the following command in the cli from the root directory of project:
+Bundle the application via the React Router build (powered by Vite/Rollup):
 
 ```bash
 npm run build
+```
+
+### Previewing the production build
+
+Build first, then serve the generated client bundle from `build/client` using Vite's preview server:
+
+```bash
+npm run preview
 ```
 
 ### Enable prettier (VSCode)

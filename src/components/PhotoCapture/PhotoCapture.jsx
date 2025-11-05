@@ -2,6 +2,7 @@ import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
+import { queryClient } from "@/queryClient"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -229,24 +230,22 @@ export default function PhotoCapture() {
   )
 }
 
-export const loader =
-  (queryClient) =>
-  async ({ params }) => {
-    const locale = getCurrentLocale()
-    const query = allContentQuery(locale)
-    const content = await queryClient.ensureQueryData(query)
+export async function clientLoader({ params }) {
+  const locale = getCurrentLocale()
+  const query = allContentQuery(locale)
+  const content = await queryClient.ensureQueryData(query)
 
-    const characterId = params.characterId
-    const characterIndex = Number.parseInt(characterId ?? "", 10)
+  const characterId = params.characterId
+  const characterIndex = Number.parseInt(characterId ?? "", 10)
 
-    if (Number.isNaN(characterIndex) || characterIndex < 0) {
-      throw new Response("Character not found", { status: 404 })
-    }
-
-    const photography = extractFromContentTree.getPhotography(
-      content,
-      characterIndex,
-    )
-
-    return { characterIndex, photography }
+  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+    throw new Response("Character not found", { status: 404 })
   }
+
+  const photography = extractFromContentTree.getPhotography(
+    content,
+    characterIndex,
+  )
+
+  return { characterIndex, photography }
+}
