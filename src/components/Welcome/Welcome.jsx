@@ -3,7 +3,7 @@ import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
-import { motion } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 import { useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
@@ -15,11 +15,9 @@ import Vignette from "@ui/Vignette"
 
 import CharacterShowcase from "./CharacterShowcase"
 import { STEP } from "./constants"
-import { getLayerAnimation } from "./hooks/useParallaxLayers"
 import { useWelcomeBackground } from "./hooks/useWelcomeBackground"
 import { useWelcomeContent } from "./hooks/useWelcomeContent"
 import { useWelcomeSteps } from "./hooks/useWelcomeSteps"
-import { LAYERS_CONFIG } from "./layersConfig"
 import {
   ChildrenContainer,
   LanguageSelectorContainer,
@@ -28,6 +26,34 @@ import {
   Layout,
   TextLayout,
 } from "./styles"
+
+// Inline layer configuration with animations
+const PARALLAX_LAYERS = [
+  {
+    id: "third",
+    src: "/layer/layer_third.png",
+    initial: { x: "-120%", y: 100, scale: 0.9, opacity: 0 },
+    animate: { x: "-110%", y: "-10%", scale: 1, opacity: 1 },
+    exit: { x: "-120%", y: -100, scale: 1.1, opacity: 0 },
+    transition: { duration: 1.2, ease: "easeOut" },
+  },
+  {
+    id: "second",
+    src: "/layer/layer_second.png",
+    initial: { x: "-40%", y: 150, scale: 0.9, opacity: 0 },
+    animate: { x: "-50%", y: "5%", scale: 1, opacity: 1 },
+    exit: { x: "-40%", y: -150, scale: 1.2, opacity: 0 },
+    transition: { duration: 1.0, ease: "easeOut" },
+  },
+  {
+    id: "front",
+    src: "/layer/layer_front.png",
+    initial: { x: "-50%", y: 200, scale: 0.8, opacity: 0 },
+    animate: { x: "-50%", y: "20%", scale: 1, opacity: 1 },
+    exit: { x: "-50%", y: -200, scale: 1.3, opacity: 0 },
+    transition: { duration: 0.8, ease: "easeOut" },
+  },
+]
 
 export default function Welcome() {
   const [showIntro, setShowIntro] = useState(true)
@@ -50,12 +76,18 @@ export default function Welcome() {
   const characterOverviewData = characterOverview
   const charactersData = characters
 
+  console.log("Welcome component loaded data:", {
+    welcomeData,
+    characterOverviewData,
+    charactersData,
+  })
+
   const handleGoToIntroduction = () => {
     clearCapturedImages()
     navigate(`/characters/${currentCharacterIndex}/introduction`)
   }
 
-  const { step, setStep, getNavigationProps, isExiting } = useWelcomeSteps({
+  const { step, setStep, getNavigationProps } = useWelcomeSteps({
     goToIntroduction: handleGoToIntroduction,
     showIntro,
     setShowIntro,
@@ -76,23 +108,27 @@ export default function Welcome() {
     characterOverviewData,
   )
 
+  const MotionLayerImage = motion.create(LayerImage)
+
   return (
     <Layout $backgroundImage={backgroundImage}>
-      <LayersContainer>
-        {LAYERS_CONFIG.map((layer) => {
-          const animation = getLayerAnimation(layer.id, isExiting)
-          const MotionLayerImage = motion.create(LayerImage)
-
-          return (
-            <MotionLayerImage
-              key={layer.id}
-              src={layer.src}
-              alt=""
-              {...animation}
-            />
-          )
-        })}
-      </LayersContainer>
+      <AnimatePresence>
+        {step === STEP.INTRO && (
+          <LayersContainer>
+            {PARALLAX_LAYERS.map((layer) => (
+              <MotionLayerImage
+                key={layer.id}
+                src={layer.src}
+                alt=""
+                initial={layer.initial}
+                animate={layer.animate}
+                exit={layer.exit}
+                transition={layer.transition}
+              />
+            ))}
+          </LayersContainer>
+        )}
+      </AnimatePresence>
       {step === STEP.CHARACTER && (
         <ChildrenContainer>
           <CharacterShowcase

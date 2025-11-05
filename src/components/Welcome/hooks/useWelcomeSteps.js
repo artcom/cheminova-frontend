@@ -12,16 +12,8 @@ export function useWelcomeSteps({
   initialStep = STEP.INTRO,
 }) {
   const [step, setStep] = useState(initialStep)
-  const [isExiting, setIsExiting] = useState(false)
 
-  const advanceFromIntro = () => {
-    setIsExiting(true)
-    // Allow exit animation to complete before changing step
-    setTimeout(() => {
-      setStep(STEP.CHARACTER)
-      setIsExiting(false)
-    }, 1200) // Longest layer animation duration
-  }
+  const advanceFromIntro = () => setStep(STEP.CHARACTER)
 
   const confirmCharacter = () => {
     setShowIntro(false)
@@ -71,6 +63,5 @@ export function useWelcomeSteps({
     handleCharacterPrev,
     handleCharacterNext,
     getNavigationProps,
-    isExiting,
   }
 }
