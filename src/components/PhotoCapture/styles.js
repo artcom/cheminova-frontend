@@ -141,8 +141,8 @@ export const PaginationDot = styled.div`
 
 export const cardPositions = [
   { x: "0px", y: "28rem", opacity: 1, zIndex: 2 },
-  { x: "11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
-  { x: "-11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
+  { x: "11rem", y: "25.5rem", opacity: 0.5, zIndex: 1 },
+  { x: "-11rem", y: "25.5rem", opacity: 0.5, zIndex: 1 },
 ]
 
 const characterStyles = [
