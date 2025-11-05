@@ -89,13 +89,8 @@ export default function usePhotoTasks(options = {}) {
       if (onImageCaptured) {
         onImageCaptured(dataUrl, currentTaskIndex)
       }
-
-      // Auto-advance to next task if not at the end
-      if (currentTaskIndex < tasks.length - 1) {
-        setCurrentTaskIndex((prev) => prev + 1)
-      }
     },
-    [currentTaskIndex, tasks.length, onImageCaptured],
+    [currentTaskIndex, onImageCaptured],
   )
 
   const handleFileObject = useCallback(
