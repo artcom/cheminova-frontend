@@ -3,6 +3,7 @@ import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { motion } from "motion/react"
 import { useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
@@ -14,12 +15,16 @@ import Vignette from "@ui/Vignette"
 
 import CharacterShowcase from "./CharacterShowcase"
 import { STEP } from "./constants"
+import { getLayerAnimation } from "./hooks/useParallaxLayers"
 import { useWelcomeBackground } from "./hooks/useWelcomeBackground"
 import { useWelcomeContent } from "./hooks/useWelcomeContent"
 import { useWelcomeSteps } from "./hooks/useWelcomeSteps"
+import { LAYERS_CONFIG } from "./layersConfig"
 import {
   ChildrenContainer,
   LanguageSelectorContainer,
+  LayerImage,
+  LayersContainer,
   Layout,
   TextLayout,
 } from "./styles"
@@ -32,6 +37,12 @@ export default function Welcome() {
     clearCapturedImages,
   } = useGlobalState()
   const navigate = useNavigate()
+  console.info(
+    "showIntro:",
+    showIntro,
+    "currentCharacterIndex:",
+    currentCharacterIndex,
+  )
 
   const { welcome, characterOverview, characters } = useLoaderData()
 
@@ -44,7 +55,7 @@ export default function Welcome() {
     navigate(`/characters/${currentCharacterIndex}/introduction`)
   }
 
-  const { step, setStep, getNavigationProps } = useWelcomeSteps({
+  const { step, setStep, getNavigationProps, isExiting } = useWelcomeSteps({
     goToIntroduction: handleGoToIntroduction,
     showIntro,
     setShowIntro,
@@ -67,6 +78,21 @@ export default function Welcome() {
 
   return (
     <Layout $backgroundImage={backgroundImage}>
+      <LayersContainer>
+        {LAYERS_CONFIG.map((layer) => {
+          const animation = getLayerAnimation(layer.id, isExiting)
+          const MotionLayerImage = motion.create(LayerImage)
+
+          return (
+            <MotionLayerImage
+              key={layer.id}
+              src={layer.src}
+              alt=""
+              {...animation}
+            />
+          )
+        })}
+      </LayersContainer>
       {step === STEP.CHARACTER && (
         <ChildrenContainer>
           <CharacterShowcase
