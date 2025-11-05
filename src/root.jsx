@@ -27,12 +27,12 @@ export const links = () => [
 
 export function Layout({ children }) {
   return (
-    <html lang="en">
+    <html lang="en" style={{ margin: 0, padding: 0 }}>
       <head>
         <Meta />
         <Links />
       </head>
-      <body>
+      <body style={{ margin: 0, padding: 0 }}>
         {children}
         <noscript>
           This application requires JavaScript to run. Please enable JavaScript
@@ -68,20 +68,18 @@ export function HydrateFallback() {
       aria-live="polite"
       style={{
         display: "flex",
-        flexDirection: "column",
         alignItems: "center",
         justifyContent: "center",
-        gap: "1rem",
-        minHeight: "100vh",
+        width: "100vw",
+        height: "100vh",
+        margin: 0,
+        padding: 0,
         backgroundColor: "#0b0b0b",
-        color: "#ffffff",
-        fontFamily: "Bricolage Grotesque, sans-serif",
+        fontFamily: "Arial, sans-serif",
+        overflow: "hidden",
       }}
     >
-      <LoadingSpinner size="32px" text="Loading the experience..." />
-      <p style={{ margin: 0, fontSize: "1rem", opacity: 0.9 }}>
-        Preparing content—hang tight!
-      </p>
+      <LoadingSpinner size="48px" />
     </div>
   )
 }
