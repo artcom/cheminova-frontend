@@ -11,6 +11,7 @@ import IconButton from "../UI/IconButton"
 import usePhotoTasks from "./hooks/usePhotoTasks"
 import {
   CameraButtonContainer,
+  cardPositions,
   ExtraBorder,
   HeaderContainer,
   HeaderText,
@@ -25,12 +26,6 @@ import {
   TaskImage,
   TasksContainer,
 } from "./styles"
-
-const cardPositions = [
-  { x: "0px", y: "28rem", opacity: 1, zIndex: 2 },
-  { x: "11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
-  { x: "-11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
-]
 
 export default function PhotoCapture({
   goToExploration,
@@ -133,15 +128,11 @@ export default function PhotoCapture({
               <TaskCard
                 key={index}
                 $characterIndex={currentCharacterIndex}
-                style={{
-                  position: "absolute",
-                  top: y,
-                  left: `calc(50% + ${x})`,
-                  transform: `translate(-50%, -50%)`,
-                  opacity,
-                  zIndex,
-                  transition: "all 0.3s ease, opacity 0.3s ease",
-                }}
+                top={y}
+                left={`calc(50% + ${x})`}
+                transform={`translate(-50%, -50%)`}
+                opacity={opacity}
+                zIndex={zIndex}
               >
                 {!taskImages[index] && (
                   <>

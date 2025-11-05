@@ -39,27 +39,24 @@ export const TasksContainer = styled.div`
 
 export const TaskCard = styled.div`
   position: absolute;
-  display: flex;
-  margin-top: 1.5rem;
   width: 19.25rem;
   height: 24.625rem;
-  padding: 1.75rem 1.625rem;
+  top: ${({ top }) => top};
+  left: ${({ left }) => left};
+  display: flex;
   flex-direction: column;
-  justify-items: center;
-  gap: 1.125rem;
-  flex-shrink: 0;
+  padding: 1.75rem 1.625rem;
   border-radius: 1.75rem;
+  transform: ${({ transform }) => transform};
+  opacity: ${({ opacity }) => opacity};
+  z-index: ${({ zIndex }) => zIndex};
   background-color: ${({ $characterIndex }) =>
     characterStyles[$characterIndex]?.backgroundColor || "#f1ece1"};
   border: ${({ $characterIndex }) =>
     characterStyles[$characterIndex]?.border || "none"};
-  margin-bottom: 2rem;
-  transition: "all 0.3s ease, opacity 0.3s ease";
-  top: ${({ top }) => top};
-  left: ${({ left }) => left};
-  transform: ${({ transform }) => transform};
-  opacity: ${({ opacity }) => opacity};
-  z-index: ${({ zIndex }) => zIndex};
+  transition:
+    all 0.3s ease,
+    opacity 0.3s ease;
 `
 
 export const TaskDescription = styled.h2`
@@ -141,6 +138,12 @@ export const PaginationDot = styled.div`
   background-color: ${({ $isActive }) => ($isActive ? "#fff" : "transparent")};
   transition: background-color 0.3s ease;
 `
+
+export const cardPositions = [
+  { x: "0px", y: "28rem", opacity: 1, zIndex: 2 },
+  { x: "11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
+  { x: "-11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
+]
 
 const characterStyles = [
   {
