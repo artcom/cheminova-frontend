@@ -58,8 +58,8 @@ export default function PhotoCapture({
   })
 
   const { handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipe(
-    () => cycleCards("left"),
     () => cycleCards("right"),
+    () => cycleCards("left"),
   )
 
   const cycleCards = (direction) => {
