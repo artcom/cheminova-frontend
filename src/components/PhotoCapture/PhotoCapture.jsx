@@ -27,9 +27,9 @@ import {
 } from "./styles"
 
 const cardPositions = [
-  { x: "-11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
   { x: "0px", y: "28rem", opacity: 1, zIndex: 2 },
   { x: "11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
+  { x: "-11rem", y: "24rem", opacity: 0.5, zIndex: 1 },
 ]
 
 export default function PhotoCapture({
