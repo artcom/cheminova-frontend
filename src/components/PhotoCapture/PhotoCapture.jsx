@@ -130,65 +130,62 @@ export default function PhotoCapture({
             const { x, y, opacity, zIndex } = cardPositions[positionIndex]
 
             return (
-              <>
-                <TaskCard
-                  key={index}
-                  isActive={isActive}
-                  $characterIndex={currentCharacterIndex}
-                  style={{
-                    position: "absolute",
-                    top: y,
-                    left: `calc(50% + ${x})`,
-                    transform: `translate(-50%, -50%)`,
-                    opacity,
-                    zIndex,
-                    transition: "all 0.3s ease, opacity 0.3s ease",
-                  }}
-                >
-                  {!taskImages[index] && (
+              <TaskCard
+                key={index}
+                $characterIndex={currentCharacterIndex}
+                style={{
+                  position: "absolute",
+                  top: y,
+                  left: `calc(50% + ${x})`,
+                  transform: `translate(-50%, -50%)`,
+                  opacity,
+                  zIndex,
+                  transition: "all 0.3s ease, opacity 0.3s ease",
+                }}
+              >
+                {!taskImages[index] && (
+                  <>
+                    {currentCharacterIndex === 0 && <ExtraBorder />}
+                    <TaskDescription $characterIndex={currentCharacterIndex}>
+                      {taskDescription}
+                    </TaskDescription>
+                  </>
+                )}
+
+                <TaskContent $characterIndex={currentCharacterIndex}>
+                  {taskImages[index] && (
                     <>
-                      {currentCharacterIndex === 0 && <ExtraBorder />}
-                      <TaskDescription $characterIndex={currentCharacterIndex}>
-                        {taskDescription}
-                      </TaskDescription>
+                      <SmallButton onClick={() => retake(index)}>
+                        {retakeText}
+                      </SmallButton>
+                      <TaskImage
+                        $characterIndex={currentCharacterIndex}
+                        src={taskImages[index]}
+                        alt={`Task ${index + 1} completed`}
+                      />
                     </>
                   )}
-
-                  <TaskContent $characterIndex={currentCharacterIndex}>
-                    {taskImages[index] && (
-                      <>
-                        <SmallButton onClick={() => retake(index)}>
-                          {retakeText}
-                        </SmallButton>
-                        <TaskImage
-                          $characterIndex={currentCharacterIndex}
-                          src={taskImages[index]}
-                          alt={`Task ${index + 1} completed`}
-                        />
-                      </>
-                    )}
-                    <CameraButtonContainer>
-                      <IconButton
-                        variant="camera"
-                        color={currentCharacterIndex === 1 ? "white" : "black"}
-                        onClick={
-                          isActive
-                            ? isAndroid
-                              ? handleOpenCamera
-                              : handleOpenGallery
-                            : undefined
-                        }
-                      />
-                    </CameraButtonContainer>
-                  </TaskContent>
-                </TaskCard>
-              </>
+                  <CameraButtonContainer>
+                    <IconButton
+                      variant="camera"
+                      color={currentCharacterIndex === 1 ? "white" : "black"}
+                      onClick={
+                        isActive
+                          ? isAndroid
+                            ? handleOpenCamera
+                            : handleOpenGallery
+                          : undefined
+                      }
+                    />
+                  </CameraButtonContainer>
+                </TaskContent>
+              </TaskCard>
             )
           })}
         </TasksContainer>
         <PaginationContainer>
           {tasks.map((_, index) => (
-            <PaginationDot key={index} isActive={index === currentTaskIndex} />
+            <PaginationDot key={index} $isActive={index === currentTaskIndex} />
           ))}
         </PaginationContainer>
         <SmallButton color="#FFF" onClick={goToExploration}>

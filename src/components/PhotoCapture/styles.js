@@ -131,7 +131,7 @@ export const PaginationDot = styled.div`
   height: 0.75rem;
   border-radius: 50%;
   border: 2px solid #fff;
-  background-color: ${({ isActive }) => (isActive ? "#fff" : "transparent")};
+  background-color: ${({ $isActive }) => ($isActive ? "#fff" : "transparent")};
   transition: background-color 0.3s ease;
 `
 
