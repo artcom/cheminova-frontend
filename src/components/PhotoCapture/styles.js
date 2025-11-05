@@ -38,6 +38,7 @@ export const TasksContainer = styled.div`
 `
 
 export const TaskCard = styled.div`
+  position: absolute;
   display: flex;
   margin-top: 1.5rem;
   width: 19.25rem;
@@ -53,6 +54,12 @@ export const TaskCard = styled.div`
   border: ${({ $characterIndex }) =>
     characterStyles[$characterIndex]?.border || "none"};
   margin-bottom: 2rem;
+  transition: "all 0.3s ease, opacity 0.3s ease";
+  top: ${({ top }) => top};
+  left: ${({ left }) => left};
+  transform: ${({ transform }) => transform};
+  opacity: ${({ opacity }) => opacity};
+  z-index: ${({ zIndex }) => zIndex};
 `
 
 export const TaskDescription = styled.h2`
