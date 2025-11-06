@@ -72,6 +72,7 @@ export const TaskDescription = styled.h2`
 
 export const TaskHeadline = styled.h2`
   color: #fff;
+  width: 21.4375rem;
   font-size: 1.5rem;
   font-style: bold;
   font-weight: 600;
@@ -120,6 +121,11 @@ export const CameraButtonContainer = styled.div`
   align-items: center;
   position: absolute;
   bottom: 1.5rem;
+`
+
+export const Footer = styled.div`
+  position: absolute;
+  top: 10rem;
 `
 
 export const PaginationContainer = styled.div`

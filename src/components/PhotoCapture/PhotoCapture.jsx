@@ -18,6 +18,7 @@ import {
   CameraButtonContainer,
   cardPositions,
   ExtraBorder,
+  Footer,
   HeaderContainer,
   HeaderText,
   HiddenInput,
@@ -242,17 +243,24 @@ export default function PhotoCapture() {
             )
           })}
         </TasksContainer>
-        <PaginationContainer>
-          {taskMetadata.map((_, index) => (
-            <PaginationDot key={index} $isActive={index === currentTaskIndex} />
-          ))}
-        </PaginationContainer>
-        <SmallButton
-          color="#FFF"
-          onClick={() => navigate(`/characters/${characterIndex}/exploration`)}
-        >
-          {photography.continueButtonText}
-        </SmallButton>
+        <Footer>
+          <PaginationContainer>
+            {taskMetadata.map((_, index) => (
+              <PaginationDot
+                key={index}
+                $isActive={index === currentTaskIndex}
+              />
+            ))}
+          </PaginationContainer>
+          <SmallButton
+            color="#FFF"
+            onClick={() =>
+              navigate(`/characters/${characterIndex}/exploration`)
+            }
+          >
+            {photography.continueButtonText}
+          </SmallButton>
+        </Footer>
       </PhotoCaptureContainer>
 
       {showMetadataModal && pendingImageData && (
