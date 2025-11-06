@@ -1,10 +1,10 @@
-import { useCharactersFromAll } from "@/api/hooks"
 import {
   CAROUSEL_ANIMATION,
   DRAG_CONFIG,
 } from "@components/Welcome/CharacterShowcase/utils/transformUtils"
 import { motion } from "motion/react"
 import { useTranslation } from "react-i18next"
+import { useRouteLoaderData } from "react-router-dom"
 import { styled } from "styled-components"
 
 import { useCharacterCarousel } from "../hooks/useCharacterCarousel"
@@ -50,7 +50,8 @@ const CharacterImage = styled(motion.img)`
 
 const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
   const { t } = useTranslation()
-  const { data: charactersData } = useCharactersFromAll()
+  const loaderData = useRouteLoaderData("welcome")
+  const charactersData = loaderData?.characters ?? []
 
   const { x, handleDragStart, handleDragEnd, dragConstraints } =
     useCharacterCarousel(

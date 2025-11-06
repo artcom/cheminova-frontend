@@ -5,30 +5,16 @@ import { useTranslation } from "react-i18next"
 export default function usePhotoTasks(options = {}) {
   const { tasks: providedTasks, onImageCaptured, initialImages = [] } = options
   const { t } = useTranslation()
-  const sanitizeDescription = (description) =>
-    description.replace(/<[^>]*>/g, "") // Remove HTML tags
 
   // Create tasks array with translations
   const tasks = useMemo(() => {
     if (providedTasks && providedTasks.length > 0) {
-      return providedTasks.map((task) => ({
-        ...task,
-        description: sanitizeDescription(task.description || ""),
-      }))
+      return providedTasks
     }
     return [
-      {
-        shortDescription: t("photoCapture.tasks.laNau"),
-        description: t("photoCapture.tasks.laNau"),
-      },
-      {
-        shortDescription: t("photoCapture.tasks.surroundings"),
-        description: t("photoCapture.tasks.surroundings"),
-      },
-      {
-        shortDescription: t("photoCapture.tasks.special"),
-        description: t("photoCapture.tasks.special"),
-      },
+      t("photoCapture.tasks.laNau"),
+      t("photoCapture.tasks.surroundings"),
+      t("photoCapture.tasks.special"),
     ]
   }, [providedTasks, t])
 
@@ -103,24 +89,20 @@ export default function usePhotoTasks(options = {}) {
       if (onImageCaptured) {
         onImageCaptured(dataUrl, currentTaskIndex)
       }
+
+      // Auto-advance to next task if not at the end
+      if (currentTaskIndex < tasks.length - 1) {
+        setCurrentTaskIndex((prev) => prev + 1)
+      }
     },
-    [currentTaskIndex, onImageCaptured],
+    [currentTaskIndex, tasks.length, onImageCaptured],
   )
 
   const handleFileObject = useCallback(
     async (file) => {
-      if (!file) return null
-
-      try {
-        const dataUrl = await compressImageFile(file)
-        if (typeof dataUrl === "string") {
-          addImageForCurrentTask(dataUrl)
-        }
-        return dataUrl
-      } catch (err) {
-        console.error("[usePhotoTasks] Failed to process image file", err)
-        return null
-      }
+      const dataUrl = await compressImageFile(file)
+      addImageForCurrentTask(dataUrl)
+      return dataUrl
     },
     [addImageForCurrentTask, compressImageFile],
   )

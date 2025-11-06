@@ -11,66 +11,49 @@ const apiRequest = async (endpoint, options = {}) => {
     ...options,
   }
 
-  try {
-    console.log(`🌐 API Request: ${url}`)
-    const response = await fetch(url, defaultOptions)
+  const response = await fetch(url, defaultOptions)
 
-    if (!response.ok) {
-      throw new Error(`HTTP error! status: ${response.status}`)
-    }
-
-    const data = await response.json()
-    console.log(`✅ API Response from ${endpoint}:`, data)
-    return data
-  } catch (error) {
-    console.error(`❌ API request failed for ${endpoint}:`, error)
-    throw error
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
   }
+
+  const contentType = response.headers.get("content-type") || ""
+
+  if (!contentType.toLowerCase().includes("application/json")) {
+    const preview = await response.text()
+    const snippet = preview.slice(0, 120)
+    throw new Error(
+      `Unexpected response format from ${url}. Expected JSON but received ${contentType || "unknown"}. Preview: ${snippet}`,
+    )
+  }
+
+  return response.json()
 }
 
 export const ALL_LOCALES_CONTENT_QUERY_KEY = ["all-locales-content"]
 
 export const fetchAllLocalesContent = async () => {
-  console.log("🌍 Fetching content for all locales...")
-  try {
-    const data = await apiRequest("/all/")
+  return apiRequest("/all/")
+}
 
-    console.log(
-      "✅ Content loaded for locales:",
-      Array.isArray(data) ? data.map((item) => item.locale) : [],
-    )
-    return data
-  } catch (error) {
-    console.error("❌ Failed to fetch all locales content:", error)
-    throw error
+export const fetchCharacterSlugs = async (locale) => {
+  const params = new URLSearchParams({ browsable: "false" })
+  if (locale) {
+    params.set("locale", locale)
   }
+
+  const query = params.toString()
+  const endpoint = `/characters/${query ? `?${query}` : ""}`
+  return apiRequest(endpoint)
 }
 
 export const getContentForLocale = (allLocalesContent, locale = "en") => {
-  if (!Array.isArray(allLocalesContent) || allLocalesContent.length === 0) {
-    console.warn("⚠️ No localized content available yet, returning null")
-    return null
-  }
-
-  const localeContent = allLocalesContent.find(
-    (item) => item?.locale === locale,
-  )
-
-  if (localeContent) {
-    console.log(`📋 Retrieved ${locale} content`)
-    return [localeContent]
-  }
-
-  console.warn(
-    `⚠️ No content found for locale: ${locale}, falling back to first available`,
-  )
-  return [allLocalesContent[0]]
+  const localeContent = allLocalesContent.find((item) => item.locale === locale)
+  return localeContent ? [localeContent] : [allLocalesContent[0]]
 }
 
 export const fetchApiRoot = async () => {
-  console.log("🔌 Fetching from Django API root...")
-  const data = await apiRequest("/")
-  return data
+  return apiRequest("/")
 }
 
 export const fetchAll = async (locale) => {

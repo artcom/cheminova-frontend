@@ -1,18 +1,22 @@
 import { resolve } from "path"
 import eslintPlugin from "@nabla/vite-plugin-eslint"
-import react from "@vitejs/plugin-react"
+import { reactRouter } from "@react-router/dev/vite"
 import { defineConfig } from "vite"
+import devtools from "vite-plugin-devtools-json"
 import webfontDownload from "vite-plugin-webfont-dl"
 
 export default defineConfig(() => ({
   base: process.env.VITE_BASE_PATH || "/",
   plugins: [
-    react({
-      babel: {
-        plugins: [
-          ["babel-plugin-react-compiler"],
-          ["babel-plugin-styled-components"],
-        ],
+    ...reactRouter({
+      routes: "./src/routes.js",
+      react: {
+        babel: {
+          plugins: [
+            ["babel-plugin-react-compiler"],
+            ["babel-plugin-styled-components"],
+          ],
+        },
       },
     }),
     eslintPlugin(),
@@ -29,6 +33,7 @@ export default defineConfig(() => ({
         subsetsAllowed: ["latin"],
       },
     ),
+    devtools(),
   ],
 
   resolve: {
@@ -48,6 +53,22 @@ export default defineConfig(() => ({
         target: "http://localhost:8080",
         changeOrigin: true,
         secure: false,
+        ws: true,
+        configure: (proxy) => {
+          proxy.on("error", (err) => {
+            console.log("proxy error", err)
+          })
+          proxy.on("proxyReq", (_proxyReq, req) => {
+            console.log("Sending Request to the Target:", req.method, req.url)
+          })
+          proxy.on("proxyRes", (proxyRes, req) => {
+            console.log(
+              "Received Response from the Target:",
+              proxyRes.statusCode,
+              req.url,
+            )
+          })
+        },
       },
     },
   },

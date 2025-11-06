@@ -30,7 +30,7 @@ export const CharacterImage = styled.img`
 
 export const ContentContainer = styled(motion.div)`
   position: absolute;
-  top: 31.3125rem;
+  top: 38.3125rem;
   left: 50%;
   display: flex;
   width: 90%;
@@ -72,6 +72,16 @@ export const Image = styled.img`
   width: 18.4375rem;
   height: 13.4375rem;
   border-radius: 1.75rem;
+`
+
+export const RiveAnimationContainer = styled.div`
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 0;
+  overflow: hidden;
 `
 
 export const CameraButtonContainer = styled.div`

@@ -13,7 +13,6 @@ import Gallery from "../Gallery"
 import Introduction from "../Introduction"
 import Perspective from "../Perspective"
 import PhotoCapture from "../PhotoCapture"
-import LanguageSelector from "../UI/LanguageSelector"
 import Upload from "../Upload"
 import Welcome from "../Welcome"
 
@@ -22,13 +21,6 @@ const AppContainer = styled.div`
   height: 100dvh;
   overflow: ${(props) => (props.$scroll ? "scroll" : "hidden")};
   position: relative;
-`
-
-const LanguageSelectorContainer = styled.div`
-  position: fixed;
-  top: 2rem;
-  right: 2rem;
-  z-index: 1000;
 `
 
 export default function App() {
@@ -64,17 +56,12 @@ export default function App() {
     <MobileOnlyGuard>
       <AppContainer>
         {state === "welcome" && (
-          <>
-            <Welcome
-              goToIntroduction={() => {
-                navigateToPage("introduction")
-                handleClearImages()
-              }}
-            />
-            <LanguageSelectorContainer>
-              <LanguageSelector />
-            </LanguageSelectorContainer>
-          </>
+          <Welcome
+            goToIntroduction={() => {
+              navigateToPage("introduction")
+              handleClearImages()
+            }}
+          />
         )}
         {state === "introduction" && (
           <Introduction

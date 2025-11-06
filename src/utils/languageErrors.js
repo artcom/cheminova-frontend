@@ -1,3 +1,3 @@
-export const handleLanguageError = (error, context = "unknown") => {
-  console.error(`❌ Language Error [${context}]:`, error.message)
+export const handleLanguageError = (error) => {
+  throw error
 }

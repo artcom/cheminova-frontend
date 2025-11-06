@@ -28,7 +28,7 @@ const Spinner = styled.div`
 
 const LoadingText = styled.span`
   color: #fff;
-  font-family: "Bricolage Grotesque";
+  font-family: "Arial", sans-serif;
   font-size: 0.875rem;
   font-weight: 500;
   animation: ${pulse} 1.5s ease-in-out infinite;

@@ -38,3 +38,26 @@ export const ChildrenContainer = styled.div`
      you can enable pass-through: pointer-events: none; and re-enable
      on specific interactive descendants with pointer-events: auto. */
 `
+
+export const LayersContainer = styled.div`
+  position: fixed;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: max-content;
+  height: auto;
+  pointer-events: none;
+  z-index: 1; /* Above background (0) but below text/UI (auto/higher) */
+  will-change: transform; /* Optimize for animations */
+`
+
+export const LayerImage = styled.img`
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  /* All transforms handled by Framer Motion - no CSS transform */
+  height: auto;
+  width: auto;
+  max-width: none; /* Allow overflow */
+  will-change: transform, opacity; /* Optimize for parallax animations */
+`

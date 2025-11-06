@@ -1,1 +1,1 @@
-export { default } from "./Exploration"
+export { default, loader } from "./Exploration"

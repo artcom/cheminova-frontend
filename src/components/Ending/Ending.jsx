@@ -1,6 +1,9 @@
-import { useEndingFromAll } from "@/api/hooks"
-import useGlobalState from "@/hooks/useGlobalState"
+import { extractFromContentTree } from "@/api/hooks"
+import { allContentQuery } from "@/api/queries"
+import { getCurrentLocale } from "@/i18n"
+import { queryClient } from "@/queryClient"
 import { useEffect, useState } from "react"
+import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
 import LoadingSpinner from "../UI/LoadingSpinner"
@@ -117,16 +120,15 @@ const NavigationWrapper = styled.div`
   padding-top: 2rem;
 `
 
-export default function Ending({ goToWelcome }) {
-  const { currentCharacterIndex } = useGlobalState()
-  const { data: endingData, isLoading } = useEndingFromAll(
-    currentCharacterIndex,
-  )
+export default function Ending() {
+  const { ending } = useLoaderData()
   const [imageLoaded, setImageLoaded] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
+  const navigate = useNavigate()
+  const isLoading = false
 
   useEffect(() => {
-    const imageUrl = endingData?.backgroundImage?.file
+    const imageUrl = ending?.backgroundImage?.file
     if (imageUrl) {
       const img = new Image()
       img.onload = () => setImageLoaded(true)
@@ -135,7 +137,7 @@ export default function Ending({ goToWelcome }) {
     } else {
       setImageLoaded(false)
     }
-  }, [endingData?.backgroundImage])
+  }, [ending?.backgroundImage])
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -146,14 +148,14 @@ export default function Ending({ goToWelcome }) {
   }, [])
 
   // Use CMS data - it's localized based on current language
-  const heading = endingData?.heading || ""
-  const description = endingData?.description
-    ? endingData.description.replace(/<[^>]*>/g, "")
+  const heading = ending?.heading || ""
+  const description = ending?.description
+    ? ending.description.replace(/<[^>]*>/g, "")
     : ""
 
   const backgroundImageUrl =
-    imageLoaded && endingData?.backgroundImage?.file
-      ? endingData.backgroundImage.file
+    imageLoaded && ending?.backgroundImage?.file
+      ? ending.backgroundImage.file
       : null
 
   return (
@@ -180,11 +182,37 @@ export default function Ending({ goToWelcome }) {
         <NavigationWrapper>
           <Navigation
             mode="single"
-            onSelect={goToWelcome}
+            onSelect={() => navigate("/")}
             disabled={isLoading}
           />
         </NavigationWrapper>
       </Content>
     </Screen>
   )
+}
+
+export async function clientLoader({ params }) {
+  const locale = getCurrentLocale()
+  const query = allContentQuery(locale)
+  const content = await queryClient.ensureQueryData(query)
+
+  const characterId = params.characterId
+  const characterIndex = Number.parseInt(characterId ?? "", 10)
+
+  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+    throw new Response("Character not found", { status: 404 })
+  }
+
+  const ending = extractFromContentTree.getEnding(content, characterIndex)
+
+  if (!ending) {
+    throw new Response("Ending not found", { status: 404 })
+  }
+
+  const endingMetas = extractFromContentTree.getEndingMetas(
+    content,
+    characterIndex,
+  )
+
+  return { characterIndex, ending, endingMetas }
 }

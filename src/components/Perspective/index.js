@@ -1,1 +1,1 @@
-export { default } from "./Perspective"
+export { default, loader } from "./Perspective"

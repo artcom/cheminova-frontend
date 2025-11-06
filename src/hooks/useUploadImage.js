@@ -1,39 +1,43 @@
-import { useCharactersFromAll } from "@/api/hooks"
+import { fetchCharacterSlugs } from "@/api/djangoApi"
 import { uploadImage } from "@/api/uploadImage"
-import useGlobalState from "@/hooks/useGlobalState"
-import { useMutation, useQueryClient } from "@tanstack/react-query"
+import { DEFAULT_LANGUAGE } from "@/config/language"
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useRef } from "react"
+import { useTranslation } from "react-i18next"
+import { useParams } from "react-router-dom"
 
 export const useUploadImage = () => {
   const queryClient = useQueryClient()
-  const { currentCharacterIndex } = useGlobalState()
-  const { data: charactersData } = useCharactersFromAll()
+  const { i18n } = useTranslation()
+  const locale = i18n.language || DEFAULT_LANGUAGE
+  const lastUploadedCharacterSlugRef = useRef(null)
+  const { characterId } = useParams()
+  const currentCharacterIndex = Number.parseInt(characterId ?? "", 10) || 0
 
-  // Get current character slug
-  const currentCharacter = charactersData?.[currentCharacterIndex]
-  const characterSlug = currentCharacter?.slug
+  const { data: characterSlugsData } = useQuery({
+    queryKey: ["character-slugs", locale],
+    queryFn: () => fetchCharacterSlugs(locale),
+    staleTime: 5 * 60 * 1000,
+    gcTime: 10 * 60 * 1000,
+    retry: 2,
+    enabled: Boolean(locale),
+  })
+
+  const getCharacterSlug = () => {
+    return characterSlugsData[0].characters[currentCharacterIndex].slug
+  }
 
   return useMutation({
-    mutationFn: ({ file, title }) => {
-      console.log("🔍 Upload Debug:", {
-        characterSlug,
-        currentCharacterIndex,
-        currentCharacter,
-        charactersData: charactersData?.length,
-      })
-      if (!characterSlug) {
-        throw new Error("No character selected for upload")
-      }
-      return uploadImage(file, characterSlug, title)
+    mutationFn: async ({ file, text, userName }) => {
+      const slug = getCharacterSlug()
+      lastUploadedCharacterSlugRef.current = slug
+      return uploadImage(file, slug, { text, userName })
     },
-    onSuccess: (data) => {
-      console.log("✅ Image uploaded successfully:", data)
-      // Invalidate character-specific image queries if they exist
-      queryClient.invalidateQueries({ queryKey: ["images", characterSlug] })
+    onSuccess: () => {
+      const slug = lastUploadedCharacterSlugRef.current
+      queryClient.invalidateQueries({ queryKey: ["images", slug] })
       queryClient.invalidateQueries({ queryKey: ["gallery-images"] })
       queryClient.invalidateQueries({ queryKey: ["recent-images"] })
-    },
-    onError: (error) => {
-      console.error("❌ Upload failed:", error.message)
     },
   })
 }

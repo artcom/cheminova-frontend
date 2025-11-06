@@ -1,6 +1,9 @@
-import { usePerspectiveFromAll } from "@/api/hooks"
-import useGlobalState from "@/hooks/useGlobalState"
+import { extractFromContentTree } from "@/api/hooks"
+import { allContentQuery } from "@/api/queries"
+import { getCurrentLocale } from "@/i18n"
+import { queryClient } from "@/queryClient"
 import { useEffect, useState } from "react"
+import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
 import LoadingSpinner from "../UI/LoadingSpinner"
@@ -92,15 +95,14 @@ const LoadingContainer = styled.div`
   margin-bottom: 2rem;
 `
 
-export default function Perspective({ goToUpload }) {
-  const { currentCharacterIndex } = useGlobalState()
-  const { data: perspectiveData, isLoading } = usePerspectiveFromAll(
-    currentCharacterIndex,
-  )
+export default function Perspective() {
+  const { characterIndex: currentCharacterIndex, perspective } = useLoaderData()
   const [imageLoaded, setImageLoaded] = useState(false)
+  const navigate = useNavigate()
+  const isLoading = false
 
   useEffect(() => {
-    const imageUrl = perspectiveData?.backgroundImage?.file
+    const imageUrl = perspective?.backgroundImage?.file
     if (imageUrl) {
       const img = new Image()
       img.onload = () => setImageLoaded(true)
@@ -109,17 +111,16 @@ export default function Perspective({ goToUpload }) {
     } else {
       setImageLoaded(false)
     }
-  }, [perspectiveData?.backgroundImage])
+  }, [perspective?.backgroundImage])
 
-  // Use CMS data - it's localized based on current language
-  const heading = perspectiveData?.heading || ""
-  const description = perspectiveData?.description
-    ? perspectiveData.description.replace(/<[^>]*>/g, "")
+  const heading = perspective?.heading || ""
+  const description = perspective?.description
+    ? perspective.description.replace(/<[^>]*>/g, "")
     : ""
 
   const backgroundImageUrl =
-    imageLoaded && perspectiveData?.backgroundImage?.file
-      ? perspectiveData.backgroundImage.file
+    imageLoaded && perspective?.backgroundImage?.file
+      ? perspective.backgroundImage.file
       : null
 
   return (
@@ -138,7 +139,35 @@ export default function Perspective({ goToUpload }) {
         {!isLoading && description && <Description>{description}</Description>}
       </Content>
 
-      <Navigation mode="single" onSelect={goToUpload} disabled={isLoading} />
+      <Navigation
+        mode="single"
+        onSelect={() => navigate(`/characters/${currentCharacterIndex}/upload`)}
+        disabled={isLoading}
+      />
     </Screen>
   )
+}
+
+export async function clientLoader({ params }) {
+  const locale = getCurrentLocale()
+  const query = allContentQuery(locale)
+  const content = await queryClient.ensureQueryData(query)
+
+  const characterId = params.characterId
+  const characterIndex = Number.parseInt(characterId ?? "", 10)
+
+  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+    throw new Response("Character not found", { status: 404 })
+  }
+
+  const perspective = extractFromContentTree.getPerspective(
+    content,
+    characterIndex,
+  )
+
+  if (!perspective) {
+    throw new Response("Perspective not found", { status: 404 })
+  }
+
+  return { characterIndex, perspective }
 }

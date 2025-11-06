@@ -1,14 +1,19 @@
-import { usePhotographyFromAll } from "@/api/hooks"
+import { extractFromContentTree } from "@/api/hooks"
+import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
 import { useSwipe } from "@/hooks/useSwipe"
+import { getCurrentLocale } from "@/i18n"
+import { queryClient } from "@/queryClient"
 import useDevicePlatform from "@hooks/useDevicePlatform"
-import { useRef } from "react"
+import { useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { useLoaderData, useNavigate } from "react-router-dom"
 
 import SmallButton from "@ui/SmallButton"
 
 import IconButton from "../UI/IconButton"
 import usePhotoTasks from "./hooks/usePhotoTasks"
+import PhotoCaptureMetadata from "./PhotoCaptureMetadata"
 import {
   CameraButtonContainer,
   cardPositions,
@@ -16,6 +21,7 @@ import {
   HeaderContainer,
   HeaderText,
   HiddenInput,
+  MetadataOverlay,
   PaginationContainer,
   PaginationDot,
   PhotoCaptureContainer,
@@ -27,31 +33,65 @@ import {
   TasksContainer,
 } from "./styles"
 
-export default function PhotoCapture({
-  goToExploration,
-  onImageCaptured,
-  capturedImages = [],
-}) {
+const DEFAULT_TASK_KEYS = ["laNau", "surroundings", "special"]
+
+export default function PhotoCapture() {
   const { t } = useTranslation()
   const { currentCharacterIndex } = useGlobalState()
+  const { capturedImages, setCapturedImageAt } = useGlobalState()
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
   const { isAndroid } = useDevicePlatform()
 
-  const { data: photographyData } = usePhotographyFromAll(currentCharacterIndex)
+  const [showMetadataModal, setShowMetadataModal] = useState(false)
+  const [pendingImageData, setPendingImageData] = useState(null)
+  const [photoMetadata, setPhotoMetadata] = useState({})
+  const navigate = useNavigate()
 
-  const heading = photographyData?.heading || t("photoCapture.title")
-  const cmsTasks = photographyData?.imageDescriptions || []
+  const { characterIndex, photography } = useLoaderData()
+
+  const heading = photography?.heading || t("photoCapture.title")
+
+  const fallbackTitles = useMemo(
+    () => DEFAULT_TASK_KEYS.map((key) => t(`photoCapture.tasks.${key}`)),
+    [t],
+  )
+
+  const taskMetadata = useMemo(() => {
+    const cmsTasks = photography?.imageDescriptions
+    if (cmsTasks && cmsTasks.length > 0) {
+      return cmsTasks.map((item, index) => {
+        const titleFallback = fallbackTitles[index] || fallbackTitles[0] || ""
+        return {
+          title: item?.shortDescription?.trim() || titleFallback,
+          description: (item?.description || "").trim(),
+        }
+      })
+    }
+
+    return fallbackTitles.map((title) => ({
+      title,
+      description: "",
+    }))
+  }, [photography?.imageDescriptions, fallbackTitles])
+
+  const tasksForHook = useMemo(
+    () =>
+      taskMetadata.map(({ description, title }) => description || title || ""),
+    [taskMetadata],
+  )
 
   const {
-    tasks,
     taskImages,
     currentTaskIndex,
     setCurrentTaskIndex,
     handleFileObject,
   } = usePhotoTasks({
-    tasks: cmsTasks.length > 0 ? cmsTasks : undefined,
-    onImageCaptured,
+    tasks: tasksForHook,
+    onImageCaptured: (dataUrl, taskIndex) => {
+      setPendingImageData({ dataUrl, taskIndex })
+      setShowMetadataModal(true)
+    },
     initialImages: capturedImages,
   })
 
@@ -63,9 +103,9 @@ export default function PhotoCapture({
   const cycleCards = (direction) => {
     setCurrentTaskIndex((prevIndex) => {
       if (direction === "left") {
-        return (prevIndex + 1) % tasks.length
+        return (prevIndex + 1) % taskMetadata.length
       } else if (direction === "right") {
-        return (prevIndex - 1 + tasks.length) % tasks.length
+        return (prevIndex - 1 + taskMetadata.length) % taskMetadata.length
       }
       return prevIndex
     })
@@ -79,6 +119,34 @@ export default function PhotoCapture({
 
   const handleOpenCamera = () => cameraInputRef.current?.click()
   const handleOpenGallery = () => galleryInputRef.current?.click()
+
+  const handleMetadataSave = ({ text, userName, taskIndex }) => {
+    console.log(text, userName, taskIndex)
+    setPhotoMetadata((prev) => ({
+      ...prev,
+      [taskIndex]: { text, userName },
+    }))
+
+    if (pendingImageData) {
+      setCapturedImageAt(taskIndex, pendingImageData.dataUrl)
+    }
+
+    setShowMetadataModal(false)
+    setPendingImageData(null)
+  }
+
+  const handleMetadataSkip = (taskIndex) => {
+    if (pendingImageData) {
+      setCapturedImageAt(taskIndex, pendingImageData.dataUrl)
+    }
+
+    setShowMetadataModal(false)
+    setPendingImageData(null)
+  }
+
+  const getMetadataForTask = (taskIndex) => {
+    return photoMetadata[taskIndex] || { text: "", userName: "" }
+  }
 
   return (
     <>
@@ -105,13 +173,17 @@ export default function PhotoCapture({
         <HeaderContainer>
           <HeaderText>{heading}</HeaderText>
         </HeaderContainer>
-        <TaskHeadline>{tasks[currentTaskIndex].shortDescription}</TaskHeadline>
+        <TaskHeadline>{taskMetadata[currentTaskIndex].title}</TaskHeadline>
 
         <TasksContainer>
-          {tasks.map((task, index) => {
+          {taskMetadata.map((task, index) => {
+            const metadata = getMetadataForTask(index)
+            const hasMetadata = metadata.text || metadata.userName
+            const taskDescription = sanitizeDescription(task.description)
             const isActive = index === currentTaskIndex
             const positionIndex =
-              (index - currentTaskIndex + tasks.length) % tasks.length
+              (index - currentTaskIndex + taskMetadata.length) %
+              taskMetadata.length
             const { x, y, opacity, zIndex } = cardPositions[positionIndex]
 
             return (
@@ -124,11 +196,20 @@ export default function PhotoCapture({
                 opacity={opacity}
                 $zIndex={zIndex}
               >
+                {hasMetadata && taskImages[index] && (
+                  <TaskDescription>
+                    {metadata.userName && (
+                      <strong>{metadata.userName}: </strong>
+                    )}
+                    {metadata.text && <em>{metadata.text}</em>}
+                  </TaskDescription>
+                )}
+
                 {!taskImages[index] && (
                   <>
                     {currentCharacterIndex === 0 && <ExtraBorder />}
                     <TaskDescription $characterIndex={currentCharacterIndex}>
-                      {task.description}
+                      {taskDescription}
                     </TaskDescription>
                   </>
                 )}
@@ -162,14 +243,53 @@ export default function PhotoCapture({
           })}
         </TasksContainer>
         <PaginationContainer>
-          {tasks.map((_, index) => (
+          {taskMetadata.map((_, index) => (
             <PaginationDot key={index} $isActive={index === currentTaskIndex} />
           ))}
         </PaginationContainer>
-        <SmallButton color="#FFF" onClick={goToExploration}>
-          {photographyData.continueButtonText}
+        <SmallButton
+          color="#FFF"
+          onClick={() => navigate(`/characters/${characterIndex}/exploration`)}
+        >
+          {photography.continueButtonText}
         </SmallButton>
       </PhotoCaptureContainer>
+
+      {showMetadataModal && pendingImageData && (
+        <>
+          <MetadataOverlay
+            onClick={() => handleMetadataSkip(pendingImageData.taskIndex)}
+          />
+          <PhotoCaptureMetadata
+            taskIndex={pendingImageData.taskIndex}
+            taskTitle={taskMetadata[pendingImageData.taskIndex]?.title}
+            onSave={handleMetadataSave}
+            onSkip={handleMetadataSkip}
+          />
+        </>
+      )}
     </>
   )
 }
+
+export async function clientLoader({ params }) {
+  const locale = getCurrentLocale()
+  const query = allContentQuery(locale)
+  const content = await queryClient.ensureQueryData(query)
+
+  const characterId = params.characterId
+  const characterIndex = Number.parseInt(characterId ?? "", 10)
+
+  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+    throw new Response("Character not found", { status: 404 })
+  }
+
+  const photography = extractFromContentTree.getPhotography(
+    content,
+    characterIndex,
+  )
+
+  return { characterIndex, photography }
+}
+
+const sanitizeDescription = (description) => description.replace(/<[^>]*>/g, "")

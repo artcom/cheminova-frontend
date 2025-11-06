@@ -1,11 +1,15 @@
-import { useGalleryFromAll } from "@/api/hooks"
+import { extractFromContentTree } from "@/api/hooks"
+import { allContentQuery } from "@/api/queries"
 import { useGalleryImages } from "@/hooks/useGallery"
 import useGlobalState from "@/hooks/useGlobalState"
+import { getCurrentLocale } from "@/i18n"
+import { queryClient } from "@/queryClient"
 import { Canvas } from "@react-three/fiber"
 import theme from "@theme"
 import { AnimatePresence, motion } from "motion/react"
 import { useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
+import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
 import Navigation from "@ui/Navigation"
@@ -41,41 +45,6 @@ const Stage = styled.div`
   overflow: hidden;
 `
 
-const DebugOverlay = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  background: rgba(0, 0, 0, 0.8);
-  color: white;
-  padding: 10px;
-  border-radius: 5px;
-  font-family: monospace;
-  font-size: 12px;
-  max-height: 80vh;
-  overflow-y: auto;
-  z-index: 100;
-  min-width: 300px;
-`
-
-const DebugControls = styled.div`
-  position: absolute;
-  top: 10px;
-  right: 10px;
-  display: flex;
-  gap: 5px;
-  z-index: 101;
-`
-
-const DebugButton = styled.button`
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: 1px solid #333;
-  padding: 5px 10px;
-  border-radius: 3px;
-  font-family: monospace;
-  font-size: 11px;
-`
-
 const ExitButton = styled.button`
   position: absolute;
   top: 20px;
@@ -99,9 +68,9 @@ const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
   import: "default",
 })
 
-export default function Gallery({ goToEnding, capturedImages = [] }) {
+export default function Gallery() {
   const { t } = useTranslation()
-  const { goStart, currentCharacterIndex } = useGlobalState()
+  const { capturedImages = [] } = useGlobalState()
   const tilesPerRow = useResponsiveTilesPerRow()
   const [allAnimsDone, setAllAnimsDone] = useState(false)
   const [detailMode, setDetailMode] = useState(false)
@@ -110,17 +79,14 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
   const [switchDir, setSwitchDir] = useState(0)
   const switchStartRef = useRef(0)
   const [detailStackScale, setDetailStackScale] = useState(null)
-  const [showDebugOverlay, setShowDebugOverlay] = useState(false)
-  const [tileDebugData, setTileDebugData] = useState([])
+  const navigate = useNavigate()
+  const { characterIndex: currentCharacterIndex, gallery } = useLoaderData()
 
   const { data: galleryData, isLoading: galleryLoading } = useGalleryImages()
 
-  const { data: galleryCmsData } = useGalleryFromAll(currentCharacterIndex)
-
-  const galleryHeading = galleryCmsData?.heading || t("gallery.title")
-  const exitButtonText =
-    galleryCmsData?.exitButtonText || t("gallery.exitGallery")
-  const closeButtonText = galleryCmsData?.closeButtonText || t("gallery.close")
+  const galleryHeading = gallery?.heading || t("gallery.title")
+  const exitButtonText = gallery?.exitButtonText || t("gallery.exitGallery")
+  const closeButtonText = gallery?.closeButtonText || t("gallery.close")
 
   const personalImages = useMemo(
     () => getPersistedPersonalImages(defaultPersonalImages, capturedImages),
@@ -142,7 +108,7 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
   const isFullyLoading = isLoading || galleryLoading
 
   const handleExitGallery = () => {
-    goStart()
+    navigate("/")
   }
 
   if (isFullyLoading) {
@@ -160,7 +126,11 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
       <Title>
         {allAnimsDone && !detailMode ? galleryHeading : `${galleryHeading}`}
       </Title>
-      <ExitButton onClick={goToEnding}>{exitButtonText}</ExitButton>
+      <ExitButton
+        onClick={() => navigate(`/characters/${currentCharacterIndex}/ending`)}
+      >
+        {exitButtonText}
+      </ExitButton>
       <Stage>
         <Canvas
           camera={{ position: [0, 0, CAMERA_DEFAULT_Z], fov: 75 }}
@@ -197,110 +167,9 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
                 setStackSize(n)
               }}
               switchInfo={{ dir: switchDir, startMs: switchStartRef.current }}
-              onDebugDataUpdate={DEBUG_GALLERY ? setTileDebugData : undefined}
             />
           </StackBump>
         </Canvas>
-
-        {DEBUG_GALLERY && (
-          <>
-            <DebugControls>
-              <DebugButton
-                onClick={() => setShowDebugOverlay(!showDebugOverlay)}
-              >
-                {showDebugOverlay ? "Hide Debug" : "Show Debug"}
-              </DebugButton>
-              <DebugButton
-                onClick={() => {
-                  console.group("🎯 Gallery Position Debug Data")
-                  console.log("Gallery State:", {
-                    detailMode,
-                    activeIndex,
-                    stackSize,
-                    tilesPerRow,
-                    totalTiles: tileDebugData.length,
-                  })
-                  console.log("Tile Positions:")
-                  tileDebugData.forEach((tile, idx) => {
-                    console.log(
-                      `Tile ${idx}${tile.isPersonal ? " (Personal)" : ""}:`,
-                      {
-                        targetPosition: tile.position,
-                        currentPositionX: tile.currentPosition
-                          ? tile.currentPosition[0]
-                          : tile.position[0],
-                        currentPositionY: tile.currentPosition
-                          ? tile.currentPosition[1]
-                          : tile.position[1],
-                        currentPositionZ: tile.currentPosition
-                          ? tile.currentPosition[2]
-                          : tile.position[2],
-                        scale: tile.scale,
-                        delay: tile.delay,
-                        isActive: idx === activeIndex && detailMode,
-                      },
-                    )
-                  })
-                  console.groupEnd()
-                }}
-              >
-                Log Positions
-              </DebugButton>
-            </DebugControls>
-
-            {showDebugOverlay && (
-              <DebugOverlay>
-                <div style={{ marginBottom: "10px", fontWeight: "bold" }}>
-                  Gallery Debug Info ({tileDebugData.length} tiles)
-                </div>
-                <div style={{ marginBottom: "10px" }}>
-                  Detail Mode: {detailMode ? "ON" : "OFF"} | Active Index:{" "}
-                  {activeIndex} | Stack Size: {stackSize}
-                </div>
-                {tileDebugData.map((tile, idx) => (
-                  <div
-                    key={idx}
-                    style={{
-                      marginBottom: "8px",
-                      padding: "5px",
-                      backgroundColor:
-                        idx === activeIndex && detailMode
-                          ? "rgba(255, 255, 0, 0.2)"
-                          : "transparent",
-                      border: tile.isPersonal
-                        ? "1px solid #ff6b6b"
-                        : "1px solid #333",
-                    }}
-                  >
-                    <div
-                      style={{
-                        fontWeight: "bold",
-                        color: tile.isPersonal ? "#ff6b6b" : "#4ecdc4",
-                      }}
-                    >
-                      Tile {idx} {tile.isPersonal ? "(Personal)" : ""}
-                    </div>
-                    <div>
-                      Position: [{tile.position[0].toFixed(3)},{" "}
-                      {tile.position[1].toFixed(3)},{" "}
-                      {tile.position[2].toFixed(3)}]
-                    </div>
-                    <div>Scale: {tile.scale.toFixed(3)}</div>
-                    <div>Delay: {tile.delay.toFixed(2)}s</div>
-                    {tile.currentPosition && (
-                      <div style={{ color: "#90ee90" }}>
-                        Current: [{tile.currentPosition[0].toFixed(3)},{" "}
-                        {tile.currentPosition[1].toFixed(3)},{" "}
-                        {tile.currentPosition[2].toFixed(3)}]
-                      </div>
-                    )}
-                  </div>
-                ))}
-              </DebugOverlay>
-            )}
-          </>
-        )}
-
         <AnimatePresence>
           {detailMode && (
             <motion.div
@@ -348,4 +217,21 @@ export default function Gallery({ goToEnding, capturedImages = [] }) {
       </Stage>
     </Page>
   )
+}
+
+export async function clientLoader({ params }) {
+  const locale = getCurrentLocale()
+  const query = allContentQuery(locale)
+  const content = await queryClient.ensureQueryData(query)
+
+  const characterId = params.characterId
+  const characterIndex = Number.parseInt(characterId ?? "", 10)
+
+  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+    throw new Response("Character not found", { status: 404 })
+  }
+
+  const gallery = extractFromContentTree.getGallery(content, characterIndex)
+
+  return { characterIndex, gallery }
 }
