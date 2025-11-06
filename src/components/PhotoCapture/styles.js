@@ -1,5 +1,29 @@
 import { styled } from "styled-components"
 
+export const cardPositions = [
+  { x: "0px", y: "28rem", opacity: 1, zIndex: 2 },
+  { x: "11rem", y: "25.5rem", opacity: 0.5, zIndex: 1 },
+  { x: "-11rem", y: "25.5rem", opacity: 0.5, zIndex: 1 },
+]
+
+const characterStyles = [
+  {
+    backgroundColor: "#f1ece1",
+    textColor: "#000",
+    imageBorder: "1px solid #000",
+  },
+  {
+    backgroundColor: "#1f1f1f99",
+    border: "1px solid #fff",
+    textColor: "#ffffff",
+  },
+  {
+    backgroundColor: "#f1ece1",
+    border: "1px solid #000",
+    textColor: "#000",
+  },
+]
+
 export const PhotoCaptureContainer = styled.div`
   display: flex;
   flex-direction: column;
@@ -145,30 +169,6 @@ export const PaginationDot = styled.div`
   background-color: ${({ $isActive }) => ($isActive ? "#fff" : "transparent")};
   transition: background-color 0.3s ease;
 `
-
-export const cardPositions = [
-  { x: "0px", y: "28rem", opacity: 1, zIndex: 2 },
-  { x: "11rem", y: "25.5rem", opacity: 0.5, zIndex: 1 },
-  { x: "-11rem", y: "25.5rem", opacity: 0.5, zIndex: 1 },
-]
-
-const characterStyles = [
-  {
-    backgroundColor: "#f1ece1",
-    textColor: "#000",
-    imageBorder: "1px solid #000",
-  },
-  {
-    backgroundColor: "#1f1f1f99",
-    border: "1px solid #fff",
-    textColor: "#ffffff",
-  },
-  {
-    backgroundColor: "#f1ece1",
-    border: "1px solid #000",
-    textColor: "#000",
-  },
-]
 
 export const MetadataContainer = styled.div`
   position: fixed;
