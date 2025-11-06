@@ -8,6 +8,7 @@ import { AnimatePresence, motion } from "motion/react"
 import { useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
+import LaNau from "@ui/assets/LaNau.webp"
 import Description from "@ui/Description"
 import Header from "@ui/Header"
 import Navigation from "@ui/Navigation"
@@ -179,6 +180,14 @@ export async function clientLoader() {
   const welcome = extractFromContentTree.getWelcome(content)
   const characterOverview = extractFromContentTree.getCharacterOverview(content)
   const characters = extractFromContentTree.getCharacters(content)
+
+  const backgroundImages = [
+    LaNau,
+    welcome?.backgroundImage?.file,
+    characterOverview?.backgroundImage?.file,
+  ].filter(Boolean)
+
+  await preloadImages(backgroundImages)
 
   return {
     welcome,
