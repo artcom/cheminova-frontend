@@ -88,7 +88,7 @@ Always ensure:
 **Language Configuration** (`src/config/language.js`):
 
 - Centralized constants: cache times, retry attempts, storage keys
-- Languages stored in localStorage key: `cheminova-language`
+- Languages stored in localStorage key: `chemisee-language`
 - Supported: EN (default), DE, ES, FR
 
 **i18next Setup** (`src/i18n/index.js`):
@@ -147,7 +147,7 @@ const Button = styled.button`
 | Hardcoded UI text           | Check `public/locales/{lng}/translation.json` first; use `useTranslation()`                         |
 | Missing character context   | Components like Exploration/Introduction need `characterIndex` from global state                    |
 | CMS tree traversal errors   | Structure: Welcome → CharacterOverview → Character → Introduction → Photography → Exploration → ... |
-| Language not switching      | Verify localStorage key is `cheminova-language`, not a generic one                                  |
+| Language not switching      | Verify localStorage key is `chemisee-language`, not a generic one                                   |
 | New screen in flow          | Add to `App.jsx` state machine AND update navigation handlers                                       |
 | R3F performance issues      | Avoid state updates in `useFrame`; use refs or imperative Three.js calls                            |
 

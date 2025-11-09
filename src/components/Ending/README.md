@@ -1,6 +1,6 @@
-# Ending and Perspective Components
+# Ending and Perspective Components - Backend Integration
 
-This document describes the enhanced Ending and Perspective components that integrate with the backend API to provide dynamic, personalized content for the Cheminova experience.
+This document describes the enhanced Ending and Perspective components that integrate with the backend API to provide dynamic, personalized content for the Chemisee experience.
 
 ## Overview
 
@@ -298,8 +298,13 @@ Test the complete flow:
 
 Enable debug logging by setting:
 
+````javascript
 ```javascript
-localStorage.setItem("DEBUG", "cheminova:*")
+// Enable debug logging in browser console
+localStorage.setItem("DEBUG", "chemisee:*")
+````
+
 ```
 
 This will show detailed API request/response logging and component state changes.
+```

@@ -19,7 +19,7 @@ RuntimeLoader.setWasmUrl(riveWasmUrl)
 
 export const meta = () => [
   { charSet: "utf-8" },
-  { title: "Cheminova" },
+  { title: "Chemisee" },
   {
     name: "viewport",
     content:

@@ -1,4 +1,6 @@
-# Cheminova Frontend
+# Chemisee Frontend
+
+Chemisee is an interactive photo gallery web application for exploring cultural heritage sites through character-guided storytelling and 3D galleries.
 
 ## Prerequisites
 
