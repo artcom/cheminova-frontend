@@ -1,21 +1,10 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
-import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
-import { useEffect } from "react"
-import { Outlet, useLoaderData } from "react-router-dom"
+import { Outlet } from "react-router-dom"
 
 export default function CharacterLayout() {
-  const { characterIndex } = useLoaderData()
-  const { setCurrentCharacterIndex } = useGlobalState()
-
-  useEffect(() => {
-    if (typeof characterIndex === "number") {
-      setCurrentCharacterIndex(characterIndex)
-    }
-  }, [characterIndex, setCurrentCharacterIndex])
-
   return <Outlet />
 }
 

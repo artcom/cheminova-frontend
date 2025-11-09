@@ -3,7 +3,6 @@ import { createContext, useState } from "react"
 export const StateContext = createContext()
 
 export default function StateProvider({ children }) {
-  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
   const [showModal, setShowModal] = useState(null)
   const [capturedImages, setCapturedImages] = useState([])
 
@@ -19,8 +18,6 @@ export default function StateProvider({ children }) {
   }
 
   const value = {
-    currentCharacterIndex,
-    setCurrentCharacterIndex,
     showModal,
     setShowModal,
     capturedImages,

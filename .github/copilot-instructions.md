@@ -16,7 +16,7 @@
 | **CMS Data Layer**          | `src/api/djangoApi.js`, `src/api/hooks.js`                           | Fetches tree structure from `/cms/api/all/` endpoint. Uses TanStack Query + custom `useLocalizedQuery` hook.                                                           |
 | **Content Tree Navigation** | `src/api/hooks.js` (`extractFromContentTree`)                        | Functions traverse hierarchical CMS data: `getWelcome()` → `getCharacterOverview()` → `getCharacter(index)` → `getIntroduction(index)` → `getPhotography(index)`, etc. |
 | **Localization**            | `src/i18n/`, `src/providers/LanguageProvider.jsx`, `public/locales/` | i18next with browser detection + localStorage. Supports EN, DE, ES, FR. CMS content is locale-specific; UI labels use translation files.                               |
-| **Global State**            | `src/GlobalState.jsx` (Context API)                                  | Manages character selection, screen navigation history, modal state (privacy/imprint). Use `useGlobalState()` hook.                                                    |
+| **Global State**            | `src/GlobalState.jsx` (Context API)                                  | Manages modal state (privacy/imprint) and captured images. Character selection is local to Welcome screen.                                                             |
 | **3D Gallery**              | `src/components/Gallery/`                                            | React Three Fiber canvas with custom image grid, camera controller, stack bump animation. Uses `@react-three/fiber` + `@react-three/drei`.                             |
 | **Styled Components**       | `src/theme/`, inline styled components                               | Theme provider with centralized colors, spacing. Components define styled elements inline (e.g., `styled.div`).                                                        |
 
@@ -208,7 +208,7 @@ theme/                  # styled-components theme provider
 | Wrong hook for CMS data         | Use `useLocalizedQuery` (not raw `useQuery`) for automatic locale filtering.       |
 | New global state                | Add to `GlobalState.jsx` context, not component-level state.                       |
 | Performance in R3F              | Minimize React state updates in `useFrame` callbacks; use refs.                    |
-| Missing character index         | Many components need `currentCharacterIndex` from `useGlobalState()`.              |
+| Character index in routes       | Get from URL params via `useParams()` or loader data, not global state.            |
 
 ## 11. Path Aliases (jsconfig.json)
 

@@ -61,11 +61,8 @@ const MotionLayerImage = motion.create(LayerImage)
 
 export default function Welcome() {
   const [showIntro, setShowIntro] = useState(true)
-  const {
-    currentCharacterIndex,
-    setCurrentCharacterIndex,
-    clearCapturedImages,
-  } = useGlobalState()
+  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
+  const { clearCapturedImages } = useGlobalState()
   const navigate = useNavigate()
   console.info(
     "showIntro:",

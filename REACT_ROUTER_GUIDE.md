@@ -162,13 +162,6 @@ Some routes exist just to wrap children with common UI or logic:
 ```javascript
 // CharacterLayout.jsx wraps all character screens
 export default function CharacterLayout() {
-  const { characterIndex } = useLoaderData()
-  const { setCurrentCharacterIndex } = useGlobalState()
-
-  useEffect(() => {
-    setCurrentCharacterIndex(characterIndex) // Update global state
-  }, [characterIndex])
-
   return <Outlet /> // Renders child route
 }
 ```
@@ -176,8 +169,10 @@ export default function CharacterLayout() {
 **Purpose:**
 
 - Validate character ID once (all children inherit validation)
-- Set global state once (all children can use it)
 - Share UI elements (headers, footers, sidebars)
+- Provide common layout structure
+
+**Note:** Character index is passed to children via loader data, not global state.
 
 ---
 
@@ -433,17 +428,17 @@ export async function clientLoader({ params }) {
 }
 
 export default function CharacterLayout() {
-  const { characterIndex } = useLoaderData()
-  const { setCurrentCharacterIndex } = useGlobalState()
-
-  // Sync URL param to global state
-  useEffect(() => {
-    setCurrentCharacterIndex(characterIndex)
-  }, [characterIndex])
-
   return <Outlet /> // Renders Introduction, PhotoCapture, etc.
 }
 ```
+
+**Why this exists:**
+
+- Validates character ID once (all child routes trust it)
+- Catches 404 errors for invalid characters
+- Provides a layout wrapper for all character-specific screens
+
+````
 
 **Why this exists:**
 
@@ -463,7 +458,7 @@ export async function clientLoader() {
 export default function CharacterIndex() {
   return null // Never renders
 }
-```
+````
 
 **Purpose:**
 
@@ -596,11 +591,12 @@ const content = await queryClient.ensureQueryData(allContentQuery(locale))
 **Step 1: User selects character and clicks "Start"**
 
 ```javascript
-// Welcome.jsx
+// Welcome.jsx (uses local state)
+const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
 const navigate = useNavigate()
+
 const handleStart = () => {
-  setCurrentCharacterIndex(0)
-  navigate("/characters/0/introduction")
+  navigate(`/characters/${currentCharacterIndex}/introduction`)
 }
 ```
 
@@ -726,7 +722,7 @@ Renders: root.jsx Layout → root.jsx Root → routes/Root.jsx → Welcome.jsx
 **2. User Clicks Character 2**
 
 ```
-Welcome.jsx: setCurrentCharacterIndex(2)
+Welcome.jsx: setCurrentCharacterIndex(2) // Local state
 Welcome.jsx: navigate("/characters/2/introduction")
      ↓
 React Router matches: "/characters/:characterId" + "introduction"
@@ -742,8 +738,6 @@ Calls Introduction.jsx clientLoader({ params: { characterId: "2" } })
   - Returns { characterIndex: 2, character, introduction }
      ↓
 Renders: CharacterLayout → Introduction
-     ↓
-CharacterLayout useEffect: setCurrentCharacterIndex(2)
      ↓
 Introduction: useLoaderData() → { characterIndex: 2, character, introduction }
      ↓
