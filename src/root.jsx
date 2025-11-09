@@ -2,8 +2,6 @@ import StateProvider from "@/GlobalState"
 import GlobalStyles from "@/GlobalStyles"
 import LanguageProvider from "@/providers/LanguageProvider"
 import { queryClient } from "@/queryClient"
-import riveWasmUrl from "@rive-app/canvas/rive.wasm?url"
-import { RuntimeLoader } from "@rive-app/react-canvas"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import AppThemeProvider from "@theme/ThemeProvider"
@@ -13,9 +11,6 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router"
 import "@/i18n"
 
 import LoadingSpinner from "@ui/LoadingSpinner"
-
-// Configure Rive WASM
-RuntimeLoader.setWasmUrl(riveWasmUrl)
 
 export const meta = () => [
   { charSet: "utf-8" },
