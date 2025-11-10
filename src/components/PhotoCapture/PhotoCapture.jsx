@@ -6,14 +6,13 @@ import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import useDevicePlatform from "@hooks/useDevicePlatform"
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useRef } from "react"
 import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
 import IconButton from "../UI/IconButton"
 import Navigation from "../UI/Navigation"
 import usePhotoTasks from "./hooks/usePhotoTasks"
-import PhotoCaptureMetadata from "./PhotoCaptureMetadata"
 import {
   CameraButtonContainer,
   cardPositions,
@@ -21,7 +20,6 @@ import {
   HeaderContainer,
   HeaderText,
   HiddenInput,
-  MetadataOverlay,
   PhotoCaptureContainer,
   TaskCard,
   TaskContent,
@@ -40,10 +38,6 @@ export default function PhotoCapture() {
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
   const { isAndroid } = useDevicePlatform()
-
-  const [showMetadataModal, setShowMetadataModal] = useState(false)
-  const [pendingImageData, setPendingImageData] = useState(null)
-  const [photoMetadata, setPhotoMetadata] = useState({})
   const navigate = useNavigate()
 
   const { characterSlug, photography } = useLoaderData()
@@ -87,8 +81,7 @@ export default function PhotoCapture() {
   } = usePhotoTasks({
     tasks: tasksForHook,
     onImageCaptured: (dataUrl, taskIndex) => {
-      setPendingImageData({ dataUrl, taskIndex })
-      setShowMetadataModal(true)
+      setCapturedImageAt(taskIndex, dataUrl)
     },
     initialImages: capturedImages,
   })
@@ -117,34 +110,6 @@ export default function PhotoCapture() {
 
   const handleOpenCamera = () => cameraInputRef.current?.click()
   const handleOpenGallery = () => galleryInputRef.current?.click()
-
-  const handleMetadataSave = ({ text, userName, taskIndex }) => {
-    console.log(text, userName, taskIndex)
-    setPhotoMetadata((prev) => ({
-      ...prev,
-      [taskIndex]: { text, userName },
-    }))
-
-    if (pendingImageData) {
-      setCapturedImageAt(taskIndex, pendingImageData.dataUrl)
-    }
-
-    setShowMetadataModal(false)
-    setPendingImageData(null)
-  }
-
-  const handleMetadataSkip = (taskIndex) => {
-    if (pendingImageData) {
-      setCapturedImageAt(taskIndex, pendingImageData.dataUrl)
-    }
-
-    setShowMetadataModal(false)
-    setPendingImageData(null)
-  }
-
-  const getMetadataForTask = (taskIndex) => {
-    return photoMetadata[taskIndex] || { text: "", userName: "" }
-  }
 
   return (
     <>
@@ -175,8 +140,6 @@ export default function PhotoCapture() {
 
         <TasksContainer>
           {taskMetadata.map((task, index) => {
-            const metadata = getMetadataForTask(index)
-            const hasMetadata = metadata.text || metadata.userName
             const taskDescription = sanitizeDescription(task.description)
             const isActive = index === currentTaskIndex
             const positionIndex =
@@ -194,15 +157,6 @@ export default function PhotoCapture() {
                 opacity={opacity}
                 $zIndex={zIndex}
               >
-                {hasMetadata && taskImages[index] && (
-                  <TaskDescription>
-                    {metadata.userName && (
-                      <strong>{metadata.userName}: </strong>
-                    )}
-                    {metadata.text && <em>{metadata.text}</em>}
-                  </TaskDescription>
-                )}
-
                 {!taskImages[index] && (
                   <>
                     {currentCharacterIndex === 0 && <ExtraBorder />}
@@ -245,20 +199,6 @@ export default function PhotoCapture() {
           onSelect={() => navigate(`/characters/${characterSlug}/exploration`)}
         />
       </PhotoCaptureContainer>
-
-      {showMetadataModal && pendingImageData && (
-        <>
-          <MetadataOverlay
-            onClick={() => handleMetadataSkip(pendingImageData.taskIndex)}
-          />
-          <PhotoCaptureMetadata
-            taskIndex={pendingImageData.taskIndex}
-            taskTitle={taskMetadata[pendingImageData.taskIndex]?.title}
-            onSave={handleMetadataSave}
-            onSkip={handleMetadataSkip}
-          />
-        </>
-      )}
     </>
   )
 }
