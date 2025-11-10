@@ -95,7 +95,7 @@ export default function Welcome() {
     const currentCharacter = charactersData[currentCharacterIndex]
     console.log("Current character:", currentCharacter)
     console.log("Current character index:", currentCharacterIndex)
-    const characterSlug = getCharacterSlug(currentCharacter)
+    const characterSlug = getCharacterSlug(currentCharacter, charactersData)
     console.log("Extracted slug:", characterSlug)
     navigate(`/characters/${characterSlug}/introduction`)
   }
