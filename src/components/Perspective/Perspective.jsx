@@ -2,6 +2,7 @@ import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { useEffect, useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
@@ -96,7 +97,7 @@ const LoadingContainer = styled.div`
 `
 
 export default function Perspective() {
-  const { characterIndex: currentCharacterIndex, perspective } = useLoaderData()
+  const { characterSlug, perspective } = useLoaderData()
   const [imageLoaded, setImageLoaded] = useState(false)
   const navigate = useNavigate()
   const isLoading = false
@@ -141,7 +142,7 @@ export default function Perspective() {
 
       <Navigation
         mode="single"
-        onSelect={() => navigate(`/characters/${currentCharacterIndex}/upload`)}
+        onSelect={() => navigate(`/characters/${characterSlug}/upload`)}
         disabled={isLoading}
       />
     </Screen>
@@ -149,14 +150,15 @@ export default function Perspective() {
 }
 
 export async function clientLoader({ params }) {
+  const characterSlug = params.characterId
   const locale = getCurrentLocale()
   const query = allContentQuery(locale)
   const content = await queryClient.ensureQueryData(query)
 
-  const characterId = params.characterId
-  const characterIndex = Number.parseInt(characterId ?? "", 10)
+  const characters = extractFromContentTree.getCharacters(content)
+  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
 
-  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+  if (characterIndex === null) {
     throw new Response("Character not found", { status: 404 })
   }
 
@@ -169,5 +171,5 @@ export async function clientLoader({ params }) {
     throw new Response("Perspective not found", { status: 404 })
   }
 
-  return { characterIndex, perspective }
+  return { characterIndex, characterSlug, perspective }
 }

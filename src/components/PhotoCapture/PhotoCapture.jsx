@@ -4,27 +4,24 @@ import useGlobalState from "@/hooks/useGlobalState"
 import { useSwipe } from "@/hooks/useSwipe"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
-import SmallButton from "@ui/SmallButton"
-
 import IconButton from "../UI/IconButton"
+import Navigation from "../UI/Navigation"
 import usePhotoTasks from "./hooks/usePhotoTasks"
 import PhotoCaptureMetadata from "./PhotoCaptureMetadata"
 import {
   CameraButtonContainer,
   cardPositions,
   ExtraBorder,
-  Footer,
   HeaderContainer,
   HeaderText,
   HiddenInput,
   MetadataOverlay,
-  PaginationContainer,
-  PaginationDot,
   PhotoCaptureContainer,
   TaskCard,
   TaskContent,
@@ -49,7 +46,7 @@ export default function PhotoCapture() {
   const [photoMetadata, setPhotoMetadata] = useState({})
   const navigate = useNavigate()
 
-  const { characterIndex, photography } = useLoaderData()
+  const { characterSlug, photography } = useLoaderData()
 
   const heading = photography?.heading || t("photoCapture.title")
 
@@ -243,24 +240,10 @@ export default function PhotoCapture() {
             )
           })}
         </TasksContainer>
-        <Footer>
-          <PaginationContainer>
-            {taskMetadata.map((_, index) => (
-              <PaginationDot
-                key={index}
-                $isActive={index === currentTaskIndex}
-              />
-            ))}
-          </PaginationContainer>
-          <SmallButton
-            color="#FFF"
-            onClick={() =>
-              navigate(`/characters/${characterIndex}/exploration`)
-            }
-          >
-            {photography.continueButtonText}
-          </SmallButton>
-        </Footer>
+        <Navigation
+          mode="single"
+          onSelect={() => navigate(`/characters/${characterSlug}/exploration`)}
+        />
       </PhotoCaptureContainer>
 
       {showMetadataModal && pendingImageData && (
@@ -281,14 +264,15 @@ export default function PhotoCapture() {
 }
 
 export async function clientLoader({ params }) {
+  const characterSlug = params.characterId
   const locale = getCurrentLocale()
   const query = allContentQuery(locale)
   const content = await queryClient.ensureQueryData(query)
 
-  const characterId = params.characterId
-  const characterIndex = Number.parseInt(characterId ?? "", 10)
+  const characters = extractFromContentTree.getCharacters(content)
+  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
 
-  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+  if (characterIndex === null) {
     throw new Response("Character not found", { status: 404 })
   }
 
@@ -297,7 +281,7 @@ export async function clientLoader({ params }) {
     characterIndex,
   )
 
-  return { characterIndex, photography }
+  return { characterIndex, characterSlug, photography }
 }
 
 const sanitizeDescription = (description) => description.replace(/<[^>]*>/g, "")

@@ -1,5 +1,5 @@
 export const LANGUAGE_CONFIG = {
-  STORAGE_KEY: "cheminova-language",
+  STORAGE_KEY: "chemisee-language",
   CACHE_TIME: 60 * 60 * 1000,
   STALE_TIME: 5 * 60 * 1000,
   ALL_LOCALES_STALE_TIME: 30 * 60 * 1000,
@@ -10,7 +10,7 @@ export const LANGUAGE_CONFIG = {
 export const DETECTION_CONFIG = {
   ORDER: ["localStorage", "navigator", "htmlTag"],
   CACHES: ["localStorage"],
-  LOOKUP_LOCAL_STORAGE: "cheminova-language",
+  LOOKUP_LOCAL_STORAGE: "chemisee-language",
 }
 
 export const BACKEND_CONFIG = {

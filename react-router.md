@@ -29,7 +29,7 @@ The application now runs on the React Router framework stack with the Vite plugi
 ```
 
 - `Root` renders the global layout, modal handling, and mobile guard. Its loader ensures the CMS tree is fetched so children have content.
-- `CharacterLayout` validates `:characterId`, sets the global `currentCharacterIndex`, and guards against unknown characters.
+- `CharacterLayout` validates `:characterId` and guards against unknown characters. Character index is passed via loader data to child routes.
 - Each leaf screen consumes loader data via `useLoaderData()` with no extra fetch calls when the cache is warm.
 
 ## Loader Pattern
@@ -76,7 +76,7 @@ No component calls `useAllContent()` directly anymore, eliminating duplicate fet
 
 - `Navigate to="introduction" replace` ensures `/characters/:id` immediately redirects to the first step.
 - Components use `useNavigate()` and URL paths (`navigate(/characters/${characterIndex}/perspective)`), keeping navigation declarative and URL-driven.
-- Global state (`StateProvider`) still tracks non-route concerns (captured images, modal state).
+- Global state (`StateProvider`) tracks non-route concerns (captured images, modal state). Character selection on Welcome screen uses local state.
 
 ## Error Handling & Hydration
 

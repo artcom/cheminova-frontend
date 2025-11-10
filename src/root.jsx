@@ -7,11 +7,14 @@ import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import AppThemeProvider from "@theme/ThemeProvider"
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router"
 
+// Initialize i18n
+import "@/i18n"
+
 import LoadingSpinner from "@ui/LoadingSpinner"
 
 export const meta = () => [
   { charSet: "utf-8" },
-  { title: "Cheminova" },
+  { title: "Chemisee" },
   {
     name: "viewport",
     content:

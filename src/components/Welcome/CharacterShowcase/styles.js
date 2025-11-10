@@ -123,6 +123,32 @@ export const IntroContainer = styled(m.div)`
   height: 100dvh;
 `
 
+export const IntroRiveContainer = styled(m.div)`
+  width: 100%;
+  max-width: 28rem;
+  height: clamp(15rem, 40dvw, 24rem);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-bottom: 2rem;
+  padding: 0 1.5rem;
+`
+
+export const IntroRiveFallback = styled.div`
+  width: 100%;
+  height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 1.5rem;
+  background: rgba(0, 0, 0, 0.35);
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.8125rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  backdrop-filter: blur(6px);
+`
+
 export const IntroCharactersRow = styled(m.div)`
   display: flex;
   align-items: end;

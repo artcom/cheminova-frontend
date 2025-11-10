@@ -2,6 +2,7 @@ import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { useEffect, useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
@@ -192,14 +193,15 @@ export default function Ending() {
 }
 
 export async function clientLoader({ params }) {
+  const characterSlug = params.characterId
   const locale = getCurrentLocale()
   const query = allContentQuery(locale)
   const content = await queryClient.ensureQueryData(query)
 
-  const characterId = params.characterId
-  const characterIndex = Number.parseInt(characterId ?? "", 10)
+  const characters = extractFromContentTree.getCharacters(content)
+  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
 
-  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+  if (characterIndex === null) {
     throw new Response("Character not found", { status: 404 })
   }
 
@@ -214,5 +216,5 @@ export async function clientLoader({ params }) {
     characterIndex,
   )
 
-  return { characterIndex, ending, endingMetas }
+  return { characterIndex, characterSlug, ending, endingMetas }
 }

@@ -2,6 +2,7 @@ import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
 import { useTranslation } from "react-i18next"
@@ -27,11 +28,7 @@ const StyledNavigation = styled(Navigation)`
 
 export default function Exploration() {
   const { t } = useTranslation()
-  const {
-    characterIndex: currentCharacterIndex,
-    character,
-    exploration,
-  } = useLoaderData()
+  const { characterSlug, character, exploration } = useLoaderData()
   const containerRef = useRef(null)
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
@@ -91,9 +88,7 @@ export default function Exploration() {
 
         <StyledNavigation
           mode="single"
-          onSelect={() =>
-            navigate(`/characters/${currentCharacterIndex}/perspective`)
-          }
+          onSelect={() => navigate(`/characters/${characterSlug}/perspective`)}
           iconColor="black"
         />
       </ContentContainer>
@@ -102,27 +97,23 @@ export default function Exploration() {
 }
 
 export async function clientLoader({ params }) {
+  const characterSlug = params.characterId
   const locale = getCurrentLocale()
   const query = allContentQuery(locale)
   const content = await queryClient.ensureQueryData(query)
 
-  const characterId = params.characterId
-  const characterIndex = Number.parseInt(characterId ?? "", 10)
+  const characters = extractFromContentTree.getCharacters(content)
+  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
 
-  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+  if (characterIndex === null) {
     throw new Response("Character not found", { status: 404 })
   }
 
   const character = extractFromContentTree.getCharacter(content, characterIndex)
-
-  if (!character) {
-    throw new Response("Character not found", { status: 404 })
-  }
-
   const exploration = extractFromContentTree.getExploration(
     content,
     characterIndex,
   )
 
-  return { characterIndex, character, exploration }
+  return { characterIndex, characterSlug, character, exploration }
 }

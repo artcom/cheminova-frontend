@@ -3,6 +3,7 @@ import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { getCharacterSlug } from "@/utils/characterSlug"
 import { preloadImages, WELCOME_LAYER_IMAGES } from "@/utils/preloadImages"
 import { AnimatePresence, motion } from "motion/react"
 import { useState } from "react"
@@ -61,11 +62,8 @@ const MotionLayerImage = motion.create(LayerImage)
 
 export default function Welcome() {
   const [showIntro, setShowIntro] = useState(true)
-  const {
-    currentCharacterIndex,
-    setCurrentCharacterIndex,
-    clearCapturedImages,
-  } = useGlobalState()
+  const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
+  const { clearCapturedImages } = useGlobalState()
   const navigate = useNavigate()
   console.info(
     "showIntro:",
@@ -85,10 +83,21 @@ export default function Welcome() {
     characterOverviewData,
     charactersData,
   })
+  console.log("Characters array:", charactersData)
+  console.log("First character:", charactersData?.[0])
+  console.log(
+    "Character fields:",
+    charactersData?.[0] ? Object.keys(charactersData[0]) : "No characters",
+  )
 
   const handleGoToIntroduction = () => {
     clearCapturedImages()
-    navigate(`/characters/${currentCharacterIndex}/introduction`)
+    const currentCharacter = charactersData[currentCharacterIndex]
+    console.log("Current character:", currentCharacter)
+    console.log("Current character index:", currentCharacterIndex)
+    const characterSlug = getCharacterSlug(currentCharacter, charactersData)
+    console.log("Extracted slug:", characterSlug)
+    navigate(`/characters/${characterSlug}/introduction`)
   }
 
   const { step, setStep, getNavigationProps } = useWelcomeSteps({

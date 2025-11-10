@@ -16,7 +16,7 @@
 | **CMS Data Layer**          | `src/api/djangoApi.js`, `src/api/hooks.js`                           | Fetches tree structure from `/cms/api/all/` endpoint. Uses TanStack Query + custom `useLocalizedQuery` hook.                                                           |
 | **Content Tree Navigation** | `src/api/hooks.js` (`extractFromContentTree`)                        | Functions traverse hierarchical CMS data: `getWelcome()` → `getCharacterOverview()` → `getCharacter(index)` → `getIntroduction(index)` → `getPhotography(index)`, etc. |
 | **Localization**            | `src/i18n/`, `src/providers/LanguageProvider.jsx`, `public/locales/` | i18next with browser detection + localStorage. Supports EN, DE, ES, FR. CMS content is locale-specific; UI labels use translation files.                               |
-| **Global State**            | `src/GlobalState.jsx` (Context API)                                  | Manages character selection, screen navigation history, modal state (privacy/imprint). Use `useGlobalState()` hook.                                                    |
+| **Global State**            | `src/GlobalState.jsx` (Context API)                                  | Manages modal state (privacy/imprint) and captured images. Character selection is local to Welcome screen.                                                             |
 | **3D Gallery**              | `src/components/Gallery/`                                            | React Three Fiber canvas with custom image grid, camera controller, stack bump animation. Uses `@react-three/fiber` + `@react-three/drei`.                             |
 | **Styled Components**       | `src/theme/`, inline styled components                               | Theme provider with centralized colors, spacing. Components define styled elements inline (e.g., `styled.div`).                                                        |
 
@@ -88,7 +88,7 @@ Always ensure:
 **Language Configuration** (`src/config/language.js`):
 
 - Centralized constants: cache times, retry attempts, storage keys
-- Languages stored in localStorage key: `cheminova-language`
+- Languages stored in localStorage key: `chemisee-language`
 - Supported: EN (default), DE, ES, FR
 
 **i18next Setup** (`src/i18n/index.js`):
@@ -147,7 +147,7 @@ const Button = styled.button`
 | Hardcoded UI text           | Check `public/locales/{lng}/translation.json` first; use `useTranslation()`                         |
 | Missing character context   | Components like Exploration/Introduction need `characterIndex` from global state                    |
 | CMS tree traversal errors   | Structure: Welcome → CharacterOverview → Character → Introduction → Photography → Exploration → ... |
-| Language not switching      | Verify localStorage key is `cheminova-language`, not a generic one                                  |
+| Language not switching      | Verify localStorage key is `chemisee-language`, not a generic one                                   |
 | New screen in flow          | Add to `App.jsx` state machine AND update navigation handlers                                       |
 | R3F performance issues      | Avoid state updates in `useFrame`; use refs or imperative Three.js calls                            |
 
@@ -208,7 +208,7 @@ theme/                  # styled-components theme provider
 | Wrong hook for CMS data         | Use `useLocalizedQuery` (not raw `useQuery`) for automatic locale filtering.       |
 | New global state                | Add to `GlobalState.jsx` context, not component-level state.                       |
 | Performance in R3F              | Minimize React state updates in `useFrame` callbacks; use refs.                    |
-| Missing character index         | Many components need `currentCharacterIndex` from `useGlobalState()`.              |
+| Character index in routes       | Get from URL params via `useParams()` or loader data, not global state.            |
 
 ## 11. Path Aliases (jsconfig.json)
 

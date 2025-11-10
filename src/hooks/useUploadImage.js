@@ -1,37 +1,17 @@
-import { fetchCharacterSlugs } from "@/api/djangoApi"
 import { uploadImage } from "@/api/uploadImage"
-import { DEFAULT_LANGUAGE } from "@/config/language"
-import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query"
+import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRef } from "react"
-import { useTranslation } from "react-i18next"
 import { useParams } from "react-router-dom"
 
 export const useUploadImage = () => {
   const queryClient = useQueryClient()
-  const { i18n } = useTranslation()
-  const locale = i18n.language || DEFAULT_LANGUAGE
   const lastUploadedCharacterSlugRef = useRef(null)
-  const { characterId } = useParams()
-  const currentCharacterIndex = Number.parseInt(characterId ?? "", 10) || 0
-
-  const { data: characterSlugsData } = useQuery({
-    queryKey: ["character-slugs", locale],
-    queryFn: () => fetchCharacterSlugs(locale),
-    staleTime: 5 * 60 * 1000,
-    gcTime: 10 * 60 * 1000,
-    retry: 2,
-    enabled: Boolean(locale),
-  })
-
-  const getCharacterSlug = () => {
-    return characterSlugsData[0].characters[currentCharacterIndex].slug
-  }
+  const { characterId: characterSlug } = useParams()
 
   return useMutation({
     mutationFn: async ({ file, text, userName }) => {
-      const slug = getCharacterSlug()
-      lastUploadedCharacterSlugRef.current = slug
-      return uploadImage(file, slug, { text, userName })
+      lastUploadedCharacterSlugRef.current = characterSlug
+      return uploadImage(file, characterSlug, { text, userName })
     },
     onSuccess: () => {
       const slug = lastUploadedCharacterSlugRef.current
