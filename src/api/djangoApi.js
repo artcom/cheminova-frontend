@@ -36,17 +36,6 @@ export const fetchAllLocalesContent = async () => {
   return apiRequest("/all/")
 }
 
-export const fetchCharacterSlugs = async (locale) => {
-  const params = new URLSearchParams({ browsable: "false" })
-  if (locale) {
-    params.set("locale", locale)
-  }
-
-  const query = params.toString()
-  const endpoint = `/characters/${query ? `?${query}` : ""}`
-  return apiRequest(endpoint)
-}
-
 export const getContentForLocale = (allLocalesContent, locale = "en") => {
   const localeContent = allLocalesContent.find((item) => item.locale === locale)
   return localeContent ? [localeContent] : [allLocalesContent[0]]

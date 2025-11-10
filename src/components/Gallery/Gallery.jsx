@@ -4,6 +4,7 @@ import { useGalleryImages } from "@/hooks/useGallery"
 import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { Canvas } from "@react-three/fiber"
 import theme from "@theme"
 import { AnimatePresence, motion } from "motion/react"
@@ -80,7 +81,7 @@ export default function Gallery() {
   const switchStartRef = useRef(0)
   const [detailStackScale, setDetailStackScale] = useState(null)
   const navigate = useNavigate()
-  const { characterIndex: currentCharacterIndex, gallery } = useLoaderData()
+  const { characterSlug, gallery } = useLoaderData()
 
   const { data: galleryData, isLoading: galleryLoading } = useGalleryImages()
 
@@ -127,7 +128,7 @@ export default function Gallery() {
         {allAnimsDone && !detailMode ? galleryHeading : `${galleryHeading}`}
       </Title>
       <ExitButton
-        onClick={() => navigate(`/characters/${currentCharacterIndex}/ending`)}
+        onClick={() => navigate(`/characters/${characterSlug}/ending`)}
       >
         {exitButtonText}
       </ExitButton>
@@ -220,18 +221,19 @@ export default function Gallery() {
 }
 
 export async function clientLoader({ params }) {
+  const characterSlug = params.characterId
   const locale = getCurrentLocale()
   const query = allContentQuery(locale)
   const content = await queryClient.ensureQueryData(query)
 
-  const characterId = params.characterId
-  const characterIndex = Number.parseInt(characterId ?? "", 10)
+  const characters = extractFromContentTree.getCharacters(content)
+  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
 
-  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+  if (characterIndex === null) {
     throw new Response("Character not found", { status: 404 })
   }
 
   const gallery = extractFromContentTree.getGallery(content, characterIndex)
 
-  return { characterIndex, gallery }
+  return { characterIndex, characterSlug, gallery }
 }

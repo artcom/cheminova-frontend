@@ -3,6 +3,7 @@ import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useMemo, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -41,7 +42,7 @@ export default function PhotoCapture() {
   const [pendingImageData, setPendingImageData] = useState(null)
   const [photoMetadata, setPhotoMetadata] = useState({})
 
-  const { characterIndex, photography } = useLoaderData()
+  const { characterSlug, photography } = useLoaderData()
 
   const heading = photography?.heading || t("photoCapture.title")
   const takePhotoText =
@@ -209,7 +210,7 @@ export default function PhotoCapture() {
         </TasksContainer>
         <Navigation
           mode="single"
-          onSelect={() => navigate(`/characters/${characterIndex}/exploration`)}
+          onSelect={() => navigate(`/characters/${characterSlug}/exploration`)}
         />
       </PhotoCaptureContainer>
 
@@ -231,14 +232,15 @@ export default function PhotoCapture() {
 }
 
 export async function clientLoader({ params }) {
+  const characterSlug = params.characterId
   const locale = getCurrentLocale()
   const query = allContentQuery(locale)
   const content = await queryClient.ensureQueryData(query)
 
-  const characterId = params.characterId
-  const characterIndex = Number.parseInt(characterId ?? "", 10)
+  const characters = extractFromContentTree.getCharacters(content)
+  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
 
-  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+  if (characterIndex === null) {
     throw new Response("Character not found", { status: 404 })
   }
 
@@ -247,5 +249,5 @@ export async function clientLoader({ params }) {
     characterIndex,
   )
 
-  return { characterIndex, photography }
+  return { characterIndex, characterSlug, photography }
 }

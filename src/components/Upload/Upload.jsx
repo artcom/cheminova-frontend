@@ -5,6 +5,7 @@ import usePhotoTasks from "@/hooks/usePhotoTasks"
 import { useUploadImage } from "@/hooks/useUploadImage"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
@@ -45,11 +46,7 @@ export default function Upload() {
   const [uploadErrors, setUploadErrors] = useState([])
   const { tasks } = usePhotoTasks()
   const navigate = useNavigate()
-  const {
-    characterIndex: currentCharacterIndex,
-    character,
-    upload: uploadData,
-  } = useLoaderData()
+  const { characterSlug, character, upload: uploadData } = useLoaderData()
 
   const uploadImageMutation = useUploadImage()
   const isUploading = uploadImageMutation.isPending
@@ -64,8 +61,7 @@ export default function Upload() {
   const yesButtonText = uploadData?.yesButtonText || t("upload.buttons.yes")
   const noButtonText = uploadData?.noButtonText || t("upload.buttons.no")
 
-  const goToGallery = () =>
-    navigate(`/characters/${currentCharacterIndex}/gallery`)
+  const goToGallery = () => navigate(`/characters/${characterSlug}/gallery`)
 
   const handleUpload = async () => {
     setUploadErrors([])
@@ -206,24 +202,20 @@ export default function Upload() {
 }
 
 export async function clientLoader({ params }) {
+  const characterSlug = params.characterId
   const locale = getCurrentLocale()
   const query = allContentQuery(locale)
   const content = await queryClient.ensureQueryData(query)
 
-  const characterId = params.characterId
-  const characterIndex = Number.parseInt(characterId ?? "", 10)
+  const characters = extractFromContentTree.getCharacters(content)
+  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
 
-  if (Number.isNaN(characterIndex) || characterIndex < 0) {
+  if (characterIndex === null) {
     throw new Response("Character not found", { status: 404 })
   }
 
   const character = extractFromContentTree.getCharacter(content, characterIndex)
-
-  if (!character) {
-    throw new Response("Character not found", { status: 404 })
-  }
-
   const upload = extractFromContentTree.getUpload(content, characterIndex)
 
-  return { characterIndex, character, upload }
+  return { characterIndex, characterSlug, character, upload }
 }
