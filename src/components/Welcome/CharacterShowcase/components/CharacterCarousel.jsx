@@ -128,7 +128,7 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => (
         delay: 0.6,
         ease: "easeOut",
       }}
-      src={character.image || character.characterImage?.file}
+      src={character.characterImage?.file}
       alt={character.name}
       $shadowIntensity={shadowIntensity}
     />
