@@ -1,25 +1,50 @@
 import { styled } from "styled-components"
 
+export const cardPositions = [
+  { x: "0px", y: "28rem", opacity: 1, zIndex: 2 },
+  { x: "11rem", y: "25.5rem", opacity: 0.5, zIndex: 1 },
+  { x: "-11rem", y: "25.5rem", opacity: 0.5, zIndex: 1 },
+]
+
+const characterStyles = [
+  {
+    backgroundColor: "#f1ece1",
+    textColor: "#000",
+    imageBorder: "1px solid #000",
+  },
+  {
+    backgroundColor: "#1f1f1f99",
+    border: "1px solid #fff",
+    textColor: "#ffffff",
+  },
+  {
+    backgroundColor: "#f1ece1",
+    border: "1px solid #000",
+    textColor: "#000",
+  },
+]
+
 export const PhotoCaptureContainer = styled.div`
   display: flex;
   flex-direction: column;
-  align-items: flex-start;
+  align-items: center;
   width: 100%;
   padding: 0 0 34.75rem 0;
+  justify-content: space-between;
 `
 
 export const HeaderContainer = styled.div`
   display: flex;
   width: 21.4375rem;
   flex-direction: column;
-  align-items: flex-start;
+  justify-items: center;
   padding: 1.5625rem;
 `
 
 export const HeaderText = styled.h1`
   color: #fff;
-  font-size: 1.5rem;
-  font-style: normal;
+  font-size: 2.375rem;
+  font-style: bold;
   font-weight: 700;
   line-height: normal;
   margin: 0;
@@ -28,69 +53,121 @@ export const HeaderText = styled.h1`
 
 export const TasksContainer = styled.div`
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   gap: 1.5rem;
-  width: 100%;
-  align-items: flex-start;
+  width: 19.25rem;
+  height: 100%;
+  justify-content: center;
+  align-items: center;
 `
 
 export const TaskCard = styled.div`
+  position: absolute;
+  width: 19.25rem;
+  height: 24.625rem;
+  top: ${({ $top }) => $top};
+  left: ${({ $left }) => $left};
   display: flex;
-  width: 23rem;
-  height: 9.4375rem;
-  padding: 1.75rem 1.625rem;
   flex-direction: column;
-  align-items: flex-start;
-  gap: 1.125rem;
-  flex-shrink: 0;
-  border-radius: 0 1.75rem 1.75rem 0;
-  background-color: #f1ece1;
-  position: relative;
+  padding: 1.75rem 1.625rem;
+  border-radius: 1.75rem;
+  transform: ${({ transform }) => transform};
+  opacity: ${({ opacity }) => opacity};
+  z-index: ${({ $zIndex }) => $zIndex};
+  background-color: ${({ $characterIndex }) =>
+    characterStyles[$characterIndex]?.backgroundColor || "#f1ece1"};
+  border: ${({ $characterIndex }) =>
+    characterStyles[$characterIndex]?.border || "none"};
+  transition:
+    all 0.3s ease,
+    opacity 0.3s ease;
+`
+
+export const TaskDescription = styled.h2`
+  color: ${({ $characterIndex }) =>
+    characterStyles[$characterIndex]?.textColor || "#000"};
+  font-size: 1rem;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+  text-align: center;
+  margin: 0;
 `
 
 export const TaskHeadline = styled.h2`
-  color: #000;
-  font-size: 1.3rem;
-  font-style: normal;
-  font-weight: 700;
+  color: #fff;
+  width: 21.4375rem;
+  font-size: 1.5rem;
+  font-style: bold;
+  font-weight: 600;
   line-height: normal;
+  text-align: center;
   margin: 0;
-`
-
-export const TaskDescription = styled.div`
-  color: #000;
-  font-size: 0.3rem;
-  font-style: normal;
-  font-weight: 400;
-  line-height: 1.5;
-  margin: 0;
-
-  p {
-    margin: 0;
-  }
 `
 
 export const TaskContent = styled.div`
   display: flex;
-  align-items: center;
+  justify-content: center;
   gap: 1rem;
   width: 100%;
+  color: ${({ $characterIndex }) =>
+    characterStyles[$characterIndex]?.textColor || "#000"};
 `
 
 export const TaskImage = styled.img`
-  width: 7rem;
-  height: 7rem;
+  width: 16.875rem;
+  height: 16.875rem;
   position: absolute;
-  right: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  margin-right: 2rem;
+  top: 1rem;
   border-radius: 1rem;
   object-fit: cover;
+  border: ${({ $characterIndex }) =>
+    characterStyles[$characterIndex]?.imageBorder || "none"};
+`
+
+export const ExtraBorder = styled.img`
+  width: 17.438rem;
+  height: 16.375rem;
+  position: absolute;
+  top: 0.9rem;
+  left: 0.9rem;
+  border-radius: 1rem;
+  border: 1px solid #000;
 `
 
 export const HiddenInput = styled.input`
   display: none;
+`
+
+export const CameraButtonContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  position: absolute;
+  bottom: 1.5rem;
+`
+
+export const Footer = styled.div`
+  position: absolute;
+  top: 10rem;
+`
+
+export const PaginationContainer = styled.div`
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 0.5rem;
+  margin-top: 33rem;
+  margin-bottom: 3rem;
+`
+
+export const PaginationDot = styled.div`
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 50%;
+  border: 2px solid #fff;
+  background-color: ${({ $isActive }) => ($isActive ? "#fff" : "transparent")};
+  transition: background-color 0.3s ease;
 `
 
 export const MetadataContainer = styled.div`
