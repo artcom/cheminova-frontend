@@ -1,15 +1,14 @@
 import { motion } from "motion/react"
 import { styled } from "styled-components"
 
-import IntroductionBackground from "./IntroductionBackground.png"
-
 export const IntroductionContainer = styled.div`
   position: relative;
   width: 100%;
   height: 100vh;
   overflow-y: auto;
   overflow-x: hidden;
-  background-image: url(${IntroductionBackground});
+  background-image: ${(props) =>
+    props.$backgroundImage ? `url(${props.$backgroundImage})` : "none"};
   background-size: contain;
   background-position: center;
   background-repeat: no-repeat;

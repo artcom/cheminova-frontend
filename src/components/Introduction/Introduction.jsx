@@ -5,13 +5,11 @@ import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { useScroll, useTransform } from "motion/react"
 import { useRef } from "react"
-import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
 import IconButton from "@ui/IconButton"
 import RiveAnimation from "@ui/RiveAnimation"
 
-import Rectangle from "./Rectangle.png"
 import {
   CameraButtonContainer,
   CharacterImage,
@@ -25,67 +23,55 @@ import {
 } from "./styles"
 
 export default function Introduction() {
-  const { t } = useTranslation()
   const navigate = useNavigate()
   const containerRef = useRef(null)
   const { scrollY } = useScroll({ container: containerRef })
   const y = useTransform(scrollY, (v) => -v * 0.5)
 
-  const {
-    characterIndex: currentCharacterIndex,
-    characterSlug,
-    character,
-    introduction,
-  } = useLoaderData()
+  const { characterSlug, character, introduction } = useLoaderData()
 
-  const heading = introduction?.heading || t("introduction.title")
-  const description = introduction?.description
-    ? introduction.description.replace(/<[^>]*>/g, "")
-    : t("introduction.description")
-  const paragraphs = [description]
-
-  const imageUrl = introduction?.image?.file || Rectangle
-
-  if (!character) {
-    return (
-      <IntroductionContainer data-introduction-container ref={containerRef}>
-        <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
-          <Headline>
-            {t("loading.characters", "Loading characters...")}
-          </Headline>
-        </ContentContainer>
-      </IntroductionContainer>
-    )
+  if (!introduction) {
+    throw new Error("Introduction data is required but missing from CMS")
   }
 
+  if (!character) {
+    throw new Error("Character data is required but missing from CMS")
+  }
+
+  const heading = introduction.heading
+  const description = introduction.description.replace(/<[^>]*>/g, "")
+
+  const shouldShowRiveAnimation = characterSlug === "artist"
+
+  const characterImageUrl =
+    introduction.characterImage?.file ||
+    character.selectedImage ||
+    character.characterImage?.file
+
   return (
-    <IntroductionContainer data-introduction-container ref={containerRef}>
-      {currentCharacterIndex === 0 ? (
+    <IntroductionContainer
+      data-introduction-container
+      ref={containerRef}
+      $backgroundImage={introduction.backgroundImage?.file}
+    >
+      {shouldShowRiveAnimation ? (
         <RiveAnimationContainer>
           <RiveAnimation src="/amaraWriting.riv" autoplay />
         </RiveAnimationContainer>
       ) : (
-        <CharacterImageContainer>
-          <CharacterImage
-            src={
-              character.selectedImage || character.characterImage?.file || ""
-            }
-            alt={character.name || ""}
-          />
-        </CharacterImageContainer>
+        characterImageUrl && (
+          <CharacterImageContainer>
+            <CharacterImage src={characterImageUrl} alt={character.name} />
+          </CharacterImageContainer>
+        )
       )}
 
       <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
         <Headline>{heading}</Headline>
 
-        {paragraphs.map((paragraph, index) => (
-          <TextBlock key={index}>
-            {paragraph}
-            {index < paragraphs.length - 1 && <br />}
-          </TextBlock>
-        ))}
+        <TextBlock>{description}</TextBlock>
 
-        <Image src={imageUrl} />
+        {introduction.image?.file && <Image src={introduction.image.file} />}
 
         <CameraButtonContainer>
           <IconButton
@@ -119,5 +105,13 @@ export async function clientLoader({ params }) {
     characterIndex,
   )
 
-  return { characterIndex, characterSlug, character, introduction }
+  if (!character) {
+    throw new Response("Character data missing from CMS", { status: 500 })
+  }
+
+  if (!introduction) {
+    throw new Response("Introduction data missing from CMS", { status: 500 })
+  }
+
+  return { characterSlug, character, introduction }
 }
