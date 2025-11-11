@@ -7,10 +7,10 @@ import {
 import { useTranslation } from "react-i18next"
 import { useRouteLoaderData } from "react-router-dom"
 
-export default function Intro({ onCharacterSelect }) {
+export default function Intro({ onCharacterSelect, characters }) {
   const { t } = useTranslation()
   const loaderData = useRouteLoaderData("welcome")
-  const charactersData = loaderData?.characters ?? []
+  const charactersData = characters ?? loaderData?.characters ?? []
 
   // Return early if no characters data is available yet
   if (!charactersData || charactersData.length === 0) {
