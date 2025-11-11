@@ -49,7 +49,8 @@ const Content = styled.div`
 
 const Headline = styled.h1`
   margin-top: 10.75rem;
-  font-family: "Bricolage Grotesque";
+  font-family:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
   font-size: 2.625rem;
   font-style: normal;
   font-weight: 700;
@@ -62,10 +63,11 @@ const Headline = styled.h1`
 const Description = styled.div`
   width: 21.375rem;
   max-width: 100%;
-  font-family: "Bricolage Grotesque";
+  font-family:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
   font-size: 1.5rem;
   font-style: normal;
-  font-weight: 700;
+  font-weight: 400;
   line-height: 1.4;
   margin-bottom: 2rem;
   opacity: ${(props) => (props.$isLoading ? "0.5" : "1")};
@@ -80,7 +82,7 @@ const Description = styled.div`
   }
 
   strong {
-    font-weight: 800;
+    font-weight: 700;
   }
 
   em {

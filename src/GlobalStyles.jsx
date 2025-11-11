@@ -31,7 +31,7 @@ const GlobalStyles = createGlobalStyle`
     min-height: 100dvh; /* Support dynamic viewport on mobile browsers */
     overflow: hidden; /* Kiosk-style: lock scroll intentionally */
     color: ${(props) => props.theme.colors.text.primary};
-    font-family: "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+  font-family: "Bricolage Grotesque Variable", "Bricolage Grotesque", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
     font-optical-sizing: auto;
     font-style: normal;
     font-variation-settings: "wdth" 100;

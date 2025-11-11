@@ -3,7 +3,6 @@ import eslintPlugin from "@nabla/vite-plugin-eslint"
 import { reactRouter } from "@react-router/dev/vite"
 import { defineConfig } from "vite"
 import devtools from "vite-plugin-devtools-json"
-import webfontDownload from "vite-plugin-webfont-dl"
 
 export default defineConfig(() => ({
   base: process.env.VITE_BASE_PATH || "/",
@@ -20,19 +19,6 @@ export default defineConfig(() => ({
       },
     }),
     eslintPlugin(),
-    webfontDownload(
-      [
-        "https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,200..800&display=swap",
-      ],
-      {
-        injectAsStyleTag: true,
-        minifyCss: true,
-        async: true,
-        cache: true,
-        proxy: false,
-        subsetsAllowed: ["latin"],
-      },
-    ),
     devtools(),
   ],
 

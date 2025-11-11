@@ -9,6 +9,7 @@ import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router"
 
 // Initialize i18n
 import "@/i18n"
+import "@fontsource-variable/bricolage-grotesque"
 
 import LoadingSpinner from "@ui/LoadingSpinner"
 

@@ -25,7 +25,8 @@ export const ChooserContainer = styled.div`
 
 export const Title = styled.h2`
   color: var(--dark-mode, #fff);
-  font-family: "Bricolage Grotesque", sans-serif;
+  font-family:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
   font-size: 1.5rem;
   font-style: normal;
   font-weight: 600;
@@ -52,7 +53,8 @@ export const LanguageOption = styled.button`
   cursor: pointer;
   padding: 0;
   color: var(--dark-mode, #fff);
-  font-family: "Bricolage Grotesque", sans-serif;
+  font-family:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
   font-size: 1rem;
   font-style: normal;
   font-weight: 500;

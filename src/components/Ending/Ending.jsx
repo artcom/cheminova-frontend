@@ -50,7 +50,8 @@ const Content = styled.div`
 `
 
 const Headline = styled.h1`
-  font-family: "Bricolage Grotesque";
+  font-family:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
   font-size: 2.625rem;
   font-style: normal;
   padding-top: 2rem;
@@ -65,7 +66,8 @@ const Headline = styled.h1`
 const Description = styled.div`
   width: 21.375rem;
   max-width: 100%;
-  font-family: "Bricolage Grotesque";
+  font-family:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
   font-size: 1.5rem;
   font-style: normal;
   font-weight: 700;
@@ -98,7 +100,8 @@ const ThankYouMessage = styled.div`
   padding: 1.5rem;
   margin-bottom: 2rem;
   backdrop-filter: blur(10px);
-  font-family: "Bricolage Grotesque";
+  font-family:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
   font-size: 1.125rem;
   font-weight: 600;
   text-align: center;

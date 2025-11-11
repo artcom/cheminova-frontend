@@ -59,7 +59,8 @@ export const ContentCard = styled.div`
 
 export const Headline = styled.h1`
   color: ${(props) => props.theme.colors.text.primary};
-  font-family: "Bricolage Grotesque", sans-serif;
+  font-family:
+    "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
   font-size: 2.375rem; /* 38px */
   font-weight: 700;
   line-height: 2.875rem; /* 46px */
