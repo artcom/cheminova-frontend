@@ -48,10 +48,14 @@ const CharacterImage = styled(motion.img)`
     `drop-shadow(0 ${0.5 + $shadowIntensity * 0.25}rem ${0.75 + $shadowIntensity * 0.5}rem rgba(0, 0, 0, ${0.4 - $shadowIntensity * 0.1}))`};
 `
 
-const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
+const CharacterCarousel = ({
+  selectedIndex,
+  onSelectionChange,
+  characters,
+}) => {
   const { t } = useTranslation()
   const loaderData = useRouteLoaderData("welcome")
-  const charactersData = loaderData?.characters ?? []
+  const charactersData = characters ?? loaderData?.characters ?? []
 
   const { x, handleDragStart, handleDragEnd, dragConstraints } =
     useCharacterCarousel(
@@ -60,7 +64,6 @@ const CharacterCarousel = ({ selectedIndex, onSelectionChange }) => {
       onSelectionChange,
     )
 
-  // Return early if no characters data is available yet
   if (!charactersData || charactersData.length === 0) {
     return (
       <CarouselContainer>
@@ -128,7 +131,7 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => (
         delay: 0.6,
         ease: "easeOut",
       }}
-      src={character.image || character.characterImage?.file}
+      src={character.characterImage?.file}
       alt={character.name}
       $shadowIntensity={shadowIntensity}
     />

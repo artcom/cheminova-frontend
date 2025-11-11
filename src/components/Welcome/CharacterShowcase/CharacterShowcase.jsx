@@ -1,4 +1,3 @@
-import useGlobalState from "@/hooks/useGlobalState"
 import { useRouteLoaderData } from "react-router-dom"
 
 import CharacterCarousel from "./components/CharacterCarousel"
@@ -9,8 +8,9 @@ export default function CharacterShowcase({
   showIntro,
   setShowIntro,
   characters,
+  currentCharacterIndex,
+  setCurrentCharacterIndex,
 }) {
-  const { currentCharacterIndex, setCurrentCharacterIndex } = useGlobalState()
   const loaderData = useRouteLoaderData("welcome")
 
   const charactersData = characters ?? loaderData?.characters ?? []
@@ -29,11 +29,15 @@ export default function CharacterShowcase({
   return (
     <MainLayoutContainer>
       {showIntro ? (
-        <Intro onCharacterSelect={handleCharacterSelection} />
+        <Intro
+          onCharacterSelect={handleCharacterSelection}
+          characters={charactersData}
+        />
       ) : (
         <CharacterCarousel
           selectedIndex={currentCharacterIndex}
           onSelectionChange={handleCharacterChange}
+          characters={charactersData}
         />
       )}
     </MainLayoutContainer>

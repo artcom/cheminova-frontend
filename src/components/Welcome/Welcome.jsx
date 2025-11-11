@@ -65,12 +65,6 @@ export default function Welcome() {
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
   const { clearCapturedImages } = useGlobalState()
   const navigate = useNavigate()
-  console.info(
-    "showIntro:",
-    showIntro,
-    "currentCharacterIndex:",
-    currentCharacterIndex,
-  )
 
   const { welcome, characterOverview, characters } = useLoaderData()
 
@@ -78,29 +72,16 @@ export default function Welcome() {
   const characterOverviewData = characterOverview
   const charactersData = characters
 
-  console.log("Welcome component loaded data:", {
-    welcomeData,
-    characterOverviewData,
-    charactersData,
-  })
-  console.log("Characters array:", charactersData)
-  console.log("First character:", charactersData?.[0])
-  console.log(
-    "Character fields:",
-    charactersData?.[0] ? Object.keys(charactersData[0]) : "No characters",
-  )
+  console.info("Characters in Welcome:", charactersData)
 
   const handleGoToIntroduction = () => {
     clearCapturedImages()
     const currentCharacter = charactersData[currentCharacterIndex]
-    console.log("Current character:", currentCharacter)
-    console.log("Current character index:", currentCharacterIndex)
     const characterSlug = getCharacterSlug(currentCharacter, charactersData)
-    console.log("Extracted slug:", characterSlug)
     navigate(`/characters/${characterSlug}/introduction`)
   }
 
-  const { step, setStep, getNavigationProps } = useWelcomeSteps({
+  const { step, getNavigationProps } = useWelcomeSteps({
     goToIntroduction: handleGoToIntroduction,
     showIntro,
     setShowIntro,
@@ -144,10 +125,11 @@ export default function Welcome() {
       {step === STEP.CHARACTER && (
         <ChildrenContainer>
           <CharacterShowcase
-            onSelect={() => setStep(2)}
             showIntro={showIntro}
             setShowIntro={setShowIntro}
             characters={charactersData}
+            currentCharacterIndex={currentCharacterIndex}
+            setCurrentCharacterIndex={setCurrentCharacterIndex}
           />
         </ChildrenContainer>
       )}
@@ -189,6 +171,8 @@ export async function clientLoader() {
   const welcome = extractFromContentTree.getWelcome(content)
   const characterOverview = extractFromContentTree.getCharacterOverview(content)
   const characters = extractFromContentTree.getCharacters(content)
+
+  console.info("Characters in clientLoader:", characters)
 
   const backgroundImages = [
     LaNau,
