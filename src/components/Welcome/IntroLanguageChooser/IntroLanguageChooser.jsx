@@ -1,5 +1,4 @@
 import { changeLanguage, getCurrentLocale } from "@/i18n"
-import { useLanguages } from "@/providers/LanguageProvider"
 import { AnimatePresence, motion } from "motion/react"
 import { useEffect, useState } from "react"
 
@@ -12,10 +11,9 @@ import {
   Title,
 } from "./styles"
 
-export default function IntroLanguageChooser() {
+export default function IntroLanguageChooser({ welcomeLanguage }) {
   const [currentLocale, setCurrentLocale] = useState(() => getCurrentLocale())
   const [hasSelected, setHasSelected] = useState(false)
-  const { supportedLanguages, isLoading, isSuccess } = useLanguages()
 
   useEffect(() => {
     // Update local state when language changes
@@ -33,12 +31,6 @@ export default function IntroLanguageChooser() {
     setCurrentLocale(languageCode)
   }
 
-  const languageEntries = Object.entries(supportedLanguages)
-
-  if (isLoading || !isSuccess) {
-    return null
-  }
-
   const MotionChooserContainer = motion.create(ChooserContainer)
 
   return (
@@ -50,18 +42,18 @@ export default function IntroLanguageChooser() {
           exit={{ opacity: 0 }}
           transition={{ duration: 0.8, ease: "easeOut", delay: 0.4 }}
         >
-          <Title>Choose Language</Title>
+          <Title>{welcomeLanguage.chooseLanguageText}</Title>
           <LanguageOptions>
-            {languageEntries.map(([code, name]) => (
+            {welcomeLanguage.languages.map(({ languageId, language }) => (
               <LanguageOption
-                key={code}
-                onClick={() => handleLanguageChange(code)}
-                $isSelected={currentLocale === code}
+                key={languageId}
+                onClick={() => handleLanguageChange(languageId)}
+                $isSelected={currentLocale === languageId}
               >
-                <RadioButton $isSelected={currentLocale === code}>
-                  <RadioCircle $isSelected={currentLocale === code} />
+                <RadioButton $isSelected={currentLocale === languageId}>
+                  <RadioCircle $isSelected={currentLocale === languageId} />
                 </RadioButton>
-                <span>{name}</span>
+                <span>{language}</span>
               </LanguageOption>
             ))}
           </LanguageOptions>

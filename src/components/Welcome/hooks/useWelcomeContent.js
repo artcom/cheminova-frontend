@@ -1,5 +1,3 @@
-import { useTranslation } from "react-i18next"
-
 import { STEP } from "../constants"
 
 export function useWelcomeContent(
@@ -8,43 +6,34 @@ export function useWelcomeContent(
   currentCharacterIndex,
   data,
 ) {
-  const { t } = useTranslation()
-  const { charactersData, characterOverviewData } = data
+  const { charactersData, characterOverviewData, welcomeIntroData } = data
 
   const getContent = () => {
     if (step === STEP.INTRO) {
       return {
-        headline: t("welcome.title"),
-        subHeadline: t("welcome.subtitle"),
+        headline: welcomeIntroData.title,
+        subHeadline: welcomeIntroData.siteName,
         description: {
-          title: "",
-          text: t("welcome.description"),
+          title: welcomeIntroData.description,
+          text: welcomeIntroData.introText.replace(/<[^>]*>/g, ""),
         },
         navigationMode: "single",
       }
     } else if (step === STEP.CHARACTER && showIntro) {
-      // Use CMS data - it's localized based on current language
       return {
-        headline: characterOverviewData?.title,
-        subHeadline: characterOverviewData?.siteName,
+        headline: characterOverviewData.title,
+        subHeadline: characterOverviewData.siteName,
         description: {
           title: "",
-          text: characterOverviewData?.onboarding
-            ? characterOverviewData.onboarding.replace(/<[^>]*>/g, "")
-            : "",
+          text: characterOverviewData.onboarding.replace(/<[^>]*>/g, ""),
         },
         navigationMode: "single",
       }
-    } else if (
-      step === STEP.CHARACTER &&
-      !showIntro &&
-      charactersData &&
-      charactersData[currentCharacterIndex]
-    ) {
+    } else if (step === STEP.CHARACTER && !showIntro) {
       const character = charactersData[currentCharacterIndex]
       return {
         headline: character.name,
-        subHeadline: character.characterType || character.role,
+        subHeadline: character.characterType,
         description: {
           title: "",
           text: character.description.replace(/<[^>]*>/g, ""),
@@ -54,5 +43,5 @@ export function useWelcomeContent(
     }
   }
 
-  return getContent() || {}
+  return getContent()
 }

@@ -1,15 +1,13 @@
-import LaNau from "@ui/assets/LaNau.webp"
-
 import { STEP } from "../constants"
 
-export function useWelcomeBackground(step, welcomeData, characterOverviewData) {
-  if (step === STEP.INTRO && welcomeData?.backgroundImage?.file) {
-    return welcomeData.backgroundImage.file
-  } else if (
-    step === STEP.CHARACTER &&
-    characterOverviewData?.backgroundImage?.file
-  ) {
+export function useWelcomeBackground(
+  step,
+  welcomeIntroData,
+  characterOverviewData,
+) {
+  if (step === STEP.INTRO) {
+    return welcomeIntroData.backgroundImage.file
+  } else if (step === STEP.CHARACTER) {
     return characterOverviewData.backgroundImage.file
   }
-  return LaNau
 }

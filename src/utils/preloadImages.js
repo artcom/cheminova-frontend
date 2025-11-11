@@ -10,9 +10,3 @@ export function preloadImages(imageUrls) {
 
   return Promise.all(promises)
 }
-
-export const WELCOME_LAYER_IMAGES = [
-  "/layer/layer_front.png",
-  "/layer/layer_second.png",
-  "/layer/layer_third.png",
-]
