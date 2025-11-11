@@ -3,8 +3,6 @@ import { allContentQuery } from "@/api/queries"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
-import { useScroll, useTransform } from "motion/react"
-import { useRef } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
 import IconButton from "@ui/IconButton"
@@ -14,9 +12,11 @@ import {
   CameraButtonContainer,
   CharacterImage,
   CharacterImageContainer,
-  ContentContainer,
+  ContentCard,
+  ContentScrollContainer,
   Headline,
   Image,
+  ImageWrapper,
   IntroductionContainer,
   RiveAnimationContainer,
   TextBlock,
@@ -24,9 +24,6 @@ import {
 
 export default function Introduction() {
   const navigate = useNavigate()
-  const containerRef = useRef(null)
-  const { scrollY } = useScroll({ container: containerRef })
-  const y = useTransform(scrollY, (v) => -v * 0.5)
 
   const { characterSlug, character, introduction } = useLoaderData()
 
@@ -51,7 +48,6 @@ export default function Introduction() {
   return (
     <IntroductionContainer
       data-introduction-container
-      ref={containerRef}
       $backgroundImage={introduction.backgroundImage?.file}
     >
       {shouldShowRiveAnimation ? (
@@ -66,22 +62,28 @@ export default function Introduction() {
         )
       )}
 
-      <ContentContainer initial={{ x: "-50%" }} style={{ y }}>
-        <Headline>{heading}</Headline>
+      <ContentScrollContainer>
+        <ContentCard>
+          <Headline>{heading}</Headline>
 
-        <TextBlock>{description}</TextBlock>
+          {introduction.image?.file && (
+            <ImageWrapper>
+              <Image src={introduction.image.file} />
+            </ImageWrapper>
+          )}
 
-        {introduction.image?.file && <Image src={introduction.image.file} />}
+          <TextBlock>{description}</TextBlock>
 
-        <CameraButtonContainer>
-          <IconButton
-            variant="camera"
-            onClick={() => {
-              navigate(`/characters/${characterSlug}/photo-capture`)
-            }}
-          />
-        </CameraButtonContainer>
-      </ContentContainer>
+          <CameraButtonContainer>
+            <IconButton
+              variant="camera"
+              onClick={() => {
+                navigate(`/characters/${characterSlug}/photo-capture`)
+              }}
+            />
+          </CameraButtonContainer>
+        </ContentCard>
+      </ContentScrollContainer>
     </IntroductionContainer>
   )
 }
