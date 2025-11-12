@@ -13,7 +13,10 @@ import {
 
 const MotionChooserContainer = motion.create(ChooserContainer)
 
-export default function IntroLanguageChooser({ welcomeLanguage }) {
+export default function IntroLanguageChooser({
+  welcomeLanguage,
+  onLanguageSelected,
+}) {
   const [currentLocale, setCurrentLocale] = useState(() => getCurrentLocale())
   const [hasSelected, setHasSelected] = useState(false)
 
@@ -31,6 +34,7 @@ export default function IntroLanguageChooser({ welcomeLanguage }) {
     setHasSelected(true)
     await changeLanguage(languageCode)
     setCurrentLocale(languageCode)
+    onLanguageSelected?.()
   }
 
   return (

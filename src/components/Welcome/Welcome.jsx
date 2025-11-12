@@ -34,6 +34,7 @@ const MotionLayerImage = motion.create(LayerImage)
 export default function Welcome() {
   const [showIntro, setShowIntro] = useState(true)
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
+  const [languageChooserVisible, setLanguageChooserVisible] = useState(true)
   const { clearCapturedImages } = useGlobalState()
   const navigate = useNavigate()
 
@@ -133,7 +134,10 @@ export default function Welcome() {
         )}
       </AnimatePresence>
       {step === STEP.INTRO && (
-        <IntroLanguageChooser welcomeLanguage={welcomeLanguage} />
+        <IntroLanguageChooser
+          welcomeLanguage={welcomeLanguage}
+          onLanguageSelected={() => setLanguageChooserVisible(false)}
+        />
       )}
       {step === STEP.CHARACTER && (
         <ChildrenContainer>
@@ -155,7 +159,7 @@ export default function Welcome() {
           />
         )}
 
-        {description && (
+        {!(step === STEP.INTRO && languageChooserVisible) && description && (
           <Description
             title={description.title}
             text={description.text}
@@ -164,11 +168,13 @@ export default function Welcome() {
           />
         )}
       </TextLayout>
-      <Navigation
-        position="default"
-        selectHref={selectHref}
-        {...getNavigationProps(navigationMode)}
-      />
+      {!(step === STEP.INTRO && languageChooserVisible) && (
+        <Navigation
+          position="default"
+          selectHref={selectHref}
+          {...getNavigationProps(navigationMode)}
+        />
+      )}
       <Vignette />
     </Layout>
   )
