@@ -210,7 +210,7 @@ export default function PhotoCapture() {
             color="#FFF"
             onClick={() => navigate(`/characters/${characterSlug}/exploration`)}
           >
-            {photography.continueButtonText}
+            {"Continue"}
           </SmallButton>
         </Footer>
       </PhotoCaptureContainer>

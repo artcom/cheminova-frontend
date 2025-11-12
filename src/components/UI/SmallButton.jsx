@@ -9,7 +9,7 @@ const StyledSmallButton = styled.button`
   display: flex;
   justify-content: center;
   align-items: center;
-  color: ${({ color }) => color || "black"};
+  color: ${({ color }) => color || "white"};
   text-align: center;
   font-size: 1rem;
   font-style: normal;

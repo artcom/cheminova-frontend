@@ -1,9 +1,9 @@
 import { styled } from "styled-components"
 
 export const cardPositions = [
-  { x: "0px", y: "23.5rem", opacity: 1, zIndex: 2 },
-  { x: "11rem", y: "21rem", opacity: 0.5, zIndex: 1 },
-  { x: "-11rem", y: "21rem", opacity: 0.5, zIndex: 1 },
+  { x: "0px", y: "21.5rem", opacity: 1, zIndex: 2 },
+  { x: "11rem", y: "19rem", opacity: 0.5, zIndex: 1 },
+  { x: "-11rem", y: "19rem", opacity: 0.5, zIndex: 1 },
 ]
 
 const characterStyles = [
@@ -65,8 +65,8 @@ export const TasksContainer = styled.div`
 
 export const TaskCard = styled.div`
   position: absolute;
-  width: 19.25rem;
-  height: 24.625rem;
+  width: 16.3625rem;
+  height: 20.93125rem;
   top: ${({ $top }) => $top};
   left: ${({ $left }) => $left};
   display: flex;
@@ -151,7 +151,7 @@ export const CameraButtonContainer = styled.div`
 
 export const Footer = styled.div`
   position: absolute;
-  top: 10rem;
+  bottom: 1rem;
 `
 
 export const PaginationContainer = styled.div`
@@ -160,7 +160,7 @@ export const PaginationContainer = styled.div`
   align-items: center;
   gap: 0.5rem;
   margin-top: 28rem;
-  margin-bottom: 3rem;
+  margin-bottom: 2rem;
 `
 
 export const PaginationDot = styled.div`

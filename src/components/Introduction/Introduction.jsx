@@ -87,6 +87,7 @@ export default function Introduction() {
           <CameraButtonContainer>
             <IconButton
               variant="camera"
+              color={isFuturePerson ? "white" : undefined}
               onClick={() => {
                 navigate(`/characters/${characterSlug}/photo-capture`)
               }}
@@ -125,16 +126,23 @@ export async function clientLoader({ params }) {
     throw new Response("Introduction data missing from CMS", { status: 500 })
   }
 
-  // Preload introduction images for instant display
   const imagesToPreload = [
     introduction.backgroundImage?.file,
     introduction.image?.file,
     introduction.characterImage?.file,
     character.selectedImage,
     character.characterImage?.file,
-  ].filter(Boolean) // Remove undefined/null values
+  ].filter(Boolean)
 
-  await preloadImages(imagesToPreload)
+  const preloadPromises = [preloadImages(imagesToPreload)]
+
+  if (characterSlug === "artist") {
+    preloadPromises.push(
+      fetch("/amaraWriting.riv").then((response) => response.blob()),
+    )
+  }
+
+  await Promise.all(preloadPromises)
 
   return { characterSlug, character, introduction }
 }
