@@ -3,6 +3,7 @@ import { allContentQuery } from "@/api/queries"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
+import { preloadImages } from "@/utils/preloadImages"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
 import IconButton from "@ui/IconButton"
@@ -114,6 +115,17 @@ export async function clientLoader({ params }) {
   if (!introduction) {
     throw new Response("Introduction data missing from CMS", { status: 500 })
   }
+
+  // Preload introduction images for instant display
+  const imagesToPreload = [
+    introduction.backgroundImage?.file,
+    introduction.image?.file,
+    introduction.characterImage?.file,
+    character.selectedImage,
+    character.characterImage?.file,
+  ].filter(Boolean) // Remove undefined/null values
+
+  await preloadImages(imagesToPreload)
 
   return { characterSlug, character, introduction }
 }
