@@ -1,9 +1,9 @@
 import { styled } from "styled-components"
 
 export const cardPositions = [
-  { x: "0px", y: "28rem", opacity: 1, zIndex: 2 },
-  { x: "11rem", y: "25.5rem", opacity: 0.5, zIndex: 1 },
-  { x: "-11rem", y: "25.5rem", opacity: 0.5, zIndex: 1 },
+  { x: "0px", y: "23.5rem", opacity: 1, zIndex: 2 },
+  { x: "11rem", y: "21rem", opacity: 0.5, zIndex: 1 },
+  { x: "-11rem", y: "21rem", opacity: 0.5, zIndex: 1 },
 ]
 
 const characterStyles = [
@@ -35,19 +35,21 @@ export const PhotoCaptureContainer = styled.div`
 
 export const HeaderContainer = styled.div`
   display: flex;
-  width: 21.4375rem;
+  width: 100%;
   flex-direction: column;
   justify-items: center;
-  padding: 1.5625rem;
+  padding: 1.5625rem 0.78125rem 0.8125rem;
 `
 
 export const HeaderText = styled.h1`
   color: #fff;
-  font-size: 2.375rem;
+  font-size: 1.875rem;
   font-style: bold;
   font-weight: 700;
   line-height: normal;
+  padding: 0;
   margin: 0;
+  width: 100%;
   text-align: center;
 `
 
@@ -97,7 +99,7 @@ export const TaskDescription = styled.h2`
 export const TaskHeadline = styled.h2`
   color: #fff;
   width: 21.4375rem;
-  font-size: 1.5rem;
+  font-size: 1.2rem;
   font-style: bold;
   font-weight: 600;
   line-height: normal;

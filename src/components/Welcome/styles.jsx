@@ -5,14 +5,11 @@ export const Layout = styled.div`
   flex-direction: column;
   width: 100dvw;
   height: 100dvh;
-  /* Safe area padding for devices with notches */
-  padding-top: var(--safe-inset-top);
+  padding-top: 0;
   padding-bottom: var(--safe-inset-bottom);
   background: ${({ theme, $backgroundImage }) =>
     `${theme.colors.background.dark} url(${$backgroundImage}) center / cover no-repeat`};
-  /* If large background images cause repaints during scroll (not expected in kiosk),
-     consider: background-attachment: local; or further optimization via preloading. */
-  position: relative; /* Removed absolute: rely on root grid centering */
+  position: relative;
 `
 
 export const TextLayout = styled.div`
@@ -21,7 +18,7 @@ export const TextLayout = styled.div`
   width: 100%;
   max-width: 24.5625rem;
   margin: 0 auto;
-  padding: 0 1rem; /* Prevent edge clipping on narrower screens */
+  padding: 0 1rem;
   justify-content: ${({ $hasDescription }) =>
     $hasDescription ? "space-between" : "flex-start"};
   align-items: flex-start;
@@ -33,10 +30,6 @@ export const ChildrenContainer = styled.div`
   inset: 0;
   width: 100dvw;
   height: 100dvh;
-  /* Layering note: This acts as an overlay (character carousel / animations).
-     If it ever blocks underlying interactive text unintentionally,
-     you can enable pass-through: pointer-events: none; and re-enable
-     on specific interactive descendants with pointer-events: auto. */
 `
 
 export const LayersContainer = styled.div`
@@ -47,17 +40,16 @@ export const LayersContainer = styled.div`
   width: max-content;
   height: auto;
   pointer-events: none;
-  z-index: 1; /* Above background (0) but below text/UI (auto/higher) */
-  will-change: transform; /* Optimize for animations */
+  z-index: 1;
+  will-change: transform;
 `
 
 export const LayerImage = styled.img`
   position: absolute;
   bottom: 0;
   left: 50%;
-  /* All transforms handled by Framer Motion - no CSS transform */
   height: auto;
   width: auto;
-  max-width: none; /* Allow overflow */
-  will-change: transform, opacity; /* Optimize for parallax animations */
+  max-width: none;
+  will-change: transform, opacity;
 `

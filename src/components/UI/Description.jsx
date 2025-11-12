@@ -8,7 +8,6 @@ const DescriptionBlock = styled(motion.div)`
   justify-content: center;
   align-items: flex-start;
   gap: 0.75rem;
-  padding: 0 1.56125rem;
   position: relative;
   z-index: 2;
 `
@@ -27,11 +26,13 @@ const DescriptionTitle = styled.div`
 const DescriptionText = styled.div`
   align-self: stretch;
   color: #fff;
-  text-align: center;
+  text-align: justify;
   font-size: 1rem;
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  white-space: pre-wrap;
+  hyphens: auto;
 `
 
 export default function Description({ title, text, headline, subheadline }) {

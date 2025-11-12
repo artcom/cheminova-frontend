@@ -14,9 +14,7 @@ const GlobalStyles = createGlobalStyle`
     -webkit-tap-highlight-color: transparent;
   }
 
-  /* CSS custom properties for safe areas & z-index scale */
   :root {
-    --safe-inset-top: env(safe-area-inset-top, 0px);
     --safe-inset-bottom: env(safe-area-inset-bottom, 0px);
     --z-base: 0;
     --z-overlay: 10;

@@ -9,7 +9,7 @@ const HeaderLayout = styled(motion.div)`
   display: flex;
   width: 100%;
   height: 10.5625rem;
-  padding: 3.625rem 0.625rem 0.625rem 0.625rem;
+  padding: 1.625rem 0.625rem 0.625rem 0.625rem;
   flex-direction: column;
   align-items: center;
   z-index: 3;
