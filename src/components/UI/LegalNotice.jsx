@@ -11,6 +11,7 @@ const LegalNoticeContainer = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+  height: 1.5rem;
 `
 
 const LinkSpan = styled.span`
