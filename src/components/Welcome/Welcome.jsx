@@ -41,9 +41,6 @@ export default function Welcome() {
   const { welcomeLanguage, welcomeIntro, characterOverview, characters } =
     useLoaderData()
 
-  console.info("Characters in Welcome:", characters)
-
-  // Build PARALLAX_LAYERS from CMS data
   const PARALLAX_LAYERS = [
     {
       id: "third",
@@ -192,8 +189,6 @@ export async function clientLoader() {
   const welcomeIntro = extractFromContentTree.getWelcomeIntro(content)
   const characterOverview = extractFromContentTree.getCharacterOverview(content)
   const characters = extractFromContentTree.getCharacters(content)
-
-  console.info("Characters in clientLoader:", characters)
 
   // Collect all layer images from CMS
   const layerImages = [
