@@ -11,15 +11,18 @@ import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
 import IconButton from "../UI/IconButton"
-import Navigation from "../UI/Navigation"
+import SmallButton from "../UI/SmallButton"
 import usePhotoTasks from "./hooks/usePhotoTasks"
 import {
   CameraButtonContainer,
   cardPositions,
   ExtraBorder,
+  Footer,
   HeaderContainer,
   HeaderText,
   HiddenInput,
+  PaginationContainer,
+  PaginationDot,
   PhotoCaptureContainer,
   TaskCard,
   TaskContent,
@@ -65,7 +68,7 @@ export default function PhotoCapture() {
       title,
       description: "",
     }))
-  }, [photography?.imageDescriptions, fallbackTitles])
+  }, [photography.imageDescriptions, fallbackTitles])
 
   const tasksForHook = useMemo(
     () =>
@@ -194,10 +197,22 @@ export default function PhotoCapture() {
             )
           })}
         </TasksContainer>
-        <Navigation
-          mode="single"
-          onSelect={() => navigate(`/characters/${characterSlug}/exploration`)}
-        />
+        <Footer>
+          <PaginationContainer>
+            {taskMetadata.map((_, index) => (
+              <PaginationDot
+                key={index}
+                $isActive={index === currentTaskIndex}
+              />
+            ))}
+          </PaginationContainer>
+          <SmallButton
+            color="#FFF"
+            onClick={() => navigate(`/characters/${characterSlug}/exploration`)}
+          >
+            {photography.continueButtonText}
+          </SmallButton>
+        </Footer>
       </PhotoCaptureContainer>
     </>
   )
