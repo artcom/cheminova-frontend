@@ -67,14 +67,13 @@ export const QuestionBlock = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 5rem;
+  gap: 1rem;
   text-align: center;
-  max-width: 32rem;
   width: 80%;
 `
 
 export const Question = styled.h1`
-  font-size: 1.6rem;
+  font-size: 1.1rem;
   margin: 0;
   font-weight: 700;
 `

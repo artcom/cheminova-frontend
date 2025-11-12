@@ -1,6 +1,6 @@
 import { changeLanguage, getCurrentLocale } from "@/i18n"
 import { AnimatePresence, motion } from "motion/react"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 import {
   ChooserContainer,
@@ -20,20 +20,18 @@ export default function IntroLanguageChooser({
   const [currentLocale, setCurrentLocale] = useState(() => getCurrentLocale())
   const [hasSelected, setHasSelected] = useState(false)
 
-  useEffect(() => {
-    // Update local state when language changes
-    const handleStorageChange = () => {
-      setCurrentLocale(getCurrentLocale())
-    }
-
-    window.addEventListener("storage", handleStorageChange)
-    return () => window.removeEventListener("storage", handleStorageChange)
-  }, [])
-
   const handleLanguageChange = async (languageCode) => {
-    setHasSelected(true)
-    await changeLanguage(languageCode)
+    // Update state immediately for instant UI feedback
     setCurrentLocale(languageCode)
+
+    // Wait a bit to show the selection change before fading out
+    await new Promise((resolve) => setTimeout(resolve, 300))
+
+    // Then update i18n and localStorage
+    await changeLanguage(languageCode)
+
+    // Finally trigger fade out
+    setHasSelected(true)
     onLanguageSelected?.()
   }
 

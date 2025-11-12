@@ -117,10 +117,13 @@ export const TaskContent = styled.div`
 `
 
 export const TaskImage = styled.img`
-  width: 16.875rem;
-  height: 16.875rem;
+  width: 85%;
+  height: auto;
+  aspect-ratio: 1;
   position: absolute;
-  top: 1rem;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
   border-radius: 1rem;
   object-fit: cover;
   border: ${({ $characterIndex }) =>
@@ -128,11 +131,13 @@ export const TaskImage = styled.img`
 `
 
 export const ExtraBorder = styled.img`
-  width: 17.438rem;
-  height: 16.375rem;
+  width: 82%;
+  height: auto;
+  aspect-ratio: 1;
   position: absolute;
-  top: 0.9rem;
-  left: 0.9rem;
+  top: 1.25rem;
+  left: 50%;
+  transform: translateX(-50%);
   border-radius: 1rem;
   border: 1px solid #000;
 `
