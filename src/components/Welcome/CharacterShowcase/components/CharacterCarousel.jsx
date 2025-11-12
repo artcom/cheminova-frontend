@@ -41,8 +41,8 @@ const CharacterCardContainer = styled(motion.div)`
 
 const CharacterImage = styled(motion.img)`
   width: auto;
-  height: 60dvh;
-  margin-bottom: 5.25rem;
+  height: 70dvh;
+  margin-bottom: 3.25rem;
   object-fit: contain;
   filter: ${({ $shadowIntensity }) =>
     `drop-shadow(0 ${0.5 + $shadowIntensity * 0.25}rem ${0.75 + $shadowIntensity * 0.5}rem rgba(0, 0, 0, ${0.4 - $shadowIntensity * 0.1}))`};
@@ -124,8 +124,8 @@ const CharacterCard = ({ character, scale, shadowIntensity }) => (
     }}
   >
     <CharacterImage
-      initial={{ opacity: 0, scale: 0.8 }}
-      animate={{ opacity: 1, scale: 1 }}
+      initial={{ opacity: 0 }}
+      animate={{ opacity: 1 }}
       transition={{
         duration: 0.6,
         delay: 0.6,

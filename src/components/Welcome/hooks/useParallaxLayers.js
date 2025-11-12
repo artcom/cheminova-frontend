@@ -1,59 +1,39 @@
-/**
- * Layer positioning and animation configuration
- * All transforms handled by Framer Motion to avoid CSS conflicts
- *
- * Enhanced parallax with ENTRY + EXIT animations:
- * - Back layer: enters from left and down, exits left and up (slowest)
- * - Middle layer: enters from right and down, exits right and up (medium speed)
- * - Front layer: enters from center and down, exits straight up (fastest)
- *
- * Layers animate IN on mount, then OUT on step transition
- */
 const LAYER_CONFIG = {
   third: {
-    // Back layer - enters from LEFT, exits LEFT (reduced horizontal movement)
-    entryX: "-120%", // Reduced from -130% (half the distance from static)
-    entryY: 100, // Start below viewport
-    entryScale: 0.9, // Smaller on entry
-    staticX: "-110%", // Rest position
+    entryX: "-120%",
+    entryY: 100,
+    entryScale: 0.9,
+    staticX: "-110%",
     staticY: "-10%",
-    exitX: "-120%", // Reduced from -130% (half the distance from static)
-    exitY: -100, // Exit up
+    exitX: "-120%",
+    exitY: -100,
     exitScale: 1.1,
     duration: 1.2,
   },
   second: {
-    // Middle layer - enters from RIGHT, exits RIGHT (reduced horizontal movement)
-    entryX: "-40%", // Reduced from -30% (half the distance from static -50%)
-    entryY: 150, // Start below viewport
+    entryX: "-40%",
+    entryY: 150,
     entryScale: 0.9,
-    staticX: "-50%", // Rest position centered
+    staticX: "-50%",
     staticY: "5%",
-    exitX: "-40%", // Reduced from -30% (half the distance from static)
-    exitY: -150, // Exit up
+    exitX: "-40%",
+    exitY: -150,
     exitScale: 1.2,
     duration: 1.0,
   },
   front: {
-    // Front layer - enters from CENTER, exits straight UP (no change)
-    entryX: "-50%", // Start centered
-    entryY: 200, // Start below viewport (furthest)
-    entryScale: 0.8, // Smallest on entry
-    staticX: "-50%", // Rest position centered
+    entryX: "-50%",
+    entryY: 200,
+    entryScale: 0.8,
+    staticX: "-50%",
     staticY: "20%",
-    exitX: "-50%", // Stay centered for dramatic forward motion
-    exitY: -200, // Exit up fastest
-    exitScale: 1.3, // Largest on exit
+    exitX: "-50%",
+    exitY: -200,
+    exitScale: 1.3,
     duration: 0.8,
   },
 }
 
-/**
- * Get animation props for a layer during exit transition
- * @param {string} layerId - Layer identifier (third, second, front)
- * @param {boolean} isExiting - Whether exit animation should play
- * @returns {Object} Framer Motion animation props
- */
 export function getLayerAnimation(layerId, isExiting) {
   const config = LAYER_CONFIG[layerId]
 
@@ -65,19 +45,18 @@ export function getLayerAnimation(layerId, isExiting) {
   }
 
   if (!isExiting) {
-    // Entry animation: layers come in from their entry positions
     return {
       initial: {
         x: config.entryX,
         y: config.entryY,
         scale: config.entryScale,
-        opacity: 0, // Start invisible
+        opacity: 0,
       },
       animate: {
         x: config.staticX,
         y: config.staticY,
         scale: 1,
-        opacity: 1, // Fade in to full visibility
+        opacity: 1,
       },
       transition: {
         duration: config.duration,
@@ -86,7 +65,6 @@ export function getLayerAnimation(layerId, isExiting) {
     }
   }
 
-  // Exit animation: layers move out in different directions
   return {
     initial: {
       x: config.staticX,
@@ -98,7 +76,7 @@ export function getLayerAnimation(layerId, isExiting) {
       x: config.exitX,
       y: config.exitY,
       scale: config.exitScale,
-      opacity: 0, // Fade out to 0
+      opacity: 0,
     },
     transition: {
       duration: config.duration,

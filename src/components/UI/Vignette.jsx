@@ -21,13 +21,13 @@ const GradientCharacter = styled.div`
   bottom: 0;
   left: 0;
   width: 100%;
-  height: 18.25rem;
+  height: 25.25rem;
   pointer-events: none;
   z-index: 1;
   background: linear-gradient(
     179deg,
     rgba(31, 31, 31, 0) 0.68%,
-    #1f1f1f 36.25%
+    #1f1f1f 65.25%
   );
 `
 

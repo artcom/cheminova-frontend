@@ -15,8 +15,8 @@ const CharacterCardContainer = styled(motion.div)`
 
 const CharacterImage = styled(motion.img)`
   width: auto;
-  height: 60dvh;
-  margin-bottom: 5.25rem;
+  height: 70dvh;
+  margin-bottom: 2.25rem;
   object-fit: contain;
   filter: ${(props) =>
     `drop-shadow(0 ${0.5 + props.$shadowIntensity * 0.25}rem ${0.75 + props.$shadowIntensity * 0.5}rem rgba(0, 0, 0, ${0.4 - props.$shadowIntensity * 0.1}))`};
