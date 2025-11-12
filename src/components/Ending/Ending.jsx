@@ -14,8 +14,7 @@ const Screen = styled.div`
   position: relative;
   width: 100dvw;
   height: 100dvh;
-  padding: 0.5rem; 1.625rem calc(var(--safe-inset-bottom) + 7rem)
-    1.625rem;
+  padding: 0.5rem 1.625rem calc(var(--safe-inset-bottom) + 7rem) 1.625rem;
   display: flex;
   flex-direction: column;
   justify-content: flex-start;
