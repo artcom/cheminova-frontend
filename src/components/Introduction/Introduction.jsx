@@ -40,6 +40,9 @@ export default function Introduction() {
   const description = introduction.description.replace(/<[^>]*>/g, "")
 
   const shouldShowRiveAnimation = characterSlug === "artist"
+  const isArtist = characterSlug === "artist"
+  const isFuturePerson = characterSlug === "future"
+  const isJanitor = characterSlug === "janitor"
 
   const characterImageUrl =
     introduction.characterImage?.file ||
@@ -64,16 +67,22 @@ export default function Introduction() {
       )}
 
       <ContentScrollContainer>
-        <ContentCard>
-          <Headline>{heading}</Headline>
+        <ContentCard
+          $isFuturePerson={isFuturePerson}
+          $isArtist={isArtist}
+          $isJanitor={isJanitor}
+        >
+          <Headline $isFuturePerson={isFuturePerson} $isJanitor={isJanitor}>
+            {heading}
+          </Headline>
 
           {introduction.image?.file && (
             <ImageWrapper>
-              <Image src={introduction.image.file} />
+              <Image src={introduction.image.file} $isJanitor={isJanitor} />
             </ImageWrapper>
           )}
 
-          <TextBlock>{description}</TextBlock>
+          <TextBlock $isFuturePerson={isFuturePerson}>{description}</TextBlock>
 
           <CameraButtonContainer>
             <IconButton
