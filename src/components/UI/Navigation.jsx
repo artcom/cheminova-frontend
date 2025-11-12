@@ -32,7 +32,6 @@ const StyledLink = styled(Link)`
 const NavigationContainer = styled.div`
   display: flex;
   width: 90%;
-  height: 7.3125rem;
   flex-shrink: 0;
   z-index: 10;
   margin: 0 auto;
@@ -42,7 +41,7 @@ const NavigationContainer = styled.div`
     `
       left: 50%;
       transform: translateX(-50%);
-      bottom: 0.75rem;
+      bottom: 0.05rem;
       pointer-events: none;
       & > * { pointer-events: auto; }
     `};
@@ -51,25 +50,25 @@ const NavigationContainer = styled.div`
     switch ($mode) {
       case "single":
         return `
-          padding: 1.9375rem 0;
+          padding: 1.9375rem 0 0;
           justify-content: center;
           align-items: center;
         `
       case "horizontal":
         return `
-          padding: 2rem 0 1.875rem 0;
+          padding: 2rem 0 0 0;
           justify-content: space-between;
           align-items: center;
         `
       case "select":
         return `
-          padding: 2rem 0 1.875rem 0;
+          padding: 2rem 0 0 0;
           justify-content: space-between;
           align-items: center;
         `
       default:
         return `
-          padding: 1.9375rem 1.5625rem;
+          padding: 1.9375rem 1.5625rem 0;
           justify-content: center;
           align-items: flex-start;
           gap: 14.5625rem;
