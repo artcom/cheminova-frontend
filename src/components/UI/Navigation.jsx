@@ -1,8 +1,33 @@
 import { forwardRef } from "react"
+import { Link } from "react-router-dom"
 import { styled } from "styled-components"
 
 import Button from "@ui/Button"
 import IconButton from "@ui/IconButton"
+
+const StyledLink = styled(Link)`
+  all: unset;
+  width: 8.875rem;
+  height: 3.4375rem;
+  border-radius: 2.75rem;
+  border: 2px solid #fff;
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  color: #fff;
+  text-align: center;
+  font-size: 1.25rem;
+  font-style: normal;
+  font-weight: 700;
+  line-height: normal;
+  cursor: pointer;
+  text-decoration: none;
+
+  &:disabled {
+    opacity: 0.5;
+  }
+`
 
 const NavigationContainer = styled.div`
   display: flex;
@@ -61,6 +86,7 @@ const Navigation = forwardRef(function Navigation(
     singleButtonVariant,
     position,
     selectLabel,
+    selectHref,
     iconColor,
     onSelect,
     onNext,
@@ -110,7 +136,13 @@ const Navigation = forwardRef(function Navigation(
           disabled={prevDisabled}
           color={iconColor}
         />
-        <Button onClick={onSelect}>{label}</Button>
+        {selectHref ? (
+          <StyledLink to={selectHref} prefetch="render" onClick={onSelect}>
+            {label}
+          </StyledLink>
+        ) : (
+          <Button onClick={onSelect}>{label}</Button>
+        )}
         <IconButton
           variant="arrowRight"
           onClick={nextDisabled ? undefined : onNext}

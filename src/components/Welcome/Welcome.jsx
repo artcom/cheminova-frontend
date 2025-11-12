@@ -70,11 +70,19 @@ export default function Welcome() {
     },
   ]
 
+  // Get the URL for the currently selected character's introduction route
+  const currentCharacter = characters[currentCharacterIndex]
+  const currentCharacterSlug = currentCharacter
+    ? getCharacterSlug(currentCharacter, characters)
+    : null
+
   const handleGoToIntroduction = () => {
     clearCapturedImages()
-    const currentCharacter = characters[currentCharacterIndex]
-    const characterSlug = getCharacterSlug(currentCharacter, characters)
-    navigate(`/characters/${characterSlug}/introduction`)
+    // When using Link (selectHref), this just clears images
+    // Otherwise, navigate programmatically
+    if (currentCharacterSlug) {
+      navigate(`/characters/${currentCharacterSlug}/introduction`)
+    }
   }
 
   const { step, getNavigationProps } = useWelcomeSteps({
@@ -98,6 +106,12 @@ export default function Welcome() {
     welcomeIntro,
     characterOverview,
   )
+
+  // Build the href for the select button when a character is selected
+  const selectHref =
+    step === STEP.CHARACTER && !showIntro && currentCharacterSlug
+      ? `/characters/${currentCharacterSlug}/introduction`
+      : undefined
 
   return (
     <Layout $backgroundImage={backgroundImage}>
@@ -150,7 +164,11 @@ export default function Welcome() {
           />
         )}
       </TextLayout>
-      <Navigation position="default" {...getNavigationProps(navigationMode)} />
+      <Navigation
+        position="default"
+        selectHref={selectHref}
+        {...getNavigationProps(navigationMode)}
+      />
       <Vignette />
     </Layout>
   )
