@@ -9,6 +9,7 @@ import { styled } from "styled-components"
 
 import LoadingSpinner from "../UI/LoadingSpinner"
 import Navigation from "../UI/Navigation"
+import RiveAnimation from "../UI/RiveAnimation"
 
 const Screen = styled.div`
   position: relative;
@@ -36,6 +37,13 @@ const BackgroundImage = styled.div`
   opacity: ${(props) => (props.$imageUrl ? "0.3" : "0")};
   z-index: 0;
   transition: opacity 0.5s ease-in-out;
+`
+
+const RiveBackground = styled.div`
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+  pointer-events: none;
 `
 
 const Content = styled.div`
@@ -98,12 +106,17 @@ const LoadingContainer = styled.div`
 `
 
 export default function Perspective() {
-  const { characterSlug, perspective } = useLoaderData()
+  const { characterSlug, perspective, riveAsset } = useLoaderData()
   const [imageLoaded, setImageLoaded] = useState(false)
   const navigate = useNavigate()
   const isLoading = false
+  const showRiveAnimation = Boolean(riveAsset)
 
   useEffect(() => {
+    if (showRiveAnimation) {
+      return undefined
+    }
+
     const imageUrl = perspective?.backgroundImage?.file || null
 
     if (!imageUrl) {
@@ -124,7 +137,7 @@ export default function Perspective() {
       img.removeEventListener("load", handleLoad)
       img.removeEventListener("error", handleError)
     }
-  }, [perspective?.backgroundImage?.file])
+  }, [perspective?.backgroundImage?.file, showRiveAnimation])
 
   const heading = perspective?.heading || ""
   const description = perspective?.description
@@ -132,13 +145,24 @@ export default function Perspective() {
     : ""
 
   const backgroundImageUrl =
-    imageLoaded && perspective?.backgroundImage?.file
+    !showRiveAnimation && imageLoaded && perspective?.backgroundImage?.file
       ? perspective.backgroundImage.file
       : null
 
   return (
     <Screen>
       <BackgroundImage $imageUrl={backgroundImageUrl} />
+
+      {showRiveAnimation && (
+        <RiveBackground>
+          <RiveAnimation
+            src={riveAsset}
+            autoplay
+            fit="Cover"
+            alignment="Center"
+          />
+        </RiveBackground>
+      )}
 
       <Content>
         <Headline $isLoading={isLoading}>{heading}</Headline>
@@ -183,5 +207,34 @@ export async function clientLoader({ params }) {
     throw new Response("Perspective not found", { status: 404 })
   }
 
-  return { characterIndex, characterSlug, perspective }
+  const riveAsset =
+    characterSlug === "future"
+      ? "/timeline.riv"
+      : characterSlug === "janitor"
+        ? "/mateosgaze.riv"
+        : null
+
+  const preloadPromises = []
+
+  if (riveAsset) {
+    preloadPromises.push(
+      fetch(riveAsset)
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error(`Failed to preload Rive animation: ${riveAsset}`)
+          }
+          return response.blob()
+        })
+        .catch((error) => {
+          console.warn(error)
+          return null
+        }),
+    )
+  }
+
+  if (preloadPromises.length > 0) {
+    await Promise.all(preloadPromises)
+  }
+
+  return { characterIndex, characterSlug, perspective, riveAsset }
 }
