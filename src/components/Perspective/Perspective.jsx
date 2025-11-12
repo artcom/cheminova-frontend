@@ -105,16 +105,27 @@ export default function Perspective() {
   const isLoading = false
 
   useEffect(() => {
-    const imageUrl = perspective?.backgroundImage?.file
-    if (imageUrl) {
-      const img = new Image()
-      img.onload = () => setImageLoaded(true)
-      img.onerror = () => setImageLoaded(false)
-      img.src = imageUrl
-    } else {
-      setImageLoaded(false)
+    const imageUrl = perspective?.backgroundImage?.file || null
+
+    if (!imageUrl) {
+      const timeoutId = setTimeout(() => setImageLoaded(false), 0)
+      return () => clearTimeout(timeoutId)
     }
-  }, [perspective?.backgroundImage])
+
+    const resetTimeoutId = setTimeout(() => setImageLoaded(false), 0)
+    const img = new Image()
+    const handleLoad = () => setImageLoaded(true)
+    const handleError = () => setImageLoaded(false)
+    img.addEventListener("load", handleLoad)
+    img.addEventListener("error", handleError)
+    img.src = imageUrl
+
+    return () => {
+      clearTimeout(resetTimeoutId)
+      img.removeEventListener("load", handleLoad)
+      img.removeEventListener("error", handleError)
+    }
+  }, [perspective?.backgroundImage?.file])
 
   const heading = perspective?.heading || ""
   const description = perspective?.description

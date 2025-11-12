@@ -1,11 +1,10 @@
-import globals from "globals"
 import pluginJs from "@eslint/js"
+import ReactThree from "@react-three/eslint-plugin"
+import pluginQuery from "@tanstack/eslint-plugin-query"
+import eslintConfigPrettier from "eslint-config-prettier"
 import pluginReact from "eslint-plugin-react"
 import pluginReactHooks from "eslint-plugin-react-hooks"
-import eslintConfigPrettier from "eslint-config-prettier"
-import reactCompiler from "eslint-plugin-react-compiler"
-import pluginQuery from "@tanstack/eslint-plugin-query"
-import ReactThree from "@react-three/eslint-plugin"
+import globals from "globals"
 
 /** @type {import('eslint').Linter.Config[]} */
 export default [
@@ -37,7 +36,6 @@ export default [
     plugins: {
       react: pluginReact,
       "react-hooks": pluginReactHooks,
-      "react-compiler": reactCompiler,
       "@tanstack/query": pluginQuery,
     },
     languageOptions: {
@@ -47,8 +45,7 @@ export default [
       ...pluginReact.configs.flat.recommended.rules,
       ...pluginReact.configs.flat["jsx-runtime"].rules,
       ...pluginQuery.configs["flat/recommended"].rules,
-      ...pluginReactHooks.configs.recommended.rules,
-      "react-compiler/react-compiler": "error",
+      ...pluginReactHooks.configs["recommended-latest"].rules,
       "react/prop-types": "off",
       "react-hooks/exhaustive-deps": "warn",
     },

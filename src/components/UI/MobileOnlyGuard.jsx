@@ -1,5 +1,5 @@
 import useDevicePlatform from "@/hooks/useDevicePlatform"
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { styled } from "styled-components"
 
 const Overlay = styled.div`
@@ -54,14 +54,12 @@ const BypassButton = styled.button`
 // Shows a blocking overlay on non-mobile platforms (Windows, MacOS, Linux)
 export default function MobileOnlyGuard({ children }) {
   const { isAndroid, isIOS } = useDevicePlatform()
-  const [isClient, setIsClient] = useState(false)
   const [bypassed, setBypassed] = useState(false)
-  useEffect(() => setIsClient(true), [])
 
-  if (!isClient) return null
-  const isMobile = isAndroid || isIOS
+  // Guard against SSR - platform detection returns 'unknown' on server
+  const isDesktopOrUnknown = !isAndroid && !isIOS
 
-  if (!isMobile && !bypassed) {
+  if (isDesktopOrUnknown && !bypassed) {
     return (
       <Overlay>
         <Headline>Please use a mobile device</Headline>

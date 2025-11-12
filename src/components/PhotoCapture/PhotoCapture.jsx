@@ -86,11 +86,6 @@ export default function PhotoCapture() {
     initialImages: capturedImages,
   })
 
-  const { handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipe(
-    () => cycleCards("right"),
-    () => cycleCards("left"),
-  )
-
   const cycleCards = (direction) => {
     setCurrentTaskIndex((prevIndex) => {
       if (direction === "left") {
@@ -101,6 +96,11 @@ export default function PhotoCapture() {
       return prevIndex
     })
   }
+
+  const { handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipe(
+    () => cycleCards("right"),
+    () => cycleCards("left"),
+  )
 
   const handleFileChange = (event) => {
     const file = event.target.files?.[0]

@@ -11,6 +11,8 @@ import {
   Title,
 } from "./styles"
 
+const MotionChooserContainer = motion.create(ChooserContainer)
+
 export default function IntroLanguageChooser({ welcomeLanguage }) {
   const [currentLocale, setCurrentLocale] = useState(() => getCurrentLocale())
   const [hasSelected, setHasSelected] = useState(false)
@@ -30,8 +32,6 @@ export default function IntroLanguageChooser({ welcomeLanguage }) {
     await changeLanguage(languageCode)
     setCurrentLocale(languageCode)
   }
-
-  const MotionChooserContainer = motion.create(ChooserContainer)
 
   return (
     <AnimatePresence>

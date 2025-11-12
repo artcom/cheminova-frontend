@@ -6,7 +6,7 @@ import { useUploadImage } from "@/hooks/useUploadImage"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
-import { useState } from "react"
+import { useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
@@ -44,6 +44,7 @@ export default function Upload() {
   const { capturedImages } = useGlobalState()
   const [uploadProgress, setUploadProgress] = useState("")
   const [uploadErrors, setUploadErrors] = useState([])
+  const uploadAttemptRef = useRef(0)
   const { tasks } = usePhotoTasks()
   const navigate = useNavigate()
   const { characterSlug, character, upload: uploadData } = useLoaderData()
@@ -72,6 +73,8 @@ export default function Upload() {
     }
 
     try {
+      const attemptId = uploadAttemptRef.current + 1
+      uploadAttemptRef.current = attemptId
       setUploadProgress(
         t("upload.status.uploadingToCharacter", {
           count: validImages.length,
@@ -80,7 +83,6 @@ export default function Upload() {
         }),
       )
 
-      const timestamp = Date.now()
       const uploadResults = []
       const uploadErrors = []
 
@@ -89,7 +91,7 @@ export default function Upload() {
         try {
           const file = dataURLToFile(
             imageData,
-            `photo-${timestamp}-${index}.jpg`,
+            `photo-${characterSlug}-${attemptId}-${index}.jpg`,
           )
           const result = await uploadImageMutation.mutateAsync({ file })
           uploadResults.push(result)

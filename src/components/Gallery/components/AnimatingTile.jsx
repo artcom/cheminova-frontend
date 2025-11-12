@@ -29,6 +29,27 @@ import { Vector3 } from "three"
 
 extend({ RoundedPlaneGeometry: geometry.RoundedPlaneGeometry })
 
+const mulberry32 = (seed) => {
+  let t = seed >>> 0
+  return () => {
+    t += 0x6d2b79f5
+    let r = Math.imul(t ^ (t >>> 15), 1 | t)
+    r ^= r + Math.imul(r ^ (r >>> 7), 61 | r)
+    return ((r ^ (r >>> 14)) >>> 0) / 4294967296
+  }
+}
+
+const computePersonalDelay = (isPersonal, url, position) => {
+  if (!isPersonal) return 0
+  const seedString = `${url}-${position.join("-")}`
+  let hash = 0
+  for (let i = 0; i < seedString.length; i++) {
+    hash = (hash * 31 + seedString.charCodeAt(i)) >>> 0
+  }
+  const rand = mulberry32(hash)()
+  return rand * ANIMATION_CONFIG.personal.delayMax
+}
+
 export default function AnimatingTile({
   url,
   position,
@@ -68,11 +89,11 @@ export default function AnimatingTile({
   const completedSent = useRef(false)
 
   const targetZ = position[2]
-  const personalDelay = useRef(
-    isPersonal ? Math.random() * ANIMATION_CONFIG.personal.delayMax : 0,
+  const personalDelay = useMemo(
+    () => computePersonalDelay(isPersonal, url, position),
+    [isPersonal, url, position],
   )
-  const adjustedPersonalStartTime =
-    personalAnimationStartTime + personalDelay.current
+  const adjustedPersonalStartTime = personalAnimationStartTime + personalDelay
   const grayscaleStartTime =
     personalAnimationStartTime +
     ANIMATION_CONFIG.personal.delayMax +

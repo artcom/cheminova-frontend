@@ -4,7 +4,7 @@ import {
 } from "@/api/djangoApi"
 import { LANGUAGE_CONFIG, LANGUAGE_LIST } from "@/config/language"
 import { useQuery } from "@tanstack/react-query"
-import { createContext, useContext, useEffect, useMemo, useState } from "react"
+import { createContext, useContext, useMemo } from "react"
 
 const LanguageContext = createContext(null)
 
@@ -41,11 +41,9 @@ function LanguageProvider({ children }) {
     retryDelay: LANGUAGE_CONFIG.RETRY_DELAY,
   })
 
-  const [languages, setLanguages] = useState(LANGUAGE_LIST)
-
-  useEffect(() => {
-    if (!isSuccess || !data) return
-    setLanguages(resolveLanguagesFromContent(data))
+  const languages = useMemo(() => {
+    if (!isSuccess || !data) return LANGUAGE_LIST
+    return resolveLanguagesFromContent(data)
   }, [data, isSuccess])
 
   const contextValue = useMemo(

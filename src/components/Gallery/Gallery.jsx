@@ -8,7 +8,7 @@ import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { Canvas } from "@react-three/fiber"
 import theme from "@theme"
 import { AnimatePresence, motion } from "motion/react"
-import { useMemo, useRef, useState } from "react"
+import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
@@ -77,8 +77,7 @@ export default function Gallery() {
   const [detailMode, setDetailMode] = useState(false)
   const [activeIndex, setActiveIndex] = useState(0)
   const [stackSize, setStackSize] = useState(0)
-  const [switchDir, setSwitchDir] = useState(0)
-  const switchStartRef = useRef(0)
+  const [switchInfo, setSwitchInfo] = useState({ dir: 0, startMs: 0 })
   const [detailStackScale, setDetailStackScale] = useState(null)
   const navigate = useNavigate()
   const { characterSlug, gallery } = useLoaderData()
@@ -141,12 +140,12 @@ export default function Gallery() {
           <CameraController detailMode={detailMode} />
 
           <StackBump
-            switchDir={switchDir}
-            switchStartRef={switchStartRef}
+            switchInfo={switchInfo}
             onEnd={() => {
               DEBUG_GALLERY && console.debug("[StackBump] end")
-              setSwitchDir(0)
-              switchStartRef.current = 0
+              setSwitchInfo((prev) =>
+                prev.dir ? { dir: 0, startMs: 0 } : prev,
+              )
             }}
           >
             <GalleryContent
@@ -167,7 +166,7 @@ export default function Gallery() {
                   console.debug("[Gallery] stack size", n)
                 setStackSize(n)
               }}
-              switchInfo={{ dir: switchDir, startMs: switchStartRef.current }}
+              switchInfo={switchInfo}
             />
           </StackBump>
         </Canvas>
@@ -199,16 +198,14 @@ export default function Gallery() {
                   if (stackSize <= 0) return
                   DEBUG_GALLERY &&
                     console.debug("[Gallery] prev", { stackSize, activeIndex })
-                  setSwitchDir(-1)
-                  switchStartRef.current = performance.now()
+                  setSwitchInfo({ dir: -1, startMs: performance.now() })
                   setActiveIndex((i) => (i - 1 + stackSize) % stackSize)
                 }}
                 onNext={() => {
                   if (stackSize <= 0) return
                   DEBUG_GALLERY &&
                     console.debug("[Gallery] next", { stackSize, activeIndex })
-                  setSwitchDir(1)
-                  switchStartRef.current = performance.now()
+                  setSwitchInfo({ dir: 1, startMs: performance.now() })
                   setActiveIndex((i) => (i + 1) % stackSize)
                 }}
               />

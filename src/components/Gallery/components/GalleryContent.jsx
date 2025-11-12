@@ -1,5 +1,5 @@
 import { useThree } from "@react-three/fiber"
-import { useEffect, useMemo, useRef } from "react"
+import { useEffect, useMemo, useRef, useState } from "react"
 
 import {
   ANIMATION_DURATION,
@@ -99,28 +99,45 @@ export default function GalleryContent({
     }
   }, [ready, vw, vh, targetTilesPerRow, imagePool, personalImages])
 
-  const frozenRef = useRef({ tileData: null, personalStart: 0 })
-  const prevDetailRef = useRef(false)
-  useEffect(() => {
-    if (detailMode && !prevDetailRef.current) {
-      frozenRef.current = {
-        tileData,
-        personalStart: personalAnimationStartTime,
-      }
-    } else if (!detailMode && prevDetailRef.current) {
-      frozenRef.current = { tileData: null, personalStart: 0 }
-    }
-    prevDetailRef.current = detailMode
-  }, [detailMode, tileData, personalAnimationStartTime])
+  const [detailSnapshot, setDetailSnapshot] = useState(null)
 
-  const effectiveTileData =
-    detailMode && frozenRef.current.tileData
-      ? frozenRef.current.tileData
-      : tileData
-  const effectivePersonalStart =
-    detailMode && frozenRef.current.personalStart
-      ? frozenRef.current.personalStart
-      : personalAnimationStartTime
+  useEffect(() => {
+    const schedule = (callback) => {
+      if (typeof requestAnimationFrame === "function") {
+        const frameId = requestAnimationFrame(() => callback())
+        return () => cancelAnimationFrame(frameId)
+      }
+      const timeoutId = setTimeout(() => callback(), 0)
+      return () => clearTimeout(timeoutId)
+    }
+
+    if (detailMode) {
+      if (detailSnapshot) return undefined
+      return schedule(() =>
+        setDetailSnapshot({
+          tileData,
+          personalStart: personalAnimationStartTime,
+        }),
+      )
+    }
+
+    if (!detailSnapshot) return undefined
+    return schedule(() => setDetailSnapshot(null))
+  }, [detailMode, tileData, personalAnimationStartTime, detailSnapshot])
+
+  const effectiveTileData = useMemo(() => {
+    if (detailMode && detailSnapshot?.tileData) {
+      return detailSnapshot.tileData
+    }
+    return tileData
+  }, [detailMode, detailSnapshot, tileData])
+
+  const effectivePersonalStart = useMemo(() => {
+    if (detailMode && detailSnapshot?.personalStart) {
+      return detailSnapshot.personalStart
+    }
+    return personalAnimationStartTime
+  }, [detailMode, detailSnapshot, personalAnimationStartTime])
 
   // If not yet captured, default to the first tile’s scale; once captured, keep it until exit
   const computedDefaultDetailScale = useMemo(() => {
@@ -140,9 +157,13 @@ export default function GalleryContent({
       onAllAnimationsDone()
   }
 
+  const effectiveTileCount = effectiveTileData.length
+
   useEffect(() => {
-    onStackSizeChange && onStackSizeChange(effectiveTileData.length)
-  }, [effectiveTileData.length, onStackSizeChange])
+    if (onStackSizeChange) {
+      onStackSizeChange(effectiveTileCount)
+    }
+  }, [effectiveTileCount, onStackSizeChange])
 
   const currentPositionsRef = useRef({})
 
@@ -158,14 +179,14 @@ export default function GalleryContent({
   }
 
   useEffect(() => {
-    if (onDebugDataUpdate && effectiveTileData.length > 0) {
+    if (onDebugDataUpdate && effectiveTileCount > 0) {
       const updatedTileData = effectiveTileData.map((tile, idx) => ({
         ...tile,
         currentPosition: currentPositionsRef.current[idx] || tile.position,
       }))
       onDebugDataUpdate(updatedTileData)
     }
-  }, [effectiveTileData, onDebugDataUpdate])
+  }, [effectiveTileData, effectiveTileCount, onDebugDataUpdate])
 
   return (
     <group>

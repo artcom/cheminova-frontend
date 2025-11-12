@@ -1,5 +1,5 @@
 import { useFrame } from "@react-three/fiber"
-import { useRef } from "react"
+import { useEffect, useRef } from "react"
 
 import {
   DEBUG_GALLERY,
@@ -7,24 +7,25 @@ import {
   STACK_SWITCH_DUR,
 } from "../config"
 
-export default function StackBump({
-  switchDir,
-  switchStartRef,
-  children,
-  onEnd,
-}) {
+export default function StackBump({ switchInfo, children, onEnd }) {
   const groupRef = useRef()
   const endCalledForStartRef = useRef(0)
+  const infoRef = useRef({ dir: 0, startMs: 0 })
+
+  useEffect(() => {
+    infoRef.current = switchInfo || { dir: 0, startMs: 0 }
+  }, [switchInfo])
 
   useFrame(() => {
     const g = groupRef.current
     if (!g) return
-    if (!switchDir || !switchStartRef.current) {
+    const { dir, startMs } = infoRef.current
+    if (!dir || !startMs) {
       g.position.y = g.position.y + (0 - g.position.y) * 0.3
       return
     }
     const now = performance.now()
-    const elapsed = (now - switchStartRef.current) / 1000
+    const elapsed = (now - startMs) / 1000
     const progress = Math.min(1, Math.max(0, elapsed / STACK_SWITCH_DUR))
     const bump = Math.sin(Math.PI * progress) * STACK_BUMP_AMPLITUDE
     g.position.y = g.position.y + (bump - g.position.y) * 0.3
@@ -40,8 +41,8 @@ export default function StackBump({
       )
     }
     if (progress >= 1 && onEnd) {
-      if (endCalledForStartRef.current !== switchStartRef.current) {
-        endCalledForStartRef.current = switchStartRef.current
+      if (endCalledForStartRef.current !== startMs) {
+        endCalledForStartRef.current = startMs
         onEnd()
       }
     }

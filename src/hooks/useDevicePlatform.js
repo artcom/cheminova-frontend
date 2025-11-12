@@ -1,13 +1,11 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 
 export default function useDevicePlatform() {
-  const [platform, setPlatform] = useState({
-    os: "unknown",
-    isIOS: false,
-    isAndroid: false,
-  })
+  const [platform] = useState(() => {
+    if (typeof navigator === "undefined") {
+      return { os: "unknown", isIOS: false, isAndroid: false }
+    }
 
-  useEffect(() => {
     const userAgent = navigator.userAgent
 
     const isIOS =
@@ -27,8 +25,8 @@ export default function useDevicePlatform() {
               ? "Linux"
               : "unknown"
 
-    setPlatform({ os, isIOS, isAndroid })
-  }, [])
+    return { os, isIOS, isAndroid }
+  })
 
   return platform
 }
