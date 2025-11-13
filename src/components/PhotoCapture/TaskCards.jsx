@@ -1,6 +1,5 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
-import { useSwipe } from "@/hooks/useSwipe"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
@@ -28,7 +27,6 @@ const CHARACTER_SLUG_FUTURE = "future"
 export default function PhotoCapture({
   taskImages,
   currentTaskIndex,
-  setCurrentTaskIndex,
   handleOpenCamera,
   handleOpenGallery,
 }) {
@@ -62,28 +60,8 @@ export default function PhotoCapture({
     }))
   }, [photography.imageDescriptions, fallbackTitles])
 
-  const cycleCards = (direction) => {
-    setCurrentTaskIndex((prevIndex) => {
-      if (direction === "left") {
-        return (prevIndex + 1) % taskMetadata.length
-      } else if (direction === "right") {
-        return (prevIndex - 1 + taskMetadata.length) % taskMetadata.length
-      }
-      return prevIndex
-    })
-  }
-
-  const { handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipe(
-    () => cycleCards("right"),
-    () => cycleCards("left"),
-  )
-
   return (
-    <TasksContainer
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
+    <TasksContainer>
       {taskMetadata.map((task, index) => {
         const taskDescription = sanitizeDescription(task.description)
         const isActive = index === currentTaskIndex

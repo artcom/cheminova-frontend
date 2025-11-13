@@ -1,7 +1,6 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
 import useGlobalState from "@/hooks/useGlobalState"
-import { useSwipe } from "@/hooks/useSwipe"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
@@ -11,6 +10,7 @@ import { useLoaderData, useNavigate } from "react-router-dom"
 
 import SmallButton from "../UI/SmallButton"
 import usePhotoTasks from "./hooks/usePhotoTasks"
+import SliderWheel from "./SliderWheel"
 import {
   Footer,
   HeaderContainer,
@@ -78,22 +78,6 @@ export default function PhotoCapture() {
     initialImages: capturedImages,
   })
 
-  const cycleCards = (direction) => {
-    setCurrentTaskIndex((prevIndex) => {
-      if (direction === "left") {
-        return (prevIndex + 1) % taskMetadata.length
-      } else if (direction === "right") {
-        return (prevIndex - 1 + taskMetadata.length) % taskMetadata.length
-      }
-      return prevIndex
-    })
-  }
-
-  const { handleTouchStart, handleTouchMove, handleTouchEnd } = useSwipe(
-    () => cycleCards("right"),
-    () => cycleCards("left"),
-  )
-
   const handleFileChange = (event) => {
     const file = event.target.files?.[0]
     if (file) handleFileObject(file)
@@ -105,11 +89,7 @@ export default function PhotoCapture() {
 
   return (
     <>
-      <PhotoCaptureContainer
-        onTouchStart={handleTouchStart}
-        onTouchMove={handleTouchMove}
-        onTouchEnd={handleTouchEnd}
-      >
+      <PhotoCaptureContainer>
         <HiddenInput
           type="file"
           accept="image/*"
@@ -129,14 +109,19 @@ export default function PhotoCapture() {
           <HeaderText>{heading}</HeaderText>
         </HeaderContainer>
         <TaskHeadline>{taskMetadata[currentTaskIndex].title}</TaskHeadline>
-
-        <TaskCards
-          taskImages={taskImages}
+        <SliderWheel
           currentTaskIndex={currentTaskIndex}
           setCurrentTaskIndex={setCurrentTaskIndex}
-          handleOpenCamera={handleOpenCamera}
-          handleOpenGallery={handleOpenGallery}
-        />
+          taskMetadata={taskMetadata}
+        >
+          <TaskCards
+            taskImages={taskImages}
+            currentTaskIndex={currentTaskIndex}
+            setCurrentTaskIndex={setCurrentTaskIndex}
+            handleOpenCamera={handleOpenCamera}
+            handleOpenGallery={handleOpenGallery}
+          />
+        </SliderWheel>
         <Footer>
           <PaginationContainer>
             {taskMetadata.map((_, index) => (
