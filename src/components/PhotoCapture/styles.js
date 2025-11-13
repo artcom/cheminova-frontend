@@ -6,23 +6,23 @@ export const cardPositions = [
   { x: "-11rem", y: "19rem", opacity: 0.5, zIndex: 1 },
 ]
 
-const characterStyles = [
-  {
+const characterStyles = {
+  janitor: {
     backgroundColor: "#f1ece1",
     textColor: "#000",
     imageBorder: "1px solid #000",
   },
-  {
+  future: {
     backgroundColor: "#1f1f1f99",
     border: "1px solid #fff",
     textColor: "#ffffff",
   },
-  {
+  artist: {
     backgroundColor: "#f1ece1",
     border: "1px solid #000",
     textColor: "#000",
   },
-]
+}
 
 export const PhotoCaptureContainer = styled.div`
   display: flex;
@@ -76,18 +76,18 @@ export const TaskCard = styled.div`
   transform: ${({ transform }) => transform};
   opacity: ${({ opacity }) => opacity};
   z-index: ${({ $zIndex }) => $zIndex};
-  background-color: ${({ $characterIndex }) =>
-    characterStyles[$characterIndex]?.backgroundColor || "#f1ece1"};
-  border: ${({ $characterIndex }) =>
-    characterStyles[$characterIndex]?.border || "none"};
+  background-color: ${({ $characterId }) =>
+    characterStyles[$characterId]?.backgroundColor || "#f1ece1"};
+  border: ${({ $characterId }) =>
+    characterStyles[$characterId]?.border || "none"};
   transition:
     all 0.3s ease,
     opacity 0.3s ease;
 `
 
 export const TaskDescription = styled.h2`
-  color: ${({ $characterIndex }) =>
-    characterStyles[$characterIndex]?.textColor || "#000"};
+  color: ${({ $characterId }) =>
+    characterStyles[$characterId]?.textColor || "#000"};
   font-size: 1rem;
   font-style: normal;
   font-weight: 400;
@@ -112,8 +112,8 @@ export const TaskContent = styled.div`
   justify-content: center;
   gap: 1rem;
   width: 100%;
-  color: ${({ $characterIndex }) =>
-    characterStyles[$characterIndex]?.textColor || "#000"};
+  color: ${({ $characterId }) =>
+    characterStyles[$characterId]?.textColor || "#000"};
 `
 
 export const TaskImage = styled.img`
@@ -126,8 +126,8 @@ export const TaskImage = styled.img`
   transform: translateX(-50%);
   border-radius: 1rem;
   object-fit: cover;
-  border: ${({ $characterIndex }) =>
-    characterStyles[$characterIndex]?.imageBorder || "none"};
+  border: ${({ $characterId }) =>
+    characterStyles[$characterId]?.imageBorder || "none"};
 `
 
 export const ExtraBorder = styled.img`

@@ -22,6 +22,8 @@ import {
 } from "./styles"
 
 const DEFAULT_TASK_KEYS = ["laNau", "surroundings", "special"]
+const CHARACTER_SLUG_JANITOR = "janitor"
+const CHARACTER_SLUG_FUTURE = "future"
 
 export default function PhotoCapture({
   taskImages,
@@ -35,6 +37,7 @@ export default function PhotoCapture({
   const { isAndroid } = useDevicePlatform()
 
   const { photography, characterSlug } = useLoaderData()
+  console.log(characterSlug)
 
   const fallbackTitles = useMemo(
     () => DEFAULT_TASK_KEYS.map((key) => t(`photoCapture.tasks.${key}`)),
@@ -91,7 +94,7 @@ export default function PhotoCapture({
         return (
           <TaskCard
             key={index}
-            $characterIndex={characterSlug}
+            $characterId={characterSlug}
             $top={y}
             $left={`calc(50% + ${x})`}
             transform={`translate(-50%, -50%)`}
@@ -100,18 +103,18 @@ export default function PhotoCapture({
           >
             {!taskImages[index] && (
               <>
-                {characterSlug === 0 && <ExtraBorder />}
-                <TaskDescription $characterIndex={characterSlug}>
+                {characterSlug === CHARACTER_SLUG_JANITOR && <ExtraBorder />}
+                <TaskDescription $characterId={characterSlug}>
                   {taskDescription}
                 </TaskDescription>
               </>
             )}
 
-            <TaskContent $characterIndex={characterSlug}>
+            <TaskContent $characterId={characterSlug}>
               {taskImages[index] && (
                 <>
                   <TaskImage
-                    $characterIndex={characterSlug}
+                    $characterId={characterSlug}
                     src={taskImages[index]}
                     alt={`Task ${index + 1} completed`}
                   />
@@ -120,7 +123,9 @@ export default function PhotoCapture({
               <CameraButtonContainer>
                 <IconButton
                   variant="camera"
-                  color={characterSlug === 1 ? "white" : "black"}
+                  color={
+                    characterSlug === CHARACTER_SLUG_FUTURE ? "white" : "black"
+                  }
                   onClick={
                     isActive
                       ? isAndroid
