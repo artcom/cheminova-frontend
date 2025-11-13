@@ -5,7 +5,7 @@ const GradientWelcome = styled.div`
   top: 0;
   left: 0;
   width: 100%;
-  height: 14.4375rem;
+  height: 7.4375rem;
   pointer-events: none;
   z-index: 1;
   background: linear-gradient(
