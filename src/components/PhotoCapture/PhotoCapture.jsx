@@ -6,18 +6,15 @@ import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { useMemo, useRef } from "react"
 import { useTranslation } from "react-i18next"
-import { useLoaderData, useNavigate } from "react-router-dom"
+import { useLoaderData } from "react-router-dom"
 
-import SmallButton from "../UI/SmallButton"
+import FooterContainer from "./Footer"
 import usePhotoTasks from "./hooks/usePhotoTasks"
 import SliderWheel from "./SliderWheel"
 import {
-  Footer,
   HeaderContainer,
   HeaderText,
   HiddenInput,
-  PaginationContainer,
-  PaginationDot,
   PhotoCaptureContainer,
   TaskHeadline,
 } from "./styles"
@@ -30,9 +27,8 @@ export default function PhotoCapture() {
   const { capturedImages, setCapturedImageAt } = useGlobalState()
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
-  const navigate = useNavigate()
 
-  const { characterSlug, photography } = useLoaderData()
+  const { photography } = useLoaderData()
 
   const heading = photography?.heading || t("photoCapture.title")
 
@@ -122,22 +118,10 @@ export default function PhotoCapture() {
             handleOpenGallery={handleOpenGallery}
           />
         </SliderWheel>
-        <Footer>
-          <PaginationContainer>
-            {taskMetadata.map((_, index) => (
-              <PaginationDot
-                key={index}
-                $isActive={index === currentTaskIndex}
-              />
-            ))}
-          </PaginationContainer>
-          <SmallButton
-            color="#FFF"
-            onClick={() => navigate(`/characters/${characterSlug}/exploration`)}
-          >
-            {"Continue"}
-          </SmallButton>
-        </Footer>
+        <FooterContainer
+          taskMetadata={taskMetadata}
+          currentTaskIndex={currentTaskIndex}
+        />
       </PhotoCaptureContainer>
     </>
   )
