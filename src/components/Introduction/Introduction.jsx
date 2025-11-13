@@ -2,8 +2,10 @@ import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
+import { getCharacterPersonaFlags } from "@/utils/characterPersona"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { preloadImages } from "@/utils/preloadImages"
+import { sanitizeRichText } from "@/utils/text"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
 import IconButton from "@ui/IconButton"
@@ -37,12 +39,11 @@ export default function Introduction() {
   }
 
   const heading = introduction.heading
-  const description = introduction.description.replace(/<[^>]*>/g, "")
+  const description = sanitizeRichText(introduction.description)
 
-  const shouldShowRiveAnimation = characterSlug === "artist"
-  const isArtist = characterSlug === "artist"
-  const isFuturePerson = characterSlug === "future"
-  const isJanitor = characterSlug === "janitor"
+  const { isArtist, isFuturePerson, isJanitor } =
+    getCharacterPersonaFlags(characterSlug)
+  const shouldShowRiveAnimation = isArtist
 
   const characterImageUrl =
     introduction.characterImage?.file ||
