@@ -62,7 +62,10 @@ export default function Upload() {
   const yesButtonText = uploadData?.yesButtonText || t("upload.buttons.yes")
   const noButtonText = uploadData?.noButtonText || t("upload.buttons.no")
 
-  const goToGallery = () => navigate(`/characters/${characterSlug}/gallery`)
+  const goToGallery = () => {
+    const destination = characterSlug === "future" ? "timeline" : "gallery"
+    navigate(`/characters/${characterSlug}/${destination}`)
+  }
 
   const handleUpload = async () => {
     setUploadErrors([])
