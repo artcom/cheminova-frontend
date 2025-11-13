@@ -1,5 +1,7 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
+import LoadingSpinner from "@/components/UI/LoadingSpinner"
+import { useFutureTimelineImages } from "@/hooks/useFutureTimelineImages"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
@@ -47,6 +49,27 @@ const ImageCard = styled(motion.div)`
     height: 100%;
     object-fit: cover;
   }
+`
+
+const StackOverlay = styled.div`
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  border-radius: 18px;
+  background: rgba(0, 0, 0, 0.55);
+  z-index: 6;
+  text-align: center;
+`
+
+const OverlayMessage = styled.p`
+  margin: 0;
+  color: rgba(255, 255, 255, 0.85);
+  font-family: "IBM Plex Sans", sans-serif;
+  font-size: 16px;
+  line-height: 1.4;
 `
 
 const InfoSection = styled.div`
@@ -158,21 +181,6 @@ const ChevronButton = styled(motion.button)`
     fill: none;
   }
 `
-
-// Import Cologne Cathedral images
-const cologneImages = import.meta.glob("../Gallery/CologneCathedral/*.webp", {
-  eager: true,
-  query: "?url",
-  import: "default",
-})
-
-// Convert glob to array
-const getImageArray = () => {
-  return Object.entries(cologneImages)
-    .sort(([a], [b]) => a.localeCompare(b))
-    .map(([, url]) => url)
-}
-
 const getStepPercentage = (index, total) => {
   if (total <= 1) {
     return 0
@@ -182,6 +190,64 @@ const getStepPercentage = (index, total) => {
 }
 
 const getTickWidth = () => 3 + Math.floor(Math.random() * 4)
+
+const DEFAULT_DATE_TIME_LABELS = {
+  dateLabel: "Date unknown",
+  timeLabel: "",
+}
+
+const formatDateTime = (value, locale) => {
+  if (!value) {
+    return DEFAULT_DATE_TIME_LABELS
+  }
+
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return DEFAULT_DATE_TIME_LABELS
+  }
+
+  try {
+    const dateLabel = new Intl.DateTimeFormat(locale || undefined, {
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+    }).format(date)
+
+    const timeLabel = new Intl.DateTimeFormat(locale || undefined, {
+      hour: "2-digit",
+      minute: "2-digit",
+    }).format(date)
+
+    return {
+      dateLabel,
+      timeLabel,
+    }
+  } catch (error) {
+    console.error("Failed to format date for future timeline", error)
+    return DEFAULT_DATE_TIME_LABELS
+  }
+}
+
+const getImageTitle = (image) => {
+  if (!image) {
+    return ""
+  }
+
+  const titleSources = [
+    image.title,
+    image.uploaded_text,
+    image.uploaded_user_name,
+  ]
+
+  for (const value of titleSources) {
+    if (typeof value === "string" && value.trim().length > 0) {
+      return value.trim()
+    }
+  }
+
+  return "Untitled memory"
+}
 
 const STACK_LAYERS = [
   {
@@ -237,113 +303,184 @@ const CARD_LAYERS = [
 
 export default function FutureTimeline() {
   useLoaderData() // Ensures loader runs and validates character
-  const [currentIndex, setCurrentIndex] = useState(0)
+  const [requestedIndex, setRequestedIndex] = useState(0)
 
-  const images = getImageArray()
-  const progress = getStepPercentage(currentIndex, images.length)
+  const locale = getCurrentLocale()
+  const {
+    data: futureImages = [],
+    isLoading,
+    isError,
+    error,
+  } = useFutureTimelineImages()
+
+  const totalImages = futureImages.length
+  const currentIndex =
+    totalImages === 0 ? 0 : Math.min(requestedIndex, totalImages - 1)
+  const currentImage =
+    totalImages === 0 ? undefined : futureImages[currentIndex]
+
+  const progress = getStepPercentage(currentIndex, totalImages)
+
   const visibleCards = CARD_LAYERS.map(({ indexOffset, style }, position) => {
     const imageIndex = currentIndex + indexOffset
-    const image = images[imageIndex]
+    const image = futureImages[imageIndex]
 
     if (!image) {
       return null
     }
 
     return {
-      key: `image-card-${imageIndex}`,
-      layoutId: `timeline-image-${imageIndex}`,
-      image,
+      key: `image-card-${image.id ?? imageIndex}`,
+      layoutId: `timeline-image-${image.id ?? imageIndex}`,
+      src: image.file,
+      alt: position === 0 ? getImageTitle(image) : "",
       style,
       isPrimary: position === 0,
     }
   }).filter(Boolean)
 
-  // Mock timeline data - in future, this should come from CMS/API
-  const timelineData = {
-    title: "An Ornament",
-    date: "April 9, 2026",
-    time: "15:23",
-  }
+  const { dateLabel, timeLabel } = currentImage
+    ? formatDateTime(currentImage.created_at, locale)
+    : DEFAULT_DATE_TIME_LABELS
+
+  const infoTitle = currentImage
+    ? getImageTitle(currentImage)
+    : isError
+      ? "Unable to load timeline"
+      : isLoading
+        ? "Loading timeline..."
+        : "No timeline entries yet"
+
+  const infoDescriptionLines = currentImage
+    ? [dateLabel, timeLabel].filter((line) => Boolean(line))
+    : isError
+      ? ["Please try again later."]
+      : isLoading
+        ? ["Fetching future memories..."]
+        : ["Check back soon for new discoveries."]
 
   const handleNext = () => {
-    if (currentIndex < images.length - 1) {
-      setCurrentIndex(currentIndex + 1)
-    }
+    setRequestedIndex((previous) => {
+      if (totalImages === 0) {
+        return 0
+      }
+
+      if (previous >= totalImages - 1) {
+        return previous
+      }
+
+      return previous + 1
+    })
   }
+
+  const showLoadingOverlay = isLoading && totalImages === 0
+  const showErrorOverlay = isError && totalImages === 0
+  const showEmptyOverlay = !isLoading && !isError && totalImages === 0
+  const nextDisabled = totalImages === 0 || currentIndex >= totalImages - 1
 
   return (
     <Page>
       <TimelineContainer>
         <ImageStack>
           <LayoutGroup id="future-timeline-stack">
-            {visibleCards.map(({ key, layoutId, image, style, isPrimary }) => (
-              <ImageCard
-                key={key}
-                layoutId={layoutId}
-                layout
-                initial={
-                  isPrimary
-                    ? {
-                        opacity: 0,
-                        scale: 0.8,
-                      }
-                    : undefined
-                }
-                animate={
-                  isPrimary
-                    ? {
-                        opacity: 1,
-                        scale: 1,
-                      }
-                    : undefined
-                }
-                transition={{
-                  duration: isPrimary ? 0.4 : undefined,
-                  ease: isPrimary ? "easeOut" : undefined,
-                  layout: { type: "spring", stiffness: 260, damping: 30 },
-                }}
-                style={style}
-              >
-                <img src={image} alt={isPrimary ? timelineData.title : ""} />
-              </ImageCard>
-            ))}
+            {visibleCards.map(
+              ({ key, layoutId, src, alt, style, isPrimary }) => (
+                <ImageCard
+                  key={key}
+                  layoutId={layoutId}
+                  layout
+                  initial={
+                    isPrimary
+                      ? {
+                          opacity: 0,
+                          scale: 0.8,
+                        }
+                      : undefined
+                  }
+                  animate={
+                    isPrimary
+                      ? {
+                          opacity: 1,
+                          scale: 1,
+                        }
+                      : undefined
+                  }
+                  transition={{
+                    duration: isPrimary ? 0.4 : undefined,
+                    ease: isPrimary ? "easeOut" : undefined,
+                    layout: { type: "spring", stiffness: 260, damping: 30 },
+                  }}
+                  style={style}
+                >
+                  <img src={src} alt={alt} loading="lazy" />
+                </ImageCard>
+              ),
+            )}
           </LayoutGroup>
+
+          {showLoadingOverlay && (
+            <StackOverlay>
+              <LoadingSpinner text="Fetching future memories..." />
+            </StackOverlay>
+          )}
+
+          {showErrorOverlay && (
+            <StackOverlay>
+              <OverlayMessage>
+                {error instanceof Error
+                  ? error.message
+                  : "Something went wrong while reaching the future."}
+              </OverlayMessage>
+            </StackOverlay>
+          )}
+
+          {showEmptyOverlay && (
+            <StackOverlay>
+              <OverlayMessage>
+                No approved future timeline images are available yet.
+              </OverlayMessage>
+            </StackOverlay>
+          )}
         </ImageStack>
 
         <InfoSection>
           <InfoContent>
-            <Title>{timelineData.title}</Title>
+            <Title>{infoTitle}</Title>
             <DateTime>
-              <p>{timelineData.date}</p>
-              <p>{timelineData.time}</p>
+              {infoDescriptionLines.map((line, index) => (
+                <p key={`timeline-info-line-${index}`}>{line}</p>
+              ))}
             </DateTime>
           </InfoContent>
           <InfoDivider aria-hidden />
         </InfoSection>
 
-        <Timeline>
-          <TimelineDot
-            initial={{ top: "100%" }}
-            animate={{ top: `${100 - progress}%` }}
-            transition={{ type: "spring", stiffness: 300, damping: 30 }}
-          />
-          {images.map((_, index) => (
-            <TimelineTick
-              key={`timeline-tick-${index}`}
-              style={{
-                top: `${100 - getStepPercentage(index, images.length)}%`,
-                width: `${getTickWidth(index)}px`,
-              }}
+        {totalImages > 0 && (
+          <Timeline>
+            <TimelineDot
+              initial={{ top: "100%" }}
+              animate={{ top: `${100 - progress}%` }}
+              transition={{ type: "spring", stiffness: 300, damping: 30 }}
             />
-          ))}
-        </Timeline>
+            {futureImages.map((image, index) => (
+              <TimelineTick
+                key={`timeline-tick-${image.id ?? index}`}
+                style={{
+                  top: `${100 - getStepPercentage(index, totalImages)}%`,
+                  width: `${getTickWidth(index)}px`,
+                }}
+              />
+            ))}
+          </Timeline>
+        )}
       </TimelineContainer>
 
       <ChevronWrapper>
         <ChevronButton
           onClick={handleNext}
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.95 }}
+          whileHover={nextDisabled ? undefined : { scale: 1.1 }}
+          whileTap={nextDisabled ? undefined : { scale: 0.95 }}
+          disabled={nextDisabled}
         >
           <svg viewBox="0 0 22 12">
             <polyline points="1,1 11,11 21,1" />
