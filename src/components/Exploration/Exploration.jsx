@@ -137,7 +137,7 @@ export default function Exploration() {
             </CharacterImageWrapper>
           ) : null}
 
-          <CharacterActionContainer>
+          <CharacterActionContainer $isCompact>
             <Navigation
               mode="single"
               position="static"

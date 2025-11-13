@@ -123,6 +123,7 @@ export const CharacterActionContainer = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 3rem 0 4rem 0;
+  padding: ${(props) =>
+    props.$isCompact ? "2rem 0 2.5rem 0" : "3rem 0 4rem 0"};
   width: 100%;
 `
