@@ -4,7 +4,7 @@ import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import theme from "@theme"
-import { motion } from "motion/react"
+import { LayoutGroup, motion } from "motion/react"
 import { useState } from "react"
 import { useLoaderData } from "react-router-dom"
 import { styled } from "styled-components"
@@ -187,8 +187,8 @@ const STACK_LAYERS = [
   {
     indexOffset: 4,
     style: {
-      left: "-96px",
-      top: "-96px",
+      left: "-144px",
+      top: "-144px",
       opacity: 0.45,
       zIndex: 1,
     },
@@ -196,8 +196,8 @@ const STACK_LAYERS = [
   {
     indexOffset: 3,
     style: {
-      left: "-72px",
-      top: "-72px",
+      left: "-108px",
+      top: "-108px",
       opacity: 0.58,
       zIndex: 2,
     },
@@ -205,8 +205,8 @@ const STACK_LAYERS = [
   {
     indexOffset: 2,
     style: {
-      left: "-36px",
-      top: "-36px",
+      left: "-72px",
+      top: "-72px",
       opacity: 0.72,
       zIndex: 3,
     },
@@ -214,12 +214,25 @@ const STACK_LAYERS = [
   {
     indexOffset: 1,
     style: {
-      left: "0px",
-      top: "0px",
+      left: "-36px",
+      top: "-36px",
       opacity: 0.88,
       zIndex: 4,
     },
   },
+]
+
+const CARD_LAYERS = [
+  {
+    indexOffset: 0,
+    style: {
+      left: "0px",
+      top: "0px",
+      opacity: 1,
+      zIndex: 5,
+    },
+  },
+  ...STACK_LAYERS,
 ]
 
 export default function FutureTimeline() {
@@ -227,8 +240,23 @@ export default function FutureTimeline() {
   const [currentIndex, setCurrentIndex] = useState(0)
 
   const images = getImageArray()
-  const currentImage = images[currentIndex]
   const progress = getStepPercentage(currentIndex, images.length)
+  const visibleCards = CARD_LAYERS.map(({ indexOffset, style }, position) => {
+    const imageIndex = currentIndex + indexOffset
+    const image = images[imageIndex]
+
+    if (!image) {
+      return null
+    }
+
+    return {
+      key: `image-card-${imageIndex}`,
+      layoutId: `timeline-image-${imageIndex}`,
+      image,
+      style,
+      isPrimary: position === 0,
+    }
+  }).filter(Boolean)
 
   // Mock timeline data - in future, this should come from CMS/API
   const timelineData = {
@@ -247,33 +275,39 @@ export default function FutureTimeline() {
     <Page>
       <TimelineContainer>
         <ImageStack>
-          {/* Background stacked images for depth effect */}
-          {STACK_LAYERS.map(({ indexOffset, style }) => {
-            const imageAtOffset = images[currentIndex + indexOffset]
-
-            if (!imageAtOffset) {
-              return null
-            }
-
-            return (
-              <ImageCard key={`stacked-image-${indexOffset}`} style={style}>
-                <img src={imageAtOffset} alt="" />
+          <LayoutGroup id="future-timeline-stack">
+            {visibleCards.map(({ key, layoutId, image, style, isPrimary }) => (
+              <ImageCard
+                key={key}
+                layoutId={layoutId}
+                layout
+                initial={
+                  isPrimary
+                    ? {
+                        opacity: 0,
+                        scale: 0.8,
+                      }
+                    : undefined
+                }
+                animate={
+                  isPrimary
+                    ? {
+                        opacity: 1,
+                        scale: 1,
+                      }
+                    : undefined
+                }
+                transition={{
+                  duration: isPrimary ? 0.4 : undefined,
+                  ease: isPrimary ? "easeOut" : undefined,
+                  layout: { type: "spring", stiffness: 260, damping: 30 },
+                }}
+                style={style}
+              >
+                <img src={image} alt={isPrimary ? timelineData.title : ""} />
               </ImageCard>
-            )
-          })}
-
-          {/* Main focused image */}
-          <ImageCard
-            key={currentIndex}
-            initial={{ opacity: 0, scale: 0.8 }}
-            animate={{ opacity: 1, scale: 1 }}
-            transition={{ duration: 0.4, ease: "easeOut" }}
-            style={{
-              zIndex: 5,
-            }}
-          >
-            <img src={currentImage} alt={timelineData.title} />
-          </ImageCard>
+            ))}
+          </LayoutGroup>
         </ImageStack>
 
         <InfoSection>
