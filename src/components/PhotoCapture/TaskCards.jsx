@@ -1,6 +1,5 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
-import useGlobalState from "@/hooks/useGlobalState"
 import { useSwipe } from "@/hooks/useSwipe"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
@@ -32,11 +31,10 @@ export default function PhotoCapture({
   handleOpenGallery,
 }) {
   const { t } = useTranslation()
-  const { currentCharacterIndex } = useGlobalState()
 
   const { isAndroid } = useDevicePlatform()
 
-  const { photography } = useLoaderData()
+  const { photography, characterSlug } = useLoaderData()
 
   const fallbackTitles = useMemo(
     () => DEFAULT_TASK_KEYS.map((key) => t(`photoCapture.tasks.${key}`)),
@@ -93,7 +91,7 @@ export default function PhotoCapture({
         return (
           <TaskCard
             key={index}
-            $characterIndex={currentCharacterIndex}
+            $characterIndex={characterSlug}
             $top={y}
             $left={`calc(50% + ${x})`}
             transform={`translate(-50%, -50%)`}
@@ -102,18 +100,18 @@ export default function PhotoCapture({
           >
             {!taskImages[index] && (
               <>
-                {currentCharacterIndex === 0 && <ExtraBorder />}
-                <TaskDescription $characterIndex={currentCharacterIndex}>
+                {characterSlug === 0 && <ExtraBorder />}
+                <TaskDescription $characterIndex={characterSlug}>
                   {taskDescription}
                 </TaskDescription>
               </>
             )}
 
-            <TaskContent $characterIndex={currentCharacterIndex}>
+            <TaskContent $characterIndex={characterSlug}>
               {taskImages[index] && (
                 <>
                   <TaskImage
-                    $characterIndex={currentCharacterIndex}
+                    $characterIndex={characterSlug}
                     src={taskImages[index]}
                     alt={`Task ${index + 1} completed`}
                   />
@@ -122,7 +120,7 @@ export default function PhotoCapture({
               <CameraButtonContainer>
                 <IconButton
                   variant="camera"
-                  color={currentCharacterIndex === 1 ? "white" : "black"}
+                  color={characterSlug === 1 ? "white" : "black"}
                   onClick={
                     isActive
                       ? isAndroid
