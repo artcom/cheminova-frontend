@@ -5,18 +5,13 @@ import { useSwipe } from "@/hooks/useSwipe"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
-import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useMemo, useRef } from "react"
 import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
-import IconButton from "../UI/IconButton"
 import SmallButton from "../UI/SmallButton"
 import usePhotoTasks from "./hooks/usePhotoTasks"
 import {
-  CameraButtonContainer,
-  cardPositions,
-  ExtraBorder,
   Footer,
   HeaderContainer,
   HeaderText,
@@ -24,23 +19,17 @@ import {
   PaginationContainer,
   PaginationDot,
   PhotoCaptureContainer,
-  TaskCard,
-  TaskContent,
-  TaskDescription,
   TaskHeadline,
-  TaskImage,
-  TasksContainer,
 } from "./styles"
+import TaskCards from "./TaskCards"
 
 const DEFAULT_TASK_KEYS = ["laNau", "surroundings", "special"]
 
 export default function PhotoCapture() {
   const { t } = useTranslation()
-  const { currentCharacterIndex } = useGlobalState()
   const { capturedImages, setCapturedImageAt } = useGlobalState()
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
-  const { isAndroid } = useDevicePlatform()
   const navigate = useNavigate()
 
   const { characterSlug, photography } = useLoaderData()
@@ -141,62 +130,13 @@ export default function PhotoCapture() {
         </HeaderContainer>
         <TaskHeadline>{taskMetadata[currentTaskIndex].title}</TaskHeadline>
 
-        <TasksContainer>
-          {taskMetadata.map((task, index) => {
-            const taskDescription = sanitizeDescription(task.description)
-            const isActive = index === currentTaskIndex
-            const positionIndex =
-              (index - currentTaskIndex + taskMetadata.length) %
-              taskMetadata.length
-            const { x, y, opacity, zIndex } = cardPositions[positionIndex]
-
-            return (
-              <TaskCard
-                key={index}
-                $characterIndex={currentCharacterIndex}
-                $top={y}
-                $left={`calc(50% + ${x})`}
-                transform={`translate(-50%, -50%)`}
-                opacity={opacity}
-                $zIndex={zIndex}
-              >
-                {!taskImages[index] && (
-                  <>
-                    {currentCharacterIndex === 0 && <ExtraBorder />}
-                    <TaskDescription $characterIndex={currentCharacterIndex}>
-                      {taskDescription}
-                    </TaskDescription>
-                  </>
-                )}
-
-                <TaskContent $characterIndex={currentCharacterIndex}>
-                  {taskImages[index] && (
-                    <>
-                      <TaskImage
-                        $characterIndex={currentCharacterIndex}
-                        src={taskImages[index]}
-                        alt={`Task ${index + 1} completed`}
-                      />
-                    </>
-                  )}
-                  <CameraButtonContainer>
-                    <IconButton
-                      variant="camera"
-                      color={currentCharacterIndex === 1 ? "white" : "black"}
-                      onClick={
-                        isActive
-                          ? isAndroid
-                            ? handleOpenCamera
-                            : handleOpenGallery
-                          : undefined
-                      }
-                    />
-                  </CameraButtonContainer>
-                </TaskContent>
-              </TaskCard>
-            )
-          })}
-        </TasksContainer>
+        <TaskCards
+          taskImages={taskImages}
+          currentTaskIndex={currentTaskIndex}
+          setCurrentTaskIndex={setCurrentTaskIndex}
+          handleOpenCamera={handleOpenCamera}
+          handleOpenGallery={handleOpenGallery}
+        />
         <Footer>
           <PaginationContainer>
             {taskMetadata.map((_, index) => (
@@ -238,5 +178,3 @@ export async function clientLoader({ params }) {
 
   return { characterIndex, characterSlug, photography }
 }
-
-const sanitizeDescription = (description) => description.replace(/<[^>]*>/g, "")
