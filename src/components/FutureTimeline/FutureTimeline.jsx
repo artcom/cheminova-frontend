@@ -113,37 +113,102 @@ const DateTime = styled.div`
   }
 `
 
+const TIMELINE_WIDTH = 160
+const TIMELINE_LINE_RIGHT = 0
+const TIMELINE_GROUP_END_RIGHT = 5
+const TIMELINE_MARKER_HEIGHT = 18
+const TIMELINE_MARKER_GAP = 1
+const TIMELINE_MARKER_BASE_WIDTH = 1
+const TIMELINE_MARKER_WIDTH_STEP = 0.5
+const TIMELINE_MARKER_MAX_WIDTH = 5.5
+const TIMELINE_MARKER_SLOT_WIDTH = TIMELINE_MARKER_MAX_WIDTH
+const TIMELINE_TICK_COLOR_PALETTE = [
+  "rgb(249, 249, 249)",
+  "rgb(214, 214, 214)",
+  "rgb(178, 178, 178)",
+  "rgb(142, 142, 142)",
+  "rgb(106, 106, 106)",
+]
+const TIMELINE_VERTICAL_PADDING = 12
+const TIMELINE_INDICATOR_EXTRA = 4
+const TIMELINE_ROW_GAP = 6
+const TIMELINE_ROW_STEP = TIMELINE_MARKER_HEIGHT + TIMELINE_ROW_GAP
+const TIMELINE_MIN_HEIGHT = 160
+const TIMELINE_GROUP_BASE_BOTTOM =
+  TIMELINE_VERTICAL_PADDING - TIMELINE_MARKER_HEIGHT / 2
+const TIMELINE_INDICATOR_BASE_BOTTOM =
+  TIMELINE_VERTICAL_PADDING -
+  (TIMELINE_MARKER_HEIGHT + TIMELINE_INDICATOR_EXTRA) / 2
+
 const Timeline = styled.div`
   position: fixed;
   right: 5px;
   bottom: 5rem;
-  height: 400px;
-  width: 2px;
-  background: linear-gradient(
-    to top,
-    transparent,
-    rgba(255, 255, 255, 0.2),
-    transparent
-  );
+  width: ${TIMELINE_WIDTH}px;
+  pointer-events: none;
+  --timeline-height: 320px;
+  height: var(--timeline-height);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: ${TIMELINE_VERTICAL_PADDING}px;
+    bottom: ${TIMELINE_VERTICAL_PADDING}px;
+    right: ${TIMELINE_LINE_RIGHT}px;
+    width: 2px;
+    background: linear-gradient(
+      to top,
+      transparent,
+      rgba(255, 255, 255, 0.2),
+      transparent
+    );
+  }
 `
 
 const TimelineDot = styled(motion.div)`
   position: absolute;
-  width: 6px;
-  height: 6px;
-  background: white;
-  border-radius: 50%;
-  right: -2px;
-  box-shadow: 0 0 4px rgba(255, 255, 255, 0.5);
-  transform: translateY(-50%);
+  height: ${TIMELINE_MARKER_HEIGHT + TIMELINE_INDICATOR_EXTRA}px;
+  background: rgba(255, 255, 255, 0.9);
+  box-shadow: 0 0 8px rgba(255, 255, 255, 0.65);
+  border-radius: 0;
+  z-index: 2;
 `
 
 const TimelineTick = styled.div`
+  width: ${({ $width }) => `${$width}px`};
+  height: ${TIMELINE_MARKER_HEIGHT}px;
+  background: ${({ $color }) => $color};
+  opacity: ${({ $opacity }) => $opacity};
+  flex: 0 0 auto;
+  box-shadow: ${({ $isCurrent }) =>
+    $isCurrent ? "0 0 6px rgba(255, 255, 255, 0.55)" : "none"};
+  border-radius: 0;
+  transition:
+    width 0.3s ease,
+    opacity 0.3s ease,
+    box-shadow 0.3s ease,
+    background 0.3s ease;
+`
+
+const TimelineGroup = styled(motion.div)`
   position: absolute;
-  height: 6px;
-  background: rgba(255, 255, 255, 0.5);
-  left: calc(50% - 0.5rem);
-  transform: translate(-50%, -50%);
+  display: flex;
+  gap: ${TIMELINE_MARKER_GAP}px;
+  align-items: center;
+  flex-direction: row-reverse;
+  justify-content: flex-start;
+  right: ${TIMELINE_GROUP_END_RIGHT}px;
+  z-index: 1;
+  min-height: ${TIMELINE_MARKER_HEIGHT}px;
+`
+
+const TimelineTickSlot = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  flex: 0 0 ${TIMELINE_MARKER_SLOT_WIDTH}px;
+  width: ${TIMELINE_MARKER_SLOT_WIDTH}px;
+  height: ${TIMELINE_MARKER_HEIGHT}px;
 `
 
 const ChevronWrapper = styled.div`
@@ -181,16 +246,6 @@ const ChevronButton = styled(motion.button)`
     fill: none;
   }
 `
-const getStepPercentage = (index, total) => {
-  if (total <= 1) {
-    return 0
-  }
-
-  return (index / (total - 1)) * 100
-}
-
-const getTickWidth = () => 3 + Math.floor(Math.random() * 4)
-
 const DEFAULT_DATE_TIME_LABELS = {
   dateLabel: "Date unknown",
   timeLabel: "",
@@ -247,6 +302,168 @@ const getImageTitle = (image) => {
   }
 
   return "Untitled memory"
+}
+
+const getDayKey = (value) => {
+  if (!value) {
+    return "unknown"
+  }
+
+  const date = new Date(value)
+
+  if (Number.isNaN(date.getTime())) {
+    return "unknown"
+  }
+
+  const year = date.getFullYear()
+  const month = String(date.getMonth() + 1).padStart(2, "0")
+  const day = String(date.getDate()).padStart(2, "0")
+
+  return `${year}-${month}-${day}`
+}
+
+const groupImagesByDay = (images) => {
+  if (!Array.isArray(images) || images.length === 0) {
+    return { groups: [], indexMap: [] }
+  }
+
+  const groups = []
+  const indexMap = []
+
+  images.forEach((image, index) => {
+    if (!image) {
+      return
+    }
+
+    const dayKey = getDayKey(image.created_at)
+    let group = groups[groups.length - 1]
+
+    if (!group || group.dateKey !== dayKey) {
+      group = {
+        dateKey: dayKey,
+        items: [],
+      }
+      groups.push(group)
+    }
+
+    const itemIndex = group.items.length
+    group.items.push({ image, globalIndex: index })
+    indexMap[index] = { groupIndex: groups.length - 1, itemIndex }
+  })
+
+  return { groups, indexMap }
+}
+
+const SHOULD_USE_TEST_DATES = import.meta.env.DEV
+const TEST_DATE_RANGE_DAYS = 50
+const TEST_DATE_JITTER_MINUTES = 20
+
+const hashString = (value) => {
+  let hash = 0
+
+  for (let index = 0; index < value.length; index += 1) {
+    const char = value.charCodeAt(index)
+    hash = (hash << 5) - hash + char
+    hash |= 0
+  }
+
+  return Math.abs(hash)
+}
+
+const TEST_ROW_ENTRY_DUPLICATES = 4
+const TEST_GROUP_DUPLICATES = 4
+
+const computeTestDate = (baselineDate, dayOffset, entryPosition, seedValue) => {
+  const targetDate = new Date(baselineDate)
+  targetDate.setDate(baselineDate.getDate() - dayOffset)
+
+  const baseHour = (8 + entryPosition * 3) % 24
+  const minuteBase = (entryPosition * 13) % 60
+  const jitter = hashString(String(seedValue)) % (TEST_DATE_JITTER_MINUTES + 1)
+  const minutes = (minuteBase + jitter) % 60
+
+  targetDate.setHours(baseHour, minutes, 0, 0)
+
+  return targetDate.toISOString()
+}
+
+const buildDevTimelineDataset = (images) => {
+  if (!Array.isArray(images) || images.length === 0) {
+    return images
+  }
+
+  const baseline = new Date()
+  baseline.setHours(0, 0, 0, 0)
+
+  const dataset = []
+  const totalPairs = Math.ceil(images.length / 2)
+  const entriesPerOriginal = TEST_ROW_ENTRY_DUPLICATES
+
+  for (let groupDup = 0; groupDup < TEST_GROUP_DUPLICATES; groupDup += 1) {
+    images.forEach((image, baseIndex) => {
+      const pairIndex = Math.floor(baseIndex / 2)
+      const basePosition = baseIndex % 2
+      const dayOffset = groupDup * totalPairs + pairIndex
+
+      if (dayOffset > TEST_DATE_RANGE_DAYS) {
+        return
+      }
+
+      for (
+        let entryDup = 0;
+        entryDup < TEST_ROW_ENTRY_DUPLICATES;
+        entryDup += 1
+      ) {
+        const entryPosition = basePosition * entriesPerOriginal + entryDup
+        const duplicateSeed = `${image?.id ?? baseIndex}-g${groupDup}-p${pairIndex}-e${entryDup}`
+        const createdAt = computeTestDate(
+          baseline,
+          dayOffset,
+          entryPosition,
+          duplicateSeed,
+        )
+
+        dataset.push({
+          ...image,
+          id: `${image?.id ?? `image-${baseIndex}`}-g${groupDup}-p${pairIndex}-e${entryDup}`,
+          created_at: createdAt,
+        })
+      }
+    })
+  }
+
+  return dataset
+}
+
+const getMarkerWidth = (itemIndex = 0) => {
+  const safeIndex = Math.max(itemIndex, 0)
+  const rawWidth =
+    TIMELINE_MARKER_BASE_WIDTH + TIMELINE_MARKER_WIDTH_STEP * safeIndex
+
+  return Math.min(rawWidth, TIMELINE_MARKER_MAX_WIDTH)
+}
+
+const getMarkerCenterRight = (itemIndex = 0) => {
+  const safeIndex = Math.max(itemIndex, 0)
+  const slotRightEdge =
+    TIMELINE_GROUP_END_RIGHT +
+    safeIndex * (TIMELINE_MARKER_SLOT_WIDTH + TIMELINE_MARKER_GAP)
+
+  return slotRightEdge + getMarkerWidth(safeIndex) / 2
+}
+
+const getMarkerColor = (image, fallbackSeed) => {
+  if (TIMELINE_TICK_COLOR_PALETTE.length === 0) {
+    return "rgb(220, 220, 220)"
+  }
+
+  const seedSource =
+    image?.id ?? image?.file ?? image?.uploaded_text ?? fallbackSeed
+  const paletteIndex =
+    hashString(String(seedSource ?? fallbackSeed ?? 0)) %
+    TIMELINE_TICK_COLOR_PALETTE.length
+
+  return TIMELINE_TICK_COLOR_PALETTE[paletteIndex]
 }
 
 const STACK_LAYERS = [
@@ -313,17 +530,42 @@ export default function FutureTimeline() {
     error,
   } = useFutureTimelineImages()
 
-  const totalImages = futureImages.length
+  const timelineImagesBase = SHOULD_USE_TEST_DATES
+    ? buildDevTimelineDataset(futureImages)
+    : futureImages
+
+  const timelineImages = timelineImagesBase.slice().sort((a, b) => {
+    const timeA = Date.parse(a?.created_at ?? "")
+    const timeB = Date.parse(b?.created_at ?? "")
+
+    if (!Number.isNaN(timeA) && !Number.isNaN(timeB)) {
+      return timeA - timeB
+    }
+
+    if (!Number.isNaN(timeA)) return -1
+    if (!Number.isNaN(timeB)) return 1
+
+    const idA = typeof a?.id === "number" ? a.id : Number.MAX_SAFE_INTEGER
+    const idB = typeof b?.id === "number" ? b.id : Number.MAX_SAFE_INTEGER
+
+    if (idA !== idB) {
+      return idA - idB
+    }
+
+    const titleA = a?.title ?? ""
+    const titleB = b?.title ?? ""
+    return String(titleA).localeCompare(String(titleB))
+  })
+
+  const totalImages = timelineImages.length
   const currentIndex =
     totalImages === 0 ? 0 : Math.min(requestedIndex, totalImages - 1)
   const currentImage =
-    totalImages === 0 ? undefined : futureImages[currentIndex]
-
-  const progress = getStepPercentage(currentIndex, totalImages)
+    totalImages === 0 ? undefined : timelineImages[currentIndex]
 
   const visibleCards = CARD_LAYERS.map(({ indexOffset, style }, position) => {
     const imageIndex = currentIndex + indexOffset
-    const image = futureImages[imageIndex]
+    const image = timelineImages[imageIndex]
 
     if (!image) {
       return null
@@ -338,6 +580,67 @@ export default function FutureTimeline() {
       isPrimary: position === 0,
     }
   }).filter(Boolean)
+
+  const { groups: timelineGroups, indexMap: timelineIndexMap } =
+    groupImagesByDay(timelineImages)
+
+  const totalGroups = timelineGroups.length
+
+  const currentTimelinePosition =
+    totalGroups > 0 && currentIndex < timelineIndexMap.length
+      ? timelineIndexMap[currentIndex]
+      : null
+
+  const currentGroupIndex = currentTimelinePosition?.groupIndex ?? 0
+
+  const getGroupBottom = (groupIndex) =>
+    TIMELINE_GROUP_BASE_BOTTOM +
+    (groupIndex - currentGroupIndex) * TIMELINE_ROW_STEP
+
+  const getGroupOpacity = (groupIndex) => {
+    const relativeIndex = currentGroupIndex - groupIndex
+
+    if (relativeIndex <= 0) {
+      return 1
+    }
+
+    if (relativeIndex === 1) {
+      return 0.5
+    }
+
+    return 0
+  }
+
+  const timelineHeight =
+    totalGroups > 0
+      ? Math.max(
+          TIMELINE_MIN_HEIGHT,
+          TIMELINE_VERTICAL_PADDING * 2 +
+            (totalGroups - 1) * TIMELINE_ROW_STEP +
+            TIMELINE_MARKER_HEIGHT,
+        )
+      : TIMELINE_MIN_HEIGHT
+
+  const indicatorBottom = TIMELINE_INDICATOR_BASE_BOTTOM
+
+  const currentGroupLength =
+    totalGroups > 0 && currentTimelinePosition
+      ? timelineGroups[currentTimelinePosition.groupIndex]?.items.length || 0
+      : 0
+
+  const currentMarkerVisualIndex =
+    totalGroups > 0 && currentTimelinePosition && currentGroupLength > 0
+      ? Math.min(
+          Math.max(currentTimelinePosition.itemIndex ?? 0, 0),
+          currentGroupLength - 1,
+        )
+      : 0
+
+  const currentMarkerWidth = getMarkerWidth(currentMarkerVisualIndex)
+  const indicatorWidth = currentMarkerWidth + TIMELINE_INDICATOR_EXTRA
+
+  const indicatorRight =
+    getMarkerCenterRight(currentMarkerVisualIndex) - indicatorWidth / 2
 
   const { dateLabel, timeLabel } = currentImage
     ? formatDateTime(currentImage.created_at, locale)
@@ -455,22 +758,93 @@ export default function FutureTimeline() {
           <InfoDivider aria-hidden />
         </InfoSection>
 
-        {totalImages > 0 && (
-          <Timeline>
-            <TimelineDot
-              initial={{ top: "100%" }}
-              animate={{ top: `${100 - progress}%` }}
-              transition={{ type: "spring", stiffness: 300, damping: 30 }}
-            />
-            {futureImages.map((image, index) => (
-              <TimelineTick
-                key={`timeline-tick-${image.id ?? index}`}
-                style={{
-                  top: `${100 - getStepPercentage(index, totalImages)}%`,
-                  width: `${getTickWidth(index)}px`,
-                }}
-              />
-            ))}
+        {totalGroups > 0 && (
+          <Timeline style={{ "--timeline-height": `${timelineHeight}px` }}>
+            {(() => {
+              const initialIndicatorWidth =
+                getMarkerWidth(0) + TIMELINE_INDICATOR_EXTRA
+
+              return (
+                <TimelineDot
+                  initial={{
+                    bottom:
+                      TIMELINE_VERTICAL_PADDING -
+                      (TIMELINE_MARKER_HEIGHT + TIMELINE_INDICATOR_EXTRA) / 2,
+                    right: getMarkerCenterRight(0) - initialIndicatorWidth / 2,
+                    width: initialIndicatorWidth,
+                  }}
+                  animate={{
+                    bottom: indicatorBottom,
+                    right: indicatorRight,
+                    width: indicatorWidth,
+                  }}
+                  transition={{ type: "spring", stiffness: 300, damping: 30 }}
+                />
+              )
+            })()}
+            {timelineGroups.map((group, groupIndex) => {
+              const groupOpacity = getGroupOpacity(groupIndex)
+
+              return (
+                <TimelineGroup
+                  key={`timeline-group-${group.dateKey}-${groupIndex}`}
+                  initial={false}
+                  animate={{
+                    bottom: getGroupBottom(groupIndex),
+                    opacity: groupOpacity,
+                  }}
+                  style={{ opacity: groupOpacity }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 260,
+                    damping: 30,
+                  }}
+                >
+                  {group.items.map(({ image, globalIndex }, itemIndex) => {
+                    const markerWidth = getMarkerWidth(itemIndex)
+                    const markerColor = getMarkerColor(
+                      image,
+                      `${groupIndex}-${itemIndex}`,
+                    )
+                    const markerOpacity = (() => {
+                      if (globalIndex === currentIndex) {
+                        return 1
+                      }
+
+                      if (globalIndex < currentIndex) {
+                        return 0.82
+                      }
+
+                      return 0.48
+                    })()
+                    const markerDateTime = formatDateTime(
+                      image?.created_at,
+                      locale,
+                    )
+                    const markerTitle =
+                      [markerDateTime.dateLabel, markerDateTime.timeLabel]
+                        .filter(Boolean)
+                        .join(" · ") || "Future memory"
+
+                    return (
+                      <TimelineTickSlot
+                        key={`timeline-tick-${
+                          image.id ?? `${groupIndex}-${itemIndex}`
+                        }`}
+                        title={markerTitle}
+                      >
+                        <TimelineTick
+                          $isCurrent={globalIndex === currentIndex}
+                          $width={markerWidth}
+                          $color={markerColor}
+                          $opacity={markerOpacity}
+                        />
+                      </TimelineTickSlot>
+                    )
+                  })}
+                </TimelineGroup>
+              )
+            })}
           </Timeline>
         )}
       </TimelineContainer>
