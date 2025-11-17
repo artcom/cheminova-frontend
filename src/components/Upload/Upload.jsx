@@ -6,7 +6,7 @@ import { useUploadImage } from "@/hooks/useUploadImage"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
-import { useRef, useState } from "react"
+import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
@@ -52,8 +52,32 @@ export default function Upload() {
   const uploadImageMutation = useUploadImage()
   const isUploading = uploadImageMutation.isPending
   const images = capturedImages || []
-  const validImages = images.filter(Boolean)
-  const hasValidImages = validImages.length > 0
+  const validImageEntries = images
+    .map((imageData, taskIndex) =>
+      imageData
+        ? {
+            imageData,
+            taskIndex,
+          }
+        : null,
+    )
+    .filter(Boolean)
+  const validImages = validImageEntries.map(({ imageData }) => imageData)
+  const validImageCount = validImageEntries.length
+  const hasValidImages = validImageCount > 0
+
+  useEffect(() => {
+    if (!hasValidImages) {
+      if (currentTaskIndex !== 0) {
+        setCurrentTaskIndex(0)
+      }
+      return
+    }
+
+    if (currentTaskIndex > validImageCount - 1) {
+      setCurrentTaskIndex(validImageCount - 1)
+    }
+  }, [hasValidImages, validImageCount, currentTaskIndex, setCurrentTaskIndex])
 
   const characterName = character?.name || ""
 
@@ -169,10 +193,16 @@ export default function Upload() {
   }
 
   const statusMessage = hasValidImages ? uploadProgress : ""
+  const displayedTaskLabel = (() => {
+    if (!hasValidImages) return tasks[currentTaskIndex]
+    const activeEntry = validImageEntries[currentTaskIndex]
+    if (!activeEntry) return tasks[currentTaskIndex]
+    return tasks[activeEntry.taskIndex] || tasks[currentTaskIndex]
+  })()
 
   return (
     <UploadContainer>
-      <TaskLabel>{tasks[currentTaskIndex]}</TaskLabel>
+      <TaskLabel>{displayedTaskLabel}</TaskLabel>
       <SliderWheel
         currentTaskIndex={currentTaskIndex}
         setCurrentTaskIndex={setCurrentTaskIndex}

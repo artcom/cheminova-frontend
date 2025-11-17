@@ -1,10 +1,23 @@
 import { styled } from "styled-components"
 
-export const cardPositions = [
-  { x: "0px", y: "22.5rem", opacity: 1, zIndex: 2 },
-  { x: "11rem", y: "20rem", opacity: 0.5, zIndex: 1 },
-  { x: "-11rem", y: "20rem", opacity: 0.5, zIndex: 1 },
-]
+const CARD_POSITION_PRESETS = {
+  1: [{ x: "0px", y: "22.5rem", opacity: 1, zIndex: 2 }],
+  2: [
+    { x: "0px", y: "22.5rem", opacity: 1, zIndex: 2 },
+    { x: "11rem", y: "21.25rem", opacity: 0.65, zIndex: 1 },
+  ],
+  3: [
+    { x: "0px", y: "22.5rem", opacity: 1, zIndex: 2 },
+    { x: "11rem", y: "20rem", opacity: 0.5, zIndex: 1 },
+    { x: "-11rem", y: "20rem", opacity: 0.5, zIndex: 1 },
+  ],
+}
+
+export const getCardPositions = (count = 3) => {
+  const preset = CARD_POSITION_PRESETS[count]
+  if (preset) return preset
+  return CARD_POSITION_PRESETS[3]
+}
 
 export const characterStyles = {
   janitor: {
