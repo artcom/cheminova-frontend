@@ -35,11 +35,14 @@ export const ImageRow = styled.div`
 `
 
 export const TaskLabel = styled.h2`
-  margin: 0;
-  font-size: 1.05rem;
   font-weight: 700;
-  color: #000;
-  flex: 1;
+  font-style: Bold;
+  font-size: 1.5rem;
+  leading-trim: NONE;
+  line-height: 100%;
+  letter-spacing: 0%;
+  text-align: center;
+  margin-top: 2rem;
 `
 
 export const Preview = styled.img`
