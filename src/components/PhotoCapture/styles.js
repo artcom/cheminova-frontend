@@ -119,6 +119,11 @@ export const CameraButtonContainer = styled.div`
   align-items: center;
   position: absolute;
   bottom: 1.5rem;
+  min-width: 3.5rem;
+  min-height: 3.5rem;
+  padding: 0.5rem;
+  border-radius: 999px;
+  touch-action: manipulation;
 `
 
 export const Footer = styled.div`

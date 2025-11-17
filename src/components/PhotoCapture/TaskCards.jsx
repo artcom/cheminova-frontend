@@ -64,7 +64,11 @@ export default function TaskCards({
                   />
                 </>
               )}
-              <CameraButtonContainer>
+              <CameraButtonContainer
+                onTouchStart={(event) => event.stopPropagation()}
+                onTouchMove={(event) => event.stopPropagation()}
+                onTouchEnd={(event) => event.stopPropagation()}
+              >
                 <IconButton
                   variant="camera"
                   color={
