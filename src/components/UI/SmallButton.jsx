@@ -1,12 +1,13 @@
 import { styled } from "styled-components"
 
 const StyledSmallButton = styled.button`
-  width: 7.8125rem;
-  height: 2.4375rem;
+  min-width: 9.5rem;
+  height: 2.75rem;
+  padding: 0 1.5rem;
   border-radius: 2.75rem;
   border: 1px solid ${({ color }) => color || "black"};
   background: transparent;
-  display: flex;
+  display: inline-flex;
   justify-content: center;
   align-items: center;
   color: ${({ color }) => color || "white"};

@@ -9,7 +9,7 @@ export const UploadContainer = styled.div`
   align-items: center;
   padding: 1.75rem 0 7rem; /* leave bottom space for nav */
   box-sizing: border-box;
-  gap: 1.75rem;
+  gap: 11.75rem;
   color: #fff;
 `
 
@@ -87,10 +87,15 @@ export const Question = styled.h1`
 
 export const Actions = styled.div`
   display: flex;
+  flex-direction: ${({ $stacked }) => ($stacked ? "column" : "row")};
+  align-items: ${({ $stacked }) => ($stacked ? "stretch" : "center")};
+  width: ${({ $stacked }) => ($stacked ? "100%" : "auto")};
   gap: 1rem;
+
   & > button {
     border-color: ${theme.colors.background.light};
     color: ${theme.colors.background.light};
+    width: ${({ $stacked }) => ($stacked ? "100%" : "auto")};
   }
 `
 

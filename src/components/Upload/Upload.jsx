@@ -43,6 +43,7 @@ export default function Upload() {
   const { capturedImages } = useGlobalState()
   const [uploadProgress, setUploadProgress] = useState("")
   const [uploadErrors, setUploadErrors] = useState([])
+  const [didCompleteUpload, setDidCompleteUpload] = useState(false)
   const uploadAttemptRef = useRef(0)
   const { tasks, currentTaskIndex, setCurrentTaskIndex } = usePhotoTasks()
   const navigate = useNavigate()
@@ -52,6 +53,7 @@ export default function Upload() {
   const isUploading = uploadImageMutation.isPending
   const images = capturedImages || []
   const validImages = images.filter(Boolean)
+  const hasValidImages = validImages.length > 0
 
   const characterName = character?.name || ""
 
@@ -60,30 +62,42 @@ export default function Upload() {
     : t("upload.question")
   const yesButtonText = uploadData?.yesButtonText || t("upload.buttons.yes")
   const noButtonText = uploadData?.noButtonText || t("upload.buttons.no")
+  const noImagesCopy = t("upload.noImages", {
+    defaultValue: "No photos to upload yet. Capture a photo before uploading.",
+  })
 
   const goToGallery = () => {
     const destination = characterSlug === "future" ? "timeline" : "gallery"
     navigate(`/characters/${characterSlug}/${destination}`)
   }
 
+  const goToPhotoCapture = () => {
+    navigate(`/characters/${characterSlug}/photo-capture`)
+  }
+
   const handleUpload = async () => {
+    if (didCompleteUpload) {
+      goToGallery()
+      return
+    }
+
     setUploadErrors([])
 
-    if (validImages.length === 0) {
-      goToGallery()
+    if (!hasValidImages) {
+      setUploadProgress(noImagesCopy)
       return
     }
 
     try {
       const attemptId = uploadAttemptRef.current + 1
       uploadAttemptRef.current = attemptId
-      setUploadProgress(
-        t("upload.status.uploadingToCharacter", {
-          count: validImages.length,
-          character: characterName,
-          defaultValue: `Uploading ${validImages.length} images to ${characterName}'s collection...`,
-        }),
-      )
+      setDidCompleteUpload(false)
+      const uploadingMessage = t("upload.status.uploadingToCharacter", {
+        count: validImages.length,
+        character: characterName,
+        defaultValue: `Uploading ${validImages.length} images to ${characterName}'s collection...`,
+      })
+      setUploadProgress(uploadingMessage)
 
       const uploadResults = []
       const uploadErrors = []
@@ -97,15 +111,6 @@ export default function Upload() {
           )
           const result = await uploadImageMutation.mutateAsync({ file })
           uploadResults.push(result)
-
-          setUploadProgress(
-            t("upload.status.uploadProgress", {
-              current: index + 1,
-              total: validImages.length,
-              character: characterName,
-              defaultValue: `Uploaded ${index + 1} of ${validImages.length} images to ${characterName}'s collection`,
-            }),
-          )
         } catch (error) {
           uploadErrors.push({
             index: index + 1,
@@ -121,9 +126,7 @@ export default function Upload() {
             defaultValue: `All uploads completed successfully for ${characterName}!`,
           }),
         )
-        setTimeout(() => {
-          goToGallery()
-        }, 2000)
+        setDidCompleteUpload(true)
       } else if (uploadResults.length > 0) {
         setUploadErrors(uploadErrors)
         setUploadProgress(
@@ -146,12 +149,16 @@ export default function Upload() {
 
   const getButtonText = () => {
     if (isUploading) return uploadProgress || t("upload.buttons.uploading")
+    if (didCompleteUpload)
+      return t("upload.buttons.viewCollection", {
+        defaultValue: "View collection",
+      })
     if (uploadErrors.length > 0) return t("upload.buttons.retry")
     return yesButtonText
   }
 
   const getUploadDescription = () => {
-    if (validImages.length === 0) return t("upload.noImages")
+    if (!hasValidImages) return noImagesCopy
 
     const baseDescription = uploadDescription || t("upload.question")
     return t("upload.questionWithCharacter", {
@@ -160,6 +167,8 @@ export default function Upload() {
       defaultValue: `${baseDescription} Your photos will be added to ${characterName}'s collection.`,
     })
   }
+
+  const statusMessage = hasValidImages ? uploadProgress : ""
 
   return (
     <UploadContainer>
@@ -177,9 +186,9 @@ export default function Upload() {
       <QuestionBlock>
         <Question>{getUploadDescription()}</Question>
 
-        {uploadProgress && (
+        {statusMessage && (
           <ProgressMessage $hasErrors={uploadErrors.length > 0}>
-            {uploadProgress}
+            {statusMessage}
           </ProgressMessage>
         )}
 
@@ -194,13 +203,38 @@ export default function Upload() {
           </ErrorList>
         )}
 
-        <Actions>
-          <SmallButton onClick={handleUpload} disabled={isUploading}>
-            {getButtonText()}
-          </SmallButton>
-          <SmallButton onClick={goToGallery} disabled={isUploading}>
-            {isUploading ? t("upload.buttons.pleaseWait") : noButtonText}
-          </SmallButton>
+        <Actions $stacked={!hasValidImages}>
+          {hasValidImages ? (
+            didCompleteUpload ? (
+              <SmallButton onClick={goToGallery}>
+                {t("upload.buttons.viewCollection", {
+                  defaultValue: "View collection",
+                })}
+              </SmallButton>
+            ) : (
+              <>
+                <SmallButton onClick={handleUpload} disabled={isUploading}>
+                  {getButtonText()}
+                </SmallButton>
+                <SmallButton onClick={goToGallery} disabled={isUploading}>
+                  {isUploading ? t("upload.buttons.pleaseWait") : noButtonText}
+                </SmallButton>
+              </>
+            )
+          ) : (
+            <>
+              <SmallButton onClick={goToPhotoCapture}>
+                {t("upload.buttons.goToPhotoCapture", {
+                  defaultValue: "Go to photo capture",
+                })}
+              </SmallButton>
+              <SmallButton onClick={goToGallery}>
+                {t("upload.buttons.proceedWithoutPhotos", {
+                  defaultValue: "Proceed without photos",
+                })}
+              </SmallButton>
+            </>
+          )}
         </Actions>
       </QuestionBlock>
     </UploadContainer>
