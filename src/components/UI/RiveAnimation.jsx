@@ -3,6 +3,7 @@ import {
   EventType,
   Fit,
   Layout,
+  RuntimeLoader,
   useRive,
 } from "@rive-app/react-canvas"
 import { useEffect, useMemo } from "react"
@@ -16,20 +17,20 @@ const RiveContainer = styled.div`
   justify-content: center;
 `
 
+const wasmUrl = new URL("@rive-app/canvas/rive.wasm", import.meta.url).href
+
 // Configure Rive WASM once globally
 let wasmConfigured = false
-const configureRiveWasm = async () => {
+const configureRiveWasm = () => {
   if (wasmConfigured) return
-  try {
-    const RiveCanvas = await import("@rive-app/react-canvas")
-    const wasmUrl = new URL("@rive-app/canvas/rive.wasm", import.meta.url).href
-    if (RiveCanvas.RuntimeLoader?.setWasmUrl) {
-      RiveCanvas.RuntimeLoader.setWasmUrl(wasmUrl)
-      wasmConfigured = true
-    }
-  } catch (error) {
-    console.warn("Failed to configure Rive WASM:", error)
+
+  if (!RuntimeLoader?.setWasmUrl) {
+    console.warn("Rive RuntimeLoader.setWasmUrl is not available")
+    return
   }
+
+  RuntimeLoader.setWasmUrl(wasmUrl)
+  wasmConfigured = true
 }
 
 export default function RiveAnimation({
