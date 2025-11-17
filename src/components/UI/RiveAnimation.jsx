@@ -1,5 +1,11 @@
-import { Alignment, Fit, Layout, useRive } from "@rive-app/react-canvas"
-import { useEffect } from "react"
+import {
+  Alignment,
+  EventType,
+  Fit,
+  Layout,
+  useRive,
+} from "@rive-app/react-canvas"
+import { useEffect, useMemo } from "react"
 import styled from "styled-components"
 
 const RiveContainer = styled.div`
@@ -31,22 +37,58 @@ export default function RiveAnimation({
   stateMachines,
   autoplay = true,
   onLoad,
+  stopAfterFirstLoop = false,
+  fit,
+  alignment,
+  layout: layoutOverride,
   ...otherProps
 }) {
   useEffect(() => {
     configureRiveWasm()
   }, [])
 
+  const resolvedLayout = useMemo(() => {
+    if (layoutOverride) {
+      return layoutOverride instanceof Layout
+        ? layoutOverride
+        : new Layout(layoutOverride)
+    }
+
+    return new Layout({
+      fit: fit ?? Fit.FitHeight,
+      alignment: alignment ?? Alignment.BottomRight,
+    })
+  }, [alignment, fit, layoutOverride])
+
   const { rive, RiveComponent } = useRive({
     src,
     stateMachines,
     autoplay,
-    layout: new Layout({
-      fit: Fit.FitHeight,
-      alignment: Alignment.BottomRight,
-    }),
+    layout: resolvedLayout,
     onLoad: onLoad ? () => onLoad(rive) : undefined,
   })
+
+  useEffect(() => {
+    if (
+      !rive ||
+      !stopAfterFirstLoop ||
+      typeof rive.on !== "function" ||
+      typeof rive.off !== "function"
+    ) {
+      return undefined
+    }
+
+    const handleLoop = () => {
+      rive.pause()
+      rive.off(EventType.Loop, handleLoop)
+    }
+
+    rive.on(EventType.Loop, handleLoop)
+
+    return () => {
+      rive.off(EventType.Loop, handleLoop)
+    }
+  }, [rive, stopAfterFirstLoop])
 
   return (
     <RiveContainer {...otherProps}>

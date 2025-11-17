@@ -3,7 +3,6 @@ import GlobalStyles from "@/GlobalStyles"
 import LanguageProvider from "@/providers/LanguageProvider"
 import { queryClient } from "@/queryClient"
 import { QueryClientProvider } from "@tanstack/react-query"
-import { ReactQueryDevtools } from "@tanstack/react-query-devtools"
 import AppThemeProvider from "@theme/ThemeProvider"
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router"
 
@@ -57,7 +56,6 @@ export default function Root() {
           <AppThemeProvider>
             <GlobalStyles />
             <Outlet />
-            {import.meta.env.DEV ? <ReactQueryDevtools /> : null}
           </AppThemeProvider>
         </StateProvider>
       </LanguageProvider>

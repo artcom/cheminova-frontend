@@ -3,6 +3,7 @@ import { allContentQuery } from "@/api/queries"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
+import { Alignment, Fit } from "@rive-app/react-canvas"
 import { useEffect, useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
@@ -55,10 +56,10 @@ const Content = styled.div`
 `
 
 const Headline = styled.h1`
-  margin-top: 10.75rem;
+  margin-top: 1.75rem;
   font-family:
     "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
-  font-size: 2.625rem;
+  font-size: 2.325rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;
@@ -72,29 +73,13 @@ const Description = styled.div`
   max-width: 100%;
   font-family:
     "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.4rem;
   font-style: normal;
-  font-weight: 400;
+  font-weight: 600;
   line-height: 1.4;
   margin-bottom: 2rem;
   opacity: ${(props) => (props.$isLoading ? "0.5" : "1")};
   transition: opacity 0.3s ease-in-out;
-
-  p {
-    margin: 0 0 1rem 0;
-
-    &:last-child {
-      margin-bottom: 0;
-    }
-  }
-
-  strong {
-    font-weight: 700;
-  }
-
-  em {
-    font-style: italic;
-  }
 `
 
 const LoadingContainer = styled.div`
@@ -149,6 +134,15 @@ export default function Perspective() {
       ? perspective.backgroundImage.file
       : null
 
+  const riveLayout = showRiveAnimation
+    ? characterSlug === "future"
+      ? {
+          fit: Fit.Cover,
+          alignment: Alignment.CenterLeft,
+        }
+      : { fit: Fit.Cover, alignment: Alignment.Center }
+    : undefined
+
   return (
     <Screen>
       <BackgroundImage $imageUrl={backgroundImageUrl} />
@@ -158,8 +152,8 @@ export default function Perspective() {
           <RiveAnimation
             src={riveAsset}
             autoplay
-            fit="Cover"
-            alignment="Center"
+            stopAfterFirstLoop={characterSlug === "future"}
+            layout={riveLayout}
           />
         </RiveBackground>
       )}
