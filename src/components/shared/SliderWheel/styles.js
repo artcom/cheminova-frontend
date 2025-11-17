@@ -6,7 +6,7 @@ export const cardPositions = [
   { x: "-11rem", y: "19rem", opacity: 0.5, zIndex: 1 },
 ]
 
-const characterStyles = {
+export const characterStyles = {
   janitor: {
     backgroundColor: "#f1ece1",
     textColor: "#000",

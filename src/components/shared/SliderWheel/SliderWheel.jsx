@@ -35,7 +35,6 @@ const SliderWheel = ({
       onTouchEnd={handleTouchEnd}
     >
       {React.Children.map(children, (child, index) => {
-        const isActive = index === currentTaskIndex
         const positionIndex =
           (index - currentTaskIndex + taskMetadata.length) % taskMetadata.length
         const { x, y, opacity, zIndex } = cardPositions[positionIndex] || {}
@@ -49,7 +48,7 @@ const SliderWheel = ({
             opacity={opacity}
             $zIndex={zIndex}
           >
-            {React.cloneElement(child, { isActive })}
+            {child}
           </SlideItem>
         )
       })}

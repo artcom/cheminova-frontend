@@ -1,28 +1,6 @@
 import { styled } from "styled-components"
 
-export const cardPositions = [
-  { x: "0px", y: "21.5rem", opacity: 1, zIndex: 2 },
-  { x: "11rem", y: "19rem", opacity: 0.5, zIndex: 1 },
-  { x: "-11rem", y: "19rem", opacity: 0.5, zIndex: 1 },
-]
-
-export const characterStyles = {
-  janitor: {
-    backgroundColor: "#f1ece1",
-    textColor: "#000",
-    imageBorder: "1px solid #000",
-  },
-  future: {
-    backgroundColor: "#1f1f1f99",
-    border: "1px solid #fff",
-    textColor: "#ffffff",
-  },
-  artist: {
-    backgroundColor: "#f1ece1",
-    border: "1px solid #000",
-    textColor: "#000",
-  },
-}
+import { characterStyles } from "../shared/SliderWheel/styles"
 
 export const PhotoCaptureContainer = styled.div`
   display: flex;
