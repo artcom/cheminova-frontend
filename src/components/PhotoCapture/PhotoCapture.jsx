@@ -10,7 +10,6 @@ import { useLoaderData } from "react-router-dom"
 
 import FooterContainer from "./Footer"
 import usePhotoTasks from "./hooks/usePhotoTasks"
-import SliderWheel from "./SliderWheel"
 import {
   HeaderContainer,
   HeaderText,
@@ -105,19 +104,14 @@ export default function PhotoCapture() {
           <HeaderText>{heading}</HeaderText>
         </HeaderContainer>
         <TaskHeadline>{taskMetadata[currentTaskIndex].title}</TaskHeadline>
-        <SliderWheel
+        <TaskCards
+          taskImages={taskImages}
           currentTaskIndex={currentTaskIndex}
           setCurrentTaskIndex={setCurrentTaskIndex}
+          handleOpenCamera={handleOpenCamera}
+          handleOpenGallery={handleOpenGallery}
           taskMetadata={taskMetadata}
-        >
-          <TaskCards
-            taskImages={taskImages}
-            currentTaskIndex={currentTaskIndex}
-            setCurrentTaskIndex={setCurrentTaskIndex}
-            handleOpenCamera={handleOpenCamera}
-            handleOpenGallery={handleOpenGallery}
-          />
-        </SliderWheel>
+        />
         <FooterContainer
           taskMetadata={taskMetadata}
           currentTaskIndex={currentTaskIndex}

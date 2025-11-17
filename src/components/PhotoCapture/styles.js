@@ -6,7 +6,7 @@ export const cardPositions = [
   { x: "-11rem", y: "19rem", opacity: 0.5, zIndex: 1 },
 ]
 
-const characterStyles = {
+export const characterStyles = {
   janitor: {
     backgroundColor: "#f1ece1",
     textColor: "#000",
@@ -65,24 +65,13 @@ export const TasksContainer = styled.div`
 
 export const TaskCard = styled.div`
   position: absolute;
-  width: 16.3625rem;
-  height: 20.93125rem;
-  top: ${({ $top }) => $top};
-  left: ${({ $left }) => $left};
+  width: 100%;
+  height: 100%;
+  top: 0;
+  left: 0;
   display: flex;
   flex-direction: column;
   padding: 1.75rem 1.625rem;
-  border-radius: 1.75rem;
-  transform: ${({ transform }) => transform};
-  opacity: ${({ opacity }) => opacity};
-  z-index: ${({ $zIndex }) => $zIndex};
-  background-color: ${({ $characterId }) =>
-    characterStyles[$characterId]?.backgroundColor || "#f1ece1"};
-  border: ${({ $characterId }) =>
-    characterStyles[$characterId]?.border || "none"};
-  transition:
-    all 0.3s ease,
-    opacity 0.3s ease;
 `
 
 export const TaskDescription = styled.h2`
