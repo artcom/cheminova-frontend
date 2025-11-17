@@ -8,7 +8,7 @@ import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import theme from "@theme"
 import { LayoutGroup, motion } from "motion/react"
 import { useState } from "react"
-import { useLoaderData } from "react-router-dom"
+import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
 const Page = styled.div`
@@ -244,6 +244,26 @@ const ChevronButton = styled(motion.button)`
     stroke: white;
     stroke-width: 2;
     fill: none;
+  }
+`
+
+const ExitButton = styled.button`
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: rgba(0, 0, 0, 0.7);
+  color: white;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  padding: 10px 15px;
+  border-radius: 5px;
+  font-family: inherit;
+  font-size: 14px;
+  cursor: pointer;
+  z-index: 100;
+  transition: background 0.2s ease;
+
+  &:hover {
+    background: rgba(255, 255, 255, 0.15);
   }
 `
 const DEFAULT_DATE_TIME_LABELS = {
@@ -511,8 +531,9 @@ const CARD_LAYERS = [
 ]
 
 export default function FutureTimeline() {
-  useLoaderData() // Ensures loader runs and validates character
+  const { characterSlug } = useLoaderData()
   const [requestedIndex, setRequestedIndex] = useState(0)
+  const navigate = useNavigate()
 
   const locale = getCurrentLocale()
   const {
@@ -666,6 +687,14 @@ export default function FutureTimeline() {
     })
   }
 
+  const handleGoToEnding = () => {
+    if (!characterSlug) {
+      return
+    }
+
+    navigate(`/characters/${characterSlug}/ending`)
+  }
+
   const showLoadingOverlay = isLoading && totalImages === 0
   const showErrorOverlay = isError && totalImages === 0
   const showEmptyOverlay = !isLoading && !isError && totalImages === 0
@@ -673,6 +702,9 @@ export default function FutureTimeline() {
 
   return (
     <Page>
+      <ExitButton type="button" onClick={handleGoToEnding}>
+        Go to ending
+      </ExitButton>
       <TimelineContainer>
         <ImageStack>
           <LayoutGroup id="future-timeline-stack">

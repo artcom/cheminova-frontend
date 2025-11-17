@@ -127,7 +127,7 @@ const stripHtml = (value) =>
   typeof value === "string" ? value.replace(/<[^>]*>/g, "") : ""
 
 export default function Ending() {
-  const { ending, endingReflection } = useLoaderData()
+  const { characterSlug, ending, endingReflection } = useLoaderData()
   const [imageLoaded, setImageLoaded] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
   const navigate = useNavigate()
@@ -216,7 +216,7 @@ export default function Ending() {
         <NavigationWrapper>
           <Navigation
             mode="single"
-            onSelect={() => navigate("/")}
+            onSelect={() => navigate(`/characters/${characterSlug}`)}
             disabled={isLoading}
           />
         </NavigationWrapper>
