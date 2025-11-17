@@ -1,9 +1,9 @@
 import { styled } from "styled-components"
 
 export const cardPositions = [
-  { x: "0px", y: "21.5rem", opacity: 1, zIndex: 2 },
-  { x: "11rem", y: "19rem", opacity: 0.5, zIndex: 1 },
-  { x: "-11rem", y: "19rem", opacity: 0.5, zIndex: 1 },
+  { x: "0px", y: "22.5rem", opacity: 1, zIndex: 2 },
+  { x: "11rem", y: "20rem", opacity: 0.5, zIndex: 1 },
+  { x: "-11rem", y: "20rem", opacity: 0.5, zIndex: 1 },
 ]
 
 export const characterStyles = {
