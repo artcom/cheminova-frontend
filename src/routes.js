@@ -11,6 +11,7 @@ export default [
       route("perspective", "./components/Perspective/Perspective.jsx"),
       route("upload", "./components/Upload/Upload.jsx"),
       route("gallery", "./components/Gallery/Gallery.jsx"),
+      route("timeline", "./components/FutureTimeline/FutureTimeline.jsx"),
       route("ending", "./components/Ending/Ending.jsx"),
     ]),
   ]),
