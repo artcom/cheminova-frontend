@@ -34,7 +34,6 @@ export const HeaderText = styled.h1`
 export const TasksContainer = styled.div`
   display: flex;
   flex-direction: row;
-  gap: 1.5rem;
   width: 19.25rem;
   height: 100%;
   justify-content: center;
@@ -135,7 +134,7 @@ export const PaginationContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 28rem;
+  margin-top: 27rem;
   margin-bottom: 2rem;
 `
 
