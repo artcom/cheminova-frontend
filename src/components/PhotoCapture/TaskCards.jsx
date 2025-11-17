@@ -6,8 +6,8 @@ import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useLoaderData } from "react-router-dom"
 
+import SliderWheel from "../shared/SliderWheel/SliderWheel"
 import IconButton from "../UI/IconButton"
-import SliderWheel from "./SliderWheel"
 import {
   CameraButtonContainer,
   ExtraBorder,

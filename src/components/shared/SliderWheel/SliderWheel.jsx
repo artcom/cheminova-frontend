@@ -1,41 +1,8 @@
 import React from "react"
 import { useLoaderData } from "react-router-dom"
-import styled from "styled-components"
 
-import { useSwipe } from "../../hooks/useSwipe"
-import { cardPositions, characterStyles } from "./styles"
-
-const SliderWheelWrapper = styled.div`
-  display: flex;
-  flex-direction: row;
-  gap: 1.5rem;
-  width: 19.25rem;
-  height: 100%;
-  justify-content: center;
-  align-items: center;
-`
-
-const SlideItem = styled.div`
-  position: absolute;
-  width: 16.3625rem;
-  height: 20.93125rem;
-  top: ${({ $top }) => $top};
-  left: ${({ $left }) => $left};
-  display: flex;
-  flex-direction: column;
-  padding: 1.75rem 1.625rem;
-  border-radius: 1.75rem;
-  transform: ${({ transform }) => transform};
-  opacity: ${({ opacity }) => opacity};
-  z-index: ${({ $zIndex }) => $zIndex};
-  background-color: ${({ $characterId }) =>
-    characterStyles[$characterId]?.backgroundColor || "#f1ece1"};
-  border: ${({ $characterId }) =>
-    characterStyles[$characterId]?.border || "none"};
-  transition:
-    all 0.3s ease,
-    opacity 0.3s ease;
-`
+import { useSwipe } from "../../../hooks/useSwipe"
+import { cardPositions, SlideItem, Wrapper } from "./styles"
 
 const SliderWheel = ({
   children,
@@ -62,7 +29,7 @@ const SliderWheel = ({
   )
 
   return (
-    <SliderWheelWrapper
+    <Wrapper
       onTouchStart={handleTouchStart}
       onTouchMove={handleTouchMove}
       onTouchEnd={handleTouchEnd}
@@ -77,9 +44,8 @@ const SliderWheel = ({
           <SlideItem
             key={index}
             $characterId={characterSlug}
-            $top={y}
-            $left={`calc(50% + ${x})`}
-            transform={`translate(-50%, -50%)`}
+            $y={y}
+            $x={x}
             opacity={opacity}
             $zIndex={zIndex}
           >
@@ -87,7 +53,7 @@ const SliderWheel = ({
           </SlideItem>
         )
       })}
-    </SliderWheelWrapper>
+    </Wrapper>
   )
 }
 
