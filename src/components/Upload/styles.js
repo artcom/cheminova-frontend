@@ -43,11 +43,15 @@ export const TaskLabel = styled.h2`
 `
 
 export const Preview = styled.img`
-  width: 5.5rem;
-  height: 5.5rem;
+  width: 85%;
+  height: auto;
+  aspect-ratio: 1;
+  position: absolute;
+  top: 1.5rem;
+  left: 50%;
+  transform: translateX(-50%);
+  border-radius: 1rem;
   object-fit: cover;
-  border-radius: 0.75rem;
-  background: #ccc;
 `
 
 export const Missing = styled.div`

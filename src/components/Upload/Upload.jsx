@@ -12,11 +12,10 @@ import { useLoaderData, useNavigate } from "react-router-dom"
 
 import SmallButton from "@ui/SmallButton"
 
+import SliderWheel from "../shared/SliderWheel/SliderWheel"
 import {
   Actions,
   ErrorList,
-  ImageRow,
-  ImagesGrid,
   Preview,
   ProgressMessage,
   Question,
@@ -45,7 +44,7 @@ export default function Upload() {
   const [uploadProgress, setUploadProgress] = useState("")
   const [uploadErrors, setUploadErrors] = useState([])
   const uploadAttemptRef = useRef(0)
-  const { tasks } = usePhotoTasks()
+  const { tasks, currentTaskIndex, setCurrentTaskIndex } = usePhotoTasks()
   const navigate = useNavigate()
   const { characterSlug, character, upload: uploadData } = useLoaderData()
 
@@ -161,14 +160,16 @@ export default function Upload() {
 
   return (
     <UploadContainer>
-      <ImagesGrid>
+      <TaskLabel>{tasks[currentTaskIndex]}</TaskLabel>
+      <SliderWheel
+        currentTaskIndex={currentTaskIndex}
+        setCurrentTaskIndex={setCurrentTaskIndex}
+        taskMetadata={tasks}
+      >
         {validImages.map((imageData, index) => (
-          <ImageRow key={index}>
-            <TaskLabel>{tasks[index]}</TaskLabel>
-            <Preview src={imageData} />
-          </ImageRow>
+          <Preview key={index} src={imageData} />
         ))}
-      </ImagesGrid>
+      </SliderWheel>
 
       <QuestionBlock>
         <Question>{getUploadDescription()}</Question>
