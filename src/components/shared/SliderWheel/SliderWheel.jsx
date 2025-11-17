@@ -1,5 +1,4 @@
 import React from "react"
-import { useLoaderData } from "react-router-dom"
 
 import { useSwipe } from "../../../hooks/useSwipe"
 import { cardPositions, SlideItem, Wrapper } from "./styles"
@@ -9,9 +8,8 @@ const SliderWheel = ({
   currentTaskIndex,
   setCurrentTaskIndex,
   taskMetadata,
+  characterSlug = undefined,
 }) => {
-  const { characterSlug } = useLoaderData()
-
   const cycleCards = (direction) => {
     setCurrentTaskIndex((prevIndex) => {
       if (direction === "left") {

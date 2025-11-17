@@ -48,7 +48,7 @@ export const SlideItem = styled.div`
   opacity: ${({ opacity }) => opacity};
   z-index: ${({ $zIndex }) => $zIndex};
   background-color: ${({ $characterId }) =>
-    characterStyles[$characterId]?.backgroundColor || "#f1ece1"};
+    characterStyles[$characterId]?.backgroundColor || "transparent"};
   border: ${({ $characterId }) =>
     characterStyles[$characterId]?.border || "none"};
   transition:

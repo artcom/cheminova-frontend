@@ -37,6 +37,7 @@ export default function TaskCards({
       currentTaskIndex={currentTaskIndex}
       setCurrentTaskIndex={setCurrentTaskIndex}
       taskMetadata={taskMetadata}
+      characterSlug={characterSlug}
     >
       {taskMetadata.map((task, index) => {
         const taskDescription = sanitizeDescription(task.description)
