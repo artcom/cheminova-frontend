@@ -4,6 +4,7 @@ import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { Alignment, Fit } from "@rive-app/react-canvas"
+import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
@@ -12,7 +13,7 @@ import LoadingSpinner from "../UI/LoadingSpinner"
 import Navigation from "../UI/Navigation"
 import RiveAnimation from "../UI/RiveAnimation"
 
-const Screen = styled.div`
+const Screen = styled(motion.div)`
   position: relative;
   width: 100dvw;
   height: 100dvh;
@@ -24,7 +25,7 @@ const Screen = styled.div`
   overflow: hidden;
 `
 
-const BackgroundImage = styled.div`
+const BackgroundImage = styled(motion.div)`
   position: absolute;
   top: 0;
   left: 0;
@@ -35,19 +36,19 @@ const BackgroundImage = styled.div`
   background-size: cover;
   background-position: center;
   background-repeat: no-repeat;
-  opacity: ${(props) => (props.$imageUrl ? "0.3" : "0")};
+  opacity: 0;
   z-index: 0;
   transition: opacity 0.5s ease-in-out;
 `
 
-const RiveBackground = styled.div`
+const RiveBackground = styled(motion.div)`
   position: absolute;
   inset: 0;
   z-index: 0;
   pointer-events: none;
 `
 
-const Content = styled.div`
+const Content = styled(motion.div)`
   position: relative;
   z-index: 1;
   display: flex;
@@ -55,7 +56,7 @@ const Content = styled.div`
   height: 100%;
 `
 
-const Headline = styled.h1`
+const Headline = styled(motion.h1)`
   margin-top: 1.75rem;
   font-family:
     "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
@@ -68,7 +69,7 @@ const Headline = styled.h1`
   transition: opacity 0.3s ease-in-out;
 `
 
-const Description = styled.div`
+const Description = styled(motion.div)`
   width: 21.375rem;
   max-width: 100%;
   font-family:
@@ -82,13 +83,58 @@ const Description = styled.div`
   transition: opacity 0.3s ease-in-out;
 `
 
-const LoadingContainer = styled.div`
+const LoadingContainer = styled(motion.div)`
   display: flex;
   align-items: center;
   justify-content: center;
   margin-top: 2rem;
   margin-bottom: 2rem;
 `
+
+const NavigationWrapper = styled(motion.div)`
+  position: relative;
+  z-index: 1;
+  margin-top: auto;
+`
+
+const easeOutExpo = [0.22, 1, 0.36, 1]
+
+const screenVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+}
+
+const contentVariants = {
+  initial: { opacity: 0 },
+  animate: {
+    opacity: 1,
+    transition: {
+      duration: 0.7,
+      ease: easeOutExpo,
+      delayChildren: 0.15,
+      staggerChildren: 0.1,
+    },
+  },
+}
+
+const itemVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1, transition: { duration: 0.6, ease: easeOutExpo } },
+  exit: { opacity: 0, transition: { duration: 0.4, ease: easeOutExpo } },
+}
+
+const backgroundVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 0.35 },
+  exit: { opacity: 0 },
+}
+
+const riveVariants = {
+  initial: { opacity: 0 },
+  animate: { opacity: 1 },
+  exit: { opacity: 0 },
+}
 
 export default function Perspective() {
   const { characterSlug, perspective, riveAsset } = useLoaderData()
@@ -144,37 +190,88 @@ export default function Perspective() {
     : undefined
 
   return (
-    <Screen>
-      <BackgroundImage $imageUrl={backgroundImageUrl} />
-
-      {showRiveAnimation && (
-        <RiveBackground>
-          <RiveAnimation
-            src={riveAsset}
-            autoplay
-            stopAfterFirstLoop={characterSlug === "future"}
-            layout={riveLayout}
+    <Screen
+      variants={screenVariants}
+      initial="initial"
+      animate="animate"
+      exit="exit"
+      transition={{ duration: 0.8, ease: easeOutExpo }}
+    >
+      <AnimatePresence mode="wait">
+        {!showRiveAnimation && backgroundImageUrl && (
+          <BackgroundImage
+            key={backgroundImageUrl}
+            $imageUrl={backgroundImageUrl}
+            variants={backgroundVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 1.1, ease: easeOutExpo }}
           />
-        </RiveBackground>
-      )}
-
-      <Content>
-        <Headline $isLoading={isLoading}>{heading}</Headline>
-
-        {isLoading && (
-          <LoadingContainer>
-            <LoadingSpinner />
-          </LoadingContainer>
         )}
 
-        {!isLoading && description && <Description>{description}</Description>}
+        {showRiveAnimation && (
+          <RiveBackground
+            key={riveAsset ?? characterSlug}
+            variants={riveVariants}
+            initial="initial"
+            animate="animate"
+            exit="exit"
+            transition={{ duration: 0.9, ease: easeOutExpo }}
+          >
+            <RiveAnimation
+              src={riveAsset}
+              autoplay
+              stopAfterFirstLoop={characterSlug === "future"}
+              layout={riveLayout}
+            />
+          </RiveBackground>
+        )}
+      </AnimatePresence>
+
+      <Content variants={contentVariants} initial="initial" animate="animate">
+        <Headline $isLoading={isLoading} variants={itemVariants}>
+          {heading}
+        </Headline>
+
+        <AnimatePresence mode="wait">
+          {isLoading ? (
+            <LoadingContainer
+              key="loading"
+              variants={itemVariants}
+              initial="initial"
+              animate="animate"
+              exit="exit"
+            >
+              <LoadingSpinner />
+            </LoadingContainer>
+          ) : (
+            description && (
+              <Description
+                key={description}
+                variants={itemVariants}
+                initial="initial"
+                animate="animate"
+                exit="exit"
+              >
+                {description}
+              </Description>
+            )
+          )}
+        </AnimatePresence>
       </Content>
 
-      <Navigation
-        mode="single"
-        onSelect={() => navigate(`/characters/${characterSlug}/upload`)}
-        disabled={isLoading}
-      />
+      <NavigationWrapper
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        transition={{ duration: 0.7, ease: easeOutExpo, delay: 0.3 }}
+      >
+        <Navigation
+          mode="single"
+          onSelect={() => navigate(`/characters/${characterSlug}/upload`)}
+          disabled={isLoading}
+        />
+      </NavigationWrapper>
     </Screen>
   )
 }
