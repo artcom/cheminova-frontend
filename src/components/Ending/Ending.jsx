@@ -123,8 +123,11 @@ const NavigationWrapper = styled.div`
   padding-top: 2rem;
 `
 
+const stripHtml = (value) =>
+  typeof value === "string" ? value.replace(/<[^>]*>/g, "") : ""
+
 export default function Ending() {
-  const { ending } = useLoaderData()
+  const { ending, endingReflection } = useLoaderData()
   const [imageLoaded, setImageLoaded] = useState(false)
   const [showCelebration, setShowCelebration] = useState(false)
   const navigate = useNavigate()
@@ -162,10 +165,27 @@ export default function Ending() {
   }, [])
 
   // Use CMS data - it's localized based on current language
-  const heading = ending?.heading || ""
+  const reflectionText = stripHtml(endingReflection?.reflectionText)
+  const heading = ending?.heading || endingReflection?.title || ""
   const description = ending?.description
-    ? ending.description.replace(/<[^>]*>/g, "")
-    : ""
+    ? stripHtml(ending.description)
+    : reflectionText
+
+  const thankYouCopy = (() => {
+    if (endingReflection?.returnToMonumentButtonText) {
+      return endingReflection.returnToMonumentButtonText
+    }
+
+    if (reflectionText && reflectionText !== description) {
+      return reflectionText
+    }
+
+    if (heading && heading !== description) {
+      return heading
+    }
+
+    return ""
+  })()
 
   const backgroundImageUrl =
     imageLoaded && ending?.backgroundImage?.file
@@ -187,9 +207,9 @@ export default function Ending() {
 
         {!isLoading && description && <Description>{description}</Description>}
 
-        {!isLoading && (
+        {!isLoading && thankYouCopy && (
           <ThankYouMessage $visible={showCelebration}>
-            {heading}
+            {thankYouCopy}
           </ThankYouMessage>
         )}
 
@@ -224,10 +244,10 @@ export async function clientLoader({ params }) {
     throw new Response("Ending not found", { status: 404 })
   }
 
-  const endingMetas = extractFromContentTree.getEndingMetas(
+  const endingReflection = extractFromContentTree.getEndingReflection(
     content,
     characterIndex,
   )
 
-  return { characterIndex, characterSlug, ending, endingMetas }
+  return { characterIndex, characterSlug, ending, endingReflection }
 }
