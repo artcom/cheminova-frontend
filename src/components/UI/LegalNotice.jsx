@@ -1,3 +1,4 @@
+import { Link } from "react-router-dom"
 import { styled } from "styled-components"
 
 const LegalNoticeContainer = styled.div`
@@ -14,18 +15,17 @@ const LegalNoticeContainer = styled.div`
   height: 1.5rem;
 `
 
-const LinkSpan = styled.span`
+const LegalLink = styled(Link)`
   text-decoration: underline;
+  color: inherit;
 `
 
-export default function LegalNotice({ setShowScreen }) {
+export default function LegalNotice() {
   return (
     <LegalNoticeContainer>
-      <LinkSpan onClick={() => setShowScreen("imprint")}>Legal Notice</LinkSpan>
+      <LegalLink to="/imprint">Legal Notice</LegalLink>
       &nbsp;&amp;&nbsp;
-      <LinkSpan onClick={() => setShowScreen("privacy")}>
-        Privacy Policy
-      </LinkSpan>
+      <LegalLink to="/privacy">Privacy Policy</LegalLink>
     </LegalNoticeContainer>
   )
 }

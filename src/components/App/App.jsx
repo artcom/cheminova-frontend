@@ -1,11 +1,7 @@
 import MobileOnlyGuard from "@/components/UI/MobileOnlyGuard"
-import useGlobalState from "@/hooks/useGlobalState"
 import useHistoryNavigation from "@/hooks/useHistoryNavigation"
 import { useState } from "react"
 import { styled } from "styled-components"
-
-import Imprint from "@ui/Imprint"
-import Privacy from "@ui/Privacy"
 
 import Ending from "../Ending"
 import Exploration from "../Exploration"
@@ -24,7 +20,6 @@ const AppContainer = styled.div`
 `
 
 export default function App() {
-  const { showModal } = useGlobalState()
   const [state, navigateToPage] = useHistoryNavigation("welcome")
   const [capturedImages, setCapturedImages] = useState([])
 
@@ -34,22 +29,6 @@ export default function App() {
 
   const handleClearImages = () => {
     setCapturedImages([])
-  }
-
-  if (showModal === "privacy") {
-    return (
-      <AppContainer $scroll>
-        <Privacy />
-      </AppContainer>
-    )
-  }
-
-  if (showModal === "imprint") {
-    return (
-      <AppContainer $scroll>
-        <Imprint />
-      </AppContainer>
-    )
   }
 
   return (

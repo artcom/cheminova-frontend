@@ -3,7 +3,6 @@ import { createContext, useState } from "react"
 export const StateContext = createContext()
 
 export default function StateProvider({ children }) {
-  const [showModal, setShowModal] = useState(null)
   const [capturedImages, setCapturedImages] = useState([])
 
   function setCapturedImageAt(index, imageData) {
@@ -18,8 +17,6 @@ export default function StateProvider({ children }) {
   }
 
   const value = {
-    showModal,
-    setShowModal,
     capturedImages,
     setCapturedImageAt,
     clearCapturedImages,

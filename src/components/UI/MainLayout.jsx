@@ -58,7 +58,6 @@ export default function MainLayout({
   navigationPosition,
   isFirstPage,
   screenIndex,
-  setShowScreen,
 }) {
   if (children && !headline && !descriptionTitle && !navigationMode) {
     return <Layout>{children}</Layout>
@@ -79,7 +78,6 @@ export default function MainLayout({
               headline={headline}
               subheadline={subheadline}
               legalNotice={isFirstPage}
-              setShowScreen={setShowScreen}
             />
           )}
           {descriptionTitle && (

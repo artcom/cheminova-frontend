@@ -15,12 +15,7 @@ const HeaderLayout = styled(motion.div)`
   z-index: 3;
 `
 
-export default function Header({
-  headline,
-  subheadline,
-  legalNotice,
-  setShowScreen,
-}) {
+export default function Header({ headline, subheadline, legalNotice }) {
   return (
     <HeaderLayout>
       <AnimatePresence mode="popLayout">
@@ -31,9 +26,7 @@ export default function Header({
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
           >
-            {legalNotice && (
-              <LegalNotice key="test-dino" setShowScreen={setShowScreen} />
-            )}
+            {legalNotice && <LegalNotice key="test-dino" />}
             {subheadline}
           </SubHeadline>
         )}
