@@ -1,6 +1,5 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
-import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { getCharacterSlug } from "@/utils/characterSlug"
@@ -35,7 +34,6 @@ export default function Welcome() {
   const [showIntro, setShowIntro] = useState(true)
   const [currentCharacterIndex, setCurrentCharacterIndex] = useState(0)
   const [languageChooserVisible, setLanguageChooserVisible] = useState(true)
-  const { clearCapturedImages } = useGlobalState()
   const navigate = useNavigate()
 
   const { welcomeLanguage, welcomeIntro, characterOverview, characters } =
@@ -75,9 +73,6 @@ export default function Welcome() {
     : null
 
   const handleGoToIntroduction = () => {
-    clearCapturedImages()
-    // When using Link (selectHref), this just clears images
-    // Otherwise, navigate programmatically
     if (currentCharacterSlug) {
       navigate(`/characters/${currentCharacterSlug}/introduction`)
     }

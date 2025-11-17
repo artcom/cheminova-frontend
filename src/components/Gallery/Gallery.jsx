@@ -1,7 +1,7 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
+import useCapturedImages from "@/hooks/useCapturedImages"
 import { useGalleryImages } from "@/hooks/useGallery"
-import useGlobalState from "@/hooks/useGlobalState"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
@@ -71,7 +71,7 @@ const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
 
 export default function Gallery() {
   const { t } = useTranslation()
-  const { capturedImages = [] } = useGlobalState()
+  const { capturedImages = [] } = useCapturedImages()
   const tilesPerRow = useResponsiveTilesPerRow()
   const [allAnimsDone, setAllAnimsDone] = useState(false)
   const [detailMode, setDetailMode] = useState(false)

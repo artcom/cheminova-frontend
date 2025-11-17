@@ -1,6 +1,6 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
-import useGlobalState from "@/hooks/useGlobalState"
+import useCapturedImages from "@/hooks/useCapturedImages"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
@@ -23,7 +23,7 @@ const DEFAULT_TASK_KEYS = ["laNau", "surroundings", "special"]
 
 export default function PhotoCapture() {
   const { t } = useTranslation()
-  const { capturedImages, setCapturedImageAt } = useGlobalState()
+  const { capturedImages, setCapturedImageAt } = useCapturedImages()
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
 

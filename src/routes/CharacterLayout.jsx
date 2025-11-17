@@ -1,12 +1,19 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
 import { getCurrentLocale } from "@/i18n"
+import CapturedImagesProvider from "@/providers/CapturedImagesProvider"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
-import { Outlet } from "react-router-dom"
+import { Outlet, useParams } from "react-router-dom"
 
 export default function CharacterLayout() {
-  return <Outlet />
+  const { characterId } = useParams()
+
+  return (
+    <CapturedImagesProvider key={characterId || "character"}>
+      <Outlet />
+    </CapturedImagesProvider>
+  )
 }
 
 export const id = "character"

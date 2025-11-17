@@ -1,4 +1,3 @@
-import StateProvider from "@/GlobalState"
 import GlobalStyles from "@/GlobalStyles"
 import LanguageProvider from "@/providers/LanguageProvider"
 import { queryClient } from "@/queryClient"
@@ -52,12 +51,10 @@ export default function Root() {
   return (
     <QueryClientProvider client={queryClient}>
       <LanguageProvider>
-        <StateProvider>
-          <AppThemeProvider>
-            <GlobalStyles />
-            <Outlet />
-          </AppThemeProvider>
-        </StateProvider>
+        <AppThemeProvider>
+          <GlobalStyles />
+          <Outlet />
+        </AppThemeProvider>
       </LanguageProvider>
     </QueryClientProvider>
   )

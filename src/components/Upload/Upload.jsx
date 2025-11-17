@@ -1,6 +1,6 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
-import useGlobalState from "@/hooks/useGlobalState"
+import useCapturedImages from "@/hooks/useCapturedImages"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
 import { useUploadImage } from "@/hooks/useUploadImage"
 import { getCurrentLocale } from "@/i18n"
@@ -40,7 +40,7 @@ const dataURLToFile = (dataURL, filename) => {
 
 export default function Upload() {
   const { t } = useTranslation()
-  const { capturedImages } = useGlobalState()
+  const { capturedImages } = useCapturedImages()
   const [uploadProgress, setUploadProgress] = useState("")
   const [uploadErrors, setUploadErrors] = useState([])
   const [didCompleteUpload, setDidCompleteUpload] = useState(false)
