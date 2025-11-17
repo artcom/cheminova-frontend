@@ -1,8 +1,8 @@
 import { extractFromContentTree } from "@/api/hooks"
-import { allContentQuery } from "@/api/queries"
-import { getCurrentLocale } from "@/i18n"
-import { queryClient } from "@/queryClient"
-import { findCharacterIndexBySlug } from "@/utils/characterSlug"
+import {
+  loadCharacterContext,
+  requireContentSection,
+} from "@/utils/loaderHelpers"
 import { useEffect, useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
@@ -226,23 +226,14 @@ export default function Ending() {
 }
 
 export async function clientLoader({ params }) {
-  const characterSlug = params.characterId
-  const locale = getCurrentLocale()
-  const query = allContentQuery(locale)
-  const content = await queryClient.ensureQueryData(query)
+  const { content, characterSlug, characterIndex } =
+    await loadCharacterContext(params)
 
-  const characters = extractFromContentTree.getCharacters(content)
-  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
-
-  if (characterIndex === null) {
-    throw new Response("Character not found", { status: 404 })
-  }
-
-  const ending = extractFromContentTree.getEnding(content, characterIndex)
-
-  if (!ending) {
-    throw new Response("Ending not found", { status: 404 })
-  }
+  const ending = requireContentSection(
+    extractFromContentTree.getEnding(content, characterIndex),
+    "Ending not found",
+    404,
+  )
 
   const endingReflection = extractFromContentTree.getEndingReflection(
     content,

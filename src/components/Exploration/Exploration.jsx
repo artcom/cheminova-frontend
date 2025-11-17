@@ -1,9 +1,9 @@
 import { extractFromContentTree } from "@/api/hooks"
-import { allContentQuery } from "@/api/queries"
-import { getCurrentLocale } from "@/i18n"
-import { queryClient } from "@/queryClient"
 import { getCharacterPersonaFlags } from "@/utils/characterPersona"
-import { findCharacterIndexBySlug } from "@/utils/characterSlug"
+import {
+  loadCharacterContext,
+  requireContentSection,
+} from "@/utils/loaderHelpers"
 import { sanitizeRichText, splitIntoParagraphs } from "@/utils/text"
 import { motion } from "motion/react"
 import { useRef } from "react"
@@ -151,31 +151,13 @@ export default function Exploration() {
 }
 
 export async function clientLoader({ params }) {
-  const characterSlug = params.characterId
-  const locale = getCurrentLocale()
-  const query = allContentQuery(locale)
-  const content = await queryClient.ensureQueryData(query)
+  const { content, characterSlug, characterIndex, character } =
+    await loadCharacterContext(params)
 
-  const characters = extractFromContentTree.getCharacters(content)
-  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
-
-  if (characterIndex === null) {
-    throw new Response("Character not found", { status: 404 })
-  }
-
-  const character = extractFromContentTree.getCharacter(content, characterIndex)
-  const exploration = extractFromContentTree.getExploration(
-    content,
-    characterIndex,
+  const exploration = requireContentSection(
+    extractFromContentTree.getExploration(content, characterIndex),
+    "Exploration data missing from CMS",
   )
-
-  if (!character) {
-    throw new Response("Character data missing from CMS", { status: 500 })
-  }
-
-  if (!exploration) {
-    throw new Response("Exploration data missing from CMS", { status: 500 })
-  }
 
   return { characterIndex, characterSlug, character, exploration }
 }

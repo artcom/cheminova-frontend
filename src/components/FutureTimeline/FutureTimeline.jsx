@@ -1,10 +1,7 @@
-import { extractFromContentTree } from "@/api/hooks"
-import { allContentQuery } from "@/api/queries"
 import LoadingSpinner from "@/components/UI/LoadingSpinner"
 import { useFutureTimelineImages } from "@/hooks/useFutureTimelineImages"
 import { getCurrentLocale } from "@/i18n"
-import { queryClient } from "@/queryClient"
-import { findCharacterIndexBySlug } from "@/utils/characterSlug"
+import { loadCharacterContext } from "@/utils/loaderHelpers"
 import theme from "@theme"
 import { LayoutGroup, motion } from "motion/react"
 import { useState } from "react"
@@ -888,17 +885,6 @@ export default function FutureTimeline() {
 }
 
 export async function clientLoader({ params }) {
-  const characterSlug = params.characterId
-  const locale = getCurrentLocale()
-  const query = allContentQuery(locale)
-  const content = await queryClient.ensureQueryData(query)
-
-  const characters = extractFromContentTree.getCharacters(content)
-  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
-
-  if (characterIndex === null) {
-    throw new Response("Character not found", { status: 404 })
-  }
-
+  const { characterSlug, characterIndex } = await loadCharacterContext(params)
   return { characterIndex, characterSlug }
 }

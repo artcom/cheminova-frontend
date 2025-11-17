@@ -1,8 +1,8 @@
 import { extractFromContentTree } from "@/api/hooks"
-import { allContentQuery } from "@/api/queries"
-import { getCurrentLocale } from "@/i18n"
-import { queryClient } from "@/queryClient"
-import { findCharacterIndexBySlug } from "@/utils/characterSlug"
+import {
+  loadCharacterContext,
+  requireContentSection,
+} from "@/utils/loaderHelpers"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useLoaderData } from "react-router-dom"
 
@@ -92,21 +92,12 @@ export default function TaskCards({
 }
 
 export async function clientLoader({ params }) {
-  const characterSlug = params.characterId
-  const locale = getCurrentLocale()
-  const query = allContentQuery(locale)
-  const content = await queryClient.ensureQueryData(query)
+  const { content, characterSlug, characterIndex } =
+    await loadCharacterContext(params)
 
-  const characters = extractFromContentTree.getCharacters(content)
-  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
-
-  if (characterIndex === null) {
-    throw new Response("Character not found", { status: 404 })
-  }
-
-  const photography = extractFromContentTree.getPhotography(
-    content,
-    characterIndex,
+  const photography = requireContentSection(
+    extractFromContentTree.getPhotography(content, characterIndex),
+    "Photography data missing from CMS",
   )
 
   return { characterIndex, characterSlug, photography }

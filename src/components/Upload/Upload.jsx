@@ -1,11 +1,11 @@
 import { extractFromContentTree } from "@/api/hooks"
-import { allContentQuery } from "@/api/queries"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
 import { useUploadImage } from "@/hooks/useUploadImage"
-import { getCurrentLocale } from "@/i18n"
-import { queryClient } from "@/queryClient"
-import { findCharacterIndexBySlug } from "@/utils/characterSlug"
+import {
+  loadCharacterContext,
+  requireContentSection,
+} from "@/utils/loaderHelpers"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
@@ -272,20 +272,13 @@ export default function Upload() {
 }
 
 export async function clientLoader({ params }) {
-  const characterSlug = params.characterId
-  const locale = getCurrentLocale()
-  const query = allContentQuery(locale)
-  const content = await queryClient.ensureQueryData(query)
+  const { content, characterSlug, characterIndex, character } =
+    await loadCharacterContext(params)
 
-  const characters = extractFromContentTree.getCharacters(content)
-  const characterIndex = findCharacterIndexBySlug(characters, characterSlug)
-
-  if (characterIndex === null) {
-    throw new Response("Character not found", { status: 404 })
-  }
-
-  const character = extractFromContentTree.getCharacter(content, characterIndex)
-  const upload = extractFromContentTree.getUpload(content, characterIndex)
+  const upload = requireContentSection(
+    extractFromContentTree.getUpload(content, characterIndex),
+    "Upload data missing from CMS",
+  )
 
   return { characterIndex, characterSlug, character, upload }
 }

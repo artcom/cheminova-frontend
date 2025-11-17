@@ -1,8 +1,6 @@
 import { extractFromContentTree } from "@/api/hooks"
-import { allContentQuery } from "@/api/queries"
-import { getCurrentLocale } from "@/i18n"
-import { queryClient } from "@/queryClient"
 import { getCharacterSlug } from "@/utils/characterSlug"
+import { loadCmsContent } from "@/utils/loaderHelpers"
 import { preloadImages } from "@/utils/preloadImages"
 import { AnimatePresence, motion } from "motion/react"
 import { useState } from "react"
@@ -175,10 +173,7 @@ export default function Welcome() {
 export const id = "welcome"
 
 export async function clientLoader() {
-  const locale = getCurrentLocale()
-  const query = allContentQuery(locale)
-
-  const content = await queryClient.ensureQueryData(query)
+  const { content } = await loadCmsContent()
 
   const welcomeLanguage = extractFromContentTree.getWelcomeLanguage(content)
   const welcomeIntro = extractFromContentTree.getWelcomeIntro(content)

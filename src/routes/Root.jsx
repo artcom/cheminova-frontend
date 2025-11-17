@@ -1,6 +1,4 @@
-import { allContentQuery } from "@/api/queries"
-import { getCurrentLocale } from "@/i18n"
-import { queryClient } from "@/queryClient"
+import { loadCmsContent } from "@/utils/loaderHelpers"
 import { Outlet } from "react-router-dom"
 import { styled } from "styled-components"
 
@@ -18,10 +16,11 @@ const AppContainer = styled.div`
 export const id = "root"
 
 export async function clientLoader() {
-  const locale = getCurrentLocale()
-  const query = allContentQuery(locale)
-  const data = await queryClient.ensureQueryData(query)
-  return { locale, hasContent: Array.isArray(data) && data.length > 0 }
+  const { locale, content } = await loadCmsContent()
+  return {
+    locale,
+    hasContent: Array.isArray(content) && content.length > 0,
+  }
 }
 
 export function ErrorBoundary() {
