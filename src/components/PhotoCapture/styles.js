@@ -155,8 +155,7 @@ export const CameraButtonContainer = styled.div`
 `
 
 export const Footer = styled.div`
-  position: absolute;
-  bottom: 1rem;
+  position: relative;
 `
 
 export const PaginationContainer = styled.div`
