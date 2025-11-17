@@ -322,6 +322,67 @@ const getDayKey = (value) => {
   return `${year}-${month}-${day}`
 }
 
+const MAX_TIMELINE_IMAGES_PER_DAY = 12
+
+const limitImagesPerDay = (images) => {
+  if (!Array.isArray(images) || images.length === 0) {
+    return Array.isArray(images) ? images : []
+  }
+
+  const indicesByDay = new Map()
+
+  images.forEach((image, index) => {
+    if (!image) {
+      return
+    }
+
+    const dayKey = getDayKey(image.created_at)
+    if (!indicesByDay.has(dayKey)) {
+      indicesByDay.set(dayKey, [])
+    }
+
+    indicesByDay.get(dayKey).push(index)
+  })
+
+  const hasOverflowingDay = Array.from(indicesByDay.values()).some(
+    (indices) => indices.length > MAX_TIMELINE_IMAGES_PER_DAY,
+  )
+
+  if (!hasOverflowingDay) {
+    return images
+  }
+
+  const allowedIndices = new Set()
+
+  indicesByDay.forEach((indices, dayKey) => {
+    if (indices.length <= MAX_TIMELINE_IMAGES_PER_DAY) {
+      indices.forEach((index) => allowedIndices.add(index))
+      return
+    }
+
+    const randomizedSelection = indices
+      .slice()
+      .sort((indexA, indexB) => {
+        const imageA = images[indexA]
+        const imageB = images[indexB]
+
+        const weightA = hashString(
+          `${dayKey}-${imageA?.id ?? imageA?.file ?? indexA}`,
+        )
+        const weightB = hashString(
+          `${dayKey}-${imageB?.id ?? imageB?.file ?? indexB}`,
+        )
+
+        return weightA - weightB
+      })
+      .slice(0, MAX_TIMELINE_IMAGES_PER_DAY)
+
+    randomizedSelection.forEach((index) => allowedIndices.add(index))
+  })
+
+  return images.filter((_, index) => allowedIndices.has(index))
+}
+
 const groupImagesByDay = (images) => {
   if (!Array.isArray(images) || images.length === 0) {
     return { groups: [], indexMap: [] }
@@ -354,10 +415,6 @@ const groupImagesByDay = (images) => {
   return { groups, indexMap }
 }
 
-const SHOULD_USE_TEST_DATES = import.meta.env.DEV
-const TEST_DATE_RANGE_DAYS = 50
-const TEST_DATE_JITTER_MINUTES = 20
-
 const hashString = (value) => {
   let hash = 0
 
@@ -368,71 +425,6 @@ const hashString = (value) => {
   }
 
   return Math.abs(hash)
-}
-
-const TEST_ROW_ENTRY_DUPLICATES = 4
-const TEST_GROUP_DUPLICATES = 4
-
-const computeTestDate = (baselineDate, dayOffset, entryPosition, seedValue) => {
-  const targetDate = new Date(baselineDate)
-  targetDate.setDate(baselineDate.getDate() - dayOffset)
-
-  const baseHour = (8 + entryPosition * 3) % 24
-  const minuteBase = (entryPosition * 13) % 60
-  const jitter = hashString(String(seedValue)) % (TEST_DATE_JITTER_MINUTES + 1)
-  const minutes = (minuteBase + jitter) % 60
-
-  targetDate.setHours(baseHour, minutes, 0, 0)
-
-  return targetDate.toISOString()
-}
-
-const buildDevTimelineDataset = (images) => {
-  if (!Array.isArray(images) || images.length === 0) {
-    return images
-  }
-
-  const baseline = new Date()
-  baseline.setHours(0, 0, 0, 0)
-
-  const dataset = []
-  const totalPairs = Math.ceil(images.length / 2)
-  const entriesPerOriginal = TEST_ROW_ENTRY_DUPLICATES
-
-  for (let groupDup = 0; groupDup < TEST_GROUP_DUPLICATES; groupDup += 1) {
-    images.forEach((image, baseIndex) => {
-      const pairIndex = Math.floor(baseIndex / 2)
-      const basePosition = baseIndex % 2
-      const dayOffset = groupDup * totalPairs + pairIndex
-
-      if (dayOffset > TEST_DATE_RANGE_DAYS) {
-        return
-      }
-
-      for (
-        let entryDup = 0;
-        entryDup < TEST_ROW_ENTRY_DUPLICATES;
-        entryDup += 1
-      ) {
-        const entryPosition = basePosition * entriesPerOriginal + entryDup
-        const duplicateSeed = `${image?.id ?? baseIndex}-g${groupDup}-p${pairIndex}-e${entryDup}`
-        const createdAt = computeTestDate(
-          baseline,
-          dayOffset,
-          entryPosition,
-          duplicateSeed,
-        )
-
-        dataset.push({
-          ...image,
-          id: `${image?.id ?? `image-${baseIndex}`}-g${groupDup}-p${pairIndex}-e${entryDup}`,
-          created_at: createdAt,
-        })
-      }
-    })
-  }
-
-  return dataset
 }
 
 const getMarkerWidth = (itemIndex = 0) => {
@@ -530,11 +522,7 @@ export default function FutureTimeline() {
     error,
   } = useFutureTimelineImages()
 
-  const timelineImagesBase = SHOULD_USE_TEST_DATES
-    ? buildDevTimelineDataset(futureImages)
-    : futureImages
-
-  const timelineImages = timelineImagesBase.slice().sort((a, b) => {
+  const timelineImagesSorted = futureImages.slice().sort((a, b) => {
     const timeA = Date.parse(a?.created_at ?? "")
     const timeB = Date.parse(b?.created_at ?? "")
 
@@ -556,6 +544,8 @@ export default function FutureTimeline() {
     const titleB = b?.title ?? ""
     return String(titleA).localeCompare(String(titleB))
   })
+
+  const timelineImages = limitImagesPerDay(timelineImagesSorted)
 
   const totalImages = timelineImages.length
   const currentIndex =
