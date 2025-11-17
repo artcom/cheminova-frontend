@@ -1,8 +1,5 @@
 import { extractFromContentTree } from "@/api/hooks"
-import {
-  loadCharacterContext,
-  requireContentSection,
-} from "@/utils/loaderHelpers"
+import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { useEffect, useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
@@ -226,13 +223,16 @@ export default function Ending() {
 }
 
 export async function clientLoader({ params }) {
-  const { content, characterSlug, characterIndex } =
-    await loadCharacterContext(params)
-
-  const ending = requireContentSection(
-    extractFromContentTree.getEnding(content, characterIndex),
-    "Ending not found",
-    404,
+  const {
+    content,
+    section: ending,
+    characterSlug,
+    characterIndex,
+  } = await loadCharacterSection(
+    params,
+    (content, characterIndex) =>
+      extractFromContentTree.getEnding(content, characterIndex),
+    { missingMessage: "Ending not found", missingStatus: 404 },
   )
 
   const endingReflection = extractFromContentTree.getEndingReflection(

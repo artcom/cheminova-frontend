@@ -1,8 +1,5 @@
 import { extractFromContentTree } from "@/api/hooks"
-import {
-  loadCharacterContext,
-  requireContentSection,
-} from "@/utils/loaderHelpers"
+import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { Alignment, Fit } from "@rive-app/react-canvas"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
@@ -277,13 +274,15 @@ export default function Perspective() {
 }
 
 export async function clientLoader({ params }) {
-  const { content, characterSlug, characterIndex } =
-    await loadCharacterContext(params)
-
-  const perspective = requireContentSection(
-    extractFromContentTree.getPerspective(content, characterIndex),
-    "Perspective not found",
-    404,
+  const {
+    section: perspective,
+    characterSlug,
+    characterIndex,
+  } = await loadCharacterSection(
+    params,
+    (content, characterIndex) =>
+      extractFromContentTree.getPerspective(content, characterIndex),
+    { missingMessage: "Perspective not found", missingStatus: 404 },
   )
 
   const riveAsset =

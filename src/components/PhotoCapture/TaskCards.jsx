@@ -1,8 +1,5 @@
 import { extractFromContentTree } from "@/api/hooks"
-import {
-  loadCharacterContext,
-  requireContentSection,
-} from "@/utils/loaderHelpers"
+import { loadCharacterSection } from "@/utils/loaderHelpers"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useLoaderData } from "react-router-dom"
 
@@ -92,12 +89,15 @@ export default function TaskCards({
 }
 
 export async function clientLoader({ params }) {
-  const { content, characterSlug, characterIndex } =
-    await loadCharacterContext(params)
-
-  const photography = requireContentSection(
-    extractFromContentTree.getPhotography(content, characterIndex),
-    "Photography data missing from CMS",
+  const {
+    section: photography,
+    characterSlug,
+    characterIndex,
+  } = await loadCharacterSection(
+    params,
+    (content, characterIndex) =>
+      extractFromContentTree.getPhotography(content, characterIndex),
+    { missingMessage: "Photography data missing from CMS" },
   )
 
   return { characterIndex, characterSlug, photography }

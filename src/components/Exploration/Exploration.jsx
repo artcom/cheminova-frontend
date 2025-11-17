@@ -1,9 +1,6 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { getCharacterPersonaFlags } from "@/utils/characterPersona"
-import {
-  loadCharacterContext,
-  requireContentSection,
-} from "@/utils/loaderHelpers"
+import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { sanitizeRichText, splitIntoParagraphs } from "@/utils/text"
 import { motion } from "motion/react"
 import { useRef } from "react"
@@ -151,12 +148,16 @@ export default function Exploration() {
 }
 
 export async function clientLoader({ params }) {
-  const { content, characterSlug, characterIndex, character } =
-    await loadCharacterContext(params)
-
-  const exploration = requireContentSection(
-    extractFromContentTree.getExploration(content, characterIndex),
-    "Exploration data missing from CMS",
+  const {
+    section: exploration,
+    characterSlug,
+    characterIndex,
+    character,
+  } = await loadCharacterSection(
+    params,
+    (content, characterIndex) =>
+      extractFromContentTree.getExploration(content, characterIndex),
+    { missingMessage: "Exploration data missing from CMS" },
   )
 
   return { characterIndex, characterSlug, character, exploration }

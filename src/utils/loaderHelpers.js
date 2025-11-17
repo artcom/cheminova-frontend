@@ -53,3 +53,25 @@ export function requireContentSection(section, message, status = 500) {
 
   return section
 }
+
+export async function loadCharacterSection(params, extractor, options = {}) {
+  if (typeof extractor !== "function") {
+    throw new Error("loadCharacterSection requires an extractor function")
+  }
+
+  const {
+    missingMessage = "Required content section missing from CMS",
+    missingStatus = 500,
+    ...contextOptions
+  } = options
+
+  const context = await loadCharacterContext(params, contextOptions)
+
+  const section = requireContentSection(
+    extractor(context.content, context.characterIndex, context.characters),
+    missingMessage,
+    missingStatus,
+  )
+
+  return { ...context, section }
+}

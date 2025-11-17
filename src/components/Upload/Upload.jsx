@@ -2,10 +2,7 @@ import { extractFromContentTree } from "@/api/hooks"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
 import { useUploadImage } from "@/hooks/useUploadImage"
-import {
-  loadCharacterContext,
-  requireContentSection,
-} from "@/utils/loaderHelpers"
+import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
@@ -272,12 +269,16 @@ export default function Upload() {
 }
 
 export async function clientLoader({ params }) {
-  const { content, characterSlug, characterIndex, character } =
-    await loadCharacterContext(params)
-
-  const upload = requireContentSection(
-    extractFromContentTree.getUpload(content, characterIndex),
-    "Upload data missing from CMS",
+  const {
+    section: upload,
+    characterSlug,
+    characterIndex,
+    character,
+  } = await loadCharacterSection(
+    params,
+    (content, characterIndex) =>
+      extractFromContentTree.getUpload(content, characterIndex),
+    { missingMessage: "Upload data missing from CMS" },
   )
 
   return { characterIndex, characterSlug, character, upload }

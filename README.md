@@ -63,20 +63,22 @@ Copy `.env.local.example` or `.env.example`, uncomment the value you need, and r
 Typical loader implementation (simplified):
 
 ```js
-import { allContentQuery } from "@/api/queries"
-import { queryClient } from "@/queryClient"
-import { selectCharacterContent } from "@/utils/characterPersona"
+import { extractFromContentTree } from "@/api/hooks"
+import { loadCharacterSection } from "@/utils/loaderHelpers"
 
 export async function clientLoader({ params }) {
-  const locale = params.locale ?? "en"
-  const allContent = await queryClient.ensureQueryData(allContentQuery(locale))
-  const character = selectCharacterContent(allContent, params.characterId)
+  const {
+    section: introduction,
+    characterSlug,
+    character,
+  } = await loadCharacterSection(
+    params,
+    (content, characterIndex) =>
+      extractFromContentTree.getIntroduction(content, characterIndex),
+    { missingMessage: "Introduction data missing from CMS" },
+  )
 
-  if (!character) {
-    throw new Response("Character not found", { status: 404 })
-  }
-
-  return { character }
+  return { characterSlug, character, introduction }
 }
 ```
 
@@ -85,6 +87,17 @@ Key takeaways:
 1. Loaders **validate params** and throw typed responses for React Router to surface in error boundaries.
 2. `ensureQueryData` keeps TanStack Query as the single cache source; components never re-fetch the same CMS tree.
 3. Child routes inherit data from parents through `useRouteLoaderData("parentId")`, so shared lookups (character metadata, modal state) live in one place.
+
+### Loader helper utilities
+
+The shared helpers in `src/utils/loaderHelpers.js` keep loaders tidy:
+
+- `loadCmsContent({ locale? })` – hydrates the entire CMS tree (used by `Root`, `Welcome`, etc.).
+- `loadCharacterContext(params, { locale?, content? })` – resolves the character slug from the URL and returns `{ characterSlug, characterIndex, character, characters, content, locale }`, throwing typed errors for invalid slugs or missing CMS nodes.
+- `loadCharacterSection(params, extractor, { missingMessage?, missingStatus?, locale?, content? })` – builds on `loadCharacterContext`, runs your extractor (e.g., `getIntroduction`, `getGallery`), and throws automatically if the section is missing. The helper returns all character context fields plus `section` so loaders can stay concise.
+- `requireContentSection(section, message, status?)` – lower-level guard exported in case a loader needs to validate extra CMS slices (e.g., `Ending` fetching both the ending and the closing reflection).
+
+Prefer `loadCharacterSection` whenever a loader needs both the character context and a guaranteed CMS slice—it cuts ~10 lines per loader and standardises error responses.
 
 ## Directory highlights
 

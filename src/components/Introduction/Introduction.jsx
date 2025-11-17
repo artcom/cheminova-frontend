@@ -1,9 +1,6 @@
 import { extractFromContentTree } from "@/api/hooks"
 import { getCharacterPersonaFlags } from "@/utils/characterPersona"
-import {
-  loadCharacterContext,
-  requireContentSection,
-} from "@/utils/loaderHelpers"
+import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { preloadImages } from "@/utils/preloadImages"
 import { sanitizeRichText } from "@/utils/text"
 import { useLoaderData, useNavigate } from "react-router-dom"
@@ -101,12 +98,15 @@ export default function Introduction() {
 }
 
 export async function clientLoader({ params }) {
-  const { content, characterSlug, characterIndex, character } =
-    await loadCharacterContext(params)
-
-  const introduction = requireContentSection(
-    extractFromContentTree.getIntroduction(content, characterIndex),
-    "Introduction data missing from CMS",
+  const {
+    section: introduction,
+    characterSlug,
+    character,
+  } = await loadCharacterSection(
+    params,
+    (content, characterIndex) =>
+      extractFromContentTree.getIntroduction(content, characterIndex),
+    { missingMessage: "Introduction data missing from CMS" },
   )
 
   const imagesToPreload = [

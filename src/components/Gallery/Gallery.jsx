@@ -1,10 +1,7 @@
 import { extractFromContentTree } from "@/api/hooks"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import { useGalleryImages } from "@/hooks/useGallery"
-import {
-  loadCharacterContext,
-  requireContentSection,
-} from "@/utils/loaderHelpers"
+import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { Canvas } from "@react-three/fiber"
 import theme from "@theme"
 import { AnimatePresence, motion } from "motion/react"
@@ -218,12 +215,15 @@ export default function Gallery() {
 }
 
 export async function clientLoader({ params }) {
-  const { content, characterSlug, characterIndex } =
-    await loadCharacterContext(params)
-
-  const gallery = requireContentSection(
-    extractFromContentTree.getGallery(content, characterIndex),
-    "Gallery data missing from CMS",
+  const {
+    section: gallery,
+    characterSlug,
+    characterIndex,
+  } = await loadCharacterSection(
+    params,
+    (content, characterIndex) =>
+      extractFromContentTree.getGallery(content, characterIndex),
+    { missingMessage: "Gallery data missing from CMS" },
   )
 
   return { characterIndex, characterSlug, gallery }
