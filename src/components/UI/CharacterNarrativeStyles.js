@@ -19,7 +19,7 @@ export const CharacterNarrativeContainer = styled.div`
 export const CharacterMediaContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 53.25rem;
+  height: 33.25rem;
   z-index: 1;
   pointer-events: none;
 `
@@ -34,7 +34,7 @@ export const CharacterMediaImage = styled.img`
 export const CharacterRiveContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 53.25rem;
+  height: 33.25rem;
   z-index: 1;
   overflow: hidden;
   pointer-events: none;
@@ -45,7 +45,7 @@ export const CharacterContentWrapper = styled.div`
   width: 100%;
   z-index: 2;
   padding: 0 1.625rem 2rem 1.625rem;
-  margin-top: -20.9375rem;
+  margin-top: -00.9375rem;
 `
 
 export const CharacterContentCard = styled.div`

@@ -5,7 +5,7 @@ import { queryClient } from "@/queryClient"
 import { getCharacterPersonaFlags } from "@/utils/characterPersona"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
 import { sanitizeRichText, splitIntoParagraphs } from "@/utils/text"
-import { motion, useScroll, useTransform } from "motion/react"
+import { motion } from "motion/react"
 import { useRef } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
@@ -27,8 +27,6 @@ import Navigation from "../UI/Navigation"
 export default function Exploration() {
   const { characterSlug, character, exploration } = useLoaderData()
   const containerRef = useRef(null)
-  const { scrollY } = useScroll({ container: containerRef })
-  const y = useTransform(scrollY, (v) => -v * 0.5)
   const navigate = useNavigate()
 
   const { isFuturePerson, isArtist, isJanitor } =
@@ -99,7 +97,6 @@ export default function Exploration() {
       <CharacterContentWrapper>
         <CharacterContentCard
           as={motion.div}
-          style={{ y }}
           $isFuturePerson={isFuturePerson}
           $isArtist={isArtist}
           $isJanitor={isJanitor}
