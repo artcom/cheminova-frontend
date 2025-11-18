@@ -10,6 +10,7 @@ import devtools from "vite-plugin-devtools-json"
 export default defineConfig(() => {
   const enableBundleVisualizer =
     process.env.ANALYZE === "1" || process.env.ANALYZE === "true"
+  const CMS_PROXY_TARGET = "http://localhost:8080"
 
   const routerPlugins = reactRouter({
     routes: "./src/routes.js",
@@ -25,6 +26,27 @@ export default defineConfig(() => {
         })
       : null,
   ]
+
+  const createProxyConfig = (overrides = {}) => ({
+    target: CMS_PROXY_TARGET,
+    changeOrigin: true,
+    secure: false,
+    ...overrides,
+  })
+
+  const attachProxyLogging = (label) => {
+    return (proxy) => {
+      proxy.on("error", (err) => {
+        console.log(`[${label}] proxy error`, err)
+      })
+      proxy.on("proxyReq", (_proxyReq, req) => {
+        console.log(`Sending ${label} request:`, req.method, req.url)
+      })
+      proxy.on("proxyRes", (proxyRes, req) => {
+        console.log(`Received ${label} response:`, proxyRes.statusCode, req.url)
+      })
+    }
+  }
 
   return {
     base: process.env.VITE_BASE_PATH || "/",
@@ -62,26 +84,12 @@ export default defineConfig(() => {
     server: {
       proxy: {
         "/api": {
-          target: "http://localhost:8080",
-          changeOrigin: true,
-          secure: false,
-          ws: true,
-          configure: (proxy) => {
-            proxy.on("error", (err) => {
-              console.log("proxy error", err)
-            })
-            proxy.on("proxyReq", (_proxyReq, req) => {
-              console.log("Sending Request to the Target:", req.method, req.url)
-            })
-            proxy.on("proxyRes", (proxyRes, req) => {
-              console.log(
-                "Received Response from the Target:",
-                proxyRes.statusCode,
-                req.url,
-              )
-            })
-          },
+          ...createProxyConfig({ ws: true }),
+          configure: attachProxyLogging("/api"),
         },
+        "/media": createProxyConfig(),
+        "/original_images": createProxyConfig(),
+        "/static": createProxyConfig(),
       },
     },
   }

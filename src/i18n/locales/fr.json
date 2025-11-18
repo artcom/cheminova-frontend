@@ -84,7 +84,22 @@
   "gallery": {
     "title": "Galerie",
     "clickImage": "Cliquez sur une image",
-    "exitGallery": "Quitter la galerie"
+    "exitGallery": "Quitter la galerie",
+    "close": "Fermer",
+    "loading": "Chargement des images...",
+    "error": "Erreur lors du chargement des images",
+    "uploadedImages": "Images téléchargées",
+    "all": "Toutes",
+    "laNau": "La Nau",
+    "allImages": "Toutes les images",
+    "surroundings": "Environs",
+    "special": "Spécial",
+    "noImages": "Aucune image téléchargée pour l'instant",
+    "noImagesForFilter": "Aucune image {{filter}} trouvée",
+    "unknownDate": "Date inconnue",
+    "imageAlt": "Image téléchargée",
+    "untitledImage": "Image sans titre",
+    "unknownTask": "Tâche inconnue"
   },
   "ending": {
     "title": "Merci",

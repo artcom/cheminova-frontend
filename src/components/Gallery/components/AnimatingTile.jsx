@@ -41,9 +41,14 @@ const mulberry32 = (seed) => {
   }
 }
 
+const SAFE_POSITION = [0, 0, 0]
+
 const computePersonalDelay = (isPersonal, url, position) => {
   if (!isPersonal) return 0
-  const seedString = `${url}-${position.join("-")}`
+
+  const coords = Array.isArray(position) ? position : SAFE_POSITION
+  const seedSource = typeof url === "string" && url.length > 0 ? url : "tile"
+  const seedString = `${seedSource}-${coords.join("-")}`
   let hash = 0
   for (let i = 0; i < seedString.length; i++) {
     hash = (hash * 31 + seedString.charCodeAt(i)) >>> 0
@@ -70,9 +75,12 @@ export default function AnimatingTile({
   switchInfo,
 }) {
   const { camera, size } = useThree()
+  const safePosition = Array.isArray(position) ? position : SAFE_POSITION
+  const safeUrl = typeof url === "string" ? url : ""
+
   const imageRef = useRef()
-  const originalZRef = useRef(position[2])
-  const deckSeedRef = useRef(position[2])
+  const originalZRef = useRef(safePosition[2])
+  const deckSeedRef = useRef(safePosition[2])
   const baseScaleRef = useRef(targetScale)
   const lastLogMsRef = useRef(0)
   const switchRef = useRef({ dir: 0, startMs: 0 })
@@ -80,20 +88,25 @@ export default function AnimatingTile({
   const lastActiveLogRef = useRef(0)
   const tmpVecRef = useRef(new Vector3())
   const detailEnterMsRef = useRef(0)
+  const initialDoneRef = useRef(false)
+  const grayscaleDoneRef = useRef(false)
 
   useEffect(() => {
     switchRef.current = switchInfo || { dir: 0, startMs: 0 }
   }, [switchInfo])
-  const flags = {
-    initialDone: useRef(false),
-    grayscaleDone: useRef(false),
-  }
+  const flags = useMemo(
+    () => ({
+      initialDone: initialDoneRef,
+      grayscaleDone: grayscaleDoneRef,
+    }),
+    [],
+  )
   const completedSent = useRef(false)
 
-  const targetZ = position[2]
+  const targetZ = safePosition[2]
   const personalDelay = useMemo(
-    () => computePersonalDelay(isPersonal, url, position),
-    [isPersonal, url, position],
+    () => computePersonalDelay(isPersonal, safeUrl, safePosition),
+    [isPersonal, safeUrl, safePosition],
   )
   const adjustedPersonalStartTime = personalAnimationStartTime + personalDelay
   const grayscaleStartTime =
@@ -296,9 +309,9 @@ export default function AnimatingTile({
 
     if (!detailMode) {
       img.position.x =
-        img.position.x + (position[0] - img.position.x) * RESTORE_LERP
+        img.position.x + (safePosition[0] - img.position.x) * RESTORE_LERP
       img.position.y =
-        img.position.y + (position[1] - img.position.y) * RESTORE_LERP
+        img.position.y + (safePosition[1] - img.position.y) * RESTORE_LERP
       mat.depthWrite = true
       mat.depthTest = true
       mat.transparent = true
@@ -325,8 +338,8 @@ export default function AnimatingTile({
     ? ANIMATION_CONFIG.personal.startZ
     : ANIMATION_CONFIG.normal.startZ
   const initialPosition = useMemo(
-    () => [position[0], position[1], initialZ],
-    [position, initialZ],
+    () => [safePosition[0], safePosition[1], initialZ],
+    [safePosition, initialZ],
   )
 
   useEffect(() => {
@@ -339,8 +352,8 @@ export default function AnimatingTile({
       mat.transparent = true
       mat.opacity = initialOpacity
     }
-    originalZRef.current = position[2]
-    deckSeedRef.current = position[2]
+    originalZRef.current = safePosition[2]
+    deckSeedRef.current = safePosition[2]
     if (!detailMode) {
       baseScaleRef.current = targetScale
     }
@@ -349,7 +362,7 @@ export default function AnimatingTile({
     initialPosition,
     initialScale,
     initialOpacity,
-    position,
+    safePosition,
     targetScale,
     detailMode,
   ])
@@ -366,7 +379,7 @@ export default function AnimatingTile({
   return (
     <Image
       ref={imageRef}
-      url={url}
+      url={safeUrl}
       transparent
       frustumCulled={false}
       onClick={onClick}

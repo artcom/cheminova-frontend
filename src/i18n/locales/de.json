@@ -84,7 +84,22 @@
   "gallery": {
     "title": "Galerie",
     "clickImage": "Klicken Sie auf ein Bild",
-    "exitGallery": "Galerie verlassen"
+    "exitGallery": "Galerie verlassen",
+    "close": "Schließen",
+    "loading": "Bilder werden geladen...",
+    "error": "Fehler beim Laden der Bilder",
+    "uploadedImages": "Hochgeladene Bilder",
+    "all": "Alle",
+    "laNau": "La Nau",
+    "allImages": "Alle Bilder",
+    "surroundings": "Umgebung",
+    "special": "Besonders",
+    "noImages": "Noch keine Bilder hochgeladen",
+    "noImagesForFilter": "Keine {{filter}}-Bilder gefunden",
+    "unknownDate": "Unbekanntes Datum",
+    "imageAlt": "Hochgeladenes Bild",
+    "untitledImage": "Unbenanntes Bild",
+    "unknownTask": "Unbekannte Aufgabe"
   },
   "ending": {
     "title": "Vielen Dank",

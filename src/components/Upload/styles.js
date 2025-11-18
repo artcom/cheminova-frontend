@@ -1,4 +1,4 @@
-import appTheme from "@/theme"
+import appTheme from "@providers/theme"
 import { styled } from "styled-components"
 
 export const UploadContainer = styled.div`
@@ -7,7 +7,7 @@ export const UploadContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.75rem 0 7rem; /* leave bottom space for nav */
+  padding: 1.75rem 0 7rem;
   box-sizing: border-box;
   gap: 11.75rem;
   color: #fff;
@@ -38,7 +38,6 @@ export const TaskLabel = styled.h2`
   font-weight: 700;
   font-style: Bold;
   font-size: 1.5rem;
-  leading-trim: NONE;
   line-height: 100%;
   letter-spacing: 0%;
   text-align: center;

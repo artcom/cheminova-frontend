@@ -59,8 +59,9 @@ const Hint = styled.p`
   opacity: 0.6;
 `
 
-export default function GalleryLoader({ loadedCount, totalImages }) {
-  const progress = (loadedCount / totalImages) * 100
+export default function GalleryLoader({ loadedCount = 0, totalImages = 0 }) {
+  const progressBase = totalImages > 0 ? loadedCount / totalImages : 0
+  const progress = Math.min(100, Math.max(0, progressBase * 100))
 
   return (
     <Wrapper>

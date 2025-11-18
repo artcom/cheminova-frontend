@@ -19,7 +19,7 @@ import GalleryContent from "./components/GalleryContent"
 import GalleryLoader from "./components/GalleryLoader"
 import StackBump from "./components/StackBump"
 import { CAMERA_DEFAULT_Z, DEBUG_GALLERY } from "./config"
-import { buildCombinedImagePool, getPersistedPersonalImages } from "./helpers"
+import { buildGalleryImagePool, getPersistedPersonalImages } from "./helpers"
 import { useGalleryImages } from "./hooks/useGalleryImages"
 import useImagePreloader from "./hooks/useImagePreloader"
 import useResponsiveTilesPerRow from "./hooks/useResponsiveTilesPerRow"
@@ -60,12 +60,6 @@ const ExitButton = styled.button`
 
 const defaultPersonalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
 
-const cologneImages = import.meta.glob("./CologneCathedral/*.webp", {
-  eager: true,
-  query: "?url",
-  import: "default",
-})
-
 export default function Gallery() {
   const { t } = useTranslation()
   const { capturedImages = [] } = useCapturedImages()
@@ -79,7 +73,8 @@ export default function Gallery() {
   const navigate = useNavigate()
   const { characterSlug, gallery } = useLoaderData()
 
-  const { data: galleryData, isLoading: galleryLoading } = useGalleryImages()
+  const { data: galleryImages = [], isLoading: galleryLoading } =
+    useGalleryImages()
 
   const galleryHeading = gallery?.heading || t("gallery.title")
   const exitButtonText = gallery?.exitButtonText || t("gallery.exitGallery")
@@ -90,10 +85,10 @@ export default function Gallery() {
     [capturedImages],
   )
 
-  const imagePoolData = useMemo(() => {
-    const uploadedImages = galleryData?.images || []
-    return buildCombinedImagePool(cologneImages, uploadedImages)
-  }, [galleryData?.images])
+  const imagePoolData = useMemo(
+    () => buildGalleryImagePool(galleryImages),
+    [galleryImages],
+  )
 
   const allImages = useMemo(
     () => [...imagePoolData.combined, ...personalImages],

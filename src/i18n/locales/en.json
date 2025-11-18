@@ -84,7 +84,22 @@
   "gallery": {
     "title": "Gallery",
     "clickImage": "Click an image",
-    "exitGallery": "Exit Gallery"
+    "exitGallery": "Exit Gallery",
+    "close": "Close",
+    "loading": "Loading images...",
+    "error": "Error loading images",
+    "uploadedImages": "Uploaded Images",
+    "all": "All",
+    "laNau": "La Nau",
+    "allImages": "All Images",
+    "surroundings": "Surroundings",
+    "special": "Special",
+    "noImages": "No images uploaded yet",
+    "noImagesForFilter": "No {{filter}} images found",
+    "unknownDate": "Unknown date",
+    "imageAlt": "Uploaded image",
+    "untitledImage": "Untitled image",
+    "unknownTask": "Unknown task"
   },
   "ending": {
     "title": "Thank You",
