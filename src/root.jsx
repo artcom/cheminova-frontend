@@ -1,11 +1,10 @@
-import GlobalStyles from "@/GlobalStyles"
+import GlobalStyles from "@/components/GlobalStyles"
 import LanguageProvider from "@/providers/LanguageProvider"
 import { queryClient } from "@/queryClient"
+import AppThemeProvider from "@providers/ThemeProvider"
 import { QueryClientProvider } from "@tanstack/react-query"
-import AppThemeProvider from "@theme/ThemeProvider"
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router"
 
-// Initialize i18n
 import "@/i18n"
 import "@fontsource-variable/bricolage-grotesque"
 

@@ -51,7 +51,7 @@ export default defineConfig(() => {
         "@hooks": resolve(__dirname, "./src/hooks"),
         "@api": resolve(__dirname, "./src/api"),
         "@ui": resolve(__dirname, "./src/components/UI"),
-        "@theme": resolve(__dirname, "./src/theme"),
+        "@providers": resolve(__dirname, "./src/providers"),
       },
     },
 

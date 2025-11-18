@@ -1,4 +1,4 @@
-import appTheme from "@theme"
+import appTheme from "@providers/theme"
 import { motion } from "motion/react"
 import { styled } from "styled-components"
 

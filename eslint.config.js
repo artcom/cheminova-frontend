@@ -50,7 +50,7 @@ export default [
             ["@hooks", "./src/hooks"],
             ["@api", "./src/api"],
             ["@ui", "./src/components/UI"],
-            ["@theme", "./src/theme"],
+            ["@providers", "./src/providers"],
           ],
           extensions: [".js", ".jsx", ".json"],
         },

@@ -2,9 +2,9 @@ import {
   ALL_LOCALES_CONTENT_QUERY_KEY,
   fetchAllLocalesContent,
 } from "@/api/djangoApi"
-import { LANGUAGE_CONFIG, LANGUAGE_LIST } from "@/config/language"
+import { LANGUAGE_CONFIG, LANGUAGE_LIST } from "@/i18n/config"
 import { useQuery } from "@tanstack/react-query"
-import { useContext, useMemo } from "react"
+import { useContext } from "react"
 
 import { LanguageContext } from "./LanguageContext"
 
@@ -41,23 +41,18 @@ function LanguageProvider({ children }) {
     retryDelay: LANGUAGE_CONFIG.RETRY_DELAY,
   })
 
-  const languages = useMemo(() => {
-    if (!isSuccess || !data) return LANGUAGE_LIST
-    return resolveLanguagesFromContent(data)
-  }, [data, isSuccess])
+  const languages =
+    !isSuccess || !data ? LANGUAGE_LIST : resolveLanguagesFromContent(data)
 
-  const contextValue = useMemo(
-    () => ({
-      supportedLanguages: languages,
-      languageCodes: Object.keys(languages),
-      isLoading,
-      isFetching,
-      isSuccess,
-      error,
-      refetch,
-    }),
-    [languages, isLoading, isFetching, isSuccess, error, refetch],
-  )
+  const contextValue = {
+    supportedLanguages: languages,
+    languageCodes: Object.keys(languages),
+    isLoading,
+    isFetching,
+    isSuccess,
+    error,
+    refetch,
+  }
 
   return (
     <LanguageContext.Provider value={contextValue}>

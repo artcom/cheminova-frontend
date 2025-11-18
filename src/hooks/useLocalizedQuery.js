@@ -1,5 +1,5 @@
 import { fetchAllLocalesContent, getContentForLocale } from "@/api/djangoApi"
-import { DEFAULT_LANGUAGE } from "@/config/language"
+import { DEFAULT_LANGUAGE } from "@/i18n/config"
 import { useQuery } from "@tanstack/react-query"
 import { useTranslation } from "react-i18next"
 

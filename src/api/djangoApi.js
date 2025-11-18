@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/config/api"
+import { API_BASE_URL } from "@/api/config"
 
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`

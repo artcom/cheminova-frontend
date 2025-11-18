@@ -1,4 +1,4 @@
-import { API_BASE_URL } from "@/config/api"
+import { API_BASE_URL } from "@/api/config"
 import { useQuery } from "@tanstack/react-query"
 
 const FUTURE_TIMELINE_IMAGES_QUERY_KEY = ["future-timeline", "images"]

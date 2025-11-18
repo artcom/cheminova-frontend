@@ -56,7 +56,3 @@ export const findCharacterIndexBySlug = (characters, slug) => {
 
   return index >= 0 ? index : null
 }
-
-export const getCharacterSlugByIndex = (index) => {
-  return INDEX_TO_SLUG[index] || null
-}

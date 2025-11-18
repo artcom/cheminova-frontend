@@ -8,7 +8,7 @@ import {
   LANGUAGE_LIST,
   NAMESPACE_CONFIG,
   REACT_I18N_CONFIG,
-} from "@/config/language"
+} from "@/i18n/config"
 import i18n from "i18next"
 import LanguageDetector from "i18next-browser-languagedetector"
 import { initReactI18next } from "react-i18next"
