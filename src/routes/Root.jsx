@@ -13,6 +13,16 @@ const AppContainer = styled.div`
   position: relative;
 `
 
+const ErrorScreen = styled.div`
+  width: 100dvw;
+  height: 100dvh;
+  background: ${({ theme }) => theme.colors.background.dark};
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0;
+`
+
 export const id = "root"
 
 export async function clientLoader() {
@@ -25,9 +35,9 @@ export async function clientLoader() {
 
 export function ErrorBoundary() {
   return (
-    <AppLayout>
+    <ErrorScreen>
       <ErrorPage />
-    </AppLayout>
+    </ErrorScreen>
   )
 }
 
