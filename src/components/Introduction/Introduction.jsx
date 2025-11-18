@@ -97,7 +97,7 @@ export default function Introduction() {
   )
 }
 
-export async function clientLoader({ params }) {
+export const clientLoader = async ({ params }) => {
   const {
     section: introduction,
     characterSlug,

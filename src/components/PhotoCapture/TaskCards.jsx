@@ -88,7 +88,7 @@ export default function TaskCards({
   )
 }
 
-export async function clientLoader({ params }) {
+export const clientLoader = async ({ params }) => {
   const {
     section: photography,
     characterSlug,

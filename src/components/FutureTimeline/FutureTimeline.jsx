@@ -173,7 +173,7 @@ export default function FutureTimeline() {
   )
 }
 
-export async function clientLoader({ params }) {
+export const clientLoader = async ({ params }) => {
   const { characterSlug, characterIndex } = await loadCharacterContext(params)
   return { characterIndex, characterSlug }
 }

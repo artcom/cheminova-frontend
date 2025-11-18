@@ -4,9 +4,9 @@ import {
 } from "@/api/djangoApi"
 import { LANGUAGE_CONFIG, LANGUAGE_LIST } from "@/config/language"
 import { useQuery } from "@tanstack/react-query"
-import { createContext, useContext, useMemo } from "react"
+import { useContext, useMemo } from "react"
 
-const LanguageContext = createContext(null)
+import { LanguageContext } from "./LanguageContext"
 
 const resolveLanguagesFromContent = (content) => {
   const codes = [

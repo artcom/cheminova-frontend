@@ -1,1 +1,1 @@
-export { default, loader } from "./Gallery"
+export { default } from "./Gallery"

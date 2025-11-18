@@ -172,7 +172,7 @@ export default function Welcome() {
 
 export const id = "welcome"
 
-export async function clientLoader() {
+export const clientLoader = async () => {
   const { content } = await loadCmsContent()
 
   const welcomeLanguage = extractFromContentTree.getWelcomeLanguage(content)

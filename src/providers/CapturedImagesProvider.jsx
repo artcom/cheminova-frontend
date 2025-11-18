@@ -1,6 +1,6 @@
-import { createContext, useCallback, useMemo, useState } from "react"
+import { useCallback, useMemo, useState } from "react"
 
-export const CapturedImagesContext = createContext(null)
+import { CapturedImagesContext } from "./CapturedImagesContext"
 
 export function CapturedImagesProvider({ children }) {
   const [capturedImages, setCapturedImages] = useState([])
@@ -32,5 +32,3 @@ export function CapturedImagesProvider({ children }) {
     </CapturedImagesContext.Provider>
   )
 }
-
-export default CapturedImagesProvider

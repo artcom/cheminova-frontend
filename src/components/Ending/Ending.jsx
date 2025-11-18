@@ -222,7 +222,7 @@ export default function Ending() {
   )
 }
 
-export async function clientLoader({ params }) {
+export const clientLoader = async ({ params }) => {
   const {
     content,
     section: ending,

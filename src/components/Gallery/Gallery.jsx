@@ -3,7 +3,7 @@ import useCapturedImages from "@/hooks/useCapturedImages"
 import { useGalleryImages } from "@/hooks/useGallery"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { Canvas } from "@react-three/fiber"
-import theme from "@theme"
+import appTheme from "@theme"
 import { AnimatePresence, motion } from "motion/react"
 import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -25,13 +25,13 @@ import useImagePreloader from "./hooks/useImagePreloader"
 import useResponsiveTilesPerRow from "./hooks/useResponsiveTilesPerRow"
 
 const Page = styled.div`
-  background-color: ${theme.colors.background.dark};
+  background-color: ${appTheme.colors.background.dark};
   min-height: 100vh;
   width: 100%;
 `
 
 const Title = styled.h1`
-  color: ${theme.colors.background.paper};
+  color: ${appTheme.colors.background.paper};
   margin: 0;
   padding: 20px;
 `
@@ -214,7 +214,7 @@ export default function Gallery() {
   )
 }
 
-export async function clientLoader({ params }) {
+export const clientLoader = async ({ params }) => {
   const {
     section: gallery,
     characterSlug,

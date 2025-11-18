@@ -2,7 +2,7 @@ import {
   animateNormal,
   animatePersonal,
 } from "@components/Gallery/animationUtils"
-import ANIMATION_CONFIG, {
+import animationConfig, {
   CAMERA_DEFAULT_Z,
   DEBUG_GALLERY,
   DEBUG_THROTTLE_MS,
@@ -28,6 +28,8 @@ import { useEffect, useMemo, useRef } from "react"
 import { Vector3 } from "three"
 
 extend({ RoundedPlaneGeometry: geometry.RoundedPlaneGeometry })
+
+const ANIMATION_CONFIG = animationConfig
 
 const mulberry32 = (seed) => {
   let t = seed >>> 0

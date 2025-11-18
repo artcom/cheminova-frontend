@@ -1,1 +1,1 @@
-export { default, loader } from "./Welcome"
+export { default } from "./Welcome"

@@ -147,7 +147,7 @@ export default function Exploration() {
   )
 }
 
-export async function clientLoader({ params }) {
+export const clientLoader = async ({ params }) => {
   const {
     section: exploration,
     characterSlug,

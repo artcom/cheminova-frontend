@@ -1,4 +1,4 @@
-import CapturedImagesProvider from "@/providers/CapturedImagesProvider"
+import { CapturedImagesProvider } from "@/providers/CapturedImagesProvider"
 import { loadCharacterContext } from "@/utils/loaderHelpers"
 import { Outlet, useParams } from "react-router-dom"
 
@@ -14,7 +14,7 @@ export default function CharacterLayout() {
 
 export const id = "character"
 
-export async function clientLoader({ params }) {
+export const clientLoader = async ({ params }) => {
   const { characterSlug, characterIndex, character } =
     await loadCharacterContext(params)
 

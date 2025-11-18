@@ -268,7 +268,7 @@ export default function Upload() {
   )
 }
 
-export async function clientLoader({ params }) {
+export const clientLoader = async ({ params }) => {
   const {
     section: upload,
     characterSlug,
@@ -281,5 +281,5 @@ export async function clientLoader({ params }) {
     { missingMessage: "Upload data missing from CMS" },
   )
 
-  return { characterIndex, characterSlug, character, upload }
+  return { characterIndex, characterSlug, upload, character }
 }

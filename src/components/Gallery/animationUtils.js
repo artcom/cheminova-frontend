@@ -1,6 +1,6 @@
 import { easing } from "maath"
 
-import ANIMATION_CONFIG from "./config"
+import animationConfig from "./config"
 
 export const clamp01 = (v) => Math.max(0, Math.min(1, v))
 export const easeOut = easing.cubic.out
@@ -25,7 +25,7 @@ export const animatePersonal = ({
   flags,
 }) => {
   const { startScale, startOpacity, endOpacity, startZ, duration } =
-    ANIMATION_CONFIG.personal
+    animationConfig.personal
 
   if (elapsedTime < adjustedStart) {
     applyTransform(img, { scale: startScale, opacity: 0, z: startZ })
@@ -56,12 +56,12 @@ export const animateNormal = ({
   flags,
 }) => {
   const { startScale, startOpacity, endOpacity, startZ, duration } =
-    ANIMATION_CONFIG.normal
+    animationConfig.normal
   const {
     start: gsStart,
     end: gsEnd,
     duration: gsDur,
-  } = ANIMATION_CONFIG.grayscale
+  } = animationConfig.grayscale
 
   if (elapsedTime < delay) return
 

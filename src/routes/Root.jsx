@@ -25,7 +25,7 @@ const ErrorScreen = styled.div`
 
 export const id = "root"
 
-export async function clientLoader() {
+export const clientLoader = async () => {
   const { locale, content } = await loadCmsContent()
   return {
     locale,

@@ -1,4 +1,4 @@
-import theme from "@/theme"
+import appTheme from "@/theme"
 import { styled } from "styled-components"
 
 export const UploadContainer = styled.div`
@@ -93,8 +93,8 @@ export const Actions = styled.div`
   gap: 1rem;
 
   & > button {
-    border-color: ${theme.colors.background.light};
-    color: ${theme.colors.background.light};
+    border-color: ${appTheme.colors.background.light};
+    color: ${appTheme.colors.background.light};
     width: ${({ $stacked }) => ($stacked ? "100%" : "auto")};
   }
 `

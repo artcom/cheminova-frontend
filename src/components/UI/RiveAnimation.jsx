@@ -7,7 +7,7 @@ import {
   useRive,
 } from "@rive-app/react-canvas"
 import { useEffect, useMemo } from "react"
-import styled from "styled-components"
+import { styled } from "styled-components"
 
 const RiveContainer = styled.div`
   width: 100%;

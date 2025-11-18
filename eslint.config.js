@@ -1,17 +1,62 @@
-import pluginJs from "@eslint/js"
-import ReactThree from "@react-three/eslint-plugin"
+import { fixupPluginRules } from "@eslint/compat"
+import js from "@eslint/js"
+import * as ReactThree from "@react-three/eslint-plugin"
 import pluginQuery from "@tanstack/eslint-plugin-query"
 import eslintConfigPrettier from "eslint-config-prettier"
+import { flatConfigs } from "eslint-plugin-import-x"
+import pluginJsxA11y from "eslint-plugin-jsx-a11y"
 import pluginReact from "eslint-plugin-react"
 import pluginReactHooks from "eslint-plugin-react-hooks"
+import pluginReactRefresh from "eslint-plugin-react-refresh"
 import globals from "globals"
 
-/** @type {import('eslint').Linter.Config[]} */
 export default [
+  {
+    ignores: [
+      "build/**",
+      "dist/**",
+      "coverage/**",
+      "**/node_modules/**",
+      "**/.react-router/**",
+    ],
+  },
+
+  js.configs.recommended,
+
+  flatConfigs.recommended,
+  flatConfigs.react,
+
+  pluginJsxA11y.flatConfigs.recommended,
+
   {
     languageOptions: {
       globals: {
         ...globals.browser,
+      },
+      parserOptions: {
+        ecmaVersion: "latest",
+        sourceType: "module",
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+    },
+    settings: {
+      "import-x/resolver": {
+        alias: {
+          map: [
+            ["@", "./src"],
+            ["@components", "./src/components"],
+            ["@hooks", "./src/hooks"],
+            ["@api", "./src/api"],
+            ["@ui", "./src/components/UI"],
+            ["@theme", "./src/theme"],
+          ],
+          extensions: [".js", ".jsx", ".json"],
+        },
+        node: {
+          extensions: [".js", ".jsx", ".mjs"],
+        },
       },
     },
   },
@@ -29,37 +74,56 @@ export default [
     },
   },
 
-  pluginJs.configs.recommended,
-
   {
     files: ["**/*.{js,mjs,cjs,jsx}"],
+    ...pluginReact.configs.flat.recommended,
+  },
+  {
+    files: ["**/*.{js,mjs,cjs,jsx}"],
+    ...pluginReact.configs.flat["jsx-runtime"],
+  },
+
+  {
     plugins: {
-      react: pluginReact,
-      "react-hooks": pluginReactHooks,
-      "@tanstack/query": pluginQuery,
-    },
-    languageOptions: {
-      ...pluginReact.configs.flat.recommended.languageOptions,
+      "react-hooks": fixupPluginRules(pluginReactHooks),
     },
     rules: {
-      ...pluginReact.configs.flat.recommended.rules,
-      ...pluginReact.configs.flat["jsx-runtime"].rules,
-      ...pluginQuery.configs["flat/recommended"].rules,
-      ...pluginReactHooks.configs["recommended-latest"].rules,
-      "react/prop-types": "off",
+      ...pluginReactHooks.configs.recommended.rules,
       "react-hooks/exhaustive-deps": "warn",
-    },
-    settings: {
-      react: {
-        version: "detect",
-      },
     },
   },
 
   {
+    files: ["**/*.{js,jsx}"],
+    plugins: {
+      "react-refresh": pluginReactRefresh,
+    },
+    rules: {
+      "react-refresh/only-export-components": [
+        "warn",
+        {
+          allowConstantExport: true,
+          allowExportNames: [
+            "clientLoader",
+            "links",
+            "meta",
+            "HydrateFallback",
+            "ErrorBoundary",
+            "AppLayout",
+            "id",
+            "useLanguages",
+          ],
+        },
+      ],
+    },
+  },
+
+  ...pluginQuery.configs["flat/recommended"],
+
+  {
     files: ["src/components/Gallery/**/*.{js,jsx}"],
     plugins: {
-      "@react-three": ReactThree,
+      "@react-three": fixupPluginRules(ReactThree),
     },
     rules: {
       ...ReactThree.configs.recommended.rules,
@@ -68,13 +132,14 @@ export default [
   },
 
   {
-    ignores: [
-      "build",
-      "dist",
-      "coverage",
-      "**/node_modules/**",
-      "**/.react-router/**",
-    ],
+    rules: {
+      "react/prop-types": "off",
+    },
+    settings: {
+      react: {
+        version: "detect",
+      },
+    },
   },
 
   eslintConfigPrettier,

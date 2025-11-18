@@ -273,11 +273,12 @@ export default function Perspective() {
   )
 }
 
-export async function clientLoader({ params }) {
+export const clientLoader = async ({ params }) => {
   const {
     section: perspective,
     characterSlug,
     characterIndex,
+    character,
   } = await loadCharacterSection(
     params,
     (content, characterIndex) =>
@@ -314,5 +315,5 @@ export async function clientLoader({ params }) {
     await Promise.all(preloadPromises)
   }
 
-  return { characterIndex, characterSlug, perspective, riveAsset }
+  return { characterIndex, characterSlug, character, perspective, riveAsset }
 }

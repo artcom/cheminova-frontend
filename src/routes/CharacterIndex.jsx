@@ -1,6 +1,6 @@
 import { redirect } from "react-router"
 
-export async function clientLoader() {
+export const clientLoader = async () => {
   throw redirect("introduction")
 }
 

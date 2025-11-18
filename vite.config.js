@@ -1,4 +1,5 @@
 import { resolve } from "path"
+// eslint-disable-next-line import-x/default
 import eslintPlugin from "@nabla/vite-plugin-eslint"
 import { reactRouter } from "@react-router/dev/vite"
 import { visualizer } from "rollup-plugin-visualizer"
