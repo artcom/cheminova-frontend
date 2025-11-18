@@ -13,10 +13,6 @@ export const DETECTION_CONFIG = {
   LOOKUP_LOCAL_STORAGE: "chemisee-language",
 }
 
-export const BACKEND_CONFIG = {
-  LOAD_PATH: "/locales/{{lng}}/translation.json",
-}
-
 export const REACT_I18N_CONFIG = {
   USE_SUSPENSE: true,
 }

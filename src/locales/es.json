@@ -46,7 +46,10 @@
   },
   "perspective": {
     "title": "Tu Perspectiva",
-    "description": "Has visto el monumento con nuevos ojos. Ahora, añade tu visión a un collage viviente, junto con otros que se preocupan, igual que tú."
+    "description": "Has visto el monumento con nuevos ojos. Ahora, añade tu visión a un collage viviente, junto con otros que se preocupan, igual que tú.",
+    "loading": "Cargando tu perspectiva personalizada...",
+    "fallback": "Experimenta esta perspectiva única de La Nau",
+    "success": "Contenido personalizado cargado con éxito"
   },
   "upload": {
     "title": "Subir colección",
@@ -83,7 +86,12 @@
   },
   "ending": {
     "title": "Gracias",
-    "description": "Gracias por contribuir a este monumento y mantenerlo vivo. Ahora echa un vistazo más profundo alrededor de La Nau."
+    "description": "Gracias por contribuir a este monumento y mantenerlo vivo. Ahora echa un vistazo más profundo alrededor de La Nau.",
+    "loading": "Completando tu viaje...",
+    "celebration": "¡Tu contribución ha sido registrada!",
+    "thankYouMessage": "Gracias por ser parte de este viaje de preservación cultural!",
+    "completionMessage": "Viaje completado - Tu experiencia ha sido personalizada",
+    "preservationNote": "Tu contribución ayudará a preservar este monumento para futuras generaciones"
   },
   "errors": {
     "unknown": "Error desconocido",
