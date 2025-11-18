@@ -67,5 +67,15 @@ export default [
     },
   },
 
+  {
+    ignores: [
+      "build",
+      "dist",
+      "coverage",
+      "**/node_modules/**",
+      "**/.react-router/**",
+    ],
+  },
+
   eslintConfigPrettier,
 ]

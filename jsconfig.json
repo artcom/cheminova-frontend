@@ -3,6 +3,11 @@
     "baseUrl": ".",
     "checkJs": false,
     "allowJs": true,
+    "module": "esnext",
+    "moduleResolution": "bundler",
+    "jsx": "react-jsx",
+    "target": "es2022",
+    "types": ["vite/client"],
     "paths": {
       "@/*": ["src/*"],
       "@components/*": ["src/components/*"],
@@ -12,6 +17,6 @@
       "@theme/*": ["src/theme/*"]
     }
   },
-  "include": ["src/**/*"],
+  "include": ["src/**/*", "vite.config.js"],
   "exclude": ["node_modules"]
 }
