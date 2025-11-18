@@ -57,7 +57,7 @@ Legacy `REACT_APP_*` flags are no longer read by the codebase and can be removed
 - **Loaders before render**: Every route exports a `clientLoader` that prefetches CMS content via the shared `QueryClient` from `src/queryClient.js`. Components rely on `useLoaderData()` so that CMS slices are ready on first paint.
 - **Shared providers** live in `src/root.jsx`, wrapping the app with `QueryClientProvider`, `LanguageProvider`, global state, theming, and global styles. The entry point (`src/entry.client.jsx`) hydrates everything with `<HydratedRouter />`.
 - **CMS helpers** in `src/api/queries.js` and `src/utils/*` describe how to extract specific content sections (welcome, introduction, gallery, etc.) from the fetched tree.
-- **i18n** uses `i18next` with locale files bundled from `src/locales/*.json` and runtime detection configured in `src/i18n/index.js`.
+- **i18n** uses `i18next` with locale files bundled from `src/i18n/locales/*.json` and runtime detection configured in `src/i18n/index.js`.
 - **3D + media** experiences (photo capture, gallery) live under `src/components/*` with scoped hooks inside `src/hooks/*` and shared UI building blocks in `src/components/UI` or `src/components/shared`.
 
 ## Data loading pattern

@@ -1,7 +1,8 @@
-import { useGalleryImages } from "@/hooks/useGallery"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { styled } from "styled-components"
+
+import { useGalleryImages } from "./hooks/useGalleryImages"
 
 const GalleryContainer = styled.div`
   width: 100%;

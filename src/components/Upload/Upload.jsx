@@ -1,7 +1,6 @@
 import { extractFromContentTree } from "@/api/hooks"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
-import { useUploadImage } from "@/hooks/useUploadImage"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -10,6 +9,7 @@ import { useLoaderData, useNavigate } from "react-router-dom"
 import SmallButton from "@ui/SmallButton"
 
 import SliderWheel from "../shared/SliderWheel/SliderWheel"
+import { useUploadImage } from "./hooks/useUploadImage"
 import {
   Actions,
   ErrorList,

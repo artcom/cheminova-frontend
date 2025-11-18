@@ -1,6 +1,6 @@
 import React, { useMemo } from "react"
 
-import { useSwipe } from "../../../hooks/useSwipe"
+import { useSwipe } from "./hooks/useSwipe"
 import { getCardPositions, SlideItem, Wrapper } from "./styles"
 
 const SliderWheel = ({

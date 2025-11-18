@@ -1,4 +1,3 @@
-// Simplified usePhotoTasks hook with memory storage only
 import { useCallback, useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -6,7 +5,6 @@ export default function usePhotoTasks(options = {}) {
   const { tasks: providedTasks, onImageCaptured, initialImages = [] } = options
   const { t } = useTranslation()
 
-  // Create tasks array with translations
   const tasks = useMemo(() => {
     if (providedTasks && providedTasks.length > 0) {
       return providedTasks
