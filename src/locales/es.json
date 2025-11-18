@@ -63,7 +63,9 @@
       "uploading": "Subiendo...",
       "retry": "Reintentar subida",
       "pleaseWait": "Por favor espera...",
-      "selectCharacter": "Seleccionar personaje primero"
+      "selectCharacter": "Seleccionar personaje primero",
+      "goToPhotoCapture": "Ir a la captura de fotos",
+      "proceedWithoutPhotos": "Continuar sin fotos"
     },
     "status": {
       "preparing": "Preparando",

@@ -63,7 +63,9 @@
       "uploading": "Téléchargement en cours...",
       "retry": "Réessayer le téléchargement",
       "pleaseWait": "Veuillez patienter...",
-      "selectCharacter": "Sélectionner un personnage d'abord"
+      "selectCharacter": "Sélectionner un personnage d'abord",
+      "goToPhotoCapture": "Aller à la prise de photo",
+      "proceedWithoutPhotos": "Continuer sans photos"
     },
     "status": {
       "preparing": "Préparation",

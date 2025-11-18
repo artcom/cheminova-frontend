@@ -63,7 +63,9 @@
       "uploading": "Wird hochgeladen...",
       "retry": "Upload wiederholen",
       "pleaseWait": "Bitte warten...",
-      "selectCharacter": "Charakter zuerst auswählen"
+      "selectCharacter": "Charakter zuerst auswählen",
+      "goToPhotoCapture": "Zur Fotoaufnahme",
+      "proceedWithoutPhotos": "Ohne Fotos fortfahren"
     },
     "status": {
       "preparing": "Vorbereitung",

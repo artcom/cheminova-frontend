@@ -63,7 +63,9 @@
       "uploading": "Uploading...",
       "retry": "Retry Upload",
       "pleaseWait": "Please wait...",
-      "selectCharacter": "Select Character First"
+      "selectCharacter": "Select Character First",
+      "goToPhotoCapture": "Go to photo capture",
+      "proceedWithoutPhotos": "Proceed without photos"
     },
     "status": {
       "preparing": "Preparing",
