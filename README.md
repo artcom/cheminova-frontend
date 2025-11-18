@@ -10,14 +10,11 @@ An interactive, character-led storytelling experience that combines CMS-driven c
    npm install
    ```
 
-2. **Configure environment**
+1. **Configure environment**
 
-   ```bash
-   cp .env.local.example .env
-   # tweak values as needed
-   ```
+No `.env` file is required for local development—API hosts and feature flags are hard-coded for dev vs. prod. If you ever need to host the app under a subpath, set `VITE_BASE_PATH` when running build commands (details below).
 
-3. **Run the dev server** (Vite + React Router framework mode)
+1. **Run the dev server** (Vite + React Router framework mode)
 
    ```bash
    npm run dev
@@ -40,14 +37,19 @@ Husky + lint-staged run `lint`/`prettier --write` on staged files before every c
 
 ## Environment variables
 
-Only two environment switches are currently respected at runtime:
+The app no longer ships with `.env` files—development/production hosts are hard-coded inside `src/config/api.js`. The only optional override is the build-time `VITE_BASE_PATH`, which Vite consumes when emitting assets under a subdirectory (e.g., when deploying to `/chemisee/`).
 
-| Variable            | Purpose                                                                                                | Default                                                          |
-| ------------------- | ------------------------------------------------------------------------------------------------------ | ---------------------------------------------------------------- |
-| `VITE_API_BASE_URL` | Overrides the CMS API base URL consumed by `src/config/api.js`.                                        | `http://localhost:8080` in dev, `/cms/api` in production builds. |
-| `VITE_BASE_PATH`    | Controls the public base path for the Vite build (useful when the app is hosted under a subdirectory). | `/`                                                              |
+| Variable         | Purpose                                                                                                | Default |
+| ---------------- | ------------------------------------------------------------------------------------------------------ | ------- |
+| `VITE_BASE_PATH` | Controls the public base path for the Vite build (useful when the app is hosted under a subdirectory). | `/`     |
 
-Copy `.env.local.example` or `.env.example`, uncomment the value you need, and restart the dev server after changes. Legacy `REACT_APP_*` flags are no longer read by the codebase and can be removed from your environment.
+Export the variable inline when running build commands, for example:
+
+```bash
+VITE_BASE_PATH=/chemisee npm run build
+```
+
+Legacy `REACT_APP_*` flags are no longer read by the codebase and can be removed from your environment.
 
 ## Architecture at a glance
 
@@ -123,6 +125,6 @@ src/
 
 1. Run `npm run build` to emit `build/client`. Clean the folder before committing; generated assets should remain untracked.
 2. If the site is hosted under a subpath (e.g., `/chemisee/`), set `VITE_BASE_PATH=/chemisee/` before building.
-3. Backends that expose the CMS outside `/cms/api` must override `VITE_API_BASE_URL` accordingly.
+3. If your CMS lives somewhere other than `http://localhost:8080/api` (dev) or `/cms/api` (prod), update `src/config/api.js` or introduce your own environment toggle before building.
 
 With the router owning navigation and loaders seeding the cache, feature work should focus on crafting route modules, keeping data derivations inside loaders, and letting components stay pure/presentational.
