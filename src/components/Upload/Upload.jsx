@@ -8,11 +8,12 @@ import { useLoaderData, useNavigate } from "react-router-dom"
 
 import SmallButton from "@ui/SmallButton"
 
-import SliderWheel from "../SliderWheel/SliderWheel"
+import TaskCarousel from "../PhotoCapture/TaskCarousel"
 import {
   Actions,
   ErrorList,
   Preview,
+  PreviewContainer,
   ProgressMessage,
   Question,
   QuestionBlock,
@@ -200,15 +201,17 @@ export default function Upload() {
   return (
     <UploadContainer>
       <TaskLabel>{displayedTaskLabel}</TaskLabel>
-      <SliderWheel
-        currentTaskIndex={currentTaskIndex}
-        setCurrentTaskIndex={setCurrentTaskIndex}
-        taskMetadata={tasks}
+      <TaskCarousel
+        selectedIndex={currentTaskIndex}
+        onSelectionChange={setCurrentTaskIndex}
+        style={{ flex: 1 }}
       >
         {validImages.map((imageData, index) => (
-          <Preview key={index} src={imageData} />
+          <PreviewContainer key={index}>
+            <Preview src={imageData} />
+          </PreviewContainer>
         ))}
-      </SliderWheel>
+      </TaskCarousel>
 
       <QuestionBlock>
         <Question>{getUploadDescription()}</Question>

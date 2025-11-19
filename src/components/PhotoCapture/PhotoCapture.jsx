@@ -112,6 +112,7 @@ export default function PhotoCapture() {
         <FooterContainer
           taskMetadata={taskMetadata}
           currentTaskIndex={currentTaskIndex}
+          setCurrentTaskIndex={setCurrentTaskIndex}
         />
       </PhotoCaptureContainer>
     </>

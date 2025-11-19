@@ -1,11 +1,31 @@
 import { useLoaderData, useNavigate } from "react-router-dom"
 
-import SmallButton from "../UI/SmallButton"
+import Navigation from "../UI/Navigation"
 import { Footer, PaginationContainer, PaginationDot } from "./styles"
 
-export default function FooterContainer({ taskMetadata, currentTaskIndex }) {
+export default function FooterContainer({
+  taskMetadata,
+  currentTaskIndex,
+  setCurrentTaskIndex,
+}) {
   const { characterSlug } = useLoaderData()
   const navigate = useNavigate()
+
+  const handlePrev = () => {
+    if (currentTaskIndex > 0) {
+      setCurrentTaskIndex(currentTaskIndex - 1)
+    }
+  }
+
+  const handleNext = () => {
+    if (currentTaskIndex < taskMetadata.length - 1) {
+      setCurrentTaskIndex(currentTaskIndex + 1)
+    }
+  }
+
+  const handleSelect = () => {
+    navigate(`/characters/${characterSlug}/exploration`)
+  }
 
   return (
     <Footer>
@@ -14,12 +34,16 @@ export default function FooterContainer({ taskMetadata, currentTaskIndex }) {
           <PaginationDot key={index} $isActive={index === currentTaskIndex} />
         ))}
       </PaginationContainer>
-      <SmallButton
-        color="#FFF"
-        onClick={() => navigate(`/characters/${characterSlug}/exploration`)}
-      >
-        {"Continue"}
-      </SmallButton>
+      <Navigation
+        mode="select"
+        selectLabel="Continue"
+        onPrev={handlePrev}
+        onNext={handleNext}
+        onSelect={handleSelect}
+        prevDisabled={currentTaskIndex === 0}
+        nextDisabled={currentTaskIndex === taskMetadata.length - 1}
+        iconColor="#FFF"
+      />
     </Footer>
   )
 }

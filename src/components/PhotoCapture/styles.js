@@ -7,7 +7,8 @@ export const PhotoCaptureContainer = styled.div`
   flex-direction: column;
   align-items: center;
   width: 100%;
-  padding: 0 0 34.75rem 0;
+  min-height: 100dvh;
+  padding: 0 0 2rem 0;
   justify-content: space-between;
 `
 
@@ -41,14 +42,20 @@ export const TasksContainer = styled.div`
 `
 
 export const TaskCard = styled.div`
-  position: absolute;
-  width: 100%;
-  height: 100%;
-  top: 0;
-  left: 0;
+  position: relative;
+  width: 85vw;
+  max-width: 22rem;
+  aspect-ratio: 1;
   display: flex;
   flex-direction: column;
   padding: 1.75rem 1.625rem;
+  align-items: center;
+  justify-content: center;
+  background-color: ${({ $characterId }) =>
+    characterStyles[$characterId]?.backgroundColor || "transparent"};
+  border: ${({ $characterId }) =>
+    characterStyles[$characterId]?.border || "none"};
+  border-radius: 1.75rem;
 `
 
 export const TaskDescription = styled.h2`
@@ -59,7 +66,8 @@ export const TaskDescription = styled.h2`
   font-weight: 400;
   line-height: normal;
   text-align: center;
-  margin: 0;
+  margin: 0 0 1rem 0;
+  width: 100%;
 `
 
 export const TaskHeadline = styled.h2`
@@ -75,9 +83,12 @@ export const TaskHeadline = styled.h2`
 
 export const TaskContent = styled.div`
   display: flex;
+  flex-direction: column;
+  align-items: center;
   justify-content: center;
   gap: 1rem;
   width: 100%;
+  position: relative;
   color: ${({ $characterId }) =>
     characterStyles[$characterId]?.textColor || "#000"};
 `
@@ -86,10 +97,6 @@ export const TaskImage = styled.img`
   width: 85%;
   height: auto;
   aspect-ratio: 1;
-  position: absolute;
-  top: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
   border-radius: 1rem;
   object-fit: cover;
   border: ${({ $characterId }) =>
@@ -101,11 +108,12 @@ export const ExtraBorder = styled.img`
   height: auto;
   aspect-ratio: 1;
   position: absolute;
-  top: 1.25rem;
+  top: 50%;
   left: 50%;
-  transform: translateX(-50%);
+  transform: translate(-50%, -50%);
   border-radius: 1rem;
   border: 1px solid #000;
+  pointer-events: none;
 `
 
 export const HiddenInput = styled.input`
@@ -116,8 +124,7 @@ export const CameraButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  position: absolute;
-  bottom: 1.5rem;
+  margin-top: 1rem;
   min-width: 3.5rem;
   min-height: 3.5rem;
   padding: 0.5rem;
@@ -134,8 +141,8 @@ export const PaginationContainer = styled.div`
   justify-content: center;
   align-items: center;
   gap: 0.5rem;
-  margin-top: 27rem;
-  margin-bottom: 2rem;
+  margin-top: 2rem;
+  margin-bottom: 3rem;
 `
 
 export const PaginationDot = styled.div`

@@ -3,13 +3,14 @@ import { styled } from "styled-components"
 
 export const UploadContainer = styled.div`
   width: 100%;
-  height: 100%;
+  min-height: 100dvh;
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.75rem 0 7rem;
+  padding: 1.75rem 0 2rem;
   box-sizing: border-box;
-  gap: 11.75rem;
+  justify-content: space-between;
+  gap: 2rem;
   color: #fff;
 `
 
@@ -44,16 +45,26 @@ export const TaskLabel = styled.h2`
   margin-top: 2rem;
 `
 
-export const Preview = styled.img`
-  width: 85%;
-  height: auto;
+export const PreviewContainer = styled.div`
+  position: relative;
+  width: 85vw;
+  max-width: 22rem;
   aspect-ratio: 1;
-  position: absolute;
-  top: 1.5rem;
-  left: 50%;
-  transform: translateX(-50%);
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 1.625rem;
+  align-items: center;
+  justify-content: center;
+  background-color: #f1ece1; /* Default background, can be dynamic if needed */
+  border-radius: 1.75rem;
+`
+
+export const Preview = styled.img`
+  width: 100%;
+  height: 100%;
   border-radius: 1rem;
   object-fit: cover;
+  display: block;
 `
 
 export const Missing = styled.div`

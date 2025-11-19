@@ -3,7 +3,6 @@ import { loadCharacterSection } from "@/utils/loaderHelpers"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useLoaderData } from "react-router-dom"
 
-import SliderWheel from "../SliderWheel/SliderWheel"
 import IconButton from "../UI/IconButton"
 import {
   CameraButtonContainer,
@@ -13,6 +12,7 @@ import {
   TaskDescription,
   TaskImage,
 } from "./styles"
+import TaskCarousel from "./TaskCarousel"
 
 const CHARACTER_SLUG_JANITOR = "janitor"
 const CHARACTER_SLUG_FUTURE = "future"
@@ -30,18 +30,17 @@ export default function TaskCards({
   const { characterSlug } = useLoaderData()
 
   return (
-    <SliderWheel
-      currentTaskIndex={currentTaskIndex}
-      setCurrentTaskIndex={setCurrentTaskIndex}
-      taskMetadata={taskMetadata}
-      characterSlug={characterSlug}
+    <TaskCarousel
+      selectedIndex={currentTaskIndex}
+      onSelectionChange={setCurrentTaskIndex}
+      style={{ flex: 1 }}
     >
       {taskMetadata.map((task, index) => {
         const taskDescription = sanitizeDescription(task.description)
         const isActive = index === currentTaskIndex
 
         return (
-          <TaskCard key={index}>
+          <TaskCard key={index} $characterId={characterSlug}>
             {!taskImages[index] && (
               <>
                 {characterSlug === CHARACTER_SLUG_JANITOR && <ExtraBorder />}
@@ -84,7 +83,7 @@ export default function TaskCards({
           </TaskCard>
         )
       })}
-    </SliderWheel>
+    </TaskCarousel>
   )
 }
 
