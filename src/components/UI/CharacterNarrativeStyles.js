@@ -17,9 +17,10 @@ export const CharacterNarrativeContainer = styled.div`
 `
 
 export const CharacterMediaContainer = styled.div`
-  position: relative;
+  position: absolute;
   width: 100%;
-  height: 33.25rem;
+  height: 100%;
+
   z-index: 1;
   pointer-events: none;
 `
@@ -32,9 +33,9 @@ export const CharacterMediaImage = styled.img`
 `
 
 export const CharacterRiveContainer = styled.div`
-  position: relative;
+  position: absolute;
   width: 100%;
-  height: 33.25rem;
+  height: 100%;
   z-index: 1;
   overflow: hidden;
   pointer-events: none;
@@ -62,6 +63,7 @@ export const CharacterContentCard = styled.div`
   }};
   padding: 2rem 1.5rem;
   display: flex;
+  margin-top: 38rem;
   flex-direction: column;
   gap: 1rem;
   backdrop-filter: ${(props) =>

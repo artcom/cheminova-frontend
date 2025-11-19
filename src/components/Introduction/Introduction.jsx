@@ -3,6 +3,7 @@ import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { preloadImages } from "@/utils/preloadImages"
 import { sanitizeRichText } from "@/utils/text"
+import { Alignment, Fit } from "@rive-app/react-canvas"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
 import IconButton from "@ui/IconButton"
@@ -54,7 +55,11 @@ export default function Introduction() {
     >
       {shouldShowRiveAnimation ? (
         <RiveAnimationContainer>
-          <RiveAnimation src="/amaraWriting.riv" autoplay />
+          <RiveAnimation
+            src="/amaraWriting.riv"
+            autoplay
+            layout={{ fit: Fit.Cover, alignment: Alignment.BottomRight }}
+          />
         </RiveAnimationContainer>
       ) : (
         characterImageUrl && (
