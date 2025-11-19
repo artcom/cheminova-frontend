@@ -1,13 +1,10 @@
-import {
-  CAROUSEL_ANIMATION,
-  DRAG_CONFIG,
-} from "@components/Welcome/CharacterShowcase/utils/transformUtils"
 import { motion } from "motion/react"
 import { useTranslation } from "react-i18next"
 import { useRouteLoaderData } from "react-router-dom"
 import { styled } from "styled-components"
 
 import { useCharacterCarousel } from "../hooks/useCharacterCarousel"
+import { DRAG_CONFIG } from "../utils/transformUtils"
 
 const CarouselContainer = styled(motion.div)`
   width: 100dvw;
@@ -110,25 +107,25 @@ const CharacterCarousel = ({
 
 const CharacterCard = ({ character, scale, shadowIntensity }) => (
   <CharacterCardContainer
-    initial={{ opacity: 0, y: 20 }}
+    initial={{ opacity: 0, y: 50 }}
     animate={{
       opacity: 1,
       y: 0,
       scale,
     }}
     transition={{
-      duration: 0.5,
-      delay: 0.4,
-      ease: "easeOut",
-      scale: CAROUSEL_ANIMATION,
+      type: "spring",
+      damping: 25,
+      stiffness: 120,
+      scale: { duration: 0.4, ease: "easeOut" }, // Keep scale smooth but not bouncy
     }}
   >
     <CharacterImage
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
+      initial={{ opacity: 0, scale: 0.9 }}
+      animate={{ opacity: 1, scale: 1 }}
       transition={{
         duration: 0.6,
-        delay: 0.6,
+        delay: 0.2,
         ease: "easeOut",
       }}
       src={character.characterImage?.file}

@@ -1,11 +1,12 @@
+import { useTranslation } from "react-i18next"
+import { useRouteLoaderData } from "react-router-dom"
+
 import {
   IntroCharacterImage,
   IntroCharacterItem,
   IntroCharactersRow,
   IntroContainer,
-} from "@components/Welcome/CharacterShowcase/styles"
-import { useTranslation } from "react-i18next"
-import { useRouteLoaderData } from "react-router-dom"
+} from "../characterStyles"
 
 export default function Intro({ onCharacterSelect, characters }) {
   const { t } = useTranslation()
@@ -23,21 +24,36 @@ export default function Intro({ onCharacterSelect, characters }) {
   return (
     <IntroContainer>
       <IntroCharactersRow
-        initial={{ y: 50, opacity: 0 }}
-        animate={{ y: 0, opacity: 1 }}
-        transition={{ duration: 0.6, delay: 0.4 }}
+        initial="hidden"
+        animate="visible"
+        variants={{
+          hidden: { opacity: 0 },
+          visible: {
+            opacity: 1,
+            transition: {
+              staggerChildren: 0.1,
+              delayChildren: 0.3,
+            },
+          },
+        }}
       >
         {charactersData.map((character, index) => (
           <IntroCharacterItem
             key={character.id || character.name}
-            initial={{ y: 30, opacity: 0 }}
-            animate={{ y: 0, opacity: 1 }}
-            transition={{
-              duration: 0.5,
-              delay: 0.6 + index * 0.1,
-              ease: "easeOut",
+            variants={{
+              hidden: { y: 50, opacity: 0 },
+              visible: {
+                y: 0,
+                opacity: 1,
+                transition: {
+                  type: "spring",
+                  damping: 20,
+                  stiffness: 100,
+                },
+              },
             }}
             onClick={() => onCharacterSelect(index)}
+            whileTap={{ scale: 0.95 }}
           >
             <IntroCharacterImage
               src={character.image || character.characterImage?.file}
@@ -45,7 +61,6 @@ export default function Intro({ onCharacterSelect, characters }) {
               animate={{ scale: 1, opacity: 1 }}
               transition={{
                 duration: 0.4,
-                delay: 0.8 + index * 0.1,
                 ease: "easeOut",
               }}
             />

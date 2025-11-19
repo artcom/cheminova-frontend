@@ -2,7 +2,13 @@ import { index, route } from "@react-router/dev/routes"
 
 export default [
   route("/", "./routes/Root.jsx", [
-    index("./components/Welcome/Welcome.jsx"),
+    route("/", "./components/Welcome/WelcomeLayout.jsx", [
+      index("./components/Welcome/Steps/WelcomeLanguage.jsx"),
+      route("intro", "./components/Welcome/Steps/WelcomeIntro.jsx"),
+      route("context", "./components/Welcome/Steps/WelcomeContext.jsx"),
+      route("onboarding", "./components/Welcome/Steps/CharacterOnboarding.jsx"),
+      route("characters", "./components/Welcome/Steps/CharacterSelection.jsx"),
+    ]),
     route("imprint", "./components/UI/Imprint.jsx"),
     route("privacy", "./components/UI/Privacy.jsx"),
     route("characters/:characterId", "./routes/CharacterLayout.jsx", [

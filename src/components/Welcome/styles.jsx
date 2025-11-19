@@ -23,6 +23,8 @@ export const TextLayout = styled.div`
     $hasDescription ? "space-between" : "flex-start"};
   align-items: flex-start;
   flex: 1 0 auto;
+  /* Ensure a minimum height to prevent layout shifts during transitions */
+  min-height: 50vh;
 `
 
 export const ChildrenContainer = styled.div`
