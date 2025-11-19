@@ -78,7 +78,7 @@ export default defineConfig(() => {
     },
 
     build: {
-      sourcemap: enableBundleVisualizer,
+      sourcemap: false,
     },
 
     server: {
