@@ -65,7 +65,8 @@
       "pleaseWait": "Please wait...",
       "selectCharacter": "Select Character First",
       "goToPhotoCapture": "Go to photo capture",
-      "proceedWithoutPhotos": "Proceed without photos"
+      "proceedWithoutPhotos": "Proceed without photos",
+      "viewCollection": "View collection"
     },
     "status": {
       "preparing": "Preparing",
