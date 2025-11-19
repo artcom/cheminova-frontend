@@ -29,7 +29,7 @@ export default function PhotoCapture() {
   const heading = photography?.heading || t("photoCapture.title")
 
   const fallbackTitles = useMemo(
-    () => DEFAULT_TASK_KEYS.map((key) => t(`photoCapture.tasks.${key} `)),
+    () => DEFAULT_TASK_KEYS.map((key) => t(`photoCapture.tasks.${key}`)),
     [t],
   )
 
