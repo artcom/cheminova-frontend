@@ -1,3 +1,4 @@
+import { sanitizeRichText } from "@/utils/text"
 import { useNavigate, useOutletContext } from "react-router-dom"
 
 import WelcomeStepLayout from "../components/WelcomeStepLayout"
@@ -12,7 +13,7 @@ export default function WelcomeIntro() {
         headline={welcomeIntro.title}
         subheadline={welcomeIntro.siteName}
         descriptionTitle={welcomeIntro.description}
-        descriptionText={welcomeIntro.introText.replace(/<[^>]*>/g, "")}
+        descriptionText={sanitizeRichText(welcomeIntro.introText)}
         legalNotice={true}
         navigationProps={{
           mode: "single",
