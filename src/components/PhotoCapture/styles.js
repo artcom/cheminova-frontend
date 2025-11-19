@@ -1,6 +1,6 @@
 import { styled } from "styled-components"
 
-import { characterStyles } from "../shared/SliderWheel/styles"
+import { characterStyles } from "../SliderWheel/styles"
 
 export const PhotoCaptureContainer = styled.div`
   display: flex;

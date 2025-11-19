@@ -1,12 +1,11 @@
-import { extractFromContentTree } from "@/api/hooks"
 import useCapturedImages from "@/hooks/useCapturedImages"
+import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { useMemo, useRef } from "react"
 import { useTranslation } from "react-i18next"
 import { useLoaderData } from "react-router-dom"
 
 import FooterContainer from "./Footer"
-import usePhotoTasks from "./hooks/usePhotoTasks"
 import {
   HeaderContainer,
   HeaderText,
@@ -15,6 +14,7 @@ import {
   TaskHeadline,
 } from "./styles"
 import TaskCards from "./TaskCards"
+import usePhotoTasks from "./usePhotoTasks"
 
 const DEFAULT_TASK_KEYS = ["laNau", "surroundings", "special"]
 
@@ -29,7 +29,7 @@ export default function PhotoCapture() {
   const heading = photography?.heading || t("photoCapture.title")
 
   const fallbackTitles = useMemo(
-    () => DEFAULT_TASK_KEYS.map((key) => t(`photoCapture.tasks.${key}`)),
+    () => DEFAULT_TASK_KEYS.map((key) => t(`photoCapture.tasks.${key} `)),
     [t],
   )
 

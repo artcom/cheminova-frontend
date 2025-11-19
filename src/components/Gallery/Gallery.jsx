@@ -1,7 +1,7 @@
-import { extractFromContentTree } from "@/api/hooks"
 import useCapturedImages from "@/hooks/useCapturedImages"
+import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
-import appTheme from "@providers/theme"
+import appTheme from "@providers/Theme/theme"
 import { Canvas } from "@react-three/fiber"
 import { AnimatePresence, motion } from "motion/react"
 import { useMemo, useState } from "react"
@@ -20,9 +20,9 @@ import GalleryLoader from "./components/GalleryLoader"
 import StackBump from "./components/StackBump"
 import { CAMERA_DEFAULT_Z, DEBUG_GALLERY } from "./config"
 import { buildGalleryImagePool, getPersistedPersonalImages } from "./helpers"
-import { useGalleryImages } from "./hooks/useGalleryImages"
-import useImagePreloader from "./hooks/useImagePreloader"
-import useResponsiveTilesPerRow from "./hooks/useResponsiveTilesPerRow"
+import { useGalleryImages } from "./useGalleryImages"
+import useImagePreloader from "./useImagePreloader"
+import useResponsiveTilesPerRow from "./useResponsiveTilesPerRow"
 
 const Page = styled.div`
   background-color: ${appTheme.colors.background.dark};

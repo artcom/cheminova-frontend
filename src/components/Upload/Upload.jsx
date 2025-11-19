@@ -1,6 +1,6 @@
-import { extractFromContentTree } from "@/api/hooks"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
+import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
@@ -8,8 +8,7 @@ import { useLoaderData, useNavigate } from "react-router-dom"
 
 import SmallButton from "@ui/SmallButton"
 
-import SliderWheel from "../shared/SliderWheel/SliderWheel"
-import { useUploadImage } from "./hooks/useUploadImage"
+import SliderWheel from "../SliderWheel/SliderWheel"
 import {
   Actions,
   ErrorList,
@@ -20,6 +19,7 @@ import {
   TaskLabel,
   UploadContainer,
 } from "./styles"
+import { useUploadImage } from "./useUploadImage"
 
 const dataURLToFile = (dataURL, filename) => {
   const [metadata, base64Data] = dataURL.split(",")

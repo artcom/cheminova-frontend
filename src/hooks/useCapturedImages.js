@@ -1,4 +1,4 @@
-import { CapturedImagesContext } from "@/providers/CapturedImagesContext"
+import { CapturedImagesContext } from "@/providers/CapturedImages/CapturedImagesContext"
 import { useContext } from "react"
 
 export default function useCapturedImages() {

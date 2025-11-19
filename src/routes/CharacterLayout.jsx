@@ -1,4 +1,4 @@
-import { CapturedImagesProvider } from "@/providers/CapturedImagesProvider"
+import { CapturedImagesProvider } from "@/providers/CapturedImages/CapturedImagesProvider"
 import { loadCharacterContext } from "@/utils/loaderHelpers"
 import { Outlet, useParams } from "react-router-dom"
 

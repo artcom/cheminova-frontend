@@ -1,5 +1,6 @@
 import { fetchAllLocalesContent, getContentForLocale } from "@/api/djangoApi"
-import { queryKeys } from "@/api/hooks"
+
+import { queryKeys } from "./useCmsContent"
 
 export const allContentQuery = (locale) => ({
   queryKey: [...queryKeys.all, "locale", locale],

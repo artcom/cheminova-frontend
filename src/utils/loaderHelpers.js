@@ -1,8 +1,8 @@
-import { extractFromContentTree } from "@/api/hooks"
 import { allContentQuery } from "@/api/queries"
 import { getCurrentLocale } from "@/i18n"
 import { queryClient } from "@/queryClient"
 import { findCharacterIndexBySlug } from "@/utils/characterSlug"
+import { extractFromContentTree } from "@/utils/cmsHelpers"
 
 export async function loadCmsContent({ locale } = {}) {
   const resolvedLocale = locale ?? getCurrentLocale()

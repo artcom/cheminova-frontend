@@ -1,4 +1,4 @@
-import appTheme from "@providers/theme"
+import { theme } from "@providers/Theme/theme"
 import { motion } from "motion/react"
 import { styled } from "styled-components"
 
@@ -14,7 +14,7 @@ import {
 } from "./constants"
 
 export const Page = styled.div`
-  background-color: ${appTheme.colors.background.dark};
+  background-color: ${theme.colors.background.dark};
   min-height: 100vh;
   width: 100%;
   position: relative;

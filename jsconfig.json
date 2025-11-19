@@ -14,7 +14,8 @@
       "@hooks/*": ["src/hooks/*"],
       "@api/*": ["src/api/*"],
       "@ui/*": ["src/components/UI/*"],
-      "@providers/*": ["src/providers/*"]
+      "@providers/*": ["src/providers/*"],
+      "@utils/*": ["src/utils/*"]
     }
   },
   "include": ["src/**/*", "vite.config.js"],

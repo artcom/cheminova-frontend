@@ -1,7 +1,7 @@
 import GlobalStyles from "@/components/GlobalStyles"
-import LanguageProvider from "@/providers/LanguageProvider"
+import LanguageProvider from "@/providers/Language/LanguageProvider"
+import AppThemeProvider from "@/providers/Theme/ThemeProvider"
 import { queryClient } from "@/queryClient"
-import AppThemeProvider from "@providers/ThemeProvider"
 import { QueryClientProvider } from "@tanstack/react-query"
 import { Links, Meta, Outlet, Scripts, ScrollRestoration } from "react-router"
 

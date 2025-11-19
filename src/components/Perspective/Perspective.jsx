@@ -1,4 +1,4 @@
-import { extractFromContentTree } from "@/api/hooks"
+import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { Alignment, Fit } from "@rive-app/react-canvas"
 import { AnimatePresence, motion } from "framer-motion"

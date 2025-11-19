@@ -1,9 +1,9 @@
-import { extractFromContentTree } from "@/api/hooks"
+import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 import { useLoaderData } from "react-router-dom"
 
-import SliderWheel from "../shared/SliderWheel/SliderWheel"
+import SliderWheel from "../SliderWheel/SliderWheel"
 import IconButton from "../UI/IconButton"
 import {
   CameraButtonContainer,

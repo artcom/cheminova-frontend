@@ -51,6 +51,7 @@ export default [
             ["@api", "./src/api"],
             ["@ui", "./src/components/UI"],
             ["@providers", "./src/providers"],
+            ["@utils", "./src/utils"],
           ],
           extensions: [".js", ".jsx", ".json"],
         },

@@ -1,4 +1,4 @@
-import { extractFromContentTree } from "@/api/hooks"
+import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCmsContent } from "@/utils/loaderHelpers"
 import { preloadImages } from "@/utils/preloadImages"
 import { AnimatePresence } from "motion/react"

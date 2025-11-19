@@ -1,8 +1,8 @@
 import { getCurrentLocale } from "@/i18n"
 import { useMemo } from "react"
 
-import { useFutureTimelineImages } from "./hooks/useFutureTimelineImages"
 import { buildTimelineMeta, computeTimelineImages } from "./timelineMath"
+import { useFutureTimelineImages } from "./useFutureTimelineImages"
 
 export function useTimelineData(requestedIndex) {
   const locale = getCurrentLocale()

@@ -3,7 +3,7 @@ import { useTranslation } from "react-i18next"
 import { useRouteLoaderData } from "react-router-dom"
 import { styled } from "styled-components"
 
-import { useCharacterCarousel } from "../hooks/useCharacterCarousel"
+import { useCharacterCarousel } from "../useCharacterCarousel"
 import { DRAG_CONFIG } from "../utils/transformUtils"
 
 const CarouselContainer = styled(motion.div)`

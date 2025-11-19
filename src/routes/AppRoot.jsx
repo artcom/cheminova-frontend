@@ -23,7 +23,7 @@ const ErrorScreen = styled.div`
   padding: 0;
 `
 
-export const id = "root"
+export const id = "app-root"
 
 export const clientLoader = async () => {
   const { locale, content } = await loadCmsContent()
@@ -49,6 +49,6 @@ export function AppLayout({ children }) {
   )
 }
 
-export default function Root() {
+export default function AppRoot() {
   return <AppLayout />
 }

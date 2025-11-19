@@ -1,4 +1,4 @@
-import appTheme from "@providers/theme"
+import { theme } from "@providers/Theme/theme"
 import { motion } from "motion/react"
 import { styled } from "styled-components"
 
@@ -9,16 +9,16 @@ const Wrapper = styled.div`
   justify-content: center;
   height: 90vh;
   width: 100%;
-  background-color: ${appTheme.colors.background.dark};
-  color: ${appTheme.colors.background.paper};
-  font-family: ${appTheme.fontFamily};
+  background-color: ${theme.colors.background.dark};
+  color: ${theme.colors.background.paper};
+  font-family: ${theme.fontFamily};
 `
 
 const SpinnerRing = styled(motion.div)`
   width: ${(p) => p.$size}px;
   height: ${(p) => p.$size}px;
-  border: 3px solid ${appTheme.colors.background.paper}30;
-  border-top: 3px solid ${appTheme.colors.background.paper};
+  border: 3px solid ${theme.colors.background.paper}30;
+  border-top: 3px solid ${theme.colors.background.paper};
   border-radius: 50%;
 `
 
@@ -26,27 +26,27 @@ const Title = styled.h2`
   margin: 20px 0 10px 0;
   font-size: 24px;
   font-weight: 300;
-  color: ${appTheme.colors.background.paper};
+  color: ${theme.colors.background.paper};
 `
 
 const Subtitle = styled.p`
   margin: 0 0 20px 0;
   font-size: 16px;
-  color: ${appTheme.colors.background.paper};
+  color: ${theme.colors.background.paper};
   opacity: 0.8;
 `
 
 const ProgressBar = styled.div`
   width: 300px;
   height: 4px;
-  background-color: ${appTheme.colors.background.paper}30;
+  background-color: ${theme.colors.background.paper}30;
   border-radius: 2px;
   overflow: hidden;
 `
 
 const ProgressFill = styled(motion.div)`
   height: 100%;
-  background-color: ${appTheme.colors.background.paper};
+  background-color: ${theme.colors.background.paper};
   border-radius: 2px;
 `
 
@@ -55,7 +55,7 @@ const Hint = styled.p`
   font-size: 14px;
   text-align: center;
   max-width: 400px;
-  color: ${appTheme.colors.background.paper};
+  color: ${theme.colors.background.paper};
   opacity: 0.6;
 `
 

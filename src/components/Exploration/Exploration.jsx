@@ -1,5 +1,5 @@
-import { extractFromContentTree } from "@/api/hooks"
 import { getCharacterPersonaFlags } from "@/utils/characterPersona"
+import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { sanitizeRichText, splitIntoParagraphs } from "@/utils/text"
 import { motion } from "motion/react"
