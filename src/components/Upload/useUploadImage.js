@@ -9,9 +9,9 @@ export const useUploadImage = () => {
   const { characterId: characterSlug } = useParams()
 
   return useMutation({
-    mutationFn: async ({ file, text, userName }) => {
+    mutationFn: async ({ file, text, userName, title }) => {
       lastUploadedCharacterSlugRef.current = characterSlug
-      return uploadImage(file, characterSlug, { text, userName })
+      return uploadImage(file, characterSlug, { text, userName, title })
     },
     onSuccess: () => {
       const slug = lastUploadedCharacterSlugRef.current

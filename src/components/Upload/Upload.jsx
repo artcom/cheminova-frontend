@@ -98,6 +98,13 @@ export default function Upload() {
   }
 
   const handleUpload = async () => {
+    if (characterSlug === "future" || characterSlug === "janitor") {
+      navigate(`/characters/${characterSlug}/logbook-create`, {
+        state: { taskIndex: currentTaskIndex },
+      })
+      return
+    }
+
     if (didCompleteUpload) {
       goToGallery()
       return
@@ -170,6 +177,11 @@ export default function Upload() {
   }
 
   const getButtonText = () => {
+    if (characterSlug === "future" || characterSlug === "janitor") {
+      return t("upload.buttons.selectPhoto", {
+        defaultValue: "Select this photo",
+      })
+    }
     if (isUploading) return uploadProgress || t("upload.buttons.uploading")
     if (didCompleteUpload)
       return t("upload.buttons.viewCollection", {

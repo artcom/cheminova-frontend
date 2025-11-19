@@ -66,7 +66,8 @@
       "selectCharacter": "Select Character First",
       "goToPhotoCapture": "Go to photo capture",
       "proceedWithoutPhotos": "Proceed without photos",
-      "viewCollection": "View collection"
+      "viewCollection": "View collection",
+      "selectPhoto": "Select this photo"
     },
     "status": {
       "preparing": "Preparing",

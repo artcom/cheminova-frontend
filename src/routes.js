@@ -18,6 +18,7 @@ export default [
       route("exploration", "./components/Exploration/Exploration.jsx"),
       route("perspective", "./components/Perspective/Perspective.jsx"),
       route("upload", "./components/Upload/Upload.jsx"),
+      route("logbook-create", "./components/Logbook/LogbookCreate.jsx"),
       route("gallery", "./components/Gallery/Gallery.jsx"),
       route("timeline", "./components/FutureTimeline/FutureTimeline.jsx"),
       route("ending", "./components/Ending/Ending.jsx"),

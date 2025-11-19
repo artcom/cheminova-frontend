@@ -3,10 +3,14 @@ import { API_BASE_URL } from "@/api/config"
 export const uploadImage = async (
   imageFile,
   characterSlug,
-  { text, userName } = {},
+  { text, userName, title } = {},
 ) => {
   const formData = new FormData()
   formData.append("image", imageFile)
+
+  if (title?.trim()) {
+    formData.append("title", title.trim())
+  }
 
   if (text?.trim()) {
     formData.append("text", text.trim())
