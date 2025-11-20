@@ -1,3 +1,4 @@
+import { getNextRoute } from "@/characterRoutesConfig"
 import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { Alignment, Fit } from "@rive-app/react-canvas"
@@ -186,6 +187,11 @@ export default function Perspective() {
       : { fit: Fit.Cover, alignment: Alignment.Center }
     : undefined
 
+  const handleContinue = () => {
+    const nextRoute = getNextRoute(characterSlug, "perspective")
+    navigate(`/characters/${characterSlug}/${nextRoute}`)
+  }
+
   return (
     <Screen
       variants={screenVariants}
@@ -265,7 +271,7 @@ export default function Perspective() {
       >
         <Navigation
           mode="single"
-          onSelect={() => navigate(`/characters/${characterSlug}/upload`)}
+          onSelect={handleContinue}
           disabled={isLoading}
         />
       </NavigationWrapper>

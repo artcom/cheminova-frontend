@@ -1,3 +1,4 @@
+import { getNextRoute } from "@/characterRoutesConfig"
 import { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
@@ -104,8 +105,11 @@ export default function JanitorLogbook() {
   const { characterId } = useParams()
   const [currentIndex, setCurrentIndex] = useState(0)
 
+  // ...
+
   const handleExit = () => {
-    navigate(`/characters/${characterId}/ending`)
+    const nextRoute = getNextRoute(characterId, "logbook")
+    navigate(`/characters/${characterId}/${nextRoute}`)
   }
 
   const handleNext = () => {
@@ -122,7 +126,7 @@ export default function JanitorLogbook() {
 
   return (
     <PageContainer>
-      <ExitButton onClick={handleExit}>Go to ending</ExitButton>
+      <ExitButton onClick={handleExit}>Create Entry</ExitButton>
 
       <TitleSection>
         <MainTitle>Someone before you noticed a similar detail.</MainTitle>

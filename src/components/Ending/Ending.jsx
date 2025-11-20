@@ -213,7 +213,12 @@ export default function Ending() {
         <NavigationWrapper>
           <Navigation
             mode="single"
-            onSelect={() => navigate(`/characters/${characterSlug}`)}
+            // ...
+
+            onSelect={() => {
+              // Restart flow
+              navigate(`/characters/${characterSlug}/introduction`)
+            }}
             disabled={isLoading}
           />
         </NavigationWrapper>

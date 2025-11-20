@@ -1,3 +1,4 @@
+import { getNextRoute } from "@/characterRoutesConfig"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
@@ -118,8 +119,12 @@ export default function Gallery() {
       <Title>
         {allAnimsDone && !detailMode ? galleryHeading : `${galleryHeading}`}
       </Title>
+
       <ExitButton
-        onClick={() => navigate(`/characters/${characterSlug}/ending`)}
+        onClick={() => {
+          const nextRoute = getNextRoute(characterSlug, "gallery")
+          navigate(`/characters/${characterSlug}/${nextRoute}`)
+        }}
       >
         {exitButtonText}
       </ExitButton>

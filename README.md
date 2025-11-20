@@ -60,6 +60,23 @@ Legacy `REACT_APP_*` flags are no longer read by the codebase and can be removed
 - **i18n** uses `i18next` with locale files bundled from `src/i18n/locales/*.json` and runtime detection configured in `src/i18n/index.js`.
 - **3D + media** experiences (photo capture, gallery) live under `src/components/*` with scoped hooks inside `src/hooks/*` and shared UI building blocks in `src/components/UI` or `src/components/shared`.
 
+## Character Routing
+
+Character navigation flows are centralized in `src/characterRoutesConfig.js`. This file defines the ordered list of routes for each character (`janitor`, `artist`, `future`).
+
+- **`CHARACTER_FLOWS`**: An object mapping character slugs to arrays of route names.
+- **`getNextRoute(characterSlug, currentStep)`**: A helper function that returns the next route in the sequence. If the current step is the last one or not found, it defaults to `"ending"`.
+
+Example usage in a component:
+
+```javascript
+import { getNextRoute } from "@/characterRoutesConfig"
+
+// ... inside component
+const nextRoute = getNextRoute(characterSlug, "photo-capture")
+navigate(`/characters/${characterSlug}/${nextRoute}`)
+```
+
 ## Data loading pattern
 
 Typical loader implementation (simplified):

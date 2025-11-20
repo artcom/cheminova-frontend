@@ -1,3 +1,4 @@
+import { getNextRoute } from "@/characterRoutesConfig"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
 import { extractFromContentTree } from "@/utils/cmsHelpers"
@@ -89,8 +90,8 @@ export default function Upload() {
   })
 
   const goToGallery = () => {
-    const destination = characterSlug === "future" ? "timeline" : "gallery"
-    navigate(`/characters/${characterSlug}/${destination}`)
+    const nextRoute = getNextRoute(characterSlug, "upload")
+    navigate(`/characters/${characterSlug}/${nextRoute}`)
   }
 
   const goToPhotoCapture = () => {
@@ -98,10 +99,18 @@ export default function Upload() {
   }
 
   const handleUpload = async () => {
-    if (characterSlug === "future" || characterSlug === "janitor") {
-      navigate(`/characters/${characterSlug}/logbook-create`, {
+    const nextRoute = getNextRoute(characterSlug, "upload")
+
+    // Special handling for passing state if needed
+    if (characterSlug === "future" && nextRoute === "logbook-create") {
+      navigate(`/characters/${characterSlug}/${nextRoute}`, {
         state: { taskIndex: currentTaskIndex },
       })
+      return
+    }
+
+    if (characterSlug === "janitor") {
+      navigate(`/characters/${characterSlug}/${nextRoute}`)
       return
     }
 

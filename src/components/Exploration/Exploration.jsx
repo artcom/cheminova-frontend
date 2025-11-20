@@ -1,3 +1,4 @@
+import { getNextRoute } from "@/characterRoutesConfig"
 import { getCharacterPersonaFlags } from "@/utils/characterPersona"
 import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
@@ -74,6 +75,11 @@ export default function Exploration() {
 
   const bottomImage = exploration?.bottomImage?.file || null
 
+  const handleContinue = () => {
+    const nextRoute = getNextRoute(characterSlug, "exploration")
+    navigate(`/characters/${characterSlug}/${nextRoute}`)
+  }
+
   return (
     <CharacterNarrativeContainer
       ref={containerRef}
@@ -135,9 +141,7 @@ export default function Exploration() {
             <Navigation
               mode="single"
               position="static"
-              onSelect={() =>
-                navigate(`/characters/${characterSlug}/perspective`)
-              }
+              onSelect={handleContinue}
               iconColor={isFuturePerson ? "white" : "black"}
             />
           </CharacterActionContainer>

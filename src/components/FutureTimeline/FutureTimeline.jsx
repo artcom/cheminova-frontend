@@ -1,3 +1,4 @@
+import { getNextRoute } from "@/characterRoutesConfig"
 import { loadCharacterContext } from "@/utils/loaderHelpers"
 import { useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
@@ -107,12 +108,15 @@ export default function FutureTimeline() {
     })
   }
 
+  // ...
+
   const handleGoToEnding = () => {
     if (!characterSlug) {
       return
     }
 
-    navigate(`/characters/${characterSlug}/ending`)
+    const nextRoute = getNextRoute(characterSlug, "timeline")
+    navigate(`/characters/${characterSlug}/${nextRoute}`)
   }
 
   const showLoadingOverlay = isLoading && totalImages === 0

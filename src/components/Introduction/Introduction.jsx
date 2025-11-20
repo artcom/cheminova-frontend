@@ -1,3 +1,4 @@
+import { getNextRoute } from "@/characterRoutesConfig"
 import { getCharacterPersonaFlags } from "@/utils/characterPersona"
 import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
@@ -92,7 +93,8 @@ export default function Introduction() {
               variant="camera"
               color={isFuturePerson ? "white" : undefined}
               onClick={() => {
-                navigate(`/characters/${characterSlug}/photo-capture`)
+                const nextRoute = getNextRoute(characterSlug, "introduction")
+                navigate(`/characters/${characterSlug}/${nextRoute}`)
               }}
             />
           </CameraButtonContainer>

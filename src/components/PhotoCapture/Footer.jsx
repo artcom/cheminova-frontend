@@ -1,3 +1,4 @@
+import { getNextRoute } from "@/characterRoutesConfig"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
 import Navigation from "../UI/Navigation"
@@ -24,7 +25,10 @@ export default function FooterContainer({
   }
 
   const handleSelect = () => {
-    navigate(`/characters/${characterSlug}/exploration`)
+    // ...
+
+    const nextRoute = getNextRoute(characterSlug, "photo-capture")
+    navigate(`/characters/${characterSlug}/${nextRoute}`)
   }
 
   return (

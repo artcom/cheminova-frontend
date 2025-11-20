@@ -1,3 +1,4 @@
+import { getNextRoute } from "@/characterRoutesConfig"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
 import { useState } from "react"
@@ -95,12 +96,11 @@ export default function LogbookCreate() {
     }
   }
 
-  const handleContinue = () => {
-    let destination = "gallery"
-    if (characterSlug === "future") destination = "timeline"
-    if (characterSlug === "janitor") destination = "logbook"
+  // ...
 
-    navigate(`/characters/${characterSlug}/${destination}`)
+  const handleContinue = () => {
+    const nextRoute = getNextRoute(characterSlug, "logbook-create")
+    navigate(`/characters/${characterSlug}/${nextRoute}`)
   }
 
   if (!image) {
