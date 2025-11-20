@@ -72,47 +72,6 @@ export const CharacterImage = styled(m.img)`
   z-index: 2;
 `
 
-export const NavigationButton = styled(m.button)`
-  position: absolute;
-  top: 50%;
-  transform: translateY(-50%);
-  background-color: white;
-  border: none;
-  border-radius: 50%;
-  width: 4.375rem;
-  height: 4.375rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 1.75rem;
-  filter: drop-shadow(0 0.25rem 0.9375rem rgba(0, 0, 0, 0.2));
-  z-index: 10;
-  color: #333;
-  transition: all 0.2s ease;
-
-  &:disabled {
-    opacity: 0.3;
-  }
-
-  &.left {
-    left: 1.875rem;
-  }
-
-  &.right {
-    right: 1.875rem;
-  }
-`
-
-export const Particles = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  overflow: hidden;
-  pointer-events: none;
-`
-
 export const IntroContainer = styled(m.div)`
   display: flex;
   flex-direction: column;
@@ -121,32 +80,6 @@ export const IntroContainer = styled(m.div)`
   padding-bottom: 5rem;
   width: 100%;
   height: 100dvh;
-`
-
-export const IntroRiveContainer = styled(m.div)`
-  width: 100%;
-  max-width: 28rem;
-  height: clamp(15rem, 40dvw, 24rem);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin-bottom: 2rem;
-  padding: 0 1.5rem;
-`
-
-export const IntroRiveFallback = styled.div`
-  width: 100%;
-  height: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  border-radius: 1.5rem;
-  background: rgba(0, 0, 0, 0.35);
-  color: rgba(255, 255, 255, 0.85);
-  font-size: 0.8125rem;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  backdrop-filter: blur(6px);
 `
 
 export const IntroCharactersRow = styled(m.div)`
