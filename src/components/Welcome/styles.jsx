@@ -25,6 +25,9 @@ export const TextLayout = styled.div`
   flex: 1 0 auto;
   /* Ensure a minimum height to prevent layout shifts during transitions */
   min-height: 50vh;
+  position: relative;
+  z-index: 2;
+  pointer-events: none;
 `
 
 export const ChildrenContainer = styled.div`
@@ -32,6 +35,7 @@ export const ChildrenContainer = styled.div`
   inset: 0;
   width: 100dvw;
   height: 100dvh;
+  z-index: 0;
 `
 
 export const LayersContainer = styled.div`

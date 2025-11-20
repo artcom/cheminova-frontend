@@ -1,7 +1,7 @@
 import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCmsContent } from "@/utils/loaderHelpers"
 import { preloadImages } from "@/utils/preloadImages"
-import { AnimatePresence } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 import { Outlet, useLoaderData, useLocation } from "react-router-dom"
 
 import Vignette from "@ui/Vignette"
@@ -35,8 +35,21 @@ export default function WelcomeLayout() {
       <AnimatePresence>
         {showParallax && <ParallaxBackground welcomeIntro={welcomeIntro} />}
       </AnimatePresence>
-      <AnimatePresence mode="wait">
-        <Outlet context={data} />
+      <AnimatePresence mode="popLayout">
+        <motion.div
+          key={location.pathname}
+          exit={{ transition: { duration: 0.8 } }}
+          style={{
+            position: "absolute",
+            inset: 0,
+            width: "100%",
+            height: "100%",
+            display: "flex",
+            flexDirection: "column",
+          }}
+        >
+          <Outlet context={data} />
+        </motion.div>
       </AnimatePresence>
       <Vignette />
     </Layout>

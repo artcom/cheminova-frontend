@@ -1,7 +1,6 @@
-import { motion } from "motion/react"
 import { styled } from "styled-components"
 
-const DescriptionBlock = styled(motion.div)`
+const DescriptionBlock = styled.div`
   width: 100%;
   display: flex;
   flex-direction: column;
@@ -35,19 +34,9 @@ const DescriptionText = styled.div`
   hyphens: auto;
 `
 
-export default function Description({ title, text, headline, subheadline }) {
+export default function Description({ title, text }) {
   return (
-    <DescriptionBlock
-      key={`description-${headline}-${subheadline}`}
-      initial={{ opacity: 0 }}
-      animate={{ opacity: 1 }}
-      exit={{ opacity: 0 }}
-      transition={{
-        delay: 0.3,
-        duration: 0.6,
-        ease: "easeOut",
-      }}
-    >
+    <DescriptionBlock>
       <DescriptionTitle>{title}</DescriptionTitle>
       <DescriptionText>{text}</DescriptionText>
     </DescriptionBlock>
