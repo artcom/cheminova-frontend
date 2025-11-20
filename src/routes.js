@@ -21,6 +21,7 @@ export default [
       route("logbook-create", "./components/Logbook/LogbookCreate.jsx"),
       route("gallery", "./components/Gallery/Gallery.jsx"),
       route("timeline", "./components/FutureTimeline/FutureTimeline.jsx"),
+      route("logbook", "./components/JanitorLogbook/JanitorLogbook.jsx"),
       route("ending", "./components/Ending/Ending.jsx"),
     ]),
   ]),
