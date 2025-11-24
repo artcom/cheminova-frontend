@@ -7,6 +7,7 @@ import { useLocation, useNavigate, useParams } from "react-router-dom"
 import { useUploadImage } from "../Upload/useUploadImage"
 import {
   Card,
+  CharCount,
   CheckButton,
   Container,
   DateText,
@@ -131,14 +132,18 @@ export default function LogbookCreate() {
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         disabled={isUploading || isSuccess}
+        maxLength={255}
       />
+      <CharCount>{description.length} / 255</CharCount>
 
       <Input
         placeholder="Your name (optional)"
         value={userName}
         onChange={(e) => setUserName(e.target.value)}
         disabled={isUploading || isSuccess}
+        maxLength={150}
       />
+      <CharCount>{userName.length} / 150</CharCount>
 
       <Footer>
         {isSuccess ? (

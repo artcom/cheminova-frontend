@@ -60,7 +60,7 @@ export const TextArea = styled.textarea`
   resize: none;
   box-sizing: border-box;
   font-family: inherit;
-  margin-bottom: 16px;
+  margin-bottom: 8px;
 
   &::placeholder {
     color: #8e8e93;
@@ -83,6 +83,7 @@ export const Input = styled.input`
   font-size: 16px;
   box-sizing: border-box;
   font-family: inherit;
+  margin-bottom: 8px;
 
   &::placeholder {
     color: #8e8e93;
@@ -92,6 +93,13 @@ export const Input = styled.input`
     outline: none;
     box-shadow: 0 0 0 2px #0a84ff;
   }
+`
+
+export const CharCount = styled.div`
+  text-align: right;
+  font-size: 12px;
+  color: #8e8e93;
+  margin-bottom: 16px;
 `
 
 export const Footer = styled.div`
