@@ -68,6 +68,7 @@ export const TaskDescription = styled.h2`
   text-align: center;
   margin: 0 0 1rem 0;
   width: 100%;
+  padding: 1rem;
 `
 
 export const TaskHeadline = styled.h2`
