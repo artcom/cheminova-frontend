@@ -53,6 +53,7 @@ export default function Introduction() {
     <IntroductionContainer
       data-introduction-container
       $backgroundImage={introduction.backgroundImage?.file}
+      $isJanitor={isJanitor}
     >
       {shouldShowRiveAnimation ? (
         <RiveAnimationContainer>
