@@ -10,7 +10,6 @@ import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
-import Button from "@ui/Button"
 import Navigation from "@ui/Navigation"
 
 import PersonalImage1 from "./assets/1.jpg"
@@ -45,18 +44,6 @@ const Stage = styled.div`
   overflow: hidden;
 `
 
-// ... existing imports ...
-
-const ExitButton = styled(Button)`
-  position: fixed;
-  bottom: 20px;
-  right: 20px;
-  z-index: 50;
-  width: 7rem;
-  height: 2.8rem;
-  font-size: 1rem;
-`
-
 const defaultPersonalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
 
 export default function Gallery() {
@@ -77,7 +64,6 @@ export default function Gallery() {
 
   const galleryHeading = gallery?.heading || t("gallery.title")
   const exitButtonText = gallery?.exitButtonText || t("gallery.exitGallery")
-  const closeButtonText = gallery?.closeButtonText || t("gallery.close")
 
   const personalImages = useMemo(
     () => getPersistedPersonalImages(defaultPersonalImages, capturedImages),
@@ -98,15 +84,10 @@ export default function Gallery() {
 
   const isFullyLoading = isLoading || galleryLoading
 
-  const handleExitGallery = () => {
-    navigate("/")
-  }
-
   if (isFullyLoading) {
     return (
       <Page>
         <Title>{galleryHeading}</Title>
-        <ExitButton onClick={handleExitGallery}>{exitButtonText}</ExitButton>
         <GalleryLoader loadedCount={loadedCount} totalImages={totalImages} />
       </Page>
     )
@@ -118,14 +99,6 @@ export default function Gallery() {
         {allAnimsDone && !detailMode ? galleryHeading : `${galleryHeading}`}
       </Title>
 
-      <ExitButton
-        onClick={() => {
-          const nextRoute = getNextRoute(characterSlug, "gallery")
-          navigate(`/characters/${characterSlug}/${nextRoute}`)
-        }}
-      >
-        {exitButtonText}
-      </ExitButton>
       <Stage>
         <Canvas
           camera={{ position: [0, 0, CAMERA_DEFAULT_Z], fov: 75 }}
@@ -183,11 +156,11 @@ export default function Gallery() {
               <Navigation
                 mode="select"
                 position="bottom"
-                selectLabel={closeButtonText}
+                selectLabel={exitButtonText}
                 onSelect={() => {
                   DEBUG_GALLERY && console.debug("[Gallery] exit detail")
-                  setDetailMode(false)
-                  setDetailStackScale(null)
+                  const nextRoute = getNextRoute(characterSlug, "gallery")
+                  navigate(`/characters/${characterSlug}/${nextRoute}`)
                 }}
                 onPrev={() => {
                   if (stackSize <= 0) return
