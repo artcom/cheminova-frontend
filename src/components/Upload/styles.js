@@ -7,9 +7,9 @@ export const UploadContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 1.75rem 0 2rem;
+  padding: 1.75rem 0 14rem;
   box-sizing: border-box;
-  justify-content: space-between;
+  justify-content: flex-start;
   gap: 2rem;
   color: #fff;
 `
@@ -86,7 +86,13 @@ export const QuestionBlock = styled.div`
   align-items: center;
   gap: 1rem;
   text-align: center;
-  width: 80%;
+  width: 100%;
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  background: ${theme.colors.background.dark};
+  padding: 2rem 0;
+  z-index: 10;
 `
 
 export const Question = styled.h1`
