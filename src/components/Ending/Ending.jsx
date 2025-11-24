@@ -89,25 +89,6 @@ const Description = styled.div`
   }
 `
 
-const ThankYouMessage = styled.div`
-  background: rgba(255, 255, 255, 0.1);
-  border: 2px solid rgba(255, 255, 255, 0.2);
-  border-radius: 12px;
-  padding: 1.5rem;
-  margin-bottom: 2rem;
-  backdrop-filter: blur(10px);
-  font-family:
-    "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
-  font-size: 1.125rem;
-  font-weight: 600;
-  text-align: center;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.2);
-  transform: ${(props) =>
-    props.$visible ? "translateY(0)" : "translateY(20px)"};
-  opacity: ${(props) => (props.$visible ? "1" : "0")};
-  transition: all 0.5s ease-in-out;
-`
-
 const LoadingContainer = styled.div`
   display: flex;
   align-items: center;
@@ -124,9 +105,8 @@ const stripHtml = (value) =>
   typeof value === "string" ? value.replace(/<[^>]*>/g, "") : ""
 
 export default function Ending() {
-  const { characterSlug, ending, endingReflection } = useLoaderData()
+  const { ending, endingReflection } = useLoaderData()
   const [imageLoaded, setImageLoaded] = useState(false)
-  const [showCelebration, setShowCelebration] = useState(false)
   const navigate = useNavigate()
   const isLoading = false
 
@@ -153,36 +133,12 @@ export default function Ending() {
     }
   }, [ending?.backgroundImage?.file])
 
-  useEffect(() => {
-    const timer = setTimeout(() => {
-      setShowCelebration(true)
-    }, 500)
-
-    return () => clearTimeout(timer)
-  }, [])
-
   // Use CMS data - it's localized based on current language
   const reflectionText = stripHtml(endingReflection?.reflectionText)
   const heading = ending?.heading || endingReflection?.title || ""
   const description = ending?.description
     ? stripHtml(ending.description)
     : reflectionText
-
-  const thankYouCopy = (() => {
-    if (endingReflection?.returnToMonumentButtonText) {
-      return endingReflection.returnToMonumentButtonText
-    }
-
-    if (reflectionText && reflectionText !== description) {
-      return reflectionText
-    }
-
-    if (heading && heading !== description) {
-      return heading
-    }
-
-    return ""
-  })()
 
   const backgroundImageUrl =
     imageLoaded && ending?.backgroundImage?.file
@@ -204,20 +160,13 @@ export default function Ending() {
 
         {!isLoading && description && <Description>{description}</Description>}
 
-        {!isLoading && thankYouCopy && (
-          <ThankYouMessage $visible={showCelebration}>
-            {thankYouCopy}
-          </ThankYouMessage>
-        )}
-
         <NavigationWrapper>
           <Navigation
             mode="single"
-            // ...
-
+            singleButtonVariant="text"
+            selectLabel="Restart"
             onSelect={() => {
-              // Restart flow
-              navigate(`/characters/${characterSlug}/introduction`)
+              navigate("/intro")
             }}
             disabled={isLoading}
           />

@@ -111,11 +111,15 @@ const Navigation = forwardRef(function Navigation(
         className={className}
         {...rest}
       >
-        <IconButton
-          variant={buttonVariant}
-          onClick={onSelect}
-          color={iconColor}
-        />
+        {buttonVariant === "text" ? (
+          <Button onClick={onSelect}>{label}</Button>
+        ) : (
+          <IconButton
+            variant={buttonVariant}
+            onClick={onSelect}
+            color={iconColor}
+          />
+        )}
       </NavigationContainer>
     )
   }
