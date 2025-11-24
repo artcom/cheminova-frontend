@@ -8,27 +8,18 @@ const StyledButton = styled.button`
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
+
   &[data-color="black"] svg rect {
     stroke: black;
   }
   &[data-color="black"] svg path {
     fill: black;
   }
-  &[data-color="black"]:disabled svg rect {
-    stroke: #444;
-  }
-  &[data-color="black"]:disabled svg path {
-    fill: #444;
-  }
 
   &:disabled {
-    svg rect {
-      stroke: #888;
-    }
-
-    svg path {
-      fill: #888;
-    }
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 `
 

@@ -25,7 +25,8 @@ const StyledLink = styled(Link)`
   text-decoration: none;
 
   &:disabled {
-    opacity: 0.5;
+    opacity: 0.3;
+    cursor: not-allowed;
   }
 `
 
