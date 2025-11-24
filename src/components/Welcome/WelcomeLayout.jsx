@@ -38,7 +38,7 @@ export default function WelcomeLayout() {
       <AnimatePresence mode="popLayout">
         <motion.div
           key={location.pathname}
-          exit={{ transition: { duration: 0.8 } }}
+          exit={{ transition: { duration: 0.3 } }}
           style={{
             position: "absolute",
             inset: 0,

@@ -73,12 +73,11 @@ const CharacterCarousel = ({
     <CarouselContainer
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
-      transition={{ duration: 0.5, ease: "easeOut" }}
+      transition={{ duration: 0.3 }}
     >
       <DraggableWrapper
-        initial={{ x: -100 }}
+        initial={{ x: 0 }}
         animate={{ x: 0 }}
-        transition={{ duration: 0.6, delay: 0.2, ease: "easeOut" }}
         style={{ x }}
         $charactersLength={charactersData.length}
         drag="x"
@@ -107,25 +106,22 @@ const CharacterCarousel = ({
 
 const CharacterCard = ({ character, scale, shadowIntensity }) => (
   <CharacterCardContainer
-    initial={{ opacity: 0, y: 50 }}
+    initial={{ opacity: 0 }}
     animate={{
       opacity: 1,
       y: 0,
       scale,
     }}
     transition={{
-      type: "spring",
-      damping: 25,
-      stiffness: 120,
-      scale: { duration: 0.4, ease: "easeOut" }, // Keep scale smooth but not bouncy
+      duration: 0.3,
+      scale: { duration: 0.3, ease: "easeOut" },
     }}
   >
     <CharacterImage
-      initial={{ opacity: 0, scale: 0.9 }}
+      initial={{ opacity: 0 }}
       animate={{ opacity: 1, scale: 1 }}
       transition={{
-        duration: 0.6,
-        delay: 0.2,
+        duration: 0.3,
         ease: "easeOut",
       }}
       src={character.characterImage?.file}

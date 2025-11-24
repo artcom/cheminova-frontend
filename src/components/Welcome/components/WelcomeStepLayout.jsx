@@ -1,47 +1,10 @@
-import { AnimatePresence, motion } from "motion/react"
+import { motion } from "motion/react"
 
 import Description from "@ui/Description"
 import Header from "@ui/Header"
 import Navigation from "@ui/Navigation"
 
 import { ChildrenContainer, TextLayout } from "../styles"
-
-const containerVariants = {
-  hidden: {},
-  visible: {
-    transition: {
-      staggerChildren: 0.15,
-      delayChildren: 0.1,
-    },
-  },
-  exit: {
-    opacity: 0,
-    transition: {
-      duration: 0.8,
-      ease: "easeIn",
-    },
-  },
-}
-
-const itemVariants = {
-  hidden: { opacity: 0, y: 20 },
-  visible: {
-    opacity: 1,
-    y: 0,
-    transition: {
-      opacity: { duration: 0.8, ease: "easeOut" },
-      y: { duration: 0.8, ease: "easeOut" },
-    },
-  },
-  exit: {
-    opacity: 0,
-    y: -10,
-    transition: {
-      duration: 0.3,
-      ease: "easeIn",
-    },
-  },
-}
 
 export default function WelcomeStepLayout({
   headline,
@@ -62,7 +25,7 @@ export default function WelcomeStepLayout({
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0 }}
-          transition={{ duration: 0.8 }}
+          transition={{ duration: 0.4 }}
         >
           {children}
         </ChildrenContainer>
@@ -70,10 +33,10 @@ export default function WelcomeStepLayout({
 
       <TextLayout $hasDescription={hasDescription}>
         <motion.div
-          variants={containerVariants}
-          initial="hidden"
-          animate="visible"
-          exit="exit"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
+          transition={{ duration: 0.3 }}
           style={{
             width: "100%",
             height: "100%",
@@ -82,43 +45,37 @@ export default function WelcomeStepLayout({
             justifyContent: hasDescription ? "space-between" : "flex-start",
           }}
         >
-          <AnimatePresence mode="wait">
-            {(headline || subheadline) && (
-              <motion.div
-                key={`header-${headline}`}
-                variants={itemVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                style={{ pointerEvents: "auto" }}
-              >
-                <Header
-                  headline={headline}
-                  subheadline={subheadline}
-                  legalNotice={legalNotice}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
-          <AnimatePresence mode="wait">
-            {descriptionText && (
-              <motion.div
-                key={`desc-${descriptionTitle || descriptionText.substring(0, 10)}`}
-                variants={itemVariants}
-                initial="hidden"
-                animate="visible"
-                exit="exit"
-                style={{ pointerEvents: "auto" }}
-              >
-                <Description
-                  title={descriptionTitle || ""}
-                  text={descriptionText}
-                  headline={headline}
-                  subheadline={subheadline}
-                />
-              </motion.div>
-            )}
-          </AnimatePresence>
+          {(headline || subheadline) && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{ pointerEvents: "auto" }}
+            >
+              <Header
+                headline={headline}
+                subheadline={subheadline}
+                legalNotice={legalNotice}
+              />
+            </motion.div>
+          )}
+          {descriptionText && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              transition={{ duration: 0.3 }}
+              style={{ pointerEvents: "auto" }}
+            >
+              <Description
+                title={descriptionTitle || ""}
+                text={descriptionText}
+                headline={headline}
+                subheadline={subheadline}
+              />
+            </motion.div>
+          )}
         </motion.div>
       </TextLayout>
 
