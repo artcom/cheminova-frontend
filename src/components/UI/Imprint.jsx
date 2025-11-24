@@ -6,8 +6,8 @@ const Container = styled.div`
   background: #fff;
   box-shadow: 0 4px 24px rgba(0, 0, 0, 0.08);
   color: #222;
-  height: auto;
-  overflow-y: scroll;
+  height: 100%;
+  overflow-y: auto;
 `
 
 const Title = styled.h1`
