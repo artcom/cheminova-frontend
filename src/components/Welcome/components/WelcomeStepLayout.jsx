@@ -1,4 +1,4 @@
-import { motion } from "motion/react"
+import { AnimatePresence, motion } from "motion/react"
 
 import Description from "@ui/Description"
 import Header from "@ui/Header"
@@ -82,31 +82,43 @@ export default function WelcomeStepLayout({
             justifyContent: hasDescription ? "space-between" : "flex-start",
           }}
         >
-          {headline && (
-            <motion.div
-              variants={itemVariants}
-              style={{ pointerEvents: "auto" }}
-            >
-              <Header
-                headline={headline}
-                subheadline={subheadline}
-                legalNotice={legalNotice}
-              />
-            </motion.div>
-          )}
-          {descriptionText && (
-            <motion.div
-              variants={itemVariants}
-              style={{ pointerEvents: "auto" }}
-            >
-              <Description
-                title={descriptionTitle || ""}
-                text={descriptionText}
-                headline={headline}
-                subheadline={subheadline}
-              />
-            </motion.div>
-          )}
+          <AnimatePresence mode="wait">
+            {headline && (
+              <motion.div
+                key={`header-${headline}`}
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                style={{ pointerEvents: "auto" }}
+              >
+                <Header
+                  headline={headline}
+                  subheadline={subheadline}
+                  legalNotice={legalNotice}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
+          <AnimatePresence mode="wait">
+            {descriptionText && (
+              <motion.div
+                key={`desc-${descriptionTitle || descriptionText.substring(0, 10)}`}
+                variants={itemVariants}
+                initial="hidden"
+                animate="visible"
+                exit="exit"
+                style={{ pointerEvents: "auto" }}
+              >
+                <Description
+                  title={descriptionTitle || ""}
+                  text={descriptionText}
+                  headline={headline}
+                  subheadline={subheadline}
+                />
+              </motion.div>
+            )}
+          </AnimatePresence>
         </motion.div>
       </TextLayout>
 
