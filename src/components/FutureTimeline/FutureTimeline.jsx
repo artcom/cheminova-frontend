@@ -3,17 +3,12 @@ import { loadCharacterContext } from "@/utils/loaderHelpers"
 import { useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 
+import Navigation from "../UI/Navigation"
 import {
   DEFAULT_DATE_TIME_LABELS,
   TIMELINE_INDICATOR_BASE_BOTTOM,
 } from "./constants"
-import {
-  ChevronButton,
-  ChevronWrapper,
-  ExitButton,
-  Page,
-  TimelineContainer,
-} from "./styles"
+import { Page, TimelineContainer } from "./styles"
 import { TimelineInfo } from "./TimelineInfo"
 import {
   formatDateTime,
@@ -108,7 +103,14 @@ export default function FutureTimeline() {
     })
   }
 
-  // ...
+  const handlePrev = () => {
+    setRequestedIndex((previous) => {
+      if (previous <= 0) {
+        return 0
+      }
+      return previous - 1
+    })
+  }
 
   const handleGoToEnding = () => {
     if (!characterSlug) {
@@ -123,13 +125,10 @@ export default function FutureTimeline() {
   const showErrorOverlay = isError && totalImages === 0
   const showEmptyOverlay = !isLoading && !isError && totalImages === 0
   const nextDisabled = totalImages === 0 || currentIndex >= totalImages - 1
+  const prevDisabled = currentIndex <= 0
 
   return (
     <Page>
-      <ExitButton type="button" onClick={handleGoToEnding}>
-        Go to ending
-      </ExitButton>
-
       <TimelineContainer>
         <TimelineStack
           visibleCards={visibleCards}
@@ -161,18 +160,16 @@ export default function FutureTimeline() {
         />
       </TimelineContainer>
 
-      <ChevronWrapper>
-        <ChevronButton
-          onClick={handleNext}
-          whileHover={nextDisabled ? undefined : { scale: 1.1 }}
-          whileTap={nextDisabled ? undefined : { scale: 0.95 }}
-          disabled={nextDisabled}
-        >
-          <svg viewBox="0 0 22 12">
-            <polyline points="1,1 11,11 21,1" />
-          </svg>
-        </ChevronButton>
-      </ChevronWrapper>
+      <Navigation
+        mode="select"
+        selectLabel="Go to ending"
+        onPrev={handlePrev}
+        onNext={handleNext}
+        onSelect={handleGoToEnding}
+        prevDisabled={prevDisabled}
+        nextDisabled={nextDisabled}
+        iconColor="#FFF"
+      />
     </Page>
   )
 }
