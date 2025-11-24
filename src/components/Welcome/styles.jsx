@@ -8,7 +8,9 @@ export const Layout = styled.div`
   padding-top: 0;
   padding-bottom: var(--safe-inset-bottom);
   background: ${({ theme, $backgroundImage }) =>
-    `${theme.colors.background.dark} url(${$backgroundImage}) center / cover no-repeat`};
+    $backgroundImage
+      ? `${theme.colors.background.dark} url(${$backgroundImage}) center / cover no-repeat`
+      : theme.colors.background.dark};
   position: relative;
 `
 
@@ -16,12 +18,12 @@ export const TextLayout = styled.div`
   display: flex;
   flex-direction: column;
   width: 100%;
-  max-width: 24.5625rem;
+  max-width: 20rem;
   margin: 0 auto;
   padding: 0 1rem;
   justify-content: ${({ $hasDescription }) =>
     $hasDescription ? "space-between" : "flex-start"};
-  align-items: flex-start;
+  align-items: center;
   flex: 1 0 auto;
   /* Ensure a minimum height to prevent layout shifts during transitions */
   min-height: 50vh;

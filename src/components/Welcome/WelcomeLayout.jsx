@@ -31,7 +31,7 @@ export default function WelcomeLayout() {
     location.pathname === "/" || location.pathname === "/intro"
 
   return (
-    <Layout $backgroundImage={backgroundImage}>
+    <Layout $backgroundImage={showParallax ? null : backgroundImage}>
       <AnimatePresence>
         {showParallax && <ParallaxBackground welcomeIntro={welcomeIntro} />}
       </AnimatePresence>

@@ -83,7 +83,7 @@ export default function WelcomeStepLayout({
           }}
         >
           <AnimatePresence mode="wait">
-            {headline && (
+            {(headline || subheadline) && (
               <motion.div
                 key={`header-${headline}`}
                 variants={itemVariants}

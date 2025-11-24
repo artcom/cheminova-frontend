@@ -25,7 +25,7 @@ const DescriptionTitle = styled.div`
 const DescriptionText = styled.div`
   align-self: stretch;
   color: #fff;
-  text-align: justify;
+  text-align: center;
   font-size: 1rem;
   font-style: normal;
   font-weight: 400;

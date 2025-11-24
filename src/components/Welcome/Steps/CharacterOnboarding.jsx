@@ -13,7 +13,6 @@ export default function CharacterOnboarding() {
 
   return (
     <WelcomeStepLayout
-      headline={characterOverview.title}
       subheadline={characterOverview.siteName}
       descriptionText={characterOverview.onboarding.replace(/<[^>]*>/g, "")}
       navigationProps={{

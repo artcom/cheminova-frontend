@@ -1,6 +1,7 @@
 import { getNextRoute } from "@/characterRoutesConfig"
 import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
+import { sanitizeRichText } from "@/utils/text"
 import { Alignment, Fit } from "@rive-app/react-canvas"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
@@ -170,7 +171,7 @@ export default function Perspective() {
 
   const heading = perspective?.heading || ""
   const description = perspective?.description
-    ? perspective.description.replace(/<[^>]*>/g, "")
+    ? sanitizeRichText(perspective.description, { trim: true })
     : ""
 
   const backgroundImageUrl =

@@ -10,7 +10,6 @@ export default function WelcomeContext() {
 
   return (
     <WelcomeStepLayout
-      headline={welcome.title}
       subheadline={welcome.siteName}
       descriptionTitle={welcome.description}
       descriptionText={welcome.introText.replace(/<[^>]*>/g, "")}

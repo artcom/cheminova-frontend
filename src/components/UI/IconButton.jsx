@@ -2,8 +2,8 @@ import { styled } from "styled-components"
 
 const StyledButton = styled.button`
   all: unset;
-  width: 2.75rem;
-  height: 2.75rem;
+  width: 3.4375rem;
+  height: 3.4375rem;
   flex-shrink: 0;
   display: flex;
   align-items: center;

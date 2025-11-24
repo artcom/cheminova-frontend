@@ -5,8 +5,12 @@ export const sanitizeRichText = (value, options = {}) => {
     return ""
   }
 
-  const sanitized = value.replace(/<[^>]*>/g, "")
-  return trim ? sanitized.trim() : sanitized
+  // Replace HTML tags with a space to prevent words from merging
+  const withoutTags = value.replace(/<[^>]*>/g, " ")
+  // Normalize multiple spaces into one and trim
+  const normalized = withoutTags.replace(/\s+/g, " ")
+
+  return trim ? normalized.trim() : normalized
 }
 
 export const splitIntoParagraphs = (value) => {
