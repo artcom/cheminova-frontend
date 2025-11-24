@@ -30,8 +30,6 @@ const DescriptionText = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
-  white-space: pre-wrap;
-  hyphens: auto;
 `
 
 export default function Description({ title, text }) {
