@@ -91,3 +91,12 @@ export const RadioCircle = styled.div`
   background: ${({ $isSelected }) => ($isSelected ? "#fff" : "transparent")};
   transition: background 0.2s ease;
 `
+
+export const BottomContainer = styled.div`
+  position: absolute;
+  bottom: 3.125rem;
+  z-index: 10;
+  display: flex;
+  justify-content: center;
+  width: 100%;
+`
