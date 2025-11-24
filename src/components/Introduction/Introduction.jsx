@@ -59,7 +59,7 @@ export default function Introduction() {
           <RiveAnimation
             src="/amaraWriting.riv"
             autoplay
-            layout={{ fit: Fit.Cover, alignment: Alignment.BottomRight }}
+            layout={{ fit: Fit.FitHeight, alignment: Alignment.BottomRight }}
           />
         </RiveAnimationContainer>
       ) : (
