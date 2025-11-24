@@ -9,6 +9,7 @@ import { useLoaderData, useNavigate } from "react-router-dom"
 
 import SmallButton from "@ui/SmallButton"
 
+import { PaginationContainer, PaginationDot } from "../PhotoCapture/styles"
 import TaskCarousel from "../PhotoCapture/TaskCarousel"
 import {
   Actions,
@@ -233,6 +234,12 @@ export default function Upload() {
           </PreviewContainer>
         ))}
       </TaskCarousel>
+
+      <PaginationContainer>
+        {validImages.map((_, index) => (
+          <PaginationDot key={index} $isActive={index === currentTaskIndex} />
+        ))}
+      </PaginationContainer>
 
       <QuestionBlock>
         <Question>{getUploadDescription()}</Question>
