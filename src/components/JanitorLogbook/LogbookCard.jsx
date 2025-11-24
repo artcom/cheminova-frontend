@@ -7,6 +7,10 @@ const Wrapper = styled(motion.div)`
   display: flex;
   flex-direction: column;
   transform-origin: top center;
+  cursor: grab;
+  &:active {
+    cursor: grabbing;
+  }
 `
 
 const LatchContainer = styled.div`
@@ -26,23 +30,11 @@ const Latch = styled.div`
   position: relative;
   border: 3px solid #000;
   border-bottom: none;
-
-  /* Optional: Add a small "connector" curve if desired, but user asked for simple non-skewed first */
 `
 
 const CardBody = styled.div`
   background-color: #f0efe9;
-  border-radius: 0 24px 24px 24px;
-  border-top-left-radius: 24px;
-  /* If the latch is on the left, we might want the top-left radius to be different or handled by the latch visual flow. 
-     For a simple "tab" look, we can keep the card rounded. 
-     But to make it look continuous, the latch usually sits on a straight edge or handles the corner.
-     Let's assume the latch is an extension of the top edge. */
   border-radius: 24px;
-  /* We need to flatten the part under the latch if we want it perfect, 
-     but overlapping usually works if Latch is wide enough. 
-     Let's stick to the requested "border goes around" look. */
-
   border: 3px solid #000;
   padding: 24px;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
@@ -60,7 +52,7 @@ const ImageContainer = styled.div`
   border-radius: 16px;
   overflow: hidden;
   background-color: #ddd;
-  border: 3px solid #000; /* Optional: adds to the "bordered" aesthetic */
+  border: 3px solid #000;
 
   img {
     width: 100%;
@@ -101,16 +93,31 @@ const Description = styled.p`
   margin-top: 8px;
 `
 
-export function LogbookCard({ data, style, drag, onDragEnd, ...props }) {
+const variants = {
+  top: { zIndex: 3, y: 0, scale: 1, opacity: 1, x: 0, rotate: 0 },
+  middle: { zIndex: 2, y: 15, scale: 0.95, opacity: 1, x: 0, rotate: 0 },
+  bottom: { zIndex: 1, y: 30, scale: 0.9, opacity: 1, x: 0, rotate: 0 },
+  back: { zIndex: 0, y: 45, scale: 0.85, opacity: 0, x: 0, rotate: 0 },
+}
+
+export function LogbookCard({ data, index, onSwipe }) {
+  const isTop = index === 0
+  const variant = index === 0 ? "top" : index === 1 ? "middle" : "bottom"
+
   return (
     <Wrapper
-      style={style}
-      drag={drag}
-      dragConstraints={{ left: -1000, right: 1000, top: 0, bottom: 0 }}
-      dragElastic={0.1}
-      onDragEnd={onDragEnd}
-      whileDrag={{ scale: 1.05, cursor: "grabbing" }}
-      {...props}
+      variants={variants}
+      initial="back"
+      animate={variant}
+      exit="back"
+      drag={isTop ? "x" : false}
+      dragSnapToOrigin
+      onDragEnd={(e, info) => {
+        if (Math.abs(info.offset.x) > 100) {
+          onSwipe()
+        }
+      }}
+      transition={{ type: "spring", stiffness: 200, damping: 20 }}
     >
       <LatchContainer>
         <Latch />

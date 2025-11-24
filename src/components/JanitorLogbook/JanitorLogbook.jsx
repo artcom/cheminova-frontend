@@ -3,6 +3,7 @@ import { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
 
+import Navigation from "../UI/Navigation"
 import { LogbookStack } from "./LogbookStack"
 import { useJanitorLogbookData } from "./useJanitorLogbookData"
 
@@ -32,71 +33,15 @@ const MainTitle = styled.h1`
   font-weight: 600;
   line-height: 1.2;
   margin: 0;
+  max-width: 80%;
+  text-align: left;
 `
 
-const ExitButton = styled.button`
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-family: inherit;
-  font-size: 14px;
-  cursor: pointer;
-  z-index: 100;
-  transition: background 0.2s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
-`
-
-const ChevronWrapper = styled.div`
-  position: fixed;
-  bottom: 12rem;
-  left: 50%;
-  transform: translateX(-50%);
-  z-index: 100;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-`
-
-const ChevronButton = styled.button`
-  width: 44px;
-  height: 44px;
-  border: 2px solid white;
-  border-radius: 30px;
-  background: transparent;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  z-index: 100;
-  transition: all 0.2s ease;
-
-  &:hover {
-    background: rgba(255, 255, 255, 0.1);
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-    &:hover {
-      background: transparent;
-    }
-  }
-
-  svg {
-    width: 22px;
-    height: 12px;
-    stroke: white;
-    stroke-width: 2;
-    fill: none;
-  }
+const Counter = styled.div`
+  font-family: "Bricolage Grotesque Variable", sans-serif;
+  font-size: 16px;
+  color: rgba(255, 255, 255, 0.6);
+  margin-top: 8px;
 `
 
 export default function JanitorLogbook() {
@@ -112,24 +57,25 @@ export default function JanitorLogbook() {
     navigate(`/characters/${characterId}/${nextRoute}`)
   }
 
+  const handlePrev = () => {
+    setCurrentIndex((prev) => (prev - 1 + data.length) % data.length)
+  }
+
   const handleNext = () => {
-    if (currentIndex < data.length) {
-      setCurrentIndex((prev) => prev + 1)
-    }
+    setCurrentIndex((prev) => (prev + 1) % data.length)
   }
 
   if (isLoading) {
     return <PageContainer>Loading...</PageContainer>
   }
 
-  const isEnd = currentIndex >= data.length
-
   return (
     <PageContainer>
-      <ExitButton onClick={handleExit}>Create Entry</ExitButton>
-
       <TitleSection>
         <MainTitle>Someone before you noticed a similar detail.</MainTitle>
+        <Counter>
+          {currentIndex + 1} / {data.length}
+        </Counter>
       </TitleSection>
 
       <LogbookStack
@@ -138,13 +84,16 @@ export default function JanitorLogbook() {
         onIndexChange={setCurrentIndex}
       />
 
-      <ChevronWrapper>
-        <ChevronButton onClick={handleNext} disabled={isEnd}>
-          <svg viewBox="0 0 22 12">
-            <polyline points="1,1 11,11 21,1" />
-          </svg>
-        </ChevronButton>
-      </ChevronWrapper>
+      <Navigation
+        mode="select"
+        selectLabel="Create Entry"
+        onPrev={handlePrev}
+        onNext={handleNext}
+        onSelect={handleExit}
+        prevDisabled={false}
+        nextDisabled={false}
+        iconColor="#FFF"
+      />
     </PageContainer>
   )
 }
