@@ -271,11 +271,11 @@ export default function Upload() {
               </SmallButton>
             ) : (
               <>
-                <SmallButton onClick={handleUpload} disabled={isUploading}>
-                  {getButtonText()}
-                </SmallButton>
                 <SmallButton onClick={goToGallery} disabled={isUploading}>
                   {isUploading ? t("upload.buttons.pleaseWait") : noButtonText}
+                </SmallButton>
+                <SmallButton onClick={handleUpload} disabled={isUploading}>
+                  {getButtonText()}
                 </SmallButton>
               </>
             )
