@@ -2,6 +2,8 @@ import { theme } from "@providers/Theme/theme"
 import { motion } from "motion/react"
 import { styled } from "styled-components"
 
+import Button from "@ui/Button"
+
 import {
   TIMELINE_GROUP_END_RIGHT,
   TIMELINE_INDICATOR_EXTRA,
@@ -222,22 +224,14 @@ export const ChevronButton = styled(motion.button)`
   }
 `
 
-export const ExitButton = styled.button`
-  position: fixed;
-  top: 20px;
-  right: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-family: inherit;
-  font-size: 14px;
-  cursor: pointer;
-  z-index: 100;
-  transition: background 0.2s ease;
+// ... existing imports ...
 
-  &:hover {
-    background: rgba(255, 255, 255, 0.15);
-  }
+export const ExitButton = styled(Button)`
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  z-index: 100;
+  width: 7rem;
+  height: 2.8rem;
+  font-size: 1rem;
 `

@@ -10,6 +10,7 @@ import { useTranslation } from "react-i18next"
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
+import Button from "@ui/Button"
 import Navigation from "@ui/Navigation"
 
 import PersonalImage1 from "./assets/1.jpg"
@@ -44,19 +45,16 @@ const Stage = styled.div`
   overflow: hidden;
 `
 
-const ExitButton = styled.button`
-  position: absolute;
-  top: 20px;
+// ... existing imports ...
+
+const ExitButton = styled(Button)`
+  position: fixed;
+  bottom: 20px;
   right: 20px;
-  background: rgba(0, 0, 0, 0.7);
-  color: white;
-  border: 1px solid #333;
-  padding: 10px 15px;
-  border-radius: 5px;
-  font-family: inherit;
-  font-size: 14px;
-  cursor: pointer;
   z-index: 50;
+  width: 7rem;
+  height: 2.8rem;
+  font-size: 1rem;
 `
 
 const defaultPersonalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
