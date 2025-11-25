@@ -1,29 +1,19 @@
-import { getNextRoute } from "@/characterRoutesConfig"
-import useCapturedImages from "@/hooks/useCapturedImages"
 import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCharacterSection } from "@/utils/loaderHelpers"
 import appTheme from "@providers/Theme/theme"
 import { Canvas } from "@react-three/fiber"
 import { AnimatePresence, motion } from "motion/react"
-import { useMemo, useState } from "react"
-import { useTranslation } from "react-i18next"
-import { useLoaderData, useNavigate } from "react-router-dom"
+import { Suspense } from "react"
 import { styled } from "styled-components"
 
 import Navigation from "@ui/Navigation"
 
-import PersonalImage1 from "./assets/1.jpg"
-import PersonalImage2 from "./assets/2.jpg"
-import PersonalImage3 from "./assets/3.jpg"
 import CameraController from "./components/CameraController"
 import GalleryContent from "./components/GalleryContent"
 import GalleryLoader from "./components/GalleryLoader"
 import StackBump from "./components/StackBump"
-import { CAMERA_DEFAULT_Z, DEBUG_GALLERY } from "./config"
-import { buildGalleryImagePool, getPersistedPersonalImages } from "./helpers"
-import { useGalleryImages } from "./useGalleryImages"
-import useImagePreloader from "./useImagePreloader"
-import useResponsiveTilesPerRow from "./useResponsiveTilesPerRow"
+import { CAMERA_DEFAULT_Z } from "./config"
+import { useGalleryLogic } from "./useGalleryLogic"
 
 const Page = styled.div`
   background-color: ${appTheme.colors.background.dark};
@@ -44,47 +34,34 @@ const Stage = styled.div`
   overflow: hidden;
 `
 
-const defaultPersonalImages = [PersonalImage1, PersonalImage2, PersonalImage3]
-
 export default function Gallery() {
-  const { t } = useTranslation()
-  const { capturedImages = [] } = useCapturedImages()
-  const tilesPerRow = useResponsiveTilesPerRow()
-  const [allAnimsDone, setAllAnimsDone] = useState(false)
-  const [detailMode, setDetailMode] = useState(false)
-  const [activeIndex, setActiveIndex] = useState(0)
-  const [stackSize, setStackSize] = useState(0)
-  const [switchInfo, setSwitchInfo] = useState({ dir: 0, startMs: 0 })
-  const [detailStackScale, setDetailStackScale] = useState(null)
-  const navigate = useNavigate()
-  const { characterSlug, gallery } = useLoaderData()
+  const {
+    allAnimsDone,
+    setAllAnimsDone,
+    detailMode,
+    setDetailMode,
+    activeIndex,
+    setActiveIndex,
+    switchInfo,
+    detailStackScale,
+    setDetailStackScale,
+    tilesPerRow,
+    galleryHeading,
+    exitButtonText,
+    personalImages,
+    imagePoolData,
+    isLoading,
+    loadedCount,
+    totalImages,
+    handleExit,
+    handlePrev,
+    handleNext,
+    handleStackSizeChange,
+    handleStackBumpEnd,
+  } = useGalleryLogic()
 
-  const { data: galleryImages = [], isLoading: galleryLoading } =
-    useGalleryImages()
-
-  const galleryHeading = gallery?.heading || t("gallery.title")
-  const exitButtonText = gallery?.exitButtonText || t("gallery.exitGallery")
-
-  const personalImages = useMemo(
-    () => getPersistedPersonalImages(defaultPersonalImages, capturedImages),
-    [capturedImages],
-  )
-
-  const imagePoolData = useMemo(
-    () => buildGalleryImagePool(galleryImages),
-    [galleryImages],
-  )
-
-  const allImages = useMemo(
-    () => [...imagePoolData.combined, ...personalImages],
-    [imagePoolData.combined, personalImages],
-  )
-
-  const { isLoading, loadedCount, totalImages } = useImagePreloader(allImages)
-
-  const isFullyLoading = isLoading || galleryLoading
-
-  if (isFullyLoading) {
+  // We show the loader if we are fetching data OR preloading images
+  if (isLoading) {
     return (
       <Page>
         <Title>{galleryHeading}</Title>
@@ -105,38 +82,27 @@ export default function Gallery() {
           style={{ touchAction: "none" }}
           gl={{ antialias: true, alpha: true }}
         >
-          <CameraController detailMode={detailMode} />
+          <Suspense fallback={null}>
+            <CameraController detailMode={detailMode} />
 
-          <StackBump
-            switchInfo={switchInfo}
-            onEnd={() => {
-              DEBUG_GALLERY && console.debug("[StackBump] end")
-              setSwitchInfo((prev) =>
-                prev.dir ? { dir: 0, startMs: 0 } : prev,
-              )
-            }}
-          >
-            <GalleryContent
-              imagePool={imagePoolData.combined}
-              targetTilesPerRow={tilesPerRow}
-              personalImages={personalImages}
-              onAllAnimationsDone={() => setAllAnimsDone(true)}
-              detailMode={detailMode}
-              setDetailMode={setDetailMode}
-              canEnterDetail={allAnimsDone && !detailMode}
-              activeIndex={activeIndex}
-              setActiveIndex={setActiveIndex}
-              detailStackScale={detailStackScale}
-              setDetailStackScale={setDetailStackScale}
-              onStackSizeChange={(n) => {
-                n !== stackSize &&
-                  DEBUG_GALLERY &&
-                  console.debug("[Gallery] stack size", n)
-                setStackSize(n)
-              }}
-              switchInfo={switchInfo}
-            />
-          </StackBump>
+            <StackBump switchInfo={switchInfo} onEnd={handleStackBumpEnd}>
+              <GalleryContent
+                imagePool={imagePoolData.combined}
+                targetTilesPerRow={tilesPerRow}
+                personalImages={personalImages}
+                onAllAnimationsDone={() => setAllAnimsDone(true)}
+                detailMode={detailMode}
+                setDetailMode={setDetailMode}
+                canEnterDetail={allAnimsDone && !detailMode}
+                activeIndex={activeIndex}
+                setActiveIndex={setActiveIndex}
+                detailStackScale={detailStackScale}
+                setDetailStackScale={setDetailStackScale}
+                onStackSizeChange={handleStackSizeChange}
+                switchInfo={switchInfo}
+              />
+            </StackBump>
+          </Suspense>
         </Canvas>
         <AnimatePresence>
           {detailMode && (
@@ -157,25 +123,9 @@ export default function Gallery() {
                 mode="select"
                 position="bottom"
                 selectLabel={exitButtonText}
-                onSelect={() => {
-                  DEBUG_GALLERY && console.debug("[Gallery] exit detail")
-                  const nextRoute = getNextRoute(characterSlug, "gallery")
-                  navigate(`/characters/${characterSlug}/${nextRoute}`)
-                }}
-                onPrev={() => {
-                  if (stackSize <= 0) return
-                  DEBUG_GALLERY &&
-                    console.debug("[Gallery] prev", { stackSize, activeIndex })
-                  setSwitchInfo({ dir: -1, startMs: performance.now() })
-                  setActiveIndex((i) => (i - 1 + stackSize) % stackSize)
-                }}
-                onNext={() => {
-                  if (stackSize <= 0) return
-                  DEBUG_GALLERY &&
-                    console.debug("[Gallery] next", { stackSize, activeIndex })
-                  setSwitchInfo({ dir: 1, startMs: performance.now() })
-                  setActiveIndex((i) => (i + 1) % stackSize)
-                }}
+                onSelect={handleExit}
+                onPrev={handlePrev}
+                onNext={handleNext}
               />
             </motion.div>
           )}

@@ -1,4 +1,3 @@
-// Moved from src/hooks/useImagePreloader.js
 import { useEffect, useMemo, useRef, useState } from "react"
 
 const useImagePreloader = (imageUrls = [], shouldPreload = true) => {
@@ -32,38 +31,45 @@ const useImagePreloader = (imageUrls = [], shouldPreload = true) => {
     const imagesMap = imageElements.current
     const preloadedSet = preloadedImages.current
 
-    const preloadImages = () => {
-      normalizedUrls.forEach((url) => {
-        if (preloadedSet.has(url) || imagesMap.has(url)) {
-          return
+    // Check which ones are already done (e.g. from a previous mount)
+    let initialCount = 0
+    normalizedUrls.forEach((url) => {
+      if (preloadedSet.has(url)) initialCount++
+    })
+    setPreloadedCount(initialCount)
+
+    normalizedUrls.forEach((url) => {
+      if (preloadedSet.has(url) || imagesMap.has(url)) {
+        return
+      }
+
+      const img = new Image()
+
+      const handleLoad = () => {
+        if (!preloadedSet.has(url)) {
+          preloadedSet.add(url)
+          setPreloadedCount((prev) => prev + 1)
         }
+        imagesMap.delete(url)
+      }
 
-        const img = new Image()
-
-        const handleLoad = () => {
-          if (!preloadedSet.has(url)) {
-            preloadedSet.add(url)
-            setPreloadedCount(preloadedSet.size)
-          }
-          imagesMap.delete(url)
+      const handleError = () => {
+        // Even on error, we count it as "processed" so we don't hang
+        if (!preloadedSet.has(url)) {
+          preloadedSet.add(url)
+          setPreloadedCount((prev) => prev + 1)
         }
+        imagesMap.delete(url)
+      }
 
-        const handleError = () => {
-          imagesMap.delete(url)
-        }
+      img.addEventListener("load", handleLoad)
+      img.addEventListener("error", handleError)
 
-        img.addEventListener("load", handleLoad)
-        img.addEventListener("error", handleError)
-
-        imagesMap.set(url, { img, handleLoad, handleError })
-        img.src = url
-      })
-    }
-
-    const timeoutId = setTimeout(preloadImages, 50)
+      imagesMap.set(url, { img, handleLoad, handleError })
+      img.src = url
+    })
 
     return () => {
-      clearTimeout(timeoutId)
       imagesMap.forEach(({ img, handleLoad, handleError }) => {
         img.removeEventListener("load", handleLoad)
         img.removeEventListener("error", handleError)
@@ -72,34 +78,17 @@ const useImagePreloader = (imageUrls = [], shouldPreload = true) => {
     }
   }, [normalizedUrls, shouldPreload])
 
-  useEffect(() => {
-    const allowed = new Set(normalizedUrls)
-    const preloadedSet = preloadedImages.current
-    let removed = false
-
-    preloadedSet.forEach((url) => {
-      if (!allowed.has(url)) {
-        preloadedSet.delete(url)
-        removed = true
-      }
-    })
-
-    if (removed) {
-      setPreloadedCount(preloadedSet.size)
-    }
-  }, [normalizedUrls])
-
+  // Cleanup on unmount
   useEffect(() => {
     const mapSnapshot = imageElements.current
-    const preloadedSnapshot = preloadedImages.current
-
+    // We don't clear preloadedImages ref on unmount so we remember what we loaded
+    // if the user navigates back and forth.
     return () => {
       mapSnapshot.forEach(({ img, handleLoad, handleError }) => {
         img.removeEventListener("load", handleLoad)
         img.removeEventListener("error", handleError)
       })
       mapSnapshot.clear()
-      preloadedSnapshot.clear()
     }
   }, [])
 
