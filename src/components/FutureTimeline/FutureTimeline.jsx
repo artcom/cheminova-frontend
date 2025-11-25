@@ -1,7 +1,7 @@
 import { getNextRoute } from "@/characterRoutesConfig"
 import { loadCharacterContext } from "@/utils/loaderHelpers"
 import { useState } from "react"
-import { useLoaderData, useNavigate } from "react-router-dom"
+import { useLoaderData, useLocation, useNavigate } from "react-router-dom"
 
 import Navigation from "../UI/Navigation"
 import {
@@ -29,6 +29,8 @@ export default function FutureTimeline() {
   const { characterSlug } = useLoaderData()
   const [requestedIndex, setRequestedIndex] = useState(0)
   const navigate = useNavigate()
+  const location = useLocation()
+  const newEntry = location.state?.newEntry
 
   const {
     locale,
@@ -42,7 +44,7 @@ export default function FutureTimeline() {
     timelineGroups,
     timelineIndexMap,
     totalGroups,
-  } = useTimelineData(requestedIndex)
+  } = useTimelineData(requestedIndex, newEntry)
 
   const currentTimelinePosition =
     totalGroups > 0 && currentIndex < timelineIndexMap.length

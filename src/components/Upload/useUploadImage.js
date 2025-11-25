@@ -16,6 +16,11 @@ export const useUploadImage = () => {
     onSuccess: () => {
       const slug = lastUploadedCharacterSlugRef.current
       queryClient.invalidateQueries({ queryKey: ["images", slug] })
+      if (slug === "future") {
+        queryClient.invalidateQueries({
+          queryKey: ["future-timeline", "images"],
+        })
+      }
       queryClient.invalidateQueries({ queryKey: ["gallery-images"] })
       queryClient.invalidateQueries({ queryKey: ["recent-images"] })
     },

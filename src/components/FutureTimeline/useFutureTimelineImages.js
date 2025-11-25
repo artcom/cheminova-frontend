@@ -19,14 +19,14 @@ const normalizeFutureTimelineImages = (data) => {
       const timestampB = Date.parse(b.created_at ?? "")
 
       if (!Number.isNaN(timestampA) && !Number.isNaN(timestampB)) {
-        return timestampA - timestampB
+        return timestampB - timestampA
       }
 
       if (!Number.isNaN(timestampA)) return -1
       if (!Number.isNaN(timestampB)) return 1
 
       if (typeof a.id === "number" && typeof b.id === "number") {
-        return a.id - b.id
+        return b.id - a.id
       }
 
       return String(a.title ?? "").localeCompare(String(b.title ?? ""))

@@ -101,7 +101,22 @@ export default function LogbookCreate() {
 
   const handleContinue = () => {
     const nextRoute = getNextRoute(characterSlug, "logbook-create")
-    navigate(`/characters/${characterSlug}/${nextRoute}`)
+
+    let state = null
+    if (isSuccess && image) {
+      state = {
+        newEntry: {
+          file: image,
+          title: taskTitle,
+          uploaded_text: description,
+          uploaded_user_name: userName,
+          created_at: new Date().toISOString(),
+          id: Date.now(),
+        },
+      }
+    }
+
+    navigate(`/characters/${characterSlug}/${nextRoute}`, { state })
   }
 
   if (!image) {

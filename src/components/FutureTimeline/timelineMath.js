@@ -107,7 +107,7 @@ export const sortTimelineImages = (images = []) =>
     const timeB = Date.parse(b?.created_at ?? "")
 
     if (!Number.isNaN(timeA) && !Number.isNaN(timeB)) {
-      return timeA - timeB
+      return timeB - timeA
     }
 
     if (!Number.isNaN(timeA)) return -1
@@ -117,7 +117,7 @@ export const sortTimelineImages = (images = []) =>
     const idB = typeof b?.id === "number" ? b.id : Number.MAX_SAFE_INTEGER
 
     if (idA !== idB) {
-      return idA - idB
+      return idB - idA
     }
 
     const titleA = a?.title ?? ""
