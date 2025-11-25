@@ -91,6 +91,10 @@ export default function Upload() {
   })
 
   const goToGallery = () => {
+    if (characterSlug === "future") {
+      navigate(`/characters/${characterSlug}/timeline`)
+      return
+    }
     const nextRoute = getNextRoute(characterSlug, "upload")
     navigate(`/characters/${characterSlug}/${nextRoute}`)
   }
