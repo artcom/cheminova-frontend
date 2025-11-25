@@ -84,7 +84,7 @@ export const InfoSection = styled.div`
   gap: 16px;
   text-align: left;
   color: white;
-  margin: auto 0 5rem 20px;
+  margin: auto 0 8rem 20px;
   padding-right: 20px;
 `
 
@@ -120,7 +120,7 @@ export const DateTime = styled.div`
 export const Timeline = styled.div`
   position: fixed;
   right: 5px;
-  bottom: 5rem;
+  bottom: 8rem;
   width: ${TIMELINE_WIDTH}px;
   pointer-events: none;
   --timeline-height: 320px;
