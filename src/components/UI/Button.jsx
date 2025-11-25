@@ -2,7 +2,8 @@ import { styled } from "styled-components"
 
 const StyledButton = styled.button`
   all: unset;
-  width: 8.875rem;
+  min-width: 8.875rem;
+  padding: 0 1rem;
   height: 3.4375rem;
   border-radius: 2.75rem;
   border: 2px solid #fff;
@@ -12,7 +13,7 @@ const StyledButton = styled.button`
   justify-content: center;
   color: #fff;
   text-align: center;
-  font-size: 1.25rem;
+  font-size: 1.125rem;
   font-style: normal;
   font-weight: 700;
   line-height: normal;

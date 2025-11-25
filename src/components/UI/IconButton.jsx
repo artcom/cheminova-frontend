@@ -136,6 +136,35 @@ const ICON_VARIANTS = {
     ),
     label: "Arrow right",
   },
+
+  trash: {
+    svg: (color) => (
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="55"
+        height="55"
+        viewBox="0 0 55 55"
+        fill="none"
+      >
+        <rect
+          x="1"
+          y="1"
+          width="53"
+          height="53"
+          rx="26.5"
+          stroke={color ? color : "black"}
+          strokeWidth="2"
+        />
+        <path
+          d="M19 19L36 36M36 19L19 36"
+          stroke={color ? color : "black"}
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+    ),
+    label: "Trash",
+  },
 }
 
 export default function IconButton({

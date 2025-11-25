@@ -105,14 +105,22 @@ export default function usePhotoTasks(options = {}) {
     [addImageForCurrentTask, compressImageFile],
   )
 
-  const retake = useCallback((taskIndex) => {
-    setTaskImages((prev) => {
-      const next = { ...prev }
-      delete next[taskIndex]
-      return next
-    })
-    setCurrentTaskIndex(taskIndex)
-  }, [])
+  const retake = useCallback(
+    (taskIndex) => {
+      setTaskImages((prev) => {
+        const next = { ...prev }
+        delete next[taskIndex]
+        return next
+      })
+      setCurrentTaskIndex(taskIndex)
+
+      // Notify parent component to clear the image from persistent storage
+      if (onImageCaptured) {
+        onImageCaptured(null, taskIndex)
+      }
+    },
+    [onImageCaptured],
+  )
 
   // Get all images as an array for upload
   const getAllImages = useCallback(() => {

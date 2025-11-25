@@ -24,6 +24,7 @@ export default function TaskCards({
   handleOpenCamera,
   handleOpenGallery,
   taskMetadata,
+  onDelete,
 }) {
   const { isAndroid } = useDevicePlatform()
 
@@ -65,6 +66,17 @@ export default function TaskCards({
                 onTouchMove={(event) => event.stopPropagation()}
                 onTouchEnd={(event) => event.stopPropagation()}
               >
+                {isActive && taskImages[index] && (
+                  <IconButton
+                    variant="trash"
+                    color={
+                      characterSlug === CHARACTER_SLUG_FUTURE
+                        ? "white"
+                        : "black"
+                    }
+                    onClick={() => onDelete(index)}
+                  />
+                )}
                 <IconButton
                   variant="camera"
                   color={

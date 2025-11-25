@@ -31,6 +31,7 @@ export default function PhotoCapture() {
     currentTaskIndex,
     setCurrentTaskIndex,
     handleFileObject,
+    retake,
   } = usePhotoTasks({
     tasks: tasksForHook,
     onImageCaptured: (dataUrl, taskIndex) => {
@@ -77,11 +78,13 @@ export default function PhotoCapture() {
           handleOpenCamera={handleOpenCamera}
           handleOpenGallery={handleOpenGallery}
           taskMetadata={taskMetadata}
+          onDelete={retake}
         />
         <FooterContainer
           taskMetadata={taskMetadata}
           currentTaskIndex={currentTaskIndex}
           setCurrentTaskIndex={setCurrentTaskIndex}
+          hasImages={Object.keys(taskImages).length > 0}
         />
       </PhotoCaptureContainer>
     </>

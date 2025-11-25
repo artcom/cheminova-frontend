@@ -48,7 +48,7 @@ export const TaskCard = styled.div`
   aspect-ratio: 1;
   display: flex;
   flex-direction: column;
-  padding: 1.75rem 1.625rem;
+  padding: 2rem;
   align-items: center;
   justify-content: center;
   background-color: ${({ $characterId }) =>
@@ -87,15 +87,16 @@ export const TaskContent = styled.div`
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 1rem;
+  gap: 1.5rem;
   width: 100%;
+  height: 100%;
   position: relative;
   color: ${({ $characterId }) =>
     characterStyles[$characterId]?.textColor || "#000"};
 `
 
 export const TaskImage = styled.img`
-  width: 85%;
+  width: 75%;
   height: auto;
   aspect-ratio: 1;
   border-radius: 1rem;
@@ -125,12 +126,13 @@ export const CameraButtonContainer = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  margin-top: 1rem;
+  margin-top: 0;
   min-width: 3.5rem;
   min-height: 3.5rem;
   padding: 0.5rem;
   border-radius: 999px;
   touch-action: manipulation;
+  gap: 1rem;
 `
 
 export const Footer = styled.div`

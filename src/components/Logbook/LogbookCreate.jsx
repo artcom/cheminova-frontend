@@ -109,7 +109,9 @@ export default function LogbookCreate() {
       <Container>
         <Header>No image selected</Header>
         <Footer>
-          <CheckButton onClick={() => navigate(-1)}>Go Back</CheckButton>
+          <CheckButton onClick={handleContinue}>
+            Proceed without photos
+          </CheckButton>
         </Footer>
       </Container>
     )

@@ -8,6 +8,7 @@ export default function FooterContainer({
   taskMetadata,
   currentTaskIndex,
   setCurrentTaskIndex,
+  hasImages,
 }) {
   const { characterSlug } = useLoaderData()
   const navigate = useNavigate()
@@ -40,7 +41,7 @@ export default function FooterContainer({
       </PaginationContainer>
       <Navigation
         mode="select"
-        selectLabel="Continue"
+        selectLabel={hasImages ? "Continue" : "Proceed without photos"}
         onPrev={handlePrev}
         onNext={handleNext}
         onSelect={handleSelect}

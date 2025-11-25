@@ -1,4 +1,5 @@
 import { getNextRoute } from "@/characterRoutesConfig"
+import useCapturedImages from "@/hooks/useCapturedImages"
 import { useState } from "react"
 import { useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
@@ -49,12 +50,20 @@ export default function JanitorLogbook() {
   const navigate = useNavigate()
   const { characterId } = useParams()
   const [currentIndex, setCurrentIndex] = useState(0)
+  const { capturedImages } = useCapturedImages()
 
-  // ...
+  // Check if any photos were taken
+  const hasPhotos = capturedImages && capturedImages.some((img) => img)
 
   const handleExit = () => {
-    const nextRoute = getNextRoute(characterId, "logbook")
-    navigate(`/characters/${characterId}/${nextRoute}`)
+    if (!hasPhotos) {
+      // No photos taken, go directly to ending
+      navigate(`/characters/${characterId}/ending`)
+    } else {
+      // Photos exist, proceed with normal flow (logbook-create)
+      const nextRoute = getNextRoute(characterId, "logbook")
+      navigate(`/characters/${characterId}/${nextRoute}`)
+    }
   }
 
   const handlePrev = () => {
@@ -86,7 +95,7 @@ export default function JanitorLogbook() {
 
       <Navigation
         mode="select"
-        selectLabel="Create Entry"
+        selectLabel={hasPhotos ? "Create Entry" : "Go to Ending"}
         onPrev={handlePrev}
         onNext={handleNext}
         onSelect={handleExit}
