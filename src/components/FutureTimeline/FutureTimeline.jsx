@@ -76,7 +76,7 @@ export default function FutureTimeline() {
     : DEFAULT_DATE_TIME_LABELS
 
   const infoTitle = currentImage
-    ? getImageTitle(currentImage)
+    ? currentImage.uploaded_text || getImageTitle(currentImage)
     : isError
       ? "Unable to load timeline"
       : isLoading
@@ -84,7 +84,7 @@ export default function FutureTimeline() {
         : "No timeline entries yet"
 
   const infoDescriptionLines = currentImage
-    ? [dateLabel, timeLabel].filter(Boolean)
+    ? [currentImage.uploaded_user_name, dateLabel, timeLabel].filter(Boolean)
     : isError
       ? ["Please try again later."]
       : isLoading

@@ -20,6 +20,8 @@ export function useJanitorLogbookData() {
         id: item.id,
         image: item.file, // Assuming 'file' is the URL or path
         title: item.title || "Untitled Entry",
+        uploaded_text: item.uploaded_text,
+        uploaded_user_name: item.uploaded_user_name,
         date: dateObj.toLocaleDateString(locale, {
           month: "long",
           day: "numeric",

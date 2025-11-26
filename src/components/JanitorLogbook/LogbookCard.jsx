@@ -86,13 +86,6 @@ const Meta = styled.div`
   margin-top: 4px;
 `
 
-const Description = styled.p`
-  font-size: 16px;
-  line-height: 1.4;
-  margin: 0;
-  margin-top: 8px;
-`
-
 const variants = {
   top: { zIndex: 3, y: 0, scale: 1, opacity: 1, x: 0, rotate: 0 },
   middle: { zIndex: 2, y: 15, scale: 0.95, opacity: 1, x: 0, rotate: 0 },
@@ -127,11 +120,11 @@ export function LogbookCard({ data, index, onSwipe }) {
           <img src={data.image} alt={data.title} />
         </ImageContainer>
         <Content>
-          <Title>{data.title}</Title>
+          <Title>{data.uploaded_text || data.title}</Title>
           <Meta>
+            {data.uploaded_user_name && <span>{data.uploaded_user_name}</span>}
             <span>{data.date}</span>
           </Meta>
-          <Description>{data.description}</Description>
         </Content>
       </CardBody>
     </Wrapper>
