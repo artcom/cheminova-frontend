@@ -2,7 +2,7 @@ import { extractFromContentTree } from "@/utils/cmsHelpers"
 import { loadCmsContent } from "@/utils/loaderHelpers"
 import { preloadImages } from "@/utils/preloadImages"
 import { AnimatePresence, motion } from "motion/react"
-import { Outlet, useLoaderData, useLocation } from "react-router-dom"
+import { useLoaderData, useLocation, useOutlet } from "react-router-dom"
 
 import Vignette from "@ui/Vignette"
 
@@ -13,6 +13,7 @@ export default function WelcomeLayout() {
   const data = useLoaderData()
   const { welcomeIntro, welcome, characterOverview } = data
   const location = useLocation()
+  const outlet = useOutlet(data)
 
   // Determine background image based on current path
   let backgroundImage = welcomeIntro?.backgroundImage?.file
@@ -50,7 +51,7 @@ export default function WelcomeLayout() {
             flexDirection: "column",
           }}
         >
-          <Outlet context={data} />
+          {outlet}
         </motion.div>
       </AnimatePresence>
       <Vignette />
