@@ -48,6 +48,7 @@ export default function FooterContainer({
         prevDisabled={currentTaskIndex === 0}
         nextDisabled={currentTaskIndex === taskMetadata.length - 1}
         iconColor="#FFF"
+        buttonStyle={{ fontSize: "0.875rem" }}
       />
     </Footer>
   )

@@ -290,7 +290,10 @@ export default function Upload() {
                   defaultValue: "Go to photo capture",
                 })}
               </SmallButton>
-              <SmallButton onClick={goToGallery}>
+              <SmallButton
+                onClick={goToGallery}
+                style={{ fontSize: "0.875rem" }}
+              >
                 {t("upload.buttons.proceedWithoutPhotos", {
                   defaultValue: "Proceed without photos",
                 })}

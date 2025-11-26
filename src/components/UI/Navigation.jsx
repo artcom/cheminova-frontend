@@ -95,6 +95,7 @@ const Navigation = forwardRef(function Navigation(
     className,
     prevDisabled,
     nextDisabled,
+    buttonStyle,
     ...rest
   },
   ref,
@@ -142,11 +143,18 @@ const Navigation = forwardRef(function Navigation(
           color={iconColor}
         />
         {selectHref ? (
-          <StyledLink to={selectHref} prefetch="render" onClick={onSelect}>
+          <StyledLink
+            to={selectHref}
+            prefetch="render"
+            onClick={onSelect}
+            style={buttonStyle}
+          >
             {label}
           </StyledLink>
         ) : (
-          <Button onClick={onSelect}>{label}</Button>
+          <Button onClick={onSelect} style={buttonStyle}>
+            {label}
+          </Button>
         )}
         <IconButton
           variant="arrowRight"
