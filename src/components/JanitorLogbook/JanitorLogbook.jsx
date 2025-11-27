@@ -25,6 +25,7 @@ const TitleSection = styled.div`
   margin-bottom: 0.75rem;
   text-align: left;
   width: 100%;
+  max-width: min(16rem, 100%);
 `
 
 const MainTitle = styled.h1`

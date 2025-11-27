@@ -99,7 +99,7 @@ export const InfoDivider = styled.div`
 
 export const Title = styled.h1`
   font-family: "Bricolage Grotesque", sans-serif;
-  font-size: 24px;
+  font-size: 1.2rem;
   font-weight: 700;
   margin: 0 0 8px 0;
   line-height: normal;
@@ -107,7 +107,7 @@ export const Title = styled.h1`
 
 export const DateTime = styled.div`
   font-family: "IBM Plex Sans", sans-serif;
-  font-size: 16px;
+  font-size: 0.8rem;
   line-height: 22px;
   font-weight: 400;
 
