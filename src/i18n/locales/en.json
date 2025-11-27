@@ -85,7 +85,7 @@
   },
   "gallery": {
     "title": "Gallery",
-    "clickImage": "Click an image",
+    "clickImage": "Touch to explore",
     "exitGallery": "Exit Gallery",
     "close": "Close",
     "loading": "Loading images...",

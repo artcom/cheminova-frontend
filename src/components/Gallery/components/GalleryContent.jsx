@@ -32,6 +32,7 @@ export default function GalleryContent({
   onStackSizeChange,
   switchInfo,
   onDebugDataUpdate,
+  onActiveItemChange,
 }) {
   const { viewport } = useThree()
   const vw = viewport.width
@@ -187,6 +188,14 @@ export default function GalleryContent({
       onDebugDataUpdate(updatedTileData)
     }
   }, [effectiveTileData, effectiveTileCount, onDebugDataUpdate])
+
+  // Notify parent about active item change
+  useEffect(() => {
+    if (onActiveItemChange && effectiveTileData.length > 0) {
+      const activeItem = effectiveTileData[activeIndex]
+      onActiveItemChange(activeItem)
+    }
+  }, [activeIndex, effectiveTileData, onActiveItemChange])
 
   return (
     <group>

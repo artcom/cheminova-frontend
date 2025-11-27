@@ -19,6 +19,7 @@ export const STACK_SWITCH_DUR = 0.5
 export const STACK_BUMP_AMPLITUDE = 0.12
 export const WRAP_EXTRA_DEPTH = -0.45
 export const WRAP_ROTATION = 0.12
+export const STACK_OFFSET_Y = 0.7
 
 export const SCALE_COMP_MIN = 0.9
 export const SCALE_COMP_MAX = 1.15

@@ -3,7 +3,7 @@ import { loadCharacterSection } from "@/utils/loaderHelpers"
 import appTheme from "@providers/Theme/theme"
 import { Canvas } from "@react-three/fiber"
 import { AnimatePresence, motion } from "motion/react"
-import { Suspense } from "react"
+import { Suspense, useState } from "react"
 import { styled } from "styled-components"
 
 import Navigation from "@ui/Navigation"
@@ -25,6 +25,7 @@ const Title = styled.h1`
   color: ${appTheme.colors.background.paper};
   margin: 0;
   padding: 20px;
+  font-size: 1.5rem;
 `
 
 const Stage = styled.div`
@@ -34,7 +35,24 @@ const Stage = styled.div`
   overflow: hidden;
 `
 
+const DateDisplay = styled(motion.div)`
+  position: absolute;
+  bottom: 35%;
+  left: 0;
+  right: 0;
+  text-align: center;
+  color: ${appTheme.colors.background.paper};
+  pointer-events: none;
+  font-size: 1rem;
+  z-index: 10;
+  font-family: "Inter", sans-serif;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+`
+
 export default function Gallery() {
+  const [activeTile, setActiveTile] = useState(null)
+
   const {
     allAnimsDone,
     setAllAnimsDone,
@@ -73,7 +91,9 @@ export default function Gallery() {
   return (
     <Page>
       <Title>
-        {allAnimsDone && !detailMode ? galleryHeading : `${galleryHeading}`}
+        {allAnimsDone && !detailMode
+          ? "Click an image to explore"
+          : galleryHeading}
       </Title>
 
       <Stage>
@@ -85,7 +105,11 @@ export default function Gallery() {
           <Suspense fallback={null}>
             <CameraController detailMode={detailMode} />
 
-            <StackBump switchInfo={switchInfo} onEnd={handleStackBumpEnd}>
+            <StackBump
+              switchInfo={switchInfo}
+              onEnd={handleStackBumpEnd}
+              detailMode={detailMode}
+            >
               <GalleryContent
                 imagePool={imagePoolData.combined}
                 targetTilesPerRow={tilesPerRow}
@@ -100,34 +124,54 @@ export default function Gallery() {
                 setDetailStackScale={setDetailStackScale}
                 onStackSizeChange={handleStackSizeChange}
                 switchInfo={switchInfo}
+                onActiveItemChange={setActiveTile}
               />
             </StackBump>
           </Suspense>
         </Canvas>
         <AnimatePresence>
           {detailMode && (
-            <motion.div
-              style={{
-                position: "fixed",
-                left: 0,
-                right: 0,
-                bottom: 0,
-                zIndex: 20,
-              }}
-              initial={{ opacity: 0, y: 40 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: 40 }}
-              transition={{ type: "tween", duration: 0.3 }}
-            >
-              <Navigation
-                mode="select"
-                position="bottom"
-                selectLabel={exitButtonText}
-                onSelect={handleExit}
-                onPrev={handlePrev}
-                onNext={handleNext}
-              />
-            </motion.div>
+            <>
+              {activeTile?.meta?.date && (
+                <DateDisplay
+                  initial={{ opacity: 0, y: 10 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: 10 }}
+                  transition={{ duration: 0.3 }}
+                >
+                  {new Date(activeTile.meta.date).toLocaleDateString(
+                    undefined,
+                    {
+                      year: "numeric",
+                      month: "long",
+                      day: "numeric",
+                    },
+                  )}
+                </DateDisplay>
+              )}
+              <motion.div
+                style={{
+                  position: "fixed",
+                  left: 0,
+                  right: 0,
+                  bottom: 0,
+                  zIndex: 20,
+                }}
+                initial={{ opacity: 0, y: 40 }}
+                animate={{ opacity: 1, y: 0 }}
+                exit={{ opacity: 0, y: 40 }}
+                transition={{ type: "tween", duration: 0.3 }}
+              >
+                <Navigation
+                  mode="select"
+                  position="bottom"
+                  selectLabel={exitButtonText}
+                  onSelect={handleExit}
+                  onPrev={handlePrev}
+                  onNext={handleNext}
+                />
+              </motion.div>
+            </>
           )}
         </AnimatePresence>
       </Stage>

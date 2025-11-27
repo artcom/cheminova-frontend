@@ -80,7 +80,11 @@ export const buildGalleryImagePool = (galleryImages = []) => {
     ? galleryImages.reduce((accumulator, item) => {
         const source = resolveGalleryImageSource(item)
         if (source) {
-          accumulator.push(source)
+          accumulator.push({
+            url: source,
+            date: item.created_at,
+            title: item.title,
+          })
         }
         return accumulator
       }, [])

@@ -182,12 +182,21 @@ export const buildTileData = ({
 
     const position = [x + randomX, y + randomY, zOffset]
 
+    // Handle image being either a string (URL) or an object
+    const imageObj = isPersonal ? null : image
+    const imageUrl = isPersonal
+      ? personalImages.urls[personalIdx]
+      : typeof image === "string"
+        ? image
+        : image?.url
+
     return {
       key: isPersonal
         ? `personal-${personalIdx}-${index}`
-        : `${image}-${index}`,
+        : `${imageUrl}-${index}`,
       position,
-      image: isPersonal ? personalImages.urls[personalIdx] : image,
+      image: imageUrl,
+      meta: imageObj,
       isPersonal,
       delay: delays[index],
       scale: isPersonal
