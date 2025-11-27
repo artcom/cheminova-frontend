@@ -16,7 +16,7 @@ export default function WelcomeLayout() {
   const outlet = useOutlet(data)
 
   // Determine background image based on current path
-  let backgroundImage = welcomeIntro?.backgroundImage?.file
+  let backgroundImage = welcome?.backgroundImage?.file
 
   if (location.pathname.includes("/context")) {
     backgroundImage = welcome?.backgroundImage?.file
@@ -32,7 +32,7 @@ export default function WelcomeLayout() {
     location.pathname === "/" || location.pathname === "/intro"
 
   return (
-    <Layout $backgroundImage={showParallax ? null : backgroundImage}>
+    <Layout $backgroundImage={backgroundImage}>
       <AnimatePresence>
         {showParallax && <ParallaxBackground welcomeIntro={welcomeIntro} />}
       </AnimatePresence>
