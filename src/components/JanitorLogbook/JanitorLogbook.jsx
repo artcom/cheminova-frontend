@@ -22,27 +22,26 @@ const PageContainer = styled.div`
 `
 
 const TitleSection = styled.div`
-  margin-bottom: 1.25rem;
+  margin-bottom: 0.75rem;
   text-align: left;
   width: 100%;
-  max-width: min(21.25rem, 100%);
 `
 
 const MainTitle = styled.h1`
   font-family: "Bricolage Grotesque Variable", sans-serif;
-  font-size: 1.75rem;
+  font-size: 1.25rem;
   font-weight: 600;
   line-height: 1.2;
   margin: 0;
-  max-width: 80%;
+  max-width: 90%;
   text-align: left;
 `
 
 const Counter = styled.div`
   font-family: "Bricolage Grotesque Variable", sans-serif;
-  font-size: 1rem;
+  font-size: 0.875rem;
   color: rgba(255, 255, 255, 0.6);
-  margin-top: 0.5rem;
+  margin-top: 0.25rem;
 `
 
 export default function JanitorLogbook() {

@@ -3,7 +3,7 @@ import styled from "styled-components"
 
 const Wrapper = styled(motion.div)`
   position: absolute;
-  width: min(21.25rem, 90vw);
+  width: min(16rem, 80vw);
   display: flex;
   flex-direction: column;
   transform-origin: top center;
@@ -14,18 +14,18 @@ const Wrapper = styled(motion.div)`
 `
 
 const LatchContainer = styled.div`
-  height: 1.875rem;
+  height: 1.5rem;
   position: relative;
   z-index: 3; /* Sit on top of CardBody */
   margin-bottom: -2px; /* Overlap the border width */
-  padding-left: 1.5rem; /* Align with card padding or desired offset */
+  padding-left: 1.25rem; /* Align with card padding or desired offset */
 `
 
 const Latch = styled.div`
-  border-top-left-radius: 0.75rem;
-  border-top-right-radius: 0.75rem;
-  height: 1.875rem;
-  width: 7.5rem;
+  border-top-left-radius: 0.5rem;
+  border-top-right-radius: 0.5rem;
+  height: 1.5rem;
+  width: 6rem;
   background: #f0efe9;
   position: relative;
   border: 3px solid #000;
@@ -34,13 +34,13 @@ const Latch = styled.div`
 
 const CardBody = styled.div`
   background-color: #f0efe9;
-  border-radius: 1.5rem;
+  border-radius: 1.25rem;
   border: 3px solid #000;
-  padding: 1.5rem;
+  padding: 1.25rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 0.75rem;
   overflow: hidden;
   position: relative;
   z-index: 2;
@@ -70,7 +70,7 @@ const Content = styled.div`
 
 const Title = styled.h2`
   font-family: "Bricolage Grotesque Variable", sans-serif;
-  font-size: 1.5rem;
+  font-size: 1.25rem;
   font-weight: 700;
   line-height: 1.1;
   margin: 0;
