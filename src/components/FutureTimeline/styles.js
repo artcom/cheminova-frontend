@@ -103,6 +103,8 @@ export const Title = styled.h1`
   font-weight: 700;
   margin: 0 0 8px 0;
   line-height: normal;
+  max-height: 2.8rem;
+  overflow-y: auto;
 `
 
 export const DateTime = styled.div`
