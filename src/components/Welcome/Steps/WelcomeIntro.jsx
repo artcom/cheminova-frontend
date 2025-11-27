@@ -17,7 +17,7 @@ export default function WelcomeIntro() {
         legalNotice={true}
         navigationProps={{
           mode: "single",
-          onSelect: () => navigate("/context"),
+          onSelect: () => navigate("/onboarding"),
         }}
       />
     </>
