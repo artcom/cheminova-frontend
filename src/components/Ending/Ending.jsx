@@ -4,6 +4,8 @@ import { useEffect, useState } from "react"
 import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
+import Button from "@ui/Button"
+
 import LoadingSpinner from "../UI/LoadingSpinner"
 import Navigation from "../UI/Navigation"
 

@@ -95,6 +95,7 @@ const Navigation = forwardRef(function Navigation(
     className,
     prevDisabled,
     nextDisabled,
+    selectDisabled,
     buttonStyle,
     ...rest
   },
@@ -152,7 +153,11 @@ const Navigation = forwardRef(function Navigation(
             {label}
           </StyledLink>
         ) : (
-          <Button onClick={onSelect} style={buttonStyle}>
+          <Button
+            onClick={onSelect}
+            style={buttonStyle}
+            disabled={selectDisabled}
+          >
             {label}
           </Button>
         )}

@@ -80,6 +80,7 @@ export default function CharacterSelection() {
         prevDisabled: selectedIndex === 0,
         nextDisabled: selectedIndex === characters.length - 1,
         selectLabel: currentCharacter?.selectButtonText,
+        selectDisabled: false,
       }}
     >
       <CharacterCarousel
