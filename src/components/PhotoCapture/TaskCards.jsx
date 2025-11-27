@@ -6,6 +6,7 @@ import { useLoaderData } from "react-router-dom"
 import IconButton from "../UI/IconButton"
 import {
   CameraButtonContainer,
+  DeleteButtonWrapper,
   ExtraBorder,
   TaskCard,
   TaskContent,
@@ -59,6 +60,18 @@ export default function TaskCards({
                     src={taskImages[index]}
                     alt={`Task ${index + 1} completed`}
                   />
+                  <DeleteButtonWrapper>
+                    <IconButton
+                      variant="trash"
+                      color={
+                        characterSlug === CHARACTER_SLUG_FUTURE
+                          ? "white"
+                          : "black"
+                      }
+                      onClick={() => onDelete(index)}
+                      size="2.5rem"
+                    />
+                  </DeleteButtonWrapper>
                 </>
               )}
               <CameraButtonContainer
@@ -66,17 +79,6 @@ export default function TaskCards({
                 onTouchMove={(event) => event.stopPropagation()}
                 onTouchEnd={(event) => event.stopPropagation()}
               >
-                {isActive && taskImages[index] && (
-                  <IconButton
-                    variant="trash"
-                    color={
-                      characterSlug === CHARACTER_SLUG_FUTURE
-                        ? "white"
-                        : "black"
-                    }
-                    onClick={() => onDelete(index)}
-                  />
-                )}
                 <IconButton
                   variant="camera"
                   color={
@@ -89,6 +91,7 @@ export default function TaskCards({
                         : handleOpenGallery
                       : undefined
                   }
+                  size="2.5rem"
                 />
               </CameraButtonContainer>
             </TaskContent>

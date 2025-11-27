@@ -2,8 +2,8 @@ import { styled } from "styled-components"
 
 const StyledButton = styled.button`
   all: unset;
-  width: 3.4375rem;
-  height: 3.4375rem;
+  width: ${({ size }) => size || "3.4375rem"};
+  height: ${({ size }) => size || "3.4375rem"};
   flex-shrink: 0;
   display: flex;
   align-items: center;
@@ -182,6 +182,7 @@ export default function IconButton({
       onClick={onClick}
       disabled={disabled}
       data-color={color}
+      size={props.size}
       {...props}
     >
       {iconVariant.svg(color)}

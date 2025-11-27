@@ -89,7 +89,6 @@ export const TaskContent = styled.div`
   justify-content: center;
   gap: 1.5rem;
   width: 100%;
-  height: 100%;
   position: relative;
   color: ${({ $characterId }) =>
     characterStyles[$characterId]?.textColor || "#000"};
@@ -128,7 +127,6 @@ export const CameraButtonContainer = styled.div`
   align-items: center;
   margin-top: 0;
   min-width: 3.5rem;
-  min-height: 3.5rem;
   padding: 0.5rem;
   border-radius: 999px;
   touch-action: manipulation;
@@ -242,4 +240,11 @@ export const MetadataOverlay = styled.div`
   bottom: 0;
   background: rgba(0, 0, 0, 0.5);
   z-index: 999;
+`
+
+export const DeleteButtonWrapper = styled.div`
+  position: absolute;
+  top: -0.5rem;
+  right: 1rem;
+  z-index: 10;
 `
