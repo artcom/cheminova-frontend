@@ -7,7 +7,7 @@ import { LogbookCard } from "./LogbookCard"
 const StackContainer = styled.div`
   position: relative;
   width: 100%;
-  height: 600px; /* Adjust based on viewport */
+  height: min(37.5rem, 65vh); /* Adjust based on viewport */
   display: flex;
   justify-content: center;
   align-items: center;

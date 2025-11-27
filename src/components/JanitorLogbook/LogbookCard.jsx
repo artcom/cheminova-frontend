@@ -3,7 +3,7 @@ import styled from "styled-components"
 
 const Wrapper = styled(motion.div)`
   position: absolute;
-  width: 340px;
+  width: min(21.25rem, 90vw);
   display: flex;
   flex-direction: column;
   transform-origin: top center;
@@ -14,18 +14,18 @@ const Wrapper = styled(motion.div)`
 `
 
 const LatchContainer = styled.div`
-  height: 30px;
+  height: 1.875rem;
   position: relative;
   z-index: 3; /* Sit on top of CardBody */
   margin-bottom: -2px; /* Overlap the border width */
-  padding-left: 24px; /* Align with card padding or desired offset */
+  padding-left: 1.5rem; /* Align with card padding or desired offset */
 `
 
 const Latch = styled.div`
-  border-top-left-radius: 12px;
-  border-top-right-radius: 12px;
-  height: 30px;
-  width: 120px;
+  border-top-left-radius: 0.75rem;
+  border-top-right-radius: 0.75rem;
+  height: 1.875rem;
+  width: 7.5rem;
   background: #f0efe9;
   position: relative;
   border: 3px solid #000;
@@ -34,13 +34,13 @@ const Latch = styled.div`
 
 const CardBody = styled.div`
   background-color: #f0efe9;
-  border-radius: 24px;
+  border-radius: 1.5rem;
   border: 3px solid #000;
-  padding: 24px;
+  padding: 1.5rem;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
   display: flex;
   flex-direction: column;
-  gap: 16px;
+  gap: 1rem;
   overflow: hidden;
   position: relative;
   z-index: 2;
@@ -49,7 +49,7 @@ const CardBody = styled.div`
 const ImageContainer = styled.div`
   width: 100%;
   aspect-ratio: 1;
-  border-radius: 16px;
+  border-radius: 1rem;
   overflow: hidden;
   background-color: #ddd;
   border: 3px solid #000;
@@ -64,13 +64,13 @@ const ImageContainer = styled.div`
 const Content = styled.div`
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 0.75rem;
   color: #1a1a1a;
 `
 
 const Title = styled.h2`
   font-family: "Bricolage Grotesque Variable", sans-serif;
-  font-size: 24px;
+  font-size: 1.5rem;
   font-weight: 700;
   line-height: 1.1;
   margin: 0;
@@ -79,11 +79,11 @@ const Title = styled.h2`
 const Meta = styled.div`
   display: flex;
   flex-direction: column;
-  font-size: 14px;
+  font-size: 0.875rem;
   opacity: 0.8;
   border-top: 1px solid rgba(0, 0, 0, 0.1);
-  padding-top: 12px;
-  margin-top: 4px;
+  padding-top: 0.75rem;
+  margin-top: 0.25rem;
 `
 
 const variants = {

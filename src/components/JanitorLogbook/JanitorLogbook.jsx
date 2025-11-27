@@ -16,21 +16,21 @@ const PageContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 24px;
+  padding: 1.5rem;
   box-sizing: border-box;
   overflow: hidden;
 `
 
 const TitleSection = styled.div`
-  margin-bottom: 20px;
+  margin-bottom: 1.25rem;
   text-align: left;
   width: 100%;
-  max-width: 340px;
+  max-width: min(21.25rem, 100%);
 `
 
 const MainTitle = styled.h1`
   font-family: "Bricolage Grotesque Variable", sans-serif;
-  font-size: 28px;
+  font-size: 1.75rem;
   font-weight: 600;
   line-height: 1.2;
   margin: 0;
@@ -40,9 +40,9 @@ const MainTitle = styled.h1`
 
 const Counter = styled.div`
   font-family: "Bricolage Grotesque Variable", sans-serif;
-  font-size: 16px;
+  font-size: 1rem;
   color: rgba(255, 255, 255, 0.6);
-  margin-top: 8px;
+  margin-top: 0.5rem;
 `
 
 export default function JanitorLogbook() {
