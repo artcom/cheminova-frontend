@@ -35,15 +35,14 @@ export const TimelineContainer = styled.div`
 
 export const ImageStack = styled.div`
   position: relative;
-  width: 270px;
-  height: 270px;
+  height: 5rem;
   margin: 130px 0 60px 60px;
 `
 
 export const ImageCard = styled(motion.div)`
   position: absolute;
-  width: 270px;
-  height: 270px;
+  width: 15rem;
+  height: 15rem;
   border-radius: 18px;
   overflow: hidden;
   box-shadow: 0px 0px 22px 0px rgba(0, 0, 0, 0.58);
@@ -84,7 +83,7 @@ export const InfoSection = styled.div`
   gap: 16px;
   text-align: left;
   color: white;
-  margin: auto 0 8rem 20px;
+  margin: auto;
   padding-right: 20px;
 `
 
