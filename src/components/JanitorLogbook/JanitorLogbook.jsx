@@ -1,6 +1,7 @@
 import { getNextRoute } from "@/characterRoutesConfig"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
 
@@ -46,6 +47,7 @@ const Counter = styled.div`
 `
 
 export default function JanitorLogbook() {
+  const { t } = useTranslation()
   const { data, isLoading } = useJanitorLogbookData()
   const navigate = useNavigate()
   const { characterId } = useParams()
@@ -81,7 +83,7 @@ export default function JanitorLogbook() {
   return (
     <PageContainer>
       <TitleSection>
-        <MainTitle>Someone before you noticed a similar detail.</MainTitle>
+        <MainTitle>{t("janitorLogbook.title")}</MainTitle>
         <Counter>
           {currentIndex + 1} / {data.length}
         </Counter>

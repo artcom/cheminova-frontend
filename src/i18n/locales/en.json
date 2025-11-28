@@ -122,6 +122,9 @@
     "noCharacterSelected": "No character selected. Please select a character first.",
     "characterNotFound": "Character '{{character}}' not found on server. Please try selecting a different character."
   },
+  "janitorLogbook": {
+    "title": "Someone before you noticed a similar detail."
+  },
   "loading": {
     "default": "Loading...",
     "content": "Loading content...",

@@ -1,6 +1,7 @@
 import { changeLanguage, getCurrentLocale } from "@/i18n"
 import { AnimatePresence, motion } from "motion/react"
 import { useState } from "react"
+import { useRevalidator } from "react-router-dom"
 
 import Button from "@ui/Button"
 
@@ -26,6 +27,7 @@ export default function IntroLanguageChooser({
   welcomeLanguage,
   onLanguageSelected,
 }) {
+  const revalidator = useRevalidator()
   const [currentLocale, setCurrentLocale] = useState(() => getCurrentLocale())
   const [hasSelected, setHasSelected] = useState(false)
 
@@ -35,6 +37,7 @@ export default function IntroLanguageChooser({
 
   const handleContinue = async () => {
     await changeLanguage(currentLocale)
+    revalidator.revalidate()
     setHasSelected(true)
     onLanguageSelected?.()
   }

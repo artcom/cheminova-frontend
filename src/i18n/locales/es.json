@@ -120,6 +120,9 @@
     "noCharacterSelected": "No se ha seleccionado ningún personaje. Por favor selecciona un personaje primero.",
     "characterNotFound": "Personaje '{{character}}' no encontrado en el servidor. Por favor intenta seleccionar un personaje diferente."
   },
+  "janitorLogbook": {
+    "title": "Alguien antes que tú notó un detalle similar."
+  },
   "loading": {
     "default": "Cargando...",
     "content": "Cargando contenido...",
