@@ -62,7 +62,7 @@ export default function WelcomeLayout() {
 export const id = "welcome"
 
 export const clientLoader = async () => {
-  const { content } = await loadCmsContent()
+  const { content, locale } = await loadCmsContent()
 
   const welcomeLanguage = extractFromContentTree.getWelcomeLanguage(content)
   const welcomeIntro = extractFromContentTree.getWelcomeIntro(content)
@@ -96,5 +96,6 @@ export const clientLoader = async () => {
     welcome,
     characterOverview,
     characters,
+    locale,
   }
 }

@@ -1,6 +1,6 @@
 import { changeLanguage, getCurrentLocale } from "@/i18n"
 import { AnimatePresence, motion } from "motion/react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { useRevalidator } from "react-router-dom"
 
 import Button from "@ui/Button"
@@ -25,11 +25,15 @@ const CONTINUE_TEXT = {
 
 export default function IntroLanguageChooser({
   welcomeLanguage,
+  currentContentLocale,
   onLanguageSelected,
 }) {
   const revalidator = useRevalidator()
   const [currentLocale, setCurrentLocale] = useState(() => getCurrentLocale())
   const [hasSelected, setHasSelected] = useState(false)
+
+  const [isWaitingForLocaleUpdate, setIsWaitingForLocaleUpdate] =
+    useState(false)
 
   const handleLanguageChange = (languageCode) => {
     setCurrentLocale(languageCode)
@@ -38,9 +42,36 @@ export default function IntroLanguageChooser({
   const handleContinue = async () => {
     await changeLanguage(currentLocale)
     revalidator.revalidate()
-    setHasSelected(true)
-    onLanguageSelected?.()
+    setIsWaitingForLocaleUpdate(true)
   }
+
+  useEffect(() => {
+    let timeoutId
+    if (isWaitingForLocaleUpdate) {
+      // Safety timeout: if content doesn't update in 5s, proceed anyway
+      timeoutId = setTimeout(() => {
+        console.warn("Language update timed out, proceeding anyway")
+        setHasSelected(true)
+        onLanguageSelected?.()
+      }, 5000)
+    }
+    return () => clearTimeout(timeoutId)
+  }, [isWaitingForLocaleUpdate, onLanguageSelected])
+
+  useEffect(() => {
+    if (isWaitingForLocaleUpdate && currentContentLocale === currentLocale) {
+      const timer = setTimeout(() => {
+        setHasSelected(true)
+        onLanguageSelected?.()
+      }, 0)
+      return () => clearTimeout(timer)
+    }
+  }, [
+    isWaitingForLocaleUpdate,
+    currentContentLocale,
+    currentLocale,
+    onLanguageSelected,
+  ])
 
   return (
     <AnimatePresence>
@@ -74,6 +105,7 @@ export default function IntroLanguageChooser({
                   key={languageId}
                   onClick={() => handleLanguageChange(languageId)}
                   $isSelected={currentLocale === languageId}
+                  disabled={isWaitingForLocaleUpdate}
                   variants={{
                     hidden: { y: 20, opacity: 0 },
                     visible: {
@@ -103,8 +135,13 @@ export default function IntroLanguageChooser({
             exit={{ opacity: 0, y: 20 }}
             transition={{ delay: 0.5, duration: 0.5 }}
           >
-            <Button onClick={handleContinue}>
-              {CONTINUE_TEXT[currentLocale] || CONTINUE_TEXT.en}
+            <Button
+              onClick={handleContinue}
+              disabled={isWaitingForLocaleUpdate}
+            >
+              {isWaitingForLocaleUpdate
+                ? "..."
+                : CONTINUE_TEXT[currentLocale] || CONTINUE_TEXT.en}
             </Button>
           </MotionBottomContainer>
         </>
