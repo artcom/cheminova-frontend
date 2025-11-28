@@ -52,25 +52,25 @@ const NavigationContainer = styled.div`
     switch ($mode) {
       case "single":
         return `
-          padding: 1.9375rem 0 0;
+          padding: 1.9375rem 0 0.2rem;
           justify-content: center;
           align-items: center;
         `
       case "horizontal":
         return `
-          padding: 2rem 0 0 0;
+          padding: 2rem 0 0.2rem;
           justify-content: space-between;
           align-items: center;
         `
       case "select":
         return `
-          padding: 2rem 0 0 0;
+          padding: 2rem 0 0.2rem 0;
           justify-content: space-between;
           align-items: center;
         `
       default:
         return `
-          padding: 1.9375rem 1.5625rem 0;
+          padding: 1.9375rem 1.5625rem 0.2rem;
           justify-content: center;
           align-items: flex-start;
           gap: 14.5625rem;
