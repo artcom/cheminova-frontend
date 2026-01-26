@@ -4,4 +4,4 @@ dist
 .vscode
 .env
 .react-router/
-build
+buildconfig.json
