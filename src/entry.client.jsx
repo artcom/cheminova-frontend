@@ -1,10 +1,15 @@
-import { StrictMode } from "react"
-import { hydrateRoot } from "react-dom/client"
-import { HydratedRouter } from "react-router/dom"
+async function loadConfig() {
+  try {
+    const response = await fetch("./config.json")
+    console.info("fetching from ./config.json")
+    const config = await response.json()
+    console.info("config loaded", config)
+    window.APP_CONFIG = config
+  } catch (error) {
+    console.error("Failed to load config.json", error)
+  }
+}
 
-hydrateRoot(
-  document,
-  <StrictMode>
-    <HydratedRouter />
-  </StrictMode>,
-)
+loadConfig().then(() => {
+  import("./bootstrap")
+})
