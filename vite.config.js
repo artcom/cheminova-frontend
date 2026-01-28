@@ -1,5 +1,5 @@
 import { resolve } from "path"
-// eslint-disable-next-line import-x/default
+import fs from "fs"
 import eslintPlugin from "@nabla/vite-plugin-eslint"
 import { reactRouter } from "@react-router/dev/vite"
 import { visualizer } from "rollup-plugin-visualizer"
@@ -83,6 +83,16 @@ export default defineConfig(() => {
 
     server: {
       proxy: {
+        "/config.json": {
+          target: "http://localhost:5173",
+          bypass: (req, res) => {
+            if (req.url === "/config.json") {
+              res.setHeader("Content-Type", "application/json")
+              res.end(fs.readFileSync("config.json"))
+              return false
+            }
+          },
+        },
         "/api": {
           ...createProxyConfig({ ws: true }),
           configure: attachProxyLogging("/api"),
