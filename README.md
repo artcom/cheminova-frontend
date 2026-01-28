@@ -145,3 +145,19 @@ src/
 3. If your CMS lives somewhere other than `http://localhost:8080/api` (dev) or `/cms/api` (prod), update `src/config/api.js` or introduce your own environment toggle before building.
 
 With the router owning navigation and loaders seeding the cache, feature work should focus on crafting route modules, keeping data derivations inside loaders, and letting components stay pure/presentational.
+
+## Configuration
+
+The application connects to a backend API. The API URL is configured in `src/api/config.js` and defaults to:
+- `http://localhost:8080/api` in development
+- `/cms/api` in production
+
+To override the API URL (e.g., when serving the static build separately from the backend), you can inject a global `APP_CONFIG` object on the `window` object in `index.html` or via a script before the app loads:
+
+```html
+<script>
+  window.APP_CONFIG = {
+    API_BASE_URL: "https://your-backend-url.com/api"
+  };
+</script>
+```
