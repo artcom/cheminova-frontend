@@ -1,8 +1,12 @@
 const isDevelopment = import.meta.env.DEV
 
-export const API_BASE_URL =
-  (typeof window !== "undefined" ? window.APP_CONFIG?.API_BASE_URL : null) ||
-  (isDevelopment ? "http://localhost:8080/api" : "/cms/api")
+export let API_BASE_URL = null
+
+export const setConfig = (config) => {
+  if (config.API_BASE_URL) {
+    API_BASE_URL = config.API_BASE_URL
+  }
+}
 
 export const getApiConfig = () => ({
   baseUrl: API_BASE_URL,
