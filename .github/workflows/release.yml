@@ -1,0 +1,49 @@
+name: Release
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+permissions:
+  contents: write
+
+jobs:
+  build-and-release:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: "npm"
+
+      - name: Install dependencies
+        run: npm ci
+
+      - name: Build application
+        run: npm run build
+
+      - name: Create Artifacts
+        run: |
+          mkdir -p artifacts
+          
+          # Create tar.gz
+          tar -czf artifacts/cheminova-frontend-${{ github.ref_name }}.tar.gz -C build/client .
+          
+          # Create zip
+          cd build/client
+          zip -r ../../artifacts/cheminova-frontend-${{ github.ref_name }}.zip .
+          cd ../..
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            artifacts/cheminova-frontend-${{ github.ref_name }}.tar.gz
+            artifacts/cheminova-frontend-${{ github.ref_name }}.zip
+          generate_release_notes: true
