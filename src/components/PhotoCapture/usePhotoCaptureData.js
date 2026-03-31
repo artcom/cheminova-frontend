@@ -1,7 +1,7 @@
 import { useMemo } from "react"
 import { useTranslation } from "react-i18next"
 
-const DEFAULT_TASK_KEYS = ["laNau", "surroundings", "special"]
+const DEFAULT_TASK_KEYS = ["monument", "surroundings", "special"]
 
 export function usePhotoCaptureData(photography) {
   const { t } = useTranslation()

@@ -10,7 +10,7 @@ export function useGalleryFilter(images = []) {
   const filterLabels = useMemo(
     () => ({
       all: t("gallery.all", "All"),
-      la_nau: t("gallery.laNau", "La Nau"),
+      monument: t("gallery.monument", "The Monument"),
       surroundings: t("gallery.surroundings", "Surroundings"),
       special: t("gallery.special", "Special"),
     }),
@@ -36,7 +36,7 @@ export function useGalleryFilter(images = []) {
         }
         return accumulator
       },
-      { all: 0, la_nau: 0, surroundings: 0, special: 0, unknown: 0 },
+      { all: 0, monument: 0, surroundings: 0, special: 0, unknown: 0 },
     )
   }, [images])
 

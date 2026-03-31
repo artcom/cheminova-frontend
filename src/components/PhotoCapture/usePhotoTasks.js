@@ -10,7 +10,7 @@ export default function usePhotoTasks(options = {}) {
       return providedTasks
     }
     return [
-      t("photoCapture.tasks.laNau"),
+      t("photoCapture.tasks.monument"),
       t("photoCapture.tasks.surroundings"),
       t("photoCapture.tasks.special"),
     ]

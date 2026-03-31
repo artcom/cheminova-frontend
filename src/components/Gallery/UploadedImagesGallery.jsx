@@ -93,10 +93,10 @@ export default function UploadedImagesGallery() {
           {t("gallery.all", "All")} ({taskCounts.all})
         </FilterButton>
         <FilterButton
-          active={filter === "la_nau"}
-          onClick={() => setFilter("la_nau")}
+          active={filter === "monument"}
+          onClick={() => setFilter("monument")}
         >
-          {filterLabels.la_nau} ({taskCounts.la_nau})
+          {filterLabels.monument} ({taskCounts.monument})
         </FilterButton>
         <FilterButton
           active={filter === "surroundings"}
