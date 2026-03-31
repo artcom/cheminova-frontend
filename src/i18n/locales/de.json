@@ -7,17 +7,17 @@
   },
   "welcome": {
     "title": "Willkommen",
-    "subtitle": "La Nau",
+    "subtitle": "Das Monument",
     "description": "Erleben Sie dieses Monument mit neuen Augen"
   },
   "introduction": {
     "title": "Wählen Sie Ihren Führer",
-    "description": "Wählen Sie Ihren Führer für diese immersive Reise durch La Nau."
+    "description": "Wählen Sie Ihren Führer für diese immersive Reise durch das Monument."
   },
   "photoCapture": {
     "title": "Rahmen Sie Ihre Perspektive",
     "tasks": {
-      "laNau": "La Nau",
+      "laNau": "Das Monument",
       "surroundings": "Ihre Umgebung",
       "special": "Etwas Besonderes"
     },
@@ -48,7 +48,7 @@
     "title": "Ihre Perspektive",
     "description": "Sie haben das Monument mit neuen Augen gesehen. Fügen Sie nun Ihre Vision zu einer lebendigen Collage hinzu, zusammen mit anderen, denen es genauso wichtig ist wie Ihnen.",
     "loading": "Lade Ihre personalisierte Perspektive...",
-    "fallback": "Erleben Sie diese einzigartige Perspektive von La Nau",
+    "fallback": "Erleben Sie diese einzigartige Perspektive des Monuments",
     "success": "Personalisierte Inhalte erfolgreich geladen"
   },
   "upload": {
@@ -90,7 +90,7 @@
     "error": "Fehler beim Laden der Bilder",
     "uploadedImages": "Hochgeladene Bilder",
     "all": "Alle",
-    "laNau": "La Nau",
+    "laNau": "Das Monument",
     "allImages": "Alle Bilder",
     "surroundings": "Umgebung",
     "special": "Besonders",
@@ -103,7 +103,7 @@
   },
   "ending": {
     "title": "Vielen Dank",
-    "description": "Vielen Dank, dass Sie zu diesem Monument beigetragen und es am Leben erhalten haben. Schauen Sie sich nun weiter in La Nau um.",
+    "description": "Vielen Dank, dass Sie zu diesem Monument beigetragen und es am Leben erhalten haben. Schauen Sie sich nun weiter im Monument um.",
     "loading": "Ihre Reise wird abgeschlossen...",
     "celebration": "Ihr Beitrag wurde aufgezeichnet!",
     "thankYouMessage": "Vielen Dank, dass Sie Teil dieser kulturellen Erhaltungsreise sind!",

@@ -7,17 +7,17 @@
   },
   "welcome": {
     "title": "Bienvenido",
-    "subtitle": "La Nau",
+    "subtitle": "El Monumento",
     "description": "Experimenta este monumento con nuevos ojos"
   },
   "introduction": {
     "title": "Elige tu guía",
-    "description": "Selecciona tu guía para este viaje inmersivo a través de La Nau."
+    "description": "Selecciona tu guía para este viaje inmersivo a través del monumento."
   },
   "photoCapture": {
     "title": "Encuadra tu perspectiva",
     "tasks": {
-      "laNau": "La Nau",
+      "laNau": "El Monumento",
       "surroundings": "Tus alrededores",
       "special": "Algo especial"
     },
@@ -48,7 +48,7 @@
     "title": "Tu Perspectiva",
     "description": "Has visto el monumento con nuevos ojos. Ahora, añade tu visión a un collage viviente, junto con otros que se preocupan, igual que tú.",
     "loading": "Cargando tu perspectiva personalizada...",
-    "fallback": "Experimenta esta perspectiva única de La Nau",
+    "fallback": "Experimenta esta perspectiva única del monumento",
     "success": "Contenido personalizado cargado con éxito"
   },
   "upload": {
@@ -90,7 +90,7 @@
     "error": "Error al cargar las imágenes",
     "uploadedImages": "Imágenes cargadas",
     "all": "Todas",
-    "laNau": "La Nau",
+    "laNau": "El Monumento",
     "allImages": "Todas las imágenes",
     "surroundings": "Alrededores",
     "special": "Especial",
@@ -103,7 +103,7 @@
   },
   "ending": {
     "title": "Gracias",
-    "description": "Gracias por contribuir a este monumento y mantenerlo vivo. Ahora echa un vistazo más profundo alrededor de La Nau.",
+    "description": "Gracias por contribuir a este monumento y mantenerlo vivo. Ahora echa un vistazo más profundo alrededor del monumento.",
     "loading": "Completando tu viaje...",
     "celebration": "¡Tu contribución ha sido registrada!",
     "thankYouMessage": "Gracias por ser parte de este viaje de preservación cultural!",

@@ -7,17 +7,17 @@
   },
   "welcome": {
     "title": "Welcome",
-    "subtitle": "La Nau",
+    "subtitle": "The Monument",
     "description": "Experience this monument through new eyes"
   },
   "introduction": {
     "title": "Choose your guide",
-    "description": "Select your guide for this immersive journey through La Nau."
+    "description": "Select your guide for this immersive journey through the monument."
   },
   "photoCapture": {
     "title": "Frame your perspective",
     "tasks": {
-      "laNau": "La Nau",
+      "laNau": "The Monument",
       "surroundings": "Your surroundings",
       "special": "Something special"
     },
@@ -48,7 +48,7 @@
     "title": "Your Perspective",
     "description": "You've seen the monument through new eyes. Now, add your vision to a living collage, together with others who care, just like you.",
     "loading": "Loading your personalized perspective...",
-    "fallback": "Experience this unique perspective of La Nau",
+    "fallback": "Experience this unique perspective of the monument",
     "success": "Personalized content loaded successfully"
   },
   "upload": {
@@ -92,7 +92,7 @@
     "error": "Error loading images",
     "uploadedImages": "Uploaded Images",
     "all": "All",
-    "laNau": "La Nau",
+    "laNau": "The Monument",
     "allImages": "All Images",
     "surroundings": "Surroundings",
     "special": "Special",
@@ -105,7 +105,7 @@
   },
   "ending": {
     "title": "Thank You",
-    "description": "Thank you for contributing to this monument and keeping it alive. Now take a further look around La Nau.",
+    "description": "Thank you for contributing to this monument and keeping it alive. Now take a further look around the monument.",
     "loading": "Completing your journey...",
     "celebration": "Your contribution has been recorded!",
     "thankYouMessage": "Thank you for being part of this cultural preservation journey!",
