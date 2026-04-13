@@ -17,6 +17,7 @@ import deTranslations from "./locales/de.json"
 import enTranslations from "./locales/en.json"
 import esTranslations from "./locales/es.json"
 import frTranslations from "./locales/fr.json"
+import itTranslations from "./locales/it.json"
 
 export { LANGUAGE_LIST }
 
@@ -32,6 +33,9 @@ const resources = {
   },
   fr: {
     [NAMESPACE_CONFIG.DEFAULT_NS]: frTranslations,
+  },
+  it: {
+    [NAMESPACE_CONFIG.DEFAULT_NS]: itTranslations,
   },
 }
 
@@ -84,6 +88,7 @@ export const changeLanguage = async (languageCode) => {
   const code = ensureSupportedLanguage(languageCode)
   await i18n.changeLanguage(code)
   localStorage.setItem(LANGUAGE_CONFIG.STORAGE_KEY, code)
+  return code
 }
 
 export const getLanguageName = (languageCode) => {

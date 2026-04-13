@@ -2,6 +2,7 @@
   "navigation": {
     "next": "Weiter",
     "previous": "Zurück",
+    "continue": "Weiter",
     "close": "Schließen",
     "select": "Auswählen"
   },

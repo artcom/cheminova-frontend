@@ -1,6 +1,7 @@
 import { changeLanguage, getCurrentLocale } from "@/i18n"
 import { AnimatePresence, motion } from "motion/react"
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { useRevalidator } from "react-router-dom"
 
 import Button from "@ui/Button"
@@ -18,16 +19,12 @@ import {
 const MotionChooserContainer = motion.create(ChooserContainer)
 const MotionBottomContainer = motion.create(BottomContainer)
 
-const CONTINUE_TEXT = {
-  en: "Continue",
-  de: "Weiter",
-}
-
 export default function IntroLanguageChooser({
   welcomeLanguage,
   currentContentLocale,
   onLanguageSelected,
 }) {
+  const { t } = useTranslation()
   const revalidator = useRevalidator()
   const [currentLocale, setCurrentLocale] = useState(() => getCurrentLocale())
   const [hasSelected, setHasSelected] = useState(false)
@@ -40,7 +37,8 @@ export default function IntroLanguageChooser({
   }
 
   const handleContinue = async () => {
-    await changeLanguage(currentLocale)
+    const resolvedLocale = await changeLanguage(currentLocale)
+    setCurrentLocale(resolvedLocale)
     revalidator.revalidate()
     setIsWaitingForLocaleUpdate(true)
   }
@@ -139,9 +137,7 @@ export default function IntroLanguageChooser({
               onClick={handleContinue}
               disabled={isWaitingForLocaleUpdate}
             >
-              {isWaitingForLocaleUpdate
-                ? "..."
-                : CONTINUE_TEXT[currentLocale] || CONTINUE_TEXT.en}
+              {isWaitingForLocaleUpdate ? "..." : t("navigation.continue")}
             </Button>
           </MotionBottomContainer>
         </>
