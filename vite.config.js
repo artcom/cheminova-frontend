@@ -1,31 +1,15 @@
-import { resolve } from "path"
 import fs from "fs"
+import { resolve } from "path"
 import eslintPlugin from "@nabla/vite-plugin-eslint"
 import { reactRouter } from "@react-router/dev/vite"
-import { visualizer } from "rollup-plugin-visualizer"
 import { defineConfig } from "vite"
-import babel from "vite-plugin-babel"
-import devtools from "vite-plugin-devtools-json"
 
 export default defineConfig(() => {
-  const enableBundleVisualizer =
-    process.env.ANALYZE === "1" || process.env.ANALYZE === "true"
   const CMS_PROXY_TARGET = "http://localhost:8080"
 
   const routerPlugins = reactRouter({
     routes: "./src/routes.js",
   })
-
-  const optionalPlugins = [
-    enableBundleVisualizer
-      ? visualizer({
-          filename: "build/client/bundle-analysis.html",
-          template: "treemap",
-          gzipSize: true,
-          brotliSize: true,
-        })
-      : null,
-  ]
 
   const createProxyConfig = (overrides = {}) => ({
     target: CMS_PROXY_TARGET,
@@ -50,22 +34,7 @@ export default defineConfig(() => {
 
   return {
     base: process.env.VITE_BASE_PATH || "/",
-    plugins: [
-      ...routerPlugins,
-      eslintPlugin(),
-      devtools(),
-      babel({
-        filter: /\.[jt]sx?$/,
-        exclude: /node_modules/,
-        babelConfig: {
-          plugins: [
-            ["babel-plugin-react-compiler"],
-            ["babel-plugin-styled-components"],
-          ],
-        },
-      }),
-      ...optionalPlugins.filter(Boolean),
-    ],
+    plugins: [...routerPlugins, eslintPlugin()],
     resolve: {
       alias: {
         "@": resolve(__dirname, "./src"),

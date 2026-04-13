@@ -73,6 +73,13 @@ export default [
         Buffer: "readonly",
       },
     },
+    rules: {
+      "import-x/default": "off",
+      "import-x/named": "off",
+      "import-x/no-duplicates": "off",
+      "import-x/no-unresolved": "off",
+      "import-x/namespace": "off",
+    },
   },
 
   {
