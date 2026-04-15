@@ -32,6 +32,8 @@ export const LANGUAGE_LIST = {
   es: "Spanish",
   fr: "French",
   it: "Italian",
+  el: "Greek",
+  uk: "Ukrainian",
 }
 
 export const DEFAULT_LANGUAGE = "en"

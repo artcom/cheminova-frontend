@@ -14,10 +14,12 @@ import LanguageDetector from "i18next-browser-languagedetector"
 import { initReactI18next } from "react-i18next"
 
 import deTranslations from "./locales/de.json"
+import elTranslations from "./locales/el.json"
 import enTranslations from "./locales/en.json"
 import esTranslations from "./locales/es.json"
 import frTranslations from "./locales/fr.json"
 import itTranslations from "./locales/it.json"
+import ukTranslations from "./locales/uk.json"
 
 export { LANGUAGE_LIST }
 
@@ -28,6 +30,9 @@ const resources = {
   de: {
     [NAMESPACE_CONFIG.DEFAULT_NS]: deTranslations,
   },
+  el: {
+    [NAMESPACE_CONFIG.DEFAULT_NS]: elTranslations,
+  },
   es: {
     [NAMESPACE_CONFIG.DEFAULT_NS]: esTranslations,
   },
@@ -36,6 +41,9 @@ const resources = {
   },
   it: {
     [NAMESPACE_CONFIG.DEFAULT_NS]: itTranslations,
+  },
+  uk: {
+    [NAMESPACE_CONFIG.DEFAULT_NS]: ukTranslations,
   },
 }
 
