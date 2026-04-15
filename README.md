@@ -147,13 +147,15 @@ src/
 With the router owning navigation and loaders seeding the cache, feature work should focus on crafting route modules, keeping data derivations inside loaders, and letting components stay pure/presentational.
 
 ## Configuration
+
 The application connects to a backend API which is configured via a `config.json` file.
 
 **Development:**
 The application uses the `config.json` file located in the root of the repository.
+
 ```json
 {
-    "API_BASE_URL": "http://localhost:8080/api"
+  "API_BASE_URL": "http://localhost:8080/api"
 }
 ```
 
@@ -161,4 +163,4 @@ The application uses the `config.json` file located in the root of the repositor
 The application expects to find a `config.json` file in the same directory as the `index.html`. You should ensure your deployment process places this file in the public root.
 The application will fetch `./config.json` at runtime before bootstrapping the React app.
 
-*Note: The environment variable `API_BASE_URL` is no longer used.*
+_Note: The environment variable `API_BASE_URL` is no longer used._

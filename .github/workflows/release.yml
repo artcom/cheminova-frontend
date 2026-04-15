@@ -3,7 +3,7 @@ name: Release
 on:
   push:
     tags:
-      - 'v*'
+      - "v*"
 
 permissions:
   contents: write
@@ -31,10 +31,10 @@ jobs:
       - name: Create Artifacts
         run: |
           mkdir -p artifacts
-          
+
           # Create tar.gz
           tar -czf artifacts/cheminova-frontend-${{ github.ref_name }}.tar.gz -C build/client .
-          
+
           # Create zip
           cd build/client
           zip -r ../../artifacts/cheminova-frontend-${{ github.ref_name }}.zip .
