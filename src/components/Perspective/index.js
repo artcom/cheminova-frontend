@@ -1,1 +1,1 @@
-export { default, clientLoader as loader } from "./Perspective"
+export { default } from "./Perspective"

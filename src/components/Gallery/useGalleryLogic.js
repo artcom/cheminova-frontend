@@ -1,8 +1,7 @@
-import { getNextRoute } from "@/characterRoutesConfig"
+import { useExperience } from "@/experience/experienceContext"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import { useMemo, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useLoaderData, useNavigate } from "react-router-dom"
 
 import PersonalImage1 from "./assets/1.jpg"
 import PersonalImage2 from "./assets/2.jpg"
@@ -25,8 +24,12 @@ export function useGalleryLogic() {
   const [stackSize, setStackSize] = useState(0)
   const [switchInfo, setSwitchInfo] = useState({ dir: 0, startMs: 0 })
   const [detailStackScale, setDetailStackScale] = useState(null)
-  const navigate = useNavigate()
-  const { characterSlug, gallery } = useLoaderData()
+  const {
+    node: gallery,
+    characterCode: characterSlug,
+    next,
+    goTo,
+  } = useExperience()
 
   const { data: galleryImages = [], isLoading: galleryLoading } =
     useGalleryImages()
@@ -59,8 +62,7 @@ export function useGalleryLogic() {
 
   const handleExit = () => {
     DEBUG_GALLERY && console.debug("[Gallery] exit detail")
-    const nextRoute = getNextRoute(characterSlug, "gallery")
-    navigate(`/characters/${characterSlug}/${nextRoute}`)
+    goTo(next)
   }
 
   const handlePrev = () => {
@@ -108,6 +110,8 @@ export function useGalleryLogic() {
     // Data
     galleryHeading,
     exitButtonText,
+    canAdvance: Boolean(next),
+    isEmptyGallery: imagePoolData.combined.length === 0,
     personalImages,
     imagePoolData,
     isLoading,

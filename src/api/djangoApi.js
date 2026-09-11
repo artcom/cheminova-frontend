@@ -45,6 +45,10 @@ export const fetchApiRoot = async () => {
   return apiRequest("/")
 }
 
+export const fetchCharacters = async () => {
+  return apiRequest("/characters/")
+}
+
 export const fetchAll = async (locale) => {
   const allLocalesContent = await fetchAllLocalesContent()
   return getContentForLocale(allLocalesContent, locale)

@@ -1,11 +1,7 @@
-import { getNextRoute } from "@/characterRoutesConfig"
 import { getCharacterPersonaFlags } from "@/utils/characterPersona"
-import { extractFromContentTree } from "@/utils/cmsHelpers"
-import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { sanitizeRichText, splitIntoParagraphs } from "@/utils/text"
 import { motion } from "motion/react"
 import { useRef } from "react"
-import { useLoaderData, useNavigate } from "react-router-dom"
 
 import {
   CharacterActionContainer,
@@ -22,26 +18,22 @@ import {
 
 import Navigation from "../UI/Navigation"
 
-export default function Exploration() {
-  const { characterSlug, character, exploration } = useLoaderData()
+export default function Exploration({
+  node: exploration,
+  characterNode: character,
+  characterCode,
+  next,
+  goTo,
+}) {
   const containerRef = useRef(null)
-  const navigate = useNavigate()
 
   const { isFuturePerson, isArtist, isJanitor } =
-    getCharacterPersonaFlags(characterSlug)
-
-  if (!character) {
-    throw new Error("Character data is required but missing from CMS")
-  }
-
-  if (!exploration) {
-    throw new Error("Exploration data is required but missing from CMS")
-  }
+    getCharacterPersonaFlags(characterCode)
 
   const characterImageUrl =
     exploration.heroImage?.file ||
-    character.selectedImage ||
-    character.characterImage?.file ||
+    character?.selectedImage ||
+    character?.characterImage?.file ||
     null
 
   const backgroundImageUrl = exploration.backgroundImage?.file || null
@@ -75,10 +67,7 @@ export default function Exploration() {
 
   const bottomImage = exploration?.bottomImage?.file || null
 
-  const handleContinue = () => {
-    const nextRoute = getNextRoute(characterSlug, "exploration")
-    navigate(`/characters/${characterSlug}/${nextRoute}`)
-  }
+  const handleContinue = () => goTo(next)
 
   return (
     <CharacterNarrativeContainer
@@ -149,20 +138,4 @@ export default function Exploration() {
       </CharacterContentWrapper>
     </CharacterNarrativeContainer>
   )
-}
-
-export const clientLoader = async ({ params }) => {
-  const {
-    section: exploration,
-    characterSlug,
-    characterIndex,
-    character,
-  } = await loadCharacterSection(
-    params,
-    (content, characterIndex) =>
-      extractFromContentTree.getExploration(content, characterIndex),
-    { missingMessage: "Exploration data missing from CMS" },
-  )
-
-  return { characterIndex, characterSlug, character, exploration }
 }

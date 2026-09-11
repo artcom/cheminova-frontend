@@ -1,5 +1,4 @@
 import { useTranslation } from "react-i18next"
-import { useRouteLoaderData } from "react-router-dom"
 
 import {
   IntroCharacterImage,
@@ -10,8 +9,7 @@ import {
 
 export default function Intro({ onCharacterSelect, characters }) {
   const { t } = useTranslation()
-  const loaderData = useRouteLoaderData("welcome")
-  const charactersData = characters ?? loaderData?.characters ?? []
+  const charactersData = characters ?? []
 
   // Return early if no characters data is available yet
   if (!charactersData || charactersData.length === 0) {

@@ -1,7 +1,5 @@
-import { extractFromContentTree } from "@/utils/cmsHelpers"
-import { loadCharacterSection } from "@/utils/loaderHelpers"
+import { useExperience } from "@/experience/experienceContext"
 import useDevicePlatform from "@hooks/useDevicePlatform"
-import { useLoaderData } from "react-router-dom"
 
 import IconButton from "../UI/IconButton"
 import {
@@ -14,6 +12,8 @@ import {
   TaskImage,
 } from "./styles"
 import TaskCarousel from "./TaskCarousel"
+
+const sanitizeDescription = (description) => description.replace(/<[^>]*>/g, "")
 
 const CHARACTER_SLUG_JANITOR = "janitor"
 const CHARACTER_SLUG_FUTURE = "future"
@@ -29,7 +29,7 @@ export default function TaskCards({
 }) {
   const { isAndroid } = useDevicePlatform()
 
-  const { characterSlug } = useLoaderData()
+  const { characterCode: characterSlug } = useExperience()
 
   return (
     <TaskCarousel
@@ -101,20 +101,3 @@ export default function TaskCards({
     </TaskCarousel>
   )
 }
-
-export const clientLoader = async ({ params }) => {
-  const {
-    section: photography,
-    characterSlug,
-    characterIndex,
-  } = await loadCharacterSection(
-    params,
-    (content, characterIndex) =>
-      extractFromContentTree.getPhotography(content, characterIndex),
-    { missingMessage: "Photography data missing from CMS" },
-  )
-
-  return { characterIndex, characterSlug, photography }
-}
-
-const sanitizeDescription = (description) => description.replace(/<[^>]*>/g, "")

@@ -1,11 +1,7 @@
-import { getNextRoute } from "@/characterRoutesConfig"
-import { extractFromContentTree } from "@/utils/cmsHelpers"
-import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { sanitizeRichText } from "@/utils/text"
 import { Alignment, Fit } from "@rive-app/react-canvas"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
-import { useLoaderData, useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
 import LoadingSpinner from "../UI/LoadingSpinner"
@@ -135,11 +131,22 @@ const riveVariants = {
   exit: { opacity: 0 },
 }
 
-export default function Perspective() {
-  const { characterSlug, perspective, riveAsset } = useLoaderData()
+const RIVE_ASSETS = {
+  future: "/timeline.riv",
+  janitor: "/mateosgaze.riv",
+}
+
+export default function Perspective({
+  node: perspective,
+  characterCode,
+  next,
+  goTo,
+}) {
   const [imageLoaded, setImageLoaded] = useState(false)
-  const navigate = useNavigate()
+  const perspectiveImage =
+    perspective?.image?.file ?? perspective?.backgroundImage?.file ?? null
   const isLoading = false
+  const riveAsset = RIVE_ASSETS[characterCode] ?? null
   const showRiveAnimation = Boolean(riveAsset)
 
   useEffect(() => {
@@ -147,7 +154,7 @@ export default function Perspective() {
       return undefined
     }
 
-    const imageUrl = perspective?.backgroundImage?.file || null
+    const imageUrl = perspectiveImage || null
 
     if (!imageUrl) {
       const timeoutId = setTimeout(() => setImageLoaded(false), 0)
@@ -167,7 +174,7 @@ export default function Perspective() {
       img.removeEventListener("load", handleLoad)
       img.removeEventListener("error", handleError)
     }
-  }, [perspective?.backgroundImage?.file, showRiveAnimation])
+  }, [perspectiveImage, showRiveAnimation])
 
   const heading = perspective?.heading || ""
   const description = perspective?.description
@@ -175,12 +182,12 @@ export default function Perspective() {
     : ""
 
   const backgroundImageUrl =
-    !showRiveAnimation && imageLoaded && perspective?.backgroundImage?.file
-      ? perspective.backgroundImage.file
+    !showRiveAnimation && imageLoaded && perspectiveImage
+      ? perspectiveImage
       : null
 
   const riveLayout = showRiveAnimation
-    ? characterSlug === "future"
+    ? characterCode === "future"
       ? {
           fit: Fit.Cover,
           alignment: Alignment.CenterLeft,
@@ -188,10 +195,7 @@ export default function Perspective() {
       : { fit: Fit.Cover, alignment: Alignment.Center }
     : undefined
 
-  const handleContinue = () => {
-    const nextRoute = getNextRoute(characterSlug, "perspective")
-    navigate(`/characters/${characterSlug}/${nextRoute}`)
-  }
+  const handleContinue = () => goTo(next)
 
   return (
     <Screen
@@ -216,7 +220,7 @@ export default function Perspective() {
 
         {showRiveAnimation && (
           <RiveBackground
-            key={riveAsset ?? characterSlug}
+            key={riveAsset ?? characterCode}
             variants={riveVariants}
             initial="initial"
             animate="animate"
@@ -226,7 +230,7 @@ export default function Perspective() {
             <RiveAnimation
               src={riveAsset}
               autoplay
-              stopAfterFirstLoop={characterSlug === "future"}
+              stopAfterFirstLoop={characterCode === "future"}
               layout={riveLayout}
             />
           </RiveBackground>
@@ -278,49 +282,4 @@ export default function Perspective() {
       </NavigationWrapper>
     </Screen>
   )
-}
-
-export const clientLoader = async ({ params }) => {
-  const {
-    section: perspective,
-    characterSlug,
-    characterIndex,
-    character,
-  } = await loadCharacterSection(
-    params,
-    (content, characterIndex) =>
-      extractFromContentTree.getPerspective(content, characterIndex),
-    { missingMessage: "Perspective not found", missingStatus: 404 },
-  )
-
-  const riveAsset =
-    characterSlug === "future"
-      ? "/timeline.riv"
-      : characterSlug === "janitor"
-        ? "/mateosgaze.riv"
-        : null
-
-  const preloadPromises = []
-
-  if (riveAsset) {
-    preloadPromises.push(
-      fetch(riveAsset)
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error(`Failed to preload Rive animation: ${riveAsset}`)
-          }
-          return response.blob()
-        })
-        .catch((error) => {
-          console.warn(error)
-          return null
-        }),
-    )
-  }
-
-  if (preloadPromises.length > 0) {
-    await Promise.all(preloadPromises)
-  }
-
-  return { characterIndex, characterSlug, character, perspective, riveAsset }
 }

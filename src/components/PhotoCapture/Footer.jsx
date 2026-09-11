@@ -1,5 +1,4 @@
-import { getNextRoute } from "@/characterRoutesConfig"
-import { useLoaderData, useNavigate } from "react-router-dom"
+import { useExperience } from "@/experience/experienceContext"
 
 import Navigation from "../UI/Navigation"
 import { Footer, PaginationContainer, PaginationDot } from "./styles"
@@ -10,8 +9,7 @@ export default function FooterContainer({
   setCurrentTaskIndex,
   hasImages,
 }) {
-  const { characterSlug } = useLoaderData()
-  const navigate = useNavigate()
+  const { next, goTo } = useExperience()
 
   const handlePrev = () => {
     if (currentTaskIndex > 0) {
@@ -28,8 +26,7 @@ export default function FooterContainer({
   const handleSelect = () => {
     // ...
 
-    const nextRoute = getNextRoute(characterSlug, "photo-capture")
-    navigate(`/characters/${characterSlug}/${nextRoute}`)
+    goTo(next)
   }
 
   return (

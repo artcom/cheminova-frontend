@@ -1,7 +1,4 @@
-import { extractFromContentTree } from "@/utils/cmsHelpers"
-import { loadCharacterSection } from "@/utils/loaderHelpers"
-import { useEffect, useState } from "react"
-import { useLoaderData, useNavigate } from "react-router-dom"
+import { useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
 import LoadingSpinner from "../UI/LoadingSpinner"
@@ -17,22 +14,6 @@ const Screen = styled.div`
   justify-content: flex-start;
   color: #fff;
   overflow: hidden;
-`
-
-const BackgroundImage = styled.div`
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background-image: ${(props) =>
-    props.$imageUrl ? `url(${props.$imageUrl})` : "none"};
-  background-size: cover;
-  background-position: center;
-  background-repeat: no-repeat;
-  opacity: ${(props) => (props.$imageUrl ? "0.4" : "0")};
-  z-index: 0;
-  transition: opacity 0.5s ease-in-out;
 `
 
 const Content = styled.div`
@@ -104,51 +85,16 @@ const NavigationWrapper = styled.div`
 const stripHtml = (value) =>
   typeof value === "string" ? value.replace(/<[^>]*>/g, "") : ""
 
-export default function Ending() {
-  const { ending, endingReflection } = useLoaderData()
-  const [imageLoaded, setImageLoaded] = useState(false)
+export default function Ending({ node }) {
   const navigate = useNavigate()
   const isLoading = false
 
-  useEffect(() => {
-    const imageUrl = ending?.backgroundImage?.file || null
-
-    if (!imageUrl) {
-      const timeoutId = setTimeout(() => setImageLoaded(false), 0)
-      return () => clearTimeout(timeoutId)
-    }
-
-    const resetTimeoutId = setTimeout(() => setImageLoaded(false), 0)
-    const img = new Image()
-    const handleLoad = () => setImageLoaded(true)
-    const handleError = () => setImageLoaded(false)
-    img.addEventListener("load", handleLoad)
-    img.addEventListener("error", handleError)
-    img.src = imageUrl
-
-    return () => {
-      clearTimeout(resetTimeoutId)
-      img.removeEventListener("load", handleLoad)
-      img.removeEventListener("error", handleError)
-    }
-  }, [ending?.backgroundImage?.file])
-
-  // Use CMS data - it's localized based on current language
-  const reflectionText = stripHtml(endingReflection?.reflectionText)
-  const heading = ending?.heading || endingReflection?.title || ""
-  const description = ending?.description
-    ? stripHtml(ending.description)
-    : reflectionText
-
-  const backgroundImageUrl =
-    imageLoaded && ending?.backgroundImage?.file
-      ? ending.backgroundImage.file
-      : null
+  const heading = node.title || ""
+  const description = stripHtml(node.reflectionText)
+  const restartLabel = node.returnToMonumentButtonText || "Restart"
 
   return (
     <Screen>
-      <BackgroundImage $imageUrl={backgroundImageUrl} />
-
       <Content>
         <Headline $isLoading={isLoading}>{heading}</Headline>
 
@@ -164,35 +110,12 @@ export default function Ending() {
           <Navigation
             mode="single"
             singleButtonVariant="text"
-            selectLabel="Restart"
-            onSelect={() => {
-              navigate("/intro")
-            }}
+            selectLabel={restartLabel}
+            onSelect={() => navigate("/")}
             disabled={isLoading}
           />
         </NavigationWrapper>
       </Content>
     </Screen>
   )
-}
-
-export const clientLoader = async ({ params }) => {
-  const {
-    content,
-    section: ending,
-    characterSlug,
-    characterIndex,
-  } = await loadCharacterSection(
-    params,
-    (content, characterIndex) =>
-      extractFromContentTree.getEnding(content, characterIndex),
-    { missingMessage: "Ending not found", missingStatus: 404 },
-  )
-
-  const endingReflection = extractFromContentTree.getEndingReflection(
-    content,
-    characterIndex,
-  )
-
-  return { characterIndex, characterSlug, ending, endingReflection }
 }

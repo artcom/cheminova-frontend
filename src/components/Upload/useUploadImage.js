@@ -1,12 +1,12 @@
 import { uploadImage } from "@/api/uploadImage"
+import { useExperience } from "@/experience/experienceContext"
 import { useMutation, useQueryClient } from "@tanstack/react-query"
 import { useRef } from "react"
-import { useParams } from "react-router-dom"
 
 export const useUploadImage = () => {
   const queryClient = useQueryClient()
   const lastUploadedCharacterSlugRef = useRef(null)
-  const { characterId: characterSlug } = useParams()
+  const { characterCode: characterSlug } = useExperience()
 
   return useMutation({
     mutationFn: async ({ file, text, userName, title }) => {

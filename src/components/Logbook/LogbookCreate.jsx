@@ -1,8 +1,7 @@
-import { getNextRoute } from "@/characterRoutesConfig"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
 import { useState } from "react"
-import { useLocation, useNavigate, useParams } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 
 import { useUploadImage } from "../Upload/useUploadImage"
 import {
@@ -34,12 +33,9 @@ const dataURLToFile = (dataURL, filename) => {
   return new File([u8arr], filename, { type: mimeMatch[1] })
 }
 
-export default function LogbookCreate() {
-  const navigate = useNavigate()
+export default function LogbookCreate({ node, characterCode, next, goTo }) {
   const location = useLocation()
-  const { characterId } = useParams()
-  // Use characterId as the slug since that's how it's passed in routes
-  const characterSlug = characterId
+  const characterSlug = characterCode
   const { capturedImages } = useCapturedImages()
   const { tasks } = usePhotoTasks()
   const [description, setDescription] = useState("")
@@ -100,8 +96,6 @@ export default function LogbookCreate() {
   // ...
 
   const handleContinue = () => {
-    const nextRoute = getNextRoute(characterSlug, "logbook-create")
-
     let state = null
     if (isSuccess && image) {
       state = {
@@ -116,7 +110,7 @@ export default function LogbookCreate() {
       }
     }
 
-    navigate(`/characters/${characterSlug}/${nextRoute}`, { state })
+    goTo(next, { state })
   }
 
   if (!image) {
@@ -134,7 +128,7 @@ export default function LogbookCreate() {
 
   return (
     <Container>
-      <Header>Inspect this spot</Header>
+      <Header>{node.heading || "Inspect this spot"}</Header>
 
       <Card>
         <Thumbnail src={image} alt={taskTitle} />
@@ -145,7 +139,7 @@ export default function LogbookCreate() {
       </Card>
 
       <TextArea
-        placeholder="Add text"
+        placeholder={node.addTextPrompt || "Add text"}
         value={description}
         onChange={(e) => setDescription(e.target.value)}
         disabled={isUploading || isSuccess}

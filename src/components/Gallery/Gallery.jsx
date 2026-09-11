@@ -1,5 +1,3 @@
-import { extractFromContentTree } from "@/utils/cmsHelpers"
-import { loadCharacterSection } from "@/utils/loaderHelpers"
 import appTheme from "@providers/Theme/theme"
 import { Canvas } from "@react-three/fiber"
 import { AnimatePresence, motion } from "motion/react"
@@ -66,6 +64,8 @@ export default function Gallery() {
     tilesPerRow,
     galleryHeading,
     exitButtonText,
+    canAdvance,
+    isEmptyGallery,
     personalImages,
     imagePoolData,
     isLoading,
@@ -130,7 +130,7 @@ export default function Gallery() {
           </Suspense>
         </Canvas>
         <AnimatePresence>
-          {detailMode && (
+          {(detailMode || isEmptyGallery) && (
             <>
               {activeTile?.meta?.date && (
                 <DateDisplay
@@ -167,6 +167,7 @@ export default function Gallery() {
                   position="bottom"
                   selectLabel={exitButtonText}
                   onSelect={handleExit}
+                  selectDisabled={!canAdvance}
                   onPrev={handlePrev}
                   onNext={handleNext}
                 />
@@ -177,19 +178,4 @@ export default function Gallery() {
       </Stage>
     </Page>
   )
-}
-
-export const clientLoader = async ({ params }) => {
-  const {
-    section: gallery,
-    characterSlug,
-    characterIndex,
-  } = await loadCharacterSection(
-    params,
-    (content, characterIndex) =>
-      extractFromContentTree.getGallery(content, characterIndex),
-    { missingMessage: "Gallery data missing from CMS" },
-  )
-
-  return { characterIndex, characterSlug, gallery }
 }

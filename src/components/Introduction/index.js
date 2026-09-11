@@ -1,1 +1,1 @@
-export { default, clientLoader as loader } from "./Introduction"
+export { default } from "./Introduction"

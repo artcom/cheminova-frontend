@@ -1,8 +1,5 @@
 import useCapturedImages from "@/hooks/useCapturedImages"
-import { extractFromContentTree } from "@/utils/cmsHelpers"
-import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { useRef } from "react"
-import { useLoaderData } from "react-router-dom"
 
 import FooterContainer from "./Footer"
 import {
@@ -16,12 +13,12 @@ import TaskCards from "./TaskCards"
 import { usePhotoCaptureData } from "./usePhotoCaptureData"
 import usePhotoTasks from "./usePhotoTasks"
 
-export default function PhotoCapture() {
+export default function PhotoCapture({ node }) {
   const { capturedImages, setCapturedImageAt } = useCapturedImages()
   const cameraInputRef = useRef(null)
   const galleryInputRef = useRef(null)
 
-  const { photography } = useLoaderData()
+  const photography = node
 
   const { heading, taskMetadata, tasksForHook } =
     usePhotoCaptureData(photography)
@@ -89,19 +86,4 @@ export default function PhotoCapture() {
       </PhotoCaptureContainer>
     </>
   )
-}
-
-export const clientLoader = async ({ params }) => {
-  const {
-    section: photography,
-    characterSlug,
-    characterIndex,
-  } = await loadCharacterSection(
-    params,
-    (content, characterIndex) =>
-      extractFromContentTree.getPhotography(content, characterIndex),
-    { missingMessage: "Photography data missing from CMS" },
-  )
-
-  return { characterIndex, characterSlug, photography }
 }

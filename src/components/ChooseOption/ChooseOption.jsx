@@ -1,0 +1,202 @@
+import { sanitizeRichText } from "@/utils/text"
+import { styled } from "styled-components"
+
+import IconButton from "../UI/IconButton"
+
+const SCREEN_BACKGROUND = "#0d0c10"
+const CARD_BACKGROUND = "#141318"
+const CARD_BORDER = "rgba(212, 175, 55, 0.2)"
+const ACCENT = "#d4af37"
+const MUTED_TEXT = "#9e9ca5"
+
+const Screen = styled.div`
+  width: 100dvw;
+  height: 100dvh;
+  padding: 1.875rem 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1.5rem;
+  background: ${SCREEN_BACKGROUND};
+  color: #fff;
+  overflow-y: auto;
+  font-variation-settings:
+    "opsz" 14,
+    "wdth" 100;
+`
+
+const Header = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  padding: 0 1.5rem;
+`
+
+const Byline = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+`
+
+const Avatar = styled.img`
+  width: 2.5rem;
+  height: 2.5rem;
+  border-radius: 50%;
+  object-fit: cover;
+  flex-shrink: 0;
+`
+
+const BylineText = styled.p`
+  margin: 0;
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 1px;
+  text-transform: uppercase;
+  color: ${ACCENT};
+  white-space: nowrap;
+`
+
+const HeaderText = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+`
+
+const Headline = styled.h1`
+  margin: 0;
+  font-size: 2.5rem;
+  font-weight: 800;
+  line-height: 2.75rem;
+  letter-spacing: -0.8px;
+  word-break: break-word;
+`
+
+const Description = styled.p`
+  margin: 0;
+  font-size: 0.875rem;
+  font-weight: 400;
+  line-height: 1.25rem;
+  color: ${MUTED_TEXT};
+`
+
+const Cards = styled.div`
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+  padding: 0 1.25rem;
+`
+
+const Card = styled.button`
+  all: unset;
+  box-sizing: border-box;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1rem;
+  border: 1px solid ${CARD_BORDER};
+  border-radius: 1rem;
+  background: ${CARD_BACKGROUND};
+  cursor: pointer;
+  overflow: hidden;
+
+  &:active {
+    transform: scale(0.99);
+  }
+`
+
+const CardImage = styled.img`
+  width: 5rem;
+  height: 5rem;
+  border-radius: 0.5rem;
+  object-fit: cover;
+  flex-shrink: 0;
+`
+
+const CardText = styled.div`
+  flex: 1 0 0;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  word-break: break-word;
+`
+
+const CardTitle = styled.span`
+  font-size: 1.25rem;
+  font-weight: 700;
+`
+
+const CardDescription = styled.span`
+  font-size: 0.75rem;
+  font-weight: 400;
+  line-height: 1rem;
+  color: ${MUTED_TEXT};
+`
+
+const CardAction = styled.span`
+  flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  pointer-events: none;
+`
+
+export default function ChooseOption({ node, characterNode, branches, goTo }) {
+  const options = node.options ?? []
+  const bylineName = [characterNode?.name, characterNode?.characterType]
+    .filter(Boolean)
+    .join(" • ")
+
+  return (
+    <Screen>
+      <Header>
+        {(characterNode?.characterImage?.file || bylineName) && (
+          <Byline>
+            {characterNode?.characterImage?.file && (
+              <Avatar src={characterNode.characterImage.file} alt="" />
+            )}
+            {bylineName && <BylineText>{bylineName}</BylineText>}
+          </Byline>
+        )}
+        <HeaderText>
+          {node.heading && <Headline>{node.heading}</Headline>}
+          {node.description && (
+            <Description>{sanitizeRichText(node.description)}</Description>
+          )}
+        </HeaderText>
+      </Header>
+
+      <Cards>
+        {branches.map((branch, index) => {
+          const option = options[index] ?? null
+          const label = option?.label ?? branch.title
+
+          return (
+            <Card
+              key={branch.id}
+              onClick={() => goTo(branch)}
+              aria-label={label}
+            >
+              {option?.image?.file && (
+                <CardImage src={option.image.file} alt="" />
+              )}
+              <CardText>
+                <CardTitle>{label}</CardTitle>
+                {option?.shortDescription && (
+                  <CardDescription>{option.shortDescription}</CardDescription>
+                )}
+              </CardText>
+              <CardAction aria-hidden="true">
+                <IconButton
+                  variant="arrowRight"
+                  size="2.75rem"
+                  as="span"
+                  type={undefined}
+                />
+              </CardAction>
+            </Card>
+          )
+        })}
+      </Cards>
+    </Screen>
+  )
+}

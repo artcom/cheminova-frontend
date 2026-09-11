@@ -1,25 +1,19 @@
 import { sanitizeRichText } from "@/utils/text"
-import { useNavigate, useOutletContext } from "react-router-dom"
 
 import WelcomeStepLayout from "../components/WelcomeStepLayout"
 
-export default function WelcomeIntro() {
-  const { welcomeIntro } = useOutletContext()
-  const navigate = useNavigate()
-
+export default function WelcomeIntro({ node, next, goTo }) {
   return (
-    <>
-      <WelcomeStepLayout
-        headline={welcomeIntro.title}
-        subheadline={welcomeIntro.siteName}
-        descriptionTitle={welcomeIntro.description}
-        descriptionText={sanitizeRichText(welcomeIntro.introText)}
-        legalNotice={true}
-        navigationProps={{
-          mode: "single",
-          onSelect: () => navigate("/onboarding"),
-        }}
-      />
-    </>
+    <WelcomeStepLayout
+      headline={node.title}
+      subheadline={node.siteName}
+      descriptionTitle={node.description}
+      descriptionText={sanitizeRichText(node.introText)}
+      legalNotice={true}
+      navigationProps={{
+        mode: "single",
+        onSelect: () => goTo(next),
+      }}
+    />
   )
 }

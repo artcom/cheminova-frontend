@@ -1,8 +1,7 @@
-import { getNextRoute } from "@/characterRoutesConfig"
+import { descendantOfType } from "@/experience/tree"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useNavigate, useParams } from "react-router-dom"
 import styled from "styled-components"
 
 import Navigation from "../UI/Navigation"
@@ -46,11 +45,9 @@ const Counter = styled.div`
   margin-top: 0.25rem;
 `
 
-export default function JanitorLogbook() {
+export default function JanitorLogbook({ node, next, goTo }) {
   const { t } = useTranslation()
   const { data, isLoading } = useJanitorLogbookData()
-  const navigate = useNavigate()
-  const { characterId } = useParams()
   const [currentIndex, setCurrentIndex] = useState(0)
   const { capturedImages } = useCapturedImages()
 
@@ -58,14 +55,8 @@ export default function JanitorLogbook() {
   const hasPhotos = capturedImages && capturedImages.some((img) => img)
 
   const handleExit = () => {
-    if (!hasPhotos) {
-      // No photos taken, go directly to ending
-      navigate(`/characters/${characterId}/ending`)
-    } else {
-      // Photos exist, proceed with normal flow (logbook-create)
-      const nextRoute = getNextRoute(characterId, "logbook")
-      navigate(`/characters/${characterId}/${nextRoute}`)
-    }
+    const ending = descendantOfType(node, "reflection")
+    goTo(!hasPhotos && ending ? ending : next)
   }
 
   const handlePrev = () => {

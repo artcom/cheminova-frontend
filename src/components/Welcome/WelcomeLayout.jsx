@@ -1,35 +1,24 @@
-import { extractFromContentTree } from "@/utils/cmsHelpers"
-import { loadCmsContent } from "@/utils/loaderHelpers"
-import { preloadImages } from "@/utils/preloadImages"
+import { findByType } from "@/experience/tree"
 import { AnimatePresence, motion } from "motion/react"
-import { useLoaderData, useLocation, useOutlet } from "react-router-dom"
 
 import Vignette from "@ui/Vignette"
 
 import ParallaxBackground from "./components/ParallaxBackground"
 import { Layout } from "./styles"
 
-export default function WelcomeLayout() {
-  const data = useLoaderData()
-  const { welcomeIntro, welcome, characterOverview } = data
-  const location = useLocation()
-  const outlet = useOutlet(data)
+const PARALLAX_TYPES = new Set(["welcome-language", "welcome-intro"])
 
-  // Determine background image based on current path
-  let backgroundImage = welcome?.backgroundImage?.file
+export default function WelcomeLayout({ node, tree, children }) {
+  const welcomeIntro = findByType(tree, "welcome-intro")
+  const welcome = findByType(tree, "welcome")
+  const characterOverview = findByType(tree, "welcome-character")
 
-  if (location.pathname.includes("/context")) {
-    backgroundImage = welcome?.backgroundImage?.file
-  } else if (
-    location.pathname.includes("/onboarding") ||
-    location.pathname.includes("/characters")
-  ) {
-    backgroundImage = characterOverview?.backgroundImage?.file
-  }
+  const backgroundImage =
+    node.type === "welcome-character" || node.type === "choose-character"
+      ? characterOverview?.backgroundImage?.file
+      : welcome?.backgroundImage?.file
 
-  // Show parallax only on root and intro routes
-  const showParallax =
-    location.pathname === "/" || location.pathname === "/intro"
+  const showParallax = PARALLAX_TYPES.has(node.type)
 
   return (
     <Layout $backgroundImage={backgroundImage}>
@@ -38,7 +27,7 @@ export default function WelcomeLayout() {
       </AnimatePresence>
       <AnimatePresence mode="popLayout">
         <motion.div
-          key={location.pathname}
+          key={node.id}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           exit={{ opacity: 0, transition: { duration: 0.3 } }}
@@ -51,51 +40,10 @@ export default function WelcomeLayout() {
             flexDirection: "column",
           }}
         >
-          {outlet}
+          {children}
         </motion.div>
       </AnimatePresence>
       <Vignette />
     </Layout>
   )
-}
-
-export const id = "welcome"
-
-export const clientLoader = async () => {
-  const { content, locale } = await loadCmsContent()
-
-  const welcomeLanguage = extractFromContentTree.getWelcomeLanguage(content)
-  const welcomeIntro = extractFromContentTree.getWelcomeIntro(content)
-  const welcome = extractFromContentTree.getWelcome(content)
-  const characterOverview = extractFromContentTree.getCharacterOverview(content)
-  const characters = extractFromContentTree.getCharacters(content)
-
-  // Collect all layer images from CMS
-  const layerImages = [
-    welcomeIntro?.backgroundImageLayer1?.file,
-    welcomeIntro?.backgroundImageLayer2?.file,
-    welcomeIntro?.backgroundImageLayer3?.file,
-  ].filter(Boolean)
-
-  // Collect all background images
-  const backgroundImages = [
-    welcomeIntro?.backgroundImage?.file,
-    welcome?.backgroundImage?.file,
-    characterOverview?.backgroundImage?.file,
-  ].filter(Boolean)
-
-  // Preload all images in parallel
-  await Promise.all([
-    preloadImages(layerImages),
-    preloadImages(backgroundImages),
-  ])
-
-  return {
-    welcomeLanguage,
-    welcomeIntro,
-    welcome,
-    characterOverview,
-    characters,
-    locale,
-  }
 }

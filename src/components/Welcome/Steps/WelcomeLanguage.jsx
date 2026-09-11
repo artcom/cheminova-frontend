@@ -1,18 +1,11 @@
-import { useNavigate, useOutletContext } from "react-router-dom"
-
 import IntroLanguageChooser from "../components/IntroLanguageChooser"
 
-export default function WelcomeLanguage() {
-  const { welcomeLanguage, locale: welcomeLanguageLocale } = useOutletContext()
-  const navigate = useNavigate()
-
+export default function WelcomeLanguage({ node, locale, next, goTo }) {
   return (
-    <>
-      <IntroLanguageChooser
-        welcomeLanguage={welcomeLanguage}
-        currentContentLocale={welcomeLanguageLocale}
-        onLanguageSelected={() => navigate("/intro")}
-      />
-    </>
+    <IntroLanguageChooser
+      welcomeLanguage={node}
+      currentContentLocale={locale}
+      onLanguageSelected={() => goTo(next)}
+    />
   )
 }

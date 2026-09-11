@@ -1,11 +1,8 @@
-import { getNextRoute } from "@/characterRoutesConfig"
+import { nearestAncestorOfType } from "@/experience/tree"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
-import { extractFromContentTree } from "@/utils/cmsHelpers"
-import { loadCharacterSection } from "@/utils/loaderHelpers"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { useLoaderData, useNavigate } from "react-router-dom"
 
 import SmallButton from "@ui/SmallButton"
 
@@ -38,7 +35,14 @@ const dataURLToFile = (dataURL, filename) => {
   return new File([u8arr], filename, { type: mimeMatch[1] })
 }
 
-export default function Upload() {
+export default function Upload({
+  node,
+  tree,
+  characterNode,
+  characterCode,
+  next,
+  goTo,
+}) {
   const { t } = useTranslation()
   const { capturedImages } = useCapturedImages()
   const [uploadProgress, setUploadProgress] = useState("")
@@ -46,8 +50,7 @@ export default function Upload() {
   const [didCompleteUpload, setDidCompleteUpload] = useState(false)
   const uploadAttemptRef = useRef(0)
   const { tasks, currentTaskIndex, setCurrentTaskIndex } = usePhotoTasks()
-  const navigate = useNavigate()
-  const { characterSlug, character, upload: uploadData } = useLoaderData()
+  const uploadData = node
 
   const uploadImageMutation = useUploadImage()
   const isUploading = uploadImageMutation.isPending
@@ -79,7 +82,7 @@ export default function Upload() {
     }
   }, [hasValidImages, validImageCount, currentTaskIndex, setCurrentTaskIndex])
 
-  const characterName = character?.name || ""
+  const characterName = characterNode?.name || ""
 
   const uploadDescription = uploadData?.description
     ? uploadData.description.replace(/<[^>]*>/g, "")
@@ -90,32 +93,22 @@ export default function Upload() {
     defaultValue: "No photos to upload yet. Capture a photo before uploading.",
   })
 
-  const goToGallery = () => {
-    if (characterSlug === "future") {
-      navigate(`/characters/${characterSlug}/timeline`)
-      return
-    }
-    const nextRoute = getNextRoute(characterSlug, "upload")
-    navigate(`/characters/${characterSlug}/${nextRoute}`)
-  }
+  const goToGallery = () => goTo(next)
 
   const goToPhotoCapture = () => {
-    navigate(`/characters/${characterSlug}/photo-capture`)
+    const photoNode = nearestAncestorOfType(tree, node.id, "photo")
+    if (photoNode) goTo(photoNode)
   }
 
   const handleUpload = async () => {
-    const nextRoute = getNextRoute(characterSlug, "upload")
-
-    // Special handling for passing state if needed
-    if (characterSlug === "future" && nextRoute === "logbook-create") {
-      navigate(`/characters/${characterSlug}/${nextRoute}`, {
-        state: { taskIndex: currentTaskIndex },
-      })
+    // future and janitor defer the upload to their next screen
+    if (characterCode === "future") {
+      goTo(next, { state: { taskIndex: currentTaskIndex } })
       return
     }
 
-    if (characterSlug === "janitor") {
-      navigate(`/characters/${characterSlug}/${nextRoute}`)
+    if (characterCode === "janitor") {
+      goTo(next)
       return
     }
 
@@ -150,7 +143,7 @@ export default function Upload() {
         try {
           const file = dataURLToFile(
             imageData,
-            `photo-${characterSlug}-${attemptId}-${index}.jpg`,
+            `photo-${characterCode}-${attemptId}-${index}.jpg`,
           )
           const result = await uploadImageMutation.mutateAsync({ file })
           uploadResults.push(result)
@@ -191,7 +184,7 @@ export default function Upload() {
   }
 
   const getButtonText = () => {
-    if (characterSlug === "future" || characterSlug === "janitor") {
+    if (characterCode === "future" || characterCode === "janitor") {
       return t("upload.buttons.selectPhoto", {
         defaultValue: "Select this photo",
       })
@@ -304,20 +297,4 @@ export default function Upload() {
       </QuestionBlock>
     </UploadContainer>
   )
-}
-
-export const clientLoader = async ({ params }) => {
-  const {
-    section: upload,
-    characterSlug,
-    characterIndex,
-    character,
-  } = await loadCharacterSection(
-    params,
-    (content, characterIndex) =>
-      extractFromContentTree.getUpload(content, characterIndex),
-    { missingMessage: "Upload data missing from CMS" },
-  )
-
-  return { characterIndex, characterSlug, upload, character }
 }

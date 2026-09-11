@@ -1,7 +1,5 @@
-import { getNextRoute } from "@/characterRoutesConfig"
-import { loadCharacterContext } from "@/utils/loaderHelpers"
 import { useState } from "react"
-import { useLoaderData, useLocation, useNavigate } from "react-router-dom"
+import { useLocation } from "react-router-dom"
 
 import Navigation from "../UI/Navigation"
 import {
@@ -25,10 +23,8 @@ import { TimelineMiniMap } from "./TimelineMiniMap"
 import { TimelineStack } from "./TimelineStack"
 import { useTimelineData } from "./useTimelineData"
 
-export default function FutureTimeline() {
-  const { characterSlug } = useLoaderData()
+export default function FutureTimeline({ next, goTo }) {
   const [requestedIndex, setRequestedIndex] = useState(0)
-  const navigate = useNavigate()
   const location = useLocation()
   const newEntry = location.state?.newEntry
 
@@ -115,12 +111,11 @@ export default function FutureTimeline() {
   }
 
   const handleGoToEnding = () => {
-    if (!characterSlug) {
+    if (!next) {
       return
     }
 
-    const nextRoute = getNextRoute(characterSlug, "timeline")
-    navigate(`/characters/${characterSlug}/${nextRoute}`)
+    goTo(next)
   }
 
   const showLoadingOverlay = isLoading && totalImages === 0
@@ -174,9 +169,4 @@ export default function FutureTimeline() {
       />
     </Page>
   )
-}
-
-export const clientLoader = async ({ params }) => {
-  const { characterSlug, characterIndex } = await loadCharacterContext(params)
-  return { characterIndex, characterSlug }
 }

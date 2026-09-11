@@ -1,6 +1,5 @@
 import { motion } from "motion/react"
 import { useTranslation } from "react-i18next"
-import { useRouteLoaderData } from "react-router-dom"
 import { styled } from "styled-components"
 
 import { useCharacterCarousel } from "../useCharacterCarousel"
@@ -51,8 +50,7 @@ const CharacterCarousel = ({
   characters,
 }) => {
   const { t } = useTranslation()
-  const loaderData = useRouteLoaderData("welcome")
-  const charactersData = characters ?? loaderData?.characters ?? []
+  const charactersData = characters ?? []
 
   const { x, handleDragStart, handleDragEnd, dragConstraints } =
     useCharacterCarousel(
