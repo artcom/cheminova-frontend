@@ -1,22 +1,3 @@
-const findFirstNodeMatching = (node, predicate) => {
-  if (!node) return null
-  if (predicate(node)) return node
-
-  if (!Array.isArray(node.children) || node.children.length === 0) {
-    return null
-  }
-
-  for (const child of node.children) {
-    const match = findFirstNodeMatching(child, predicate)
-    if (match) return match
-  }
-
-  return null
-}
-
-const isReflectionNode = (node) =>
-  Boolean(node?.reflectionText || node?.returnToMonumentButtonText)
-
 export const extractFromContentTree = {
   getWelcomeLanguage: (data) => {
     if (!data || !Array.isArray(data) || data.length === 0) return null
@@ -107,11 +88,5 @@ export const extractFromContentTree = {
     const gallery = extractFromContentTree.getGallery(data, characterIndex)
     if (!gallery?.children || gallery.children.length === 0) return null
     return gallery.children[0]
-  },
-
-  getEndingReflection: (data, characterIndex) => {
-    const gallery = extractFromContentTree.getGallery(data, characterIndex)
-    if (!gallery) return null
-    return findFirstNodeMatching(gallery, isReflectionNode)
   },
 }

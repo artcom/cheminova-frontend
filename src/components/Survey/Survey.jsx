@@ -1,7 +1,7 @@
 import { useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
-import LoadingSpinner from "../UI/LoadingSpinner"
+import Button from "../UI/Button"
 import Navigation from "../UI/Navigation"
 
 const Screen = styled.div`
@@ -35,8 +35,6 @@ const Headline = styled.h1`
   font-weight: 700;
   line-height: normal;
   margin-bottom: 2rem;
-  opacity: ${(props) => (props.$isLoading ? "0.5" : "1")};
-  transition: opacity 0.3s ease-in-out;
   text-align: left;
 `
 
@@ -50,8 +48,6 @@ const Description = styled.div`
   font-weight: 700;
   line-height: 1.4;
   margin-bottom: 3rem;
-  opacity: ${(props) => (props.$isLoading ? "0.5" : "1")};
-  transition: opacity 0.3s ease-in-out;
 
   p {
     margin: 0 0 1rem 0;
@@ -70,13 +66,6 @@ const Description = styled.div`
   }
 `
 
-const LoadingContainer = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 2rem 0;
-`
-
 const NavigationWrapper = styled.div`
   margin-top: auto;
   padding-top: 2rem;
@@ -85,39 +74,39 @@ const NavigationWrapper = styled.div`
 const stripHtml = (value) =>
   typeof value === "string" ? value.replace(/<[^>]*>/g, "") : ""
 
-export default function Ending({ node, next, goTo }) {
+export default function Survey({ node }) {
   const navigate = useNavigate()
-  const isLoading = false
 
-  const heading = node.title || ""
-  const description = stripHtml(node.text)
-  // A Survey child is optional: with one the ending hands over to it, without one it
-  // stays the last screen and sends the visitor back to the start.
-  const label = next
-    ? node.continueButtonText || "Continue"
-    : node.returnToMonumentButtonText || "Restart"
-  const onSelect = next ? () => goTo(next) : () => navigate("/")
+  const heading = node.heading || node.title || ""
+  const description = stripHtml(node.description)
+  const surveyUrl = node.surveyUrl || ""
+  const surveyLabel = node.surveyButtonText || "Take the survey"
+  const restartLabel = node.returnToMonumentButtonText || "Restart"
 
   return (
     <Screen>
       <Content>
-        <Headline $isLoading={isLoading}>{heading}</Headline>
+        <Headline>{heading}</Headline>
 
-        {isLoading && (
-          <LoadingContainer>
-            <LoadingSpinner />
-          </LoadingContainer>
+        {description && <Description>{description}</Description>}
+
+        {surveyUrl && (
+          <Button
+            as="a"
+            href={surveyUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+          >
+            {surveyLabel}
+          </Button>
         )}
-
-        {!isLoading && description && <Description>{description}</Description>}
 
         <NavigationWrapper>
           <Navigation
             mode="single"
             singleButtonVariant="text"
-            selectLabel={label}
-            onSelect={onSelect}
-            disabled={isLoading}
+            selectLabel={restartLabel}
+            onSelect={() => navigate("/")}
           />
         </NavigationWrapper>
       </Content>

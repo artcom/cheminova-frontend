@@ -55,7 +55,7 @@ export default function JanitorLogbook({ node, next, goTo }) {
   const hasPhotos = capturedImages && capturedImages.some((img) => img)
 
   const handleExit = () => {
-    const ending = descendantOfType(node, "reflection")
+    const ending = descendantOfType(node, "ending")
     goTo(!hasPhotos && ending ? ending : next)
   }
 

@@ -114,7 +114,7 @@ The shared helpers in `src/utils/loaderHelpers.js` keep loaders tidy:
 - `loadCmsContent({ locale? })` – hydrates the entire CMS tree (used by `Root`, `Welcome`, etc.).
 - `loadCharacterContext(params, { locale?, content? })` – resolves the character slug from the URL and returns `{ characterSlug, characterIndex, character, characters, content, locale }`, throwing typed errors for invalid slugs or missing CMS nodes.
 - `loadCharacterSection(params, extractor, { missingMessage?, missingStatus?, locale?, content? })` – builds on `loadCharacterContext`, runs your extractor (e.g., `getIntroduction`, `getGallery`), and throws automatically if the section is missing. The helper returns all character context fields plus `section` so loaders can stay concise.
-- `requireContentSection(section, message, status?)` – lower-level guard exported in case a loader needs to validate extra CMS slices (e.g., `Ending` fetching both the ending and the closing reflection).
+- `requireContentSection(section, message, status?)` – lower-level guard exported in case a loader needs to validate extra CMS slices (e.g., `Ending` fetching both the ending and its optional survey page).
 
 Prefer `loadCharacterSection` whenever a loader needs both the character context and a guaranteed CMS slice—it cuts ~10 lines per loader and standardises error responses.
 

@@ -60,8 +60,11 @@ export const PAGE_REGISTRY = {
   timeline: {
     component: lazy(() => import("@/components/FutureTimeline/FutureTimeline")),
   },
-  reflection: {
+  ending: {
     component: lazy(() => import("@/components/Ending/Ending")),
+  },
+  survey: {
+    component: lazy(() => import("@/components/Survey/Survey")),
   },
 }
 
