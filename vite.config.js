@@ -11,6 +11,25 @@ export default defineConfig(() => {
     routes: "./src/routes.js",
   })
 
+  const ignoreDevtoolsProbe = {
+    name: "chrome-devtools-json-404",
+    enforce: "pre",
+    configureServer(server) {
+      server.middlewares.use((req, res, next) => {
+        if (
+          req.url?.startsWith(
+            "/.well-known/appspecific/com.chrome.devtools.json",
+          )
+        ) {
+          res.statusCode = 404
+          res.end()
+          return
+        }
+        next()
+      })
+    },
+  }
+
   const createProxyConfig = (overrides = {}) => ({
     target: CMS_PROXY_TARGET,
     changeOrigin: true,
@@ -34,7 +53,7 @@ export default defineConfig(() => {
 
   return {
     base: process.env.VITE_BASE_PATH || "/",
-    plugins: [...routerPlugins, eslintPlugin()],
+    plugins: [ignoreDevtoolsProbe, ...routerPlugins, eslintPlugin()],
     resolve: {
       alias: {
         "@": resolve(__dirname, "./src"),
