@@ -66,6 +66,7 @@ export default defineConfig(() => {
           ...createProxyConfig({ ws: true }),
           configure: attachProxyLogging("/api"),
         },
+        "/cms": createProxyConfig(),
         "/media": createProxyConfig(),
         "/original_images": createProxyConfig(),
         "/static": createProxyConfig(),
