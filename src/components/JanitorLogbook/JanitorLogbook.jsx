@@ -45,7 +45,7 @@ const Counter = styled.div`
   margin-top: 0.25rem;
 `
 
-export default function JanitorLogbook({ node, next, goTo }) {
+export default function JanitorLogbook({ tree, node, next, goTo }) {
   const { t } = useTranslation()
   const { data, isLoading } = useJanitorLogbookData()
   const [currentIndex, setCurrentIndex] = useState(0)
@@ -55,7 +55,7 @@ export default function JanitorLogbook({ node, next, goTo }) {
   const hasPhotos = capturedImages && capturedImages.some((img) => img)
 
   const handleExit = () => {
-    const ending = descendantOfType(node, "ending")
+    const ending = descendantOfType(tree, node, "ending")
     goTo(!hasPhotos && ending ? ending : next)
   }
 

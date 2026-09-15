@@ -2,11 +2,19 @@ import WelcomeLayout from "@/components/Welcome/WelcomeLayout"
 import { lazy } from "react"
 
 /**
+ * How a node that has no screen of its own hands the flow on.
+ *
+ * `PASSTHROUGH` continues at the node's first child, `LINK` at the page the CMS editor
+ * chose as its target.
+ */
+export const TRAVERSAL = { PASSTHROUGH: "passthrough", LINK: "link" }
+
+/**
  * Maps the CMS page type (`type` in the API payload) to the screen that renders it.
  *
  * The component names predate the CMS names and deliberately differ, so this table is the
  * single place the two vocabularies meet. A new page type needs one entry here and nothing
- * else. `passthrough` marks a node the CMS carries but the design never renders on its own.
+ * else. `traversal` marks a node the CMS carries but the design never renders on its own.
  */
 export const PAGE_REGISTRY = {
   "welcome-language": {
@@ -17,7 +25,7 @@ export const PAGE_REGISTRY = {
     component: lazy(() => import("@/components/Welcome/Steps/WelcomeIntro")),
     layout: WelcomeLayout,
   },
-  welcome: { passthrough: true },
+  welcome: { traversal: TRAVERSAL.PASSTHROUGH },
   "welcome-character": {
     component: lazy(
       () => import("@/components/Welcome/Steps/CharacterOnboarding"),
@@ -66,6 +74,11 @@ export const PAGE_REGISTRY = {
   survey: {
     component: lazy(() => import("@/components/Survey/Survey")),
   },
+  "flow-link": { traversal: TRAVERSAL.LINK },
+}
+
+export function traversalOf(node) {
+  return node ? (PAGE_REGISTRY[node.type]?.traversal ?? null) : null
 }
 
 export function componentForType(type) {

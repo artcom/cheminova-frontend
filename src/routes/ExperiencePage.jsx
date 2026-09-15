@@ -43,6 +43,13 @@ export const clientLoader = async ({ params }) => {
     throw new Response(`No CMS page with id ${params.pageId}`, { status: 404 })
   }
 
+  // A flow link or a passthrough page carries no screen — a direct hit on its id
+  // continues where it points.
+  const renderable = firstRenderableNode(tree, entry.node)
+  if (renderable && renderable.id !== entry.node.id) {
+    throw redirect(`/page/${renderable.id}`)
+  }
+
   await preloadImages(imageUrlsOf(entry.node))
 
   return {
@@ -55,7 +62,7 @@ export const clientLoader = async ({ params }) => {
       entry.characterNode,
       siblingsOf(tree, entry.characterNode),
     ),
-    next: nextNode(entry.node),
+    next: nextNode(tree, entry.node),
     branches: branchesOf(entry.node),
     siblings: siblingsOf(tree, entry.node),
   }
@@ -75,7 +82,7 @@ export default function ExperiencePage() {
   const navigate = useNavigate()
 
   const goTo = (target, options) => {
-    const renderable = firstRenderableNode(target)
+    const renderable = firstRenderableNode(tree, target)
 
     if (!renderable) {
       console.warn(

@@ -1,4 +1,4 @@
-import { PAGE_REGISTRY } from "@/experience/pageRegistry"
+import { TRAVERSAL, traversalOf } from "@/experience/pageRegistry"
 
 const CHARACTER_TYPE = "choose-character"
 
@@ -33,20 +33,43 @@ export function buildExperienceTree(content, locale) {
   return indexTree(pickLocaleRoot(content, locale))
 }
 
-const isPassthrough = (node) =>
-  Boolean(node && PAGE_REGISTRY[node.type]?.passthrough)
-
-export function firstRenderableNode(node) {
-  let current = node
-  while (isPassthrough(current)) {
-    current = current.children?.[0] ?? null
+export function resolveLink(tree, node) {
+  const target =
+    tree.byTranslationKey.get(node.targetTranslationKey)?.node ?? null
+  if (!target) {
+    console.warn(
+      `Flow link "${node.title}" (id ${node.id}) has no published target page in this locale.`,
+    )
   }
+  return target
+}
+
+const traverse = (tree, node) =>
+  traversalOf(node) === TRAVERSAL.LINK
+    ? resolveLink(tree, node)
+    : (node.children?.[0] ?? null)
+
+export function firstRenderableNode(tree, node) {
+  const visited = new Set()
+  let current = node
+
+  while (current && traversalOf(current)) {
+    if (visited.has(current.id)) {
+      console.warn(
+        `The flow loops back to "${current.type}" (id ${current.id}) without reaching a screen.`,
+      )
+      return null
+    }
+    visited.add(current.id)
+    current = traverse(tree, current)
+  }
+
   return current
 }
 
-export function nextNode(node) {
+export function nextNode(tree, node) {
   const children = node?.children ?? []
-  return children.length === 1 ? firstRenderableNode(children[0]) : null
+  return children.length === 1 ? firstRenderableNode(tree, children[0]) : null
 }
 
 export function branchesOf(node) {
@@ -78,10 +101,14 @@ export function ancestorsOf(tree, nodeId) {
   return path
 }
 
-export function descendantOfType(node, type) {
+export function descendantOfType(tree, node, type, visited = new Set()) {
   for (const child of node?.children ?? []) {
-    if (child.type === type) return child
-    const deeper = descendantOfType(child, type)
+    const reached =
+      traversalOf(child) === TRAVERSAL.LINK ? resolveLink(tree, child) : child
+    if (!reached || visited.has(reached.id)) continue
+    visited.add(reached.id)
+    if (reached.type === type) return reached
+    const deeper = descendantOfType(tree, reached, type, visited)
     if (deeper) return deeper
   }
   return null
