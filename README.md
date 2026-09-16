@@ -142,7 +142,7 @@ src/
 
 1. Run `npm run build` to emit `build/client`. Clean the folder before committing; generated assets should remain untracked.
 2. If the site is hosted under a subpath (e.g., `/chemisee/`), set `VITE_BASE_PATH=/chemisee/` before building.
-3. If your CMS lives somewhere other than `http://localhost:8080/api` (dev) or `/cms/api` (prod), update `src/config/api.js` or introduce your own environment toggle before building.
+3. The API base URL is not baked into the build. If your CMS lives somewhere other than `http://localhost:8080/api` (dev) or `/cms/api` (prod), update the deployed `config.json` (see [Configuration](#configuration)) — no rebuild required.
 
 With the router owning navigation and loaders seeding the cache, feature work should focus on crafting route modules, keeping data derivations inside loaders, and letting components stay pure/presentational.
 
@@ -160,7 +160,10 @@ The application uses the `config.json` file located in the root of the repositor
 ```
 
 **Production / Deployment:**
-The application expects to find a `config.json` file in the same directory as the `index.html`. You should ensure your deployment process places this file in the public root.
-The application will fetch `./config.json` at runtime before bootstrapping the React app.
+The application expects to find a `config.json` file in the public root of the deployment, next to `index.html`. Ensure your deployment process places it there.
+
+At runtime, before bootstrapping the React app, the application fetches `config.json` relative to the configured base path (`VITE_BASE_PATH`) — i.e. `/config.json` for a root deployment, or `/chemisee/config.json` when built with `VITE_BASE_PATH=/chemisee/`. The path is absolute, so it resolves the same way on nested routes such as `/page/:pageId`.
+
+If `config.json` is missing, is not served as JSON, or has no `API_BASE_URL` entry, the app does **not** boot: it renders an error screen naming the URL it tried to read. A trailing slash on `API_BASE_URL` is allowed and stripped, so `https://example.org/cms/api` and `https://example.org/cms/api/` behave identically.
 
 _Note: The environment variable `API_BASE_URL` is no longer used._
