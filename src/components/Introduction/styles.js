@@ -17,24 +17,11 @@ import {
 export const IntroductionContainer = styled(IntroductionContainerBase)`
   ${({ $isJanitor, $backgroundImage }) =>
     $isJanitor &&
+    $backgroundImage &&
     css`
-      background-image: none;
-      position: relative;
-
-      &::before {
-        content: "";
-        position: absolute;
-        inset: 0;
-        background-image: ${$backgroundImage
-          ? `url(${$backgroundImage})`
-          : "none"};
-        background-size: 100% auto;
-        background-position: center center;
-        background-repeat: no-repeat;
-        opacity: 0.5;
-        pointer-events: none;
-        z-index: 0;
-      }
+      background-image:
+        linear-gradient(rgba(31, 31, 31, 0.5), rgba(31, 31, 31, 0.5)),
+        url(${$backgroundImage});
     `}
 `
 
