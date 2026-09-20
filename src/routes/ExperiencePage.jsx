@@ -1,6 +1,6 @@
 import { characterCodeFor } from "@/experience/characters"
 import ExperienceProvider from "@/experience/ExperienceProvider"
-import { imageUrlsOf } from "@/experience/nodeImages"
+import { imageUrlsOf, optionCardImageUrlsOf } from "@/experience/nodeImages"
 import { componentForType, layoutForType } from "@/experience/pageRegistry"
 import {
   branchesOf,
@@ -50,7 +50,10 @@ export const clientLoader = async ({ params }) => {
     throw redirect(`/page/${renderable.id}`)
   }
 
-  await preloadImages(imageUrlsOf(entry.node))
+  await preloadImages([
+    ...imageUrlsOf(entry.node),
+    ...optionCardImageUrlsOf(entry.node),
+  ])
 
   return {
     locale,

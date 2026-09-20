@@ -140,8 +140,13 @@ const CardAction = styled.span`
   pointer-events: none;
 `
 
-export default function ChooseOption({ node, characterNode, branches, goTo }) {
-  const options = node.options ?? []
+export default function ChooseOption({ node, characterNode, goTo }) {
+  const offered = node.children ?? []
+  if (offered.length === 0) {
+    console.warn(
+      `The choice "${node.title}" (id ${node.id}) offers nothing — it has no published child page in the CMS.`,
+    )
+  }
   const bylineName = [characterNode?.name, characterNode?.characterType]
     .filter(Boolean)
     .join(" • ")
@@ -166,23 +171,20 @@ export default function ChooseOption({ node, characterNode, branches, goTo }) {
       </Header>
 
       <Cards>
-        {branches.map((branch, index) => {
-          const option = options[index] ?? null
-          const label = option?.label ?? branch.title
+        {offered.map((child) => {
+          const label = child.optionLabel ?? child.title
 
           return (
-            <Card
-              key={branch.id}
-              onClick={() => goTo(branch)}
-              aria-label={label}
-            >
-              {option?.image?.file && (
-                <CardImage src={option.image.file} alt="" />
+            <Card key={child.id} onClick={() => goTo(child)} aria-label={label}>
+              {child.optionImage?.file && (
+                <CardImage src={child.optionImage.file} alt="" />
               )}
               <CardText>
                 <CardTitle>{label}</CardTitle>
-                {option?.shortDescription && (
-                  <CardDescription>{option.shortDescription}</CardDescription>
+                {child.optionShortDescription && (
+                  <CardDescription>
+                    {child.optionShortDescription}
+                  </CardDescription>
                 )}
               </CardText>
               <CardAction aria-hidden="true">

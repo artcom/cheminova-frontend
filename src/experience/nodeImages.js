@@ -26,3 +26,19 @@ export function imageUrlsOf(node) {
 
   return [...urls]
 }
+
+const CHOICE_TYPE = "choose-option"
+
+/**
+ * The card images of the options a choice offers.
+ *
+ * They sit on the child pages, which `imageUrlsOf` skips, but they paint as part of the
+ * choice screen itself, so the engine preloads them with it.
+ */
+export function optionCardImageUrlsOf(node) {
+  if (node?.type !== CHOICE_TYPE) return []
+
+  return (node.children ?? [])
+    .map((child) => child.optionImage?.file)
+    .filter(Boolean)
+}
