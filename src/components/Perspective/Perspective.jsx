@@ -1,4 +1,3 @@
-import { sanitizeRichText } from "@/utils/text"
 import { Alignment, Fit } from "@rive-app/react-canvas"
 import { AnimatePresence, motion } from "framer-motion"
 import { useEffect, useState } from "react"
@@ -6,6 +5,8 @@ import { styled } from "styled-components"
 
 import LoadingSpinner from "../UI/LoadingSpinner"
 import Navigation from "../UI/Navigation"
+import RichText from "../UI/RichText"
+import { richTextStyles } from "../UI/richTextStyles"
 import RiveAnimation from "../UI/RiveAnimation"
 
 const Screen = styled(motion.div)`
@@ -76,6 +77,8 @@ const Description = styled(motion.div)`
   margin-bottom: 2rem;
   opacity: ${(props) => (props.$isLoading ? "0.5" : "1")};
   transition: opacity 0.3s ease-in-out;
+
+  ${richTextStyles}
 `
 
 const LoadingContainer = styled(motion.div)`
@@ -178,8 +181,6 @@ export default function Perspective({
 
   const heading = perspective?.heading || ""
   const description = perspective?.description
-    ? sanitizeRichText(perspective.description, { trim: true })
-    : ""
 
   const backgroundImageUrl =
     !showRiveAnimation && imageLoaded && perspectiveImage
@@ -262,7 +263,7 @@ export default function Perspective({
                 animate="animate"
                 exit="exit"
               >
-                {description}
+                <RichText html={description} />
               </Description>
             )
           )}

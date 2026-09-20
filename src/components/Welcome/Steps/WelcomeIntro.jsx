@@ -1,4 +1,4 @@
-import { sanitizeRichText } from "@/utils/text"
+import { richTextOrNull } from "@ui/richTextOrNull"
 
 import WelcomeStepLayout from "../components/WelcomeStepLayout"
 
@@ -8,7 +8,7 @@ export default function WelcomeIntro({ node, next, goTo }) {
       headline={node.title}
       subheadline={node.siteName}
       descriptionTitle={node.description}
-      descriptionText={sanitizeRichText(node.introText)}
+      descriptionText={richTextOrNull(node.introText)}
       legalNotice={true}
       navigationProps={{
         mode: "single",

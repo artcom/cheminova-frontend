@@ -3,6 +3,8 @@ import { styled } from "styled-components"
 
 import Button from "../UI/Button"
 import Navigation from "../UI/Navigation"
+import RichText from "../UI/RichText"
+import { richTextStyles } from "../UI/richTextStyles"
 
 const Screen = styled.div`
   position: relative;
@@ -38,7 +40,7 @@ const Headline = styled.h1`
   text-align: left;
 `
 
-const Description = styled.div`
+const Description = styled(RichText)`
   width: 21.375rem;
   max-width: 100%;
   font-family:
@@ -48,6 +50,8 @@ const Description = styled.div`
   font-weight: 700;
   line-height: 1.4;
   margin-bottom: 3rem;
+
+  ${richTextStyles}
 
   p {
     margin: 0 0 1rem 0;
@@ -71,14 +75,11 @@ const NavigationWrapper = styled.div`
   padding-top: 2rem;
 `
 
-const stripHtml = (value) =>
-  typeof value === "string" ? value.replace(/<[^>]*>/g, "") : ""
-
 export default function Survey({ node }) {
   const navigate = useNavigate()
 
   const heading = node.heading || node.title || ""
-  const description = stripHtml(node.description)
+  const description = node.description
   const surveyUrl = node.surveyUrl || ""
   const surveyLabel = node.surveyButtonText || "Take the survey"
   const restartLabel = node.returnToMonumentButtonText || "Restart"
@@ -88,7 +89,7 @@ export default function Survey({ node }) {
       <Content>
         <Headline>{heading}</Headline>
 
-        {description && <Description>{description}</Description>}
+        <Description html={description} />
 
         {surveyUrl && (
           <Button

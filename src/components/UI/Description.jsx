@@ -1,5 +1,7 @@
 import { styled } from "styled-components"
 
+import { richTextStyles } from "./richTextStyles"
+
 const DescriptionBlock = styled.div`
   width: 100%;
   display: flex;
@@ -30,6 +32,8 @@ const DescriptionText = styled.div`
   font-style: normal;
   font-weight: 400;
   line-height: normal;
+
+  ${richTextStyles}
 `
 
 export default function Description({ title, text }) {

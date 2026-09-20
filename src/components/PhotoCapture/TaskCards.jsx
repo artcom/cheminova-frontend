@@ -2,6 +2,7 @@ import { useExperience } from "@/experience/experienceContext"
 import useDevicePlatform from "@hooks/useDevicePlatform"
 
 import IconButton from "../UI/IconButton"
+import RichText from "../UI/RichText"
 import {
   CameraButtonContainer,
   DeleteButtonWrapper,
@@ -12,8 +13,6 @@ import {
   TaskImage,
 } from "./styles"
 import TaskCarousel from "./TaskCarousel"
-
-const sanitizeDescription = (description) => description.replace(/<[^>]*>/g, "")
 
 const CHARACTER_SLUG_JANITOR = "janitor"
 const CHARACTER_SLUG_FUTURE = "future"
@@ -38,7 +37,6 @@ export default function TaskCards({
       style={{ flex: 1 }}
     >
       {taskMetadata.map((task, index) => {
-        const taskDescription = sanitizeDescription(task.description)
         const isActive = index === currentTaskIndex
 
         return (
@@ -46,9 +44,11 @@ export default function TaskCards({
             {!taskImages[index] && (
               <>
                 {characterSlug === CHARACTER_SLUG_JANITOR && <ExtraBorder />}
-                <TaskDescription $characterId={characterSlug}>
-                  {taskDescription}
-                </TaskDescription>
+                <TaskDescription
+                  as={RichText}
+                  html={task.description}
+                  $characterId={characterSlug}
+                />
               </>
             )}
 

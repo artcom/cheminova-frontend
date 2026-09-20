@@ -3,6 +3,8 @@ import { styled } from "styled-components"
 
 import LoadingSpinner from "../UI/LoadingSpinner"
 import Navigation from "../UI/Navigation"
+import RichText from "../UI/RichText"
+import { richTextStyles } from "../UI/richTextStyles"
 
 const Screen = styled.div`
   position: relative;
@@ -40,7 +42,7 @@ const Headline = styled.h1`
   text-align: left;
 `
 
-const Description = styled.div`
+const Description = styled(RichText)`
   width: 21.375rem;
   max-width: 100%;
   font-family:
@@ -52,6 +54,8 @@ const Description = styled.div`
   margin-bottom: 3rem;
   opacity: ${(props) => (props.$isLoading ? "0.5" : "1")};
   transition: opacity 0.3s ease-in-out;
+
+  ${richTextStyles}
 
   p {
     margin: 0 0 1rem 0;
@@ -82,15 +86,12 @@ const NavigationWrapper = styled.div`
   padding-top: 2rem;
 `
 
-const stripHtml = (value) =>
-  typeof value === "string" ? value.replace(/<[^>]*>/g, "") : ""
-
 export default function Ending({ node, next, goTo }) {
   const navigate = useNavigate()
   const isLoading = false
 
   const heading = node.title || ""
-  const description = stripHtml(node.text)
+  const description = node.text
   // A Survey child is optional: with one the ending hands over to it, without one it
   // stays the last screen and sends the visitor back to the start.
   const label = next
@@ -109,7 +110,9 @@ export default function Ending({ node, next, goTo }) {
           </LoadingContainer>
         )}
 
-        {!isLoading && description && <Description>{description}</Description>}
+        {!isLoading && (
+          <Description html={description} $isLoading={isLoading} />
+        )}
 
         <NavigationWrapper>
           <Navigation

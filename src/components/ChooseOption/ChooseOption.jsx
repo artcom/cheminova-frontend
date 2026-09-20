@@ -1,7 +1,8 @@
-import { sanitizeRichText } from "@/utils/text"
 import { styled } from "styled-components"
 
 import IconButton from "../UI/IconButton"
+import RichText from "../UI/RichText"
+import { richTextStyles } from "../UI/richTextStyles"
 
 const SCREEN_BACKGROUND = "#0d0c10"
 const CARD_BACKGROUND = "#141318"
@@ -70,12 +71,14 @@ const Headline = styled.h1`
   word-break: break-word;
 `
 
-const Description = styled.p`
+const Description = styled(RichText)`
   margin: 0;
   font-size: 0.875rem;
   font-weight: 400;
   line-height: 1.25rem;
   color: ${MUTED_TEXT};
+
+  ${richTextStyles}
 `
 
 const Cards = styled.div`
@@ -164,9 +167,7 @@ export default function ChooseOption({ node, characterNode, goTo }) {
         )}
         <HeaderText>
           {node.heading && <Headline>{node.heading}</Headline>}
-          {node.description && (
-            <Description>{sanitizeRichText(node.description)}</Description>
-          )}
+          <Description html={node.description} />
         </HeaderText>
       </Header>
 

@@ -1,5 +1,6 @@
 import { getCharacterPersonaFlags } from "@/utils/characterPersona"
-import { sanitizeRichText, splitIntoParagraphs } from "@/utils/text"
+import { hasRichTextContent } from "@/utils/richText"
+import { sanitizeRichText } from "@/utils/text"
 import { motion } from "motion/react"
 import { useRef } from "react"
 
@@ -15,6 +16,7 @@ import {
   CharacterNarrativeContainer,
   CharacterText,
 } from "@ui/CharacterNarrativeStyles"
+import RichText from "@ui/RichText"
 
 import Navigation from "../UI/Navigation"
 
@@ -38,20 +40,17 @@ export default function Exploration({
 
   const backgroundImageUrl = exploration.backgroundImage?.file || null
 
-  const descriptionParagraphs = splitIntoParagraphs(exploration?.description)
-
-  const additionalParagraphs = Object.entries(exploration ?? {})
+  const additionalTexts = Object.entries(exploration ?? {})
     .filter(([key, value]) => {
       if (key === "description" || key === "heading") return false
       if (!/description|text|content/i.test(key)) return false
       return typeof value === "string"
     })
-    .flatMap(([, value]) => splitIntoParagraphs(value))
+    .map(([, value]) => value)
 
-  const paragraphs =
-    descriptionParagraphs.length > 0 || additionalParagraphs.length > 0
-      ? [...descriptionParagraphs, ...additionalParagraphs]
-      : []
+  const paragraphs = [exploration?.description, ...additionalTexts].filter(
+    hasRichTextContent,
+  )
 
   const heading = sanitizeRichText(exploration?.heading, { trim: true })
 
@@ -111,9 +110,12 @@ export default function Exploration({
           ) : null}
 
           {paragraphs.map((paragraph, index) => (
-            <CharacterText key={index} $isFuturePerson={isFuturePerson}>
-              {paragraph}
-            </CharacterText>
+            <CharacterText
+              key={index}
+              as={RichText}
+              html={paragraph}
+              $isFuturePerson={isFuturePerson}
+            />
           ))}
 
           {bottomImage ? (

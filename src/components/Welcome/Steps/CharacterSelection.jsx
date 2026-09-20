@@ -1,3 +1,5 @@
+import { richTextOrNull } from "@ui/richTextOrNull"
+
 import CharacterCarousel from "../components/CharacterCarousel"
 import WelcomeStepLayout from "../components/WelcomeStepLayout"
 
@@ -17,7 +19,7 @@ export default function CharacterSelection({ node, siblings, next, goTo }) {
     <WelcomeStepLayout
       headline={node.name}
       subheadline={node.characterType}
-      descriptionText={node.description?.replace(/<[^>]*>/g, "")}
+      descriptionText={richTextOrNull(node.description)}
       navigationProps={{
         mode: "select",
         onSelect: () => goTo(next),

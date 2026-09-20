@@ -1,5 +1,7 @@
 import { styled } from "styled-components"
 
+import { richTextStyles } from "./richTextStyles"
+
 export const CharacterNarrativeContainer = styled.div`
   position: absolute;
   inset: 0;
@@ -110,7 +112,7 @@ export const CharacterContentImage = styled.img`
   border: ${(props) => (props.$isJanitor ? "1px solid #000" : "none")};
 `
 
-export const CharacterText = styled.p`
+export const CharacterText = styled.div`
   color: ${(props) =>
     props.$isFuturePerson ? "#FFFFFF" : props.theme.colors.text.primary};
   font-family: "IBM Plex Sans", sans-serif;
@@ -118,7 +120,8 @@ export const CharacterText = styled.p`
   font-weight: 400;
   line-height: 1.375rem;
   margin: 0;
-  white-space: pre-line;
+
+  ${richTextStyles}
 `
 
 export const CharacterActionContainer = styled.div`

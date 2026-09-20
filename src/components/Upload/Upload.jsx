@@ -1,6 +1,7 @@
 import { nearestAncestorOfType } from "@/experience/tree"
 import useCapturedImages from "@/hooks/useCapturedImages"
 import usePhotoTasks from "@/hooks/usePhotoTasks"
+import { sanitizeRichText } from "@/utils/text"
 import { useEffect, useRef, useState } from "react"
 import { useTranslation } from "react-i18next"
 
@@ -84,9 +85,10 @@ export default function Upload({
 
   const characterName = characterNode?.name || ""
 
-  const uploadDescription = uploadData?.description
-    ? uploadData.description.replace(/<[^>]*>/g, "")
-    : t("upload.question")
+  // Interpolated into a translated sentence, so this one stays plain text.
+  const uploadDescription =
+    sanitizeRichText(uploadData?.description, { trim: true }) ||
+    t("upload.question")
   const yesButtonText = uploadData?.yesButtonText || t("upload.buttons.yes")
   const noButtonText = uploadData?.noButtonText || t("upload.buttons.no")
   const noImagesCopy = t("upload.noImages", {

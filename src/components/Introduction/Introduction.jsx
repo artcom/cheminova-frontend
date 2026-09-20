@@ -1,9 +1,9 @@
 import { getCharacterPersonaFlags } from "@/utils/characterPersona"
-import { sanitizeRichText } from "@/utils/text"
 import { Alignment, Fit } from "@rive-app/react-canvas"
 import { useEffect } from "react"
 
 import IconButton from "@ui/IconButton"
+import RichText from "@ui/RichText"
 import RiveAnimation from "@ui/RiveAnimation"
 
 import {
@@ -28,7 +28,6 @@ export default function Introduction({
   goTo,
 }) {
   const heading = introduction.heading
-  const description = sanitizeRichText(introduction.description)
 
   const { isArtist, isFuturePerson, isJanitor } =
     getCharacterPersonaFlags(characterCode)
@@ -81,7 +80,11 @@ export default function Introduction({
             </ImageWrapper>
           )}
 
-          <TextBlock $isFuturePerson={isFuturePerson}>{description}</TextBlock>
+          <TextBlock
+            as={RichText}
+            html={introduction.description}
+            $isFuturePerson={isFuturePerson}
+          />
 
           <CameraButtonContainer>
             <IconButton

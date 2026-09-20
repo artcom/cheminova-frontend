@@ -1,6 +1,7 @@
 import { styled } from "styled-components"
 
 import { characterStyles } from "../SliderWheel/styles"
+import { richTextStyles } from "../UI/richTextStyles"
 
 export const PhotoCaptureContainer = styled.div`
   display: flex;
@@ -58,7 +59,7 @@ export const TaskCard = styled.div`
   border-radius: 1.75rem;
 `
 
-export const TaskDescription = styled.h2`
+export const TaskDescription = styled.div`
   color: ${({ $characterId }) =>
     characterStyles[$characterId]?.textColor || "#000"};
   font-size: 1rem;
@@ -69,6 +70,8 @@ export const TaskDescription = styled.h2`
   margin: 0 0 1rem 0;
   width: 100%;
   padding: 1rem;
+
+  ${richTextStyles}
 `
 
 export const TaskHeadline = styled.h2`
