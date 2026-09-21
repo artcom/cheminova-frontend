@@ -28,6 +28,16 @@ jobs:
       - name: Build application
         run: npm run build
 
+      - name: Create build.json
+        run: |
+          cat <<EOF > build/client/build.json
+          {
+            "commit": "${{ github.sha }}",
+            "buildJob": "${{ github.run_id }}",
+            "ref": "${{ github.ref }}"
+          }
+          EOF
+
       - name: Create Artifacts
         run: |
           mkdir -p artifacts
