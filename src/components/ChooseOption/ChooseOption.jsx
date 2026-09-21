@@ -64,8 +64,9 @@ const HeaderText = styled.div`
 
 const Headline = styled.h1`
   margin: 0;
-  font-size: 2.5rem;
-  font-weight: 800;
+  font-size: 1.875rem;
+  font-style: bold;
+  font-weight: 700;
   line-height: 2.75rem;
   letter-spacing: -0.8px;
   word-break: break-word;
