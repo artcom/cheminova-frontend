@@ -60,8 +60,8 @@ export const CharacterContentCard = styled.div`
   border-radius: ${(props) =>
     props.$isFuturePerson ? "1rem 1rem 1rem 1rem" : "1rem"};
   border: ${(props) => {
-    if (props.$isFuturePerson) return "1px solid #FFF"
-    if (props.$isJanitor) return "1px solid #000"
+    if (props.$isFuturePerson) return "1px solid #7A7A7A75"
+    if (props.$isJanitor) return "1px solid #d5d5d5"
     return "none"
   }};
   padding: 2rem 1.5rem;
