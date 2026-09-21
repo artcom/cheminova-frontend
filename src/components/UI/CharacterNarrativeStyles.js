@@ -87,7 +87,7 @@ export const CharacterHeadline = styled.h1`
     "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
   font-size: 1.575rem;
   font-weight: 700;
-  line-height: 1.25rem;
+  line-height: 1.4rem;
   letter-spacing: -0.0238rem;
   margin: 0;
   width: 100%;
