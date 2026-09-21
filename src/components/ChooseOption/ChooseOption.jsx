@@ -43,6 +43,7 @@ const Avatar = styled.img`
   height: 2.5rem;
   border-radius: 50%;
   object-fit: cover;
+  object-position: 0 -10px;
   flex-shrink: 0;
 `
 
@@ -113,7 +114,6 @@ const CardImage = styled.img`
   height: 5rem;
   border-radius: 0.5rem;
   object-fit: cover;
-  object-position: 0 -10px;
   flex-shrink: 0;
 `
 
