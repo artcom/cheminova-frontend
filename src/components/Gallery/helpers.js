@@ -1,27 +1,25 @@
-import { API_BASE_URL } from "@/api/config"
+const IS_DEV = Boolean(import.meta.env?.DEV)
 
-const CMS_DEV_ORIGIN = import.meta.env?.DEV
-  ? (() => {
-      try {
-        return new URL(API_BASE_URL).origin
-      } catch {
-        return null
-      }
-    })()
-  : null
-
+// In dev the CMS answers with absolute URLs pointing at its own host
+// (localhost:8080, or the LAN IP when testing on a phone). Those bypass the
+// Vite proxy and get blocked by CORS, so reduce them to a same-origin path.
 const normalizeCmsMediaUrl = (value) => {
   if (typeof value !== "string" || value.length === 0) {
     return null
   }
 
-  if (!CMS_DEV_ORIGIN) {
+  if (!IS_DEV || typeof window === "undefined") {
     return value
   }
 
-  return value.startsWith(CMS_DEV_ORIGIN)
-    ? value.replace(CMS_DEV_ORIGIN, "")
-    : value
+  try {
+    const url = new URL(value, window.location.origin)
+    return url.origin === window.location.origin
+      ? value
+      : `${url.pathname}${url.search}${url.hash}`
+  } catch {
+    return value
+  }
 }
 
 export const getPersistedPersonalImages = (defaults, capturedImages = []) => {
