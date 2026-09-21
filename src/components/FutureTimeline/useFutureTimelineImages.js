@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/api/config"
+import { normalizeCmsUrls } from "@/api/normalizeCmsUrls"
 import { useQuery } from "@tanstack/react-query"
 
 const FUTURE_TIMELINE_IMAGES_QUERY_KEY = ["future-timeline", "images"]
@@ -47,7 +48,7 @@ export const useFutureTimelineImages = (options = {}) => {
         )
       }
 
-      return response.json()
+      return normalizeCmsUrls(await response.json())
     },
     enabled,
     staleTime: 5 * 60 * 1000,

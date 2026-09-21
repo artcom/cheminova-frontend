@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/api/config"
+import { normalizeCmsUrls } from "@/api/normalizeCmsUrls"
 
 const apiRequest = async (endpoint, options = {}) => {
   const url = `${API_BASE_URL}${endpoint}`
@@ -27,7 +28,7 @@ const apiRequest = async (endpoint, options = {}) => {
     )
   }
 
-  return response.json()
+  return normalizeCmsUrls(await response.json())
 }
 
 export const ALL_LOCALES_CONTENT_QUERY_KEY = ["all-locales-content"]

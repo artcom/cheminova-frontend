@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/api/config"
+import { normalizeCmsUrls } from "@/api/normalizeCmsUrls"
 import { useQuery } from "@tanstack/react-query"
 
 const JANITOR_LOGBOOK_IMAGES_QUERY_KEY = ["janitor-logbook", "images"]
@@ -50,7 +51,7 @@ export const useJanitorLogbookImages = (options = {}) => {
         )
       }
 
-      return response.json()
+      return normalizeCmsUrls(await response.json())
     },
     enabled,
     staleTime: 5 * 60 * 1000,

@@ -1,4 +1,5 @@
 import { API_BASE_URL } from "@/api/config"
+import { normalizeCmsUrls } from "@/api/normalizeCmsUrls"
 import { useQuery } from "@tanstack/react-query"
 
 const GALLERY_IMAGES_QUERY_KEY = ["gallery-images"]
@@ -62,7 +63,7 @@ export const useGalleryImages = (options = {}) => {
         throw new Error(`Failed to fetch gallery images: ${response.status}`)
       }
 
-      return response.json()
+      return normalizeCmsUrls(await response.json())
     },
     enabled,
     staleTime: 5 * 60 * 1000,

@@ -1,27 +1,3 @@
-const IS_DEV = Boolean(import.meta.env?.DEV)
-
-// In dev the CMS answers with absolute URLs pointing at its own host
-// (localhost:8080, or the LAN IP when testing on a phone). Those bypass the
-// Vite proxy and get blocked by CORS, so reduce them to a same-origin path.
-const normalizeCmsMediaUrl = (value) => {
-  if (typeof value !== "string" || value.length === 0) {
-    return null
-  }
-
-  if (!IS_DEV || typeof window === "undefined") {
-    return value
-  }
-
-  try {
-    const url = new URL(value, window.location.origin)
-    return url.origin === window.location.origin
-      ? value
-      : `${url.pathname}${url.search}${url.hash}`
-  } catch {
-    return value
-  }
-}
-
 export const getPersistedPersonalImages = (defaults, capturedImages = []) => {
   if (Array.isArray(capturedImages) && capturedImages.some(Boolean)) {
     return defaults.map((d, i) => capturedImages[i] || d)
@@ -70,7 +46,7 @@ const resolveGalleryImageSource = (item) => {
     item.image ||
     getRenditionFile(item.renditions)
 
-  return normalizeCmsMediaUrl(source)
+  return typeof source === "string" && source.length > 0 ? source : null
 }
 
 export const buildGalleryImagePool = (galleryImages = []) => {

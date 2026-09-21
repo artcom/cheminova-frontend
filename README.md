@@ -142,7 +142,7 @@ src/
 
 1. Run `npm run build` to emit `build/client`. Clean the folder before committing; generated assets should remain untracked.
 2. If the site is hosted under a subpath (e.g., `/chemisee/`), set `VITE_BASE_PATH=/chemisee/` before building.
-3. The API base URL is not baked into the build. If your CMS lives somewhere other than `http://localhost:8080/api` (dev) or `/cms/api` (prod), update the deployed `config.json` (see [Configuration](#configuration)) — no rebuild required.
+3. The API base URL is not baked into the build. If your CMS lives somewhere other than `/cms/api`, update the deployed `config.json` (see [Configuration](#configuration)) — no rebuild required.
 
 With the router owning navigation and loaders seeding the cache, feature work should focus on crafting route modules, keeping data derivations inside loaders, and letting components stay pure/presentational.
 
@@ -151,13 +151,17 @@ With the router owning navigation and loaders seeding the cache, feature work sh
 The application connects to a backend API which is configured via a `config.json` file.
 
 **Development:**
-The application uses the `config.json` file located in the root of the repository.
+The application uses the `config.json` file located in the root of the repository. It is gitignored; copy `config.json.template` to get started.
 
 ```json
 {
-  "API_BASE_URL": "http://localhost:8080/api"
+  "API_BASE_URL": "/cms/api"
 }
 ```
+
+Keep the value relative. The dev server proxies `/cms`, `/api`, `/media`, `/original_images` and `/static` to the CMS (`CMS_PROXY_TARGET` in `vite.config.js`), so a relative base keeps every request same-origin and needs no CORS headers from the CMS.
+
+To test on a phone or tablet, run `npm run dev:host` and open the machine's LAN address, e.g. `http://192.168.178.178:5173`. Pointing `API_BASE_URL` at that address with the CMS port instead would skip the proxy and fail the preflight. The CMS still serializes absolute media URLs against its own base (`http://localhost:8080/...`), which no other device can reach, so in development those are rewritten to proxy paths as responses come in — see `src/api/normalizeCmsUrls.js`.
 
 **Production / Deployment:**
 The application expects to find a `config.json` file in the public root of the deployment, next to `index.html`. Ensure your deployment process places it there.
