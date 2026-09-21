@@ -1,5 +1,6 @@
 import { styled } from "styled-components"
 
+import PaperTexture from "./assets/paperTexture.jpg"
 import { richTextStyles } from "./richTextStyles"
 
 export const CharacterNarrativeContainer = styled.div`
@@ -73,9 +74,10 @@ export const CharacterContentCard = styled.div`
   -webkit-backdrop-filter: ${(props) =>
     props.$isFuturePerson ? "blur(10px)" : "none"};
   background-image: ${(props) =>
-    props.$isArtist
-      ? "url(\"data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' xmlns:svgjs='http://svgjs.dev/svgjs' viewBox='0 0 700 700' width='700' height='700' opacity='1'%3E%3Cdefs%3E%3Cfilter id='nnnoise-filter' x='-20%25' y='-20%25' width='140%25' height='140%25' filterUnits='objectBoundingBox' primitiveUnits='userSpaceOnUse' color-interpolation-filters='linearRGB'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.067' numOctaves='4' seed='15' stitchTiles='stitch' x='0%25' y='0%25' width='100%25' height='100%25' result='turbulence'%3E%3C/feTurbulence%3E%3CfeSpecularLighting surfaceScale='12' specularConstant='3' specularExponent='20' lighting-color='%238b572a' x='0%25' y='0%25' width='100%25' height='100%25' in='turbulence' result='specularLighting'%3E%3CfeDistantLight azimuth='3' elevation='128'%3E%3C/feDistantLight%3E%3C/feSpecularLighting%3E%3C/filter%3E%3C/defs%3E%3Crect width='700' height='700' fill='%23f1ece1ff'%3E%3C/rect%3E%3Crect width='700' height='700' fill='%238b572a' filter='url(%23nnnoise-filter)'%3E%3C/rect%3E%3C/svg%3E\")"
-      : "none"};
+    props.$isArtist ? `url(${PaperTexture})` : "none"};
+  background-size: 512px 512px;
+  background-position: top left;
+  background-repeat: repeat;
 `
 
 export const CharacterHeadline = styled.h1`
@@ -85,7 +87,7 @@ export const CharacterHeadline = styled.h1`
     "Bricolage Grotesque Variable", "Bricolage Grotesque", sans-serif;
   font-size: 1.575rem;
   font-weight: 700;
-  line-height: 2.875rem;
+  line-height: 1.25rem;
   letter-spacing: -0.0238rem;
   margin: 0;
   width: 100%;
