@@ -11,6 +11,11 @@ export const clientLoader = async ({ params }) => {
   return { characterId: entry?.characterNode?.id ?? null }
 }
 
+// A pathless layout keeps the same match pathname on every /page/:pageId, so React Router would
+// skip this loader and freeze `characterId` at the page the visitor entered the experience on.
+// The CMS content is served from the query cache, so re-running is a cache hit.
+export const shouldRevalidate = () => true
+
 export default function CharacterScope() {
   const { characterId } = useLoaderData()
 

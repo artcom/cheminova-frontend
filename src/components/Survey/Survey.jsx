@@ -1,3 +1,4 @@
+import useCapturedImages from "@/hooks/useCapturedImages"
 import { useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
@@ -77,6 +78,12 @@ const NavigationWrapper = styled.div`
 
 export default function Survey({ node }) {
   const navigate = useNavigate()
+  const { clearCapturedImages } = useCapturedImages()
+
+  const restart = () => {
+    clearCapturedImages()
+    navigate("/")
+  }
 
   const heading = node.heading || node.title || ""
   const description = node.description
@@ -107,7 +114,7 @@ export default function Survey({ node }) {
             mode="single"
             singleButtonVariant="text"
             selectLabel={restartLabel}
-            onSelect={() => navigate("/")}
+            onSelect={restart}
           />
         </NavigationWrapper>
       </Content>

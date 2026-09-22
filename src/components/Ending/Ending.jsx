@@ -1,3 +1,4 @@
+import useCapturedImages from "@/hooks/useCapturedImages"
 import { useNavigate } from "react-router-dom"
 import { styled } from "styled-components"
 
@@ -88,6 +89,7 @@ const NavigationWrapper = styled.div`
 
 export default function Ending({ node, next, goTo }) {
   const navigate = useNavigate()
+  const { clearCapturedImages } = useCapturedImages()
   const isLoading = false
 
   const heading = node.title || ""
@@ -97,7 +99,11 @@ export default function Ending({ node, next, goTo }) {
   const label = next
     ? node.continueButtonText || "Continue"
     : node.returnToMonumentButtonText || "Restart"
-  const onSelect = next ? () => goTo(next) : () => navigate("/")
+  const restart = () => {
+    clearCapturedImages()
+    navigate("/")
+  }
+  const onSelect = next ? () => goTo(next) : restart
 
   return (
     <Screen>

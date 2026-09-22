@@ -113,6 +113,7 @@ export default [
           allowConstantExport: true,
           allowExportNames: [
             "clientLoader",
+            "shouldRevalidate",
             "links",
             "meta",
             "HydrateFallback",
