@@ -18,7 +18,7 @@
   "photoCapture": {
     "title": "Encuadra tu perspectiva",
     "tasks": {
-      "laNau": "El Monumento",
+      "monument": "El Monumento",
       "surroundings": "Tus alrededores",
       "special": "Algo especial"
     },
@@ -91,7 +91,7 @@
     "error": "Error al cargar las imágenes",
     "uploadedImages": "Imágenes cargadas",
     "all": "Todas",
-    "laNau": "El Monumento",
+    "monument": "El Monumento",
     "allImages": "Todas las imágenes",
     "surroundings": "Alrededores",
     "special": "Especial",

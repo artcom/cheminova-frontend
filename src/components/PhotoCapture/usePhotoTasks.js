@@ -10,9 +10,11 @@ export default function usePhotoTasks(options = {}) {
       return providedTasks
     }
     return [
-      t("photoCapture.tasks.monument"),
-      t("photoCapture.tasks.surroundings"),
-      t("photoCapture.tasks.special"),
+      t("photoCapture.tasks.monument", { defaultValue: "The Monument" }),
+      t("photoCapture.tasks.surroundings", {
+        defaultValue: "Your surroundings",
+      }),
+      t("photoCapture.tasks.special", { defaultValue: "Something special" }),
     ]
   }, [providedTasks, t])
 

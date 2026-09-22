@@ -18,7 +18,7 @@
   "photoCapture": {
     "title": "Frame your perspective",
     "tasks": {
-      "laNau": "The Monument",
+      "monument": "The Monument",
       "surroundings": "Your surroundings",
       "special": "Something special"
     },
@@ -93,7 +93,7 @@
     "error": "Error loading images",
     "uploadedImages": "Uploaded Images",
     "all": "All",
-    "laNau": "The Monument",
+    "monument": "The Monument",
     "allImages": "All Images",
     "surroundings": "Surroundings",
     "special": "Special",

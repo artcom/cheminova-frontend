@@ -18,7 +18,7 @@
   "photoCapture": {
     "title": "Rahmen Sie Ihre Perspektive",
     "tasks": {
-      "laNau": "Das Monument",
+      "monument": "Das Monument",
       "surroundings": "Ihre Umgebung",
       "special": "Etwas Besonderes"
     },
@@ -91,7 +91,7 @@
     "error": "Fehler beim Laden der Bilder",
     "uploadedImages": "Hochgeladene Bilder",
     "all": "Alle",
-    "laNau": "Das Monument",
+    "monument": "Das Monument",
     "allImages": "Alle Bilder",
     "surroundings": "Umgebung",
     "special": "Besonders",
